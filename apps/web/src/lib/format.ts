@@ -44,6 +44,19 @@ export function formatLongDate(date: string): string {
   return capitalize(longDate.format(parseDate(date)));
 }
 
+const shortDate = new Intl.DateTimeFormat(LOCALE, { day: "numeric", month: "short", timeZone: "UTC" });
+const fullDate = new Intl.DateTimeFormat(LOCALE, { day: "numeric", month: "short", year: "numeric", timeZone: "UTC" });
+
+/** "2026-11-04" -> "4 nov" */
+export function formatShortDate(date: string): string {
+  return shortDate.format(parseDate(date));
+}
+
+/** "2026-11-04" -> "4 nov 2026" */
+export function formatMediumDate(date: string): string {
+  return fullDate.format(parseDate(date));
+}
+
 /** "2026-11-05" -> "Giovedì" */
 export function formatWeekday(date: string): string {
   return capitalize(weekday.format(parseDate(date)));

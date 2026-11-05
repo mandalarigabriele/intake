@@ -1,10 +1,13 @@
 import type { FastifyPluginAsync, preHandlerHookHandler } from "fastify";
 import { z } from "zod";
+import type { PlanStore } from "../db/planStore.js";
 import type { NutritionApi } from "../mcp/nutritionApi.js";
 import { getDayView, isValidDate } from "../services/dayView.js";
+import { logPlannedMeal, PlanMealNotFoundError, PlanMealWithoutMacrosError } from "../services/logPlanned.js";
 
 export interface DayRoutesOptions {
-  api: Pick<NutritionApi, "clock" | "goalProgress" | "mealsByDate" | "addWater">;
+  api: Pick<NutritionApi, "clock" | "goalProgress" | "mealsByDate" | "addWater" | "logMeal">;
+  plans?: Pick<PlanStore, "activeOn" | "linksOn" | "get" | "addLink">;
   requireOwner: preHandlerHookHandler;
 }
 
@@ -14,7 +17,7 @@ const addWaterBody = z.object({
 });
 
 /** Day data under /api. */
-export const dayRoutes: FastifyPluginAsync<DayRoutesOptions> = async (app, { api, requireOwner }) => {
+export const dayRoutes: FastifyPluginAsync<DayRoutesOptions> = async (app, { api, plans, requireOwner }) => {
   app.addHook("preHandler", requireOwner);
 
   app.get<{ Params: { date: string } }>("/days/:date", async (request, reply) => {
@@ -22,8 +25,30 @@ export const dayRoutes: FastifyPluginAsync<DayRoutesOptions> = async (app, { api
     if (date !== "today" && !isValidDate(date)) {
       return reply.code(400).send({ error: "Date must be YYYY-MM-DD or 'today'" });
     }
-    return getDayView(api, date);
+    return getDayView(api, plans ?? null, date);
   });
+
+  // "Mangiato come previsto": log a planned meal of the given day
+  app.post<{ Params: { date: string; planId: string; index: string } }>(
+    "/days/:date/planned/:planId/:index",
+    async (request, reply) => {
+      const { date } = request.params;
+      const planId = Number(request.params.planId);
+      const index = Number(request.params.index);
+      if (!plans || !isValidDate(date) || !Number.isInteger(planId) || !Number.isInteger(index) || index < 0) {
+        return reply.code(400).send({ error: "Invalid planned meal" });
+      }
+      const clock = await api.clock();
+      try {
+        const result = await logPlannedMeal(api, plans, { date, planId, index, today: clock.localDate, now: clock.localTime });
+        return reply.code(201).send(result);
+      } catch (error) {
+        if (error instanceof PlanMealNotFoundError) return reply.code(404).send({ error: error.message });
+        if (error instanceof PlanMealWithoutMacrosError) return reply.code(422).send({ error: "missing_macros" });
+        throw error;
+      }
+    },
+  );
 
   app.post("/water", async (request, reply) => {
     const body = addWaterBody.safeParse(request.body);

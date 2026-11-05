@@ -1,3 +1,5 @@
+import type { PlannedEntry } from "./api.js";
+
 /**
  * Nutrition data as Intake uses it, independent of how the Nutrition MCP server formats it.
  *
@@ -103,6 +105,8 @@ export interface DayView {
   goals: DayGoals;
   totals: DayTotals;
   meals: Meal[];
+  /** Planned meals from the active plan that no logged meal covers, sorted by time. */
+  planned: PlannedEntry[];
 }
 
 export interface AddWaterRequest {

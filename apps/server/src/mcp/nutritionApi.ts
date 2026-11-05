@@ -10,6 +10,27 @@ import {
 } from "../parsers/index.js";
 import type { ToolResult } from "./connection.js";
 
+/** Fields accepted by log_meal / update_meal (snake_case as the tool expects). */
+export interface MealWriteFields {
+  description?: string;
+  meal_type?: string;
+  calories?: number;
+  protein_g?: number;
+  carbs_g?: number;
+  fat_g?: number;
+  saturated_fat_g?: number;
+  fiber_g?: number;
+  sugar_g?: number;
+  added_sugar_g?: number;
+  caffeine_mg?: number;
+  sodium_mg?: number;
+  logged_at?: string;
+  idempotency_key?: string;
+  items?: Array<Record<string, unknown>>;
+}
+
+const UUID = /\b[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}\b/i;
+
 /** The tool returned an error result (e.g. invalid arguments). */
 export class ToolError extends Error {
   constructor(
@@ -49,6 +70,12 @@ export class NutritionApi {
   /** Daily goals and totals (including water) from structured content. */
   goalProgress(date: string): Promise<GoalProgress> {
     return this.callStructured("get_goal_progress", { date }, parseGoalProgress);
+  }
+
+  /** Logs a meal; returns its id when the response carries one. */
+  async logMeal(fields: MealWriteFields & { description: string; meal_type: string }): Promise<{ id: string | null }> {
+    const result = await this.call("log_meal", { ...fields });
+    return { id: UUID.exec(result.text)?.[0] ?? null };
   }
 
   /** Logs water now. The idempotency key makes a retried request safe. */

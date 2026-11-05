@@ -56,22 +56,53 @@ export const plannedMacrosSchema = z
   });
 
 export const plannedFoodSchema = z.strictObject({
-  name: z.string().trim().min(1),
-  quantity: z.number().positive(),
-  unit: z.string().trim().min(1).describe('Unit of the quantity, e.g. "g", "ml", "piece"'),
+  name: z.string().trim().min(1).describe('Food, e.g. "Yogurt greco" or a free-text line such as "1 frutto"'),
+  quantity: z.number().positive().optional(),
+  unit: z.string().trim().min(1).optional().describe('Unit of the quantity, e.g. "g", "ml", "piece"'),
+  note: z.string().trim().min(1).optional().describe('Preparation note, e.g. "a crudo"'),
 });
 
-export const plannedMealSchema = z.strictObject({
-  time: z
-    .string()
-    .regex(/^([01]\d|2[0-3]):[0-5]\d$/, "time must be HH:MM (24-hour)")
-    .describe("Local time of the meal, HH:MM (24-hour)"),
+export const MEAL_TYPES = ["breakfast", "lunch", "dinner", "snack"] as const;
+
+const time = z
+  .string()
+  .regex(/^([01]\d|2[0-3]):[0-5]\d$/, "time must be HH:MM (24-hour)")
+  .optional()
+  .describe("Local time of the meal, HH:MM (24-hour). Optional: without it Intake uses a default slot for the meal type");
+
+const mealType = z
+  .enum(MEAL_TYPES)
+  .optional()
+  .describe("Meal type used when logging. Optional: inferred from the title (colazione, pranzo, cena, spuntino) when missing");
+
+const description = z.string().trim().min(1).optional().describe("Readable one-line summary of the meal");
+
+export const fixedMealSchema = z.strictObject({
   title: z.string().trim().min(1),
+  time,
+  type: mealType,
+  free: z.literal(false).optional(),
+  description,
   foods: z.array(plannedFoodSchema).min(1),
-  macros: plannedMacrosSchema.describe("Estimated nutrients for the whole meal"),
+  macros: plannedMacrosSchema
+    .optional()
+    .describe('Estimated nutrients for the whole meal. Needed for "Mangiato come previsto" to log complete values'),
 });
+
+export const freeMealSchema = z.strictObject({
+  title: z.string().trim().min(1),
+  time,
+  type: mealType,
+  free: z.literal(true).describe('A "free" meal with no planned foods (shown as "Libero")'),
+  description,
+});
+
+export const plannedMealSchema = z.union([fixedMealSchema, freeMealSchema]);
 
 export const plannedDaySchema = z.strictObject({
+  label: z.string().trim().min(1).max(12).optional().describe('Short tag shown on the day tab, e.g. "dolce"'),
+  note: z.string().trim().min(1).max(80).optional().describe('One-line note for the day, e.g. "pranzo in famiglia · cena libera"'),
+  expectedProtein: z.number().nonnegative().optional().describe("Expected protein for the day in grams"),
   meals: z.array(plannedMealSchema),
 });
 
@@ -79,6 +110,7 @@ export const mealPlanSchema = z
   .strictObject({
     schemaVersion: z.literal(MEAL_PLAN_SCHEMA_VERSION),
     validFrom: z.iso.date().describe("First day the plan is active, YYYY-MM-DD"),
+    notes: z.array(z.string().trim().min(1)).optional().describe("General notes shown on the Piano page"),
     days: z.strictObject({
       monday: plannedDaySchema,
       tuesday: plannedDaySchema,
@@ -97,6 +129,8 @@ export const mealPlanSchema = z
 export type PlannedMacros = z.infer<typeof plannedMacrosSchema>;
 export type PlannedFood = z.infer<typeof plannedFoodSchema>;
 export type PlannedMeal = z.infer<typeof plannedMealSchema>;
+export type FixedPlannedMeal = z.infer<typeof fixedMealSchema>;
+export type MealTypeValue = (typeof MEAL_TYPES)[number];
 export type PlannedDay = z.infer<typeof plannedDaySchema>;
 export type MealPlan = z.infer<typeof mealPlanSchema>;
 
