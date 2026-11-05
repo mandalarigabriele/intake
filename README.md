@@ -15,15 +15,23 @@ Self-hosted nutrition dashboard with a daily meal timeline, macro tracking and m
 - `npm run capture -w @intake/server` saves raw responses of the read-only Nutrition tools for building parser fixtures.
 - Parsers for Nutrition MCP responses (meals with foods and all tracked nutrients, nutrition goals, current time and timezone), tested against real server output. Unrecognized fields are reported as warnings instead of being silently dropped.
 - Sign in with Google, restricted to the owner's account (`OWNER_EMAIL`): OpenID Connect with PKCE and nonce, signed httpOnly session cookie valid for 30 days, sign-out. All data routes and the Nutrition connection require it. See [docs/google-sign-in.md](docs/google-sign-in.md).
-- Web app shell with sign-in screen and Nutrition connection status, installable on iPhone via Safari "Add to Home Screen" (web app manifest and icons, safe-area aware, light and dark themes).
+- Today view: calorie ring (eaten / goal / remaining), macro bars for protein, carbs, fat and fiber with remaining or excess amounts, water as 250 ml glasses with a quick "+250 ml" button (idempotent, optimistic update).
+- Navigation: fixed bottom tab bar on iPhone (Oggi · Settimana · Piano · Allenamenti) with a floating "+" on Today; sticky sidebar with "+ Aggiungi" on iPad and desktop (from 800 px).
+- "Aggiungi" sheet with water shortcuts (+250 / +500 ml).
+- Sign-in and one-time Nutrition connection screens; profile menu with sign-out and "Scollega Nutrition".
+- Allenamenti placeholder ("In arrivo", Hevy integration is phase 2); Settimana and Piano placeholders until those sections are built.
+- Week strip (Monday to Sunday) to switch day; the selected day is kept in the URL.
+- Meal timeline with logged meals (foods with quantities, kcal, macro chips) and a "now" marker for today.
+- UI built from the approved design in `docs/design/` (Manrope, design tokens), in Italian with Italian number and date formatting; responsive (iPhone, iPad, desktop); light and dark mode following the system, with a manual Sistema / Chiaro / Scuro choice saved per device.
+- Day API: `GET /api/days/:date` (or `today`, in the Nutrition profile's timezone) and `POST /api/water`.
+- Installable on iPhone via Safari "Add to Home Screen" (web app manifest and icons, safe-area aware, light and dark themes).
 
 ### Planned – version 1
 
-- Today view: calorie ring (eaten / goal / remaining), macro bars (protein, carbs, fat, fiber) with remaining amounts, water tracker with a quick "+250 ml" button.
-- Vertical meal timeline: logged meals as solid cards, a "now" marker, planned meals from the active plan as dashed cards with a "Mark as eaten as planned" action.
+- Planned meals from the active plan in the timeline, as dashed cards with a "Mark as eaten as planned" action.
 - Meal detail: foods with quantities, macros breakdown, fiber, sugar (added sugar), caffeine.
 - Edit and delete logged meals.
-- Week day navigation.
+- Navigation to previous and next weeks.
 - Weight logging view and weekly trends.
 - Meal plan section: upload a JSON plan file; it becomes active from its `validFrom` date onward; previous versions are kept as history.
 

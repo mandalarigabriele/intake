@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<title>Modifica pasto</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+a{color:#17201B;text-decoration:none}a:hover{color:#2F6B47}
+input{font-family:inherit}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; box-sizing: border-box; background: #F4F5F1; font-family: 'Manrope', system-ui, sans-serif; color: #17201B; display: flex; flex-direction: column; position: relative; overflow: hidden">
+
+<header style="padding: 52px 16px 8px; display: flex; align-items: center; justify-content: space-between">
+<a href="Pasto.dc.html" style="height: 44px; padding: 0 6px; display: flex; align-items: center; font-size: 15px; font-weight: 700; color: #56605A">Annulla</a>
+<span style="font-size: 16px; font-weight: 800">Modifica pasto</span>
+<a href="Pasto.dc.html" style="height: 44px; padding: 0 6px; display: flex; align-items: center; font-size: 15px; font-weight: 800; color: #2F6B47">Salva</a>
+</header>
+
+<div style="padding: 8px 16px 0; display: flex; flex-direction: column; gap: 12px">
+
+<div role="group" aria-label="Tipo di pasto" style="display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 4px; padding: 4px; background: #E6E9E3; border-radius: 14px">
+<button style="height: 38px; border-radius: 10px; border: none; background: #FFFFFF; font-family: inherit; font-size: 13px; font-weight: 800; color: #17201B">Colazione</button>
+<button style="height: 38px; border-radius: 10px; border: none; background: transparent; font-family: inherit; font-size: 13px; font-weight: 700; color: #56605A">Pranzo</button>
+<button style="height: 38px; border-radius: 10px; border: none; background: transparent; font-family: inherit; font-size: 13px; font-weight: 700; color: #56605A">Cena</button>
+<button style="height: 38px; border-radius: 10px; border: none; background: transparent; font-family: inherit; font-size: 13px; font-weight: 700; color: #56605A">Spuntino</button>
+</div>
+
+<div style="padding: 4px 16px; background: #FFFFFF; border-radius: 20px">
+<label style="display: flex; justify-content: space-between; align-items: center; height: 48px; font-size: 15px; font-weight: 700">Orario<input value="08:03" aria-label="Orario" style="width: 70px; border: none; text-align: right; font-size: 15px; font-weight: 800; color: #17201B; background: transparent"></label>
+</div>
+
+<span style="font-size: 12px; font-weight: 800; color: #56605A; letter-spacing: 0.05em; padding: 4px 4px 0">ALIMENTI</span>
+<div style="padding: 0 16px; background: #FFFFFF; border-radius: 20px; display: flex; flex-direction: column">
+<sc-for list="{{items}}" as="it" hint-placeholder-count="4">
+<div style="display: flex; align-items: center; gap: 8px; min-height: 52px; border-bottom: 1px solid #ECEEEA">
+<input value="{{it.name}}" aria-label="Alimento" style="flex: 1; min-width: 0; border: none; font-size: 15px; font-weight: 700; color: #17201B; background: transparent">
+<input value="{{it.qty}}" aria-label="Quantità" style="width: 64px; height: 34px; box-sizing: border-box; border: 1px solid #DDE1DA; border-radius: 10px; text-align: center; font-size: 14px; font-weight: 700; color: #17201B; background: #F7F8F5">
+<button aria-label="Rimuovi alimento" style="width: 36px; height: 44px; border: none; background: none; color: #8A928C; display: flex; align-items: center; justify-content: center"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"></path></svg></button>
+</div>
+</sc-for>
+<button style="height: 48px; border: none; background: none; font-family: inherit; font-size: 14px; font-weight: 800; color: #2F6B47; text-align: left; padding: 0">+ Aggiungi alimento</button>
+</div>
+
+<span style="font-size: 12px; font-weight: 800; color: #56605A; letter-spacing: 0.05em; padding: 4px 4px 0">VALORI DEL PASTO</span>
+<div style="display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px">
+<sc-for list="{{vals}}" as="v" hint-placeholder-count="4">
+<label style="padding: 10px; background: #FFFFFF; border-radius: 16px; display: flex; flex-direction: column; gap: 2px; font-size: 12px; font-weight: 700; color: #56605A">{{v.label}}<input value="{{v.value}}" style="width: 100%; border: none; padding: 0; font-size: 17px; font-weight: 800; color: #17201B; background: transparent"></label>
+</sc-for>
+</div>
+
+</div>
+
+<div style="flex: 1"></div>
+<div style="padding: 0 16px 34px">
+<button onClick="{{askDelete}}" style="width: 100%; height: 52px; border-radius: 16px; border: 1px solid #E8C4BA; background: #FBEFEB; color: #A53A22; font-family: inherit; font-size: 15px; font-weight: 800">Elimina pasto</button>
+</div>
+
+<sc-if value="{{confirm}}" hint-placeholder-val="{{false}}">
+<div style="position: absolute; inset: 0; background: rgba(23, 32, 27, 0.45); display: flex; align-items: flex-end">
+<div role="dialog" aria-label="Conferma eliminazione" style="width: 100%; box-sizing: border-box; padding: 24px 20px 34px; background: #FFFFFF; border-radius: 28px 28px 0 0; display: flex; flex-direction: column; gap: 10px">
+<span style="font-size: 20px; font-weight: 800">Eliminare la colazione?</span>
+<span style="font-size: 14px; line-height: 1.5; color: #3C453F">Viene cancellata anche da Nutrition: non sarà più visibile né qui né nelle chat con Claude.</span>
+<a href="Main.dc.html" style="margin-top: 8px; height: 52px; border-radius: 16px; background: #B4412A; color: #FFFFFF; display: flex; align-items: center; justify-content: center; font-size: 15px; font-weight: 800">Elimina</a>
+<button onClick="{{cancelDelete}}" style="height: 52px; border-radius: 16px; border: none; background: #ECEEEA; color: #17201B; font-family: inherit; font-size: 15px; font-weight: 800">Annulla</button>
+</div>
+</div>
+</sc-if>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  constructor(props) { super(props); this.state = { confirm: false }; }
+  renderVals() {
+    return {
+      confirm: this.state.confirm,
+      askDelete: () => this.setState({ confirm: true }),
+      cancelDelete: () => this.setState({ confirm: false }),
+      items: [
+        { name: 'Caffellatte', qty: '200 ml' },
+        { name: 'Yogurt greco 0%', qty: '150 g' },
+        { name: "Fiocchi d'avena", qty: '40 g' },
+        { name: 'Banana', qty: '1' }
+      ],
+      vals: [
+        { label: 'kcal', value: '438' },
+        { label: 'Prot. g', value: '28,2' },
+        { label: 'Carb. g', value: '68,9' },
+        { label: 'Grassi g', value: '7' }
+      ]
+    };
+  }
+}
+</script>
+</body>
+</html>

@@ -74,3 +74,39 @@ export interface ClockInfo {
   /** Current instant, ISO 8601 in UTC. */
   utc: string;
 }
+
+/** Daily targets used by the Today view; null when the goal is not set. */
+export interface DayGoals {
+  kcal: number | null;
+  protein: number | null;
+  carbs: number | null;
+  fat: number | null;
+  fiber: number | null;
+  waterMl: number | null;
+}
+
+export interface DayTotals {
+  kcal: number;
+  protein: number;
+  carbs: number;
+  fat: number;
+  fiber: number;
+  waterMl: number;
+}
+
+/** Everything the Today view shows for one date. */
+export interface DayView {
+  /** The requested date, YYYY-MM-DD in the Nutrition profile's timezone. */
+  date: string;
+  isToday: boolean;
+  clock: ClockInfo;
+  goals: DayGoals;
+  totals: DayTotals;
+  meals: Meal[];
+}
+
+export interface AddWaterRequest {
+  amountMl: number;
+  /** Unique per tap, so a retried request does not log the water twice. */
+  idempotencyKey: string;
+}

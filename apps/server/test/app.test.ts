@@ -36,3 +36,16 @@ describe("app", () => {
     expect(response.json()).toEqual({ error: "Not found" });
   });
 });
+
+describe("static files", () => {
+  it("serves files added after startup (rebuilt web app)", async () => {
+    const webDistDir = mkdtempSync(join(tmpdir(), "intake-web-"));
+    writeFileSync(join(webDistDir, "index.html"), "<!doctype html><title>Intake</title>");
+    const app = await buildApp({ webDistDir });
+    writeFileSync(join(webDistDir, "app-123.js"), "console.log(1)");
+    const response = await app.inject({ method: "GET", url: "/app-123.js" });
+    expect(response.statusCode).toBe(200);
+    expect(response.headers["content-type"]).toContain("javascript");
+    await app.close();
+  });
+});

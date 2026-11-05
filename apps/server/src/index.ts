@@ -2,10 +2,14 @@ import { resolve } from "node:path";
 import { buildApp } from "./app.js";
 import { GoogleSignIn } from "./auth/google.js";
 import { loadConfig } from "./config.js";
+import { NutritionApi } from "./mcp/nutritionApi.js";
 import { createServices } from "./services.js";
 
 const config = loadConfig();
 const services = createServices(config);
+const api = new NutritionApi(services.nutrition, (tool, warnings) => {
+  app.log.warn({ tool, warnings }, "Unrecognized content in Nutrition MCP response");
+});
 
 const app = await buildApp({
   webDistDir: config.WEB_DIST_DIR ?? resolve(import.meta.dirname, "../../web/dist"),
@@ -21,6 +25,7 @@ const app = await buildApp({
     secureCookies: config.PUBLIC_BASE_URL.startsWith("https://"),
   },
   nutrition: services.nutrition,
+  api,
 });
 
 app.addHook("onClose", async () => {

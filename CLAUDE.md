@@ -12,6 +12,14 @@ Intake is a self-hosted, responsive nutrition dashboard with a daily meal timeli
 - The **README must always be kept up to date** with the complete list of features, on every change.
 - **Secrets** (Google OAuth credentials, MCP tokens, session keys) live only in an environment file on the server, **never in the repository**. Only variable names go in `.env.example`.
 
+## UI
+
+- The UI must be flexible and modern, follow the system light/dark mode automatically, and work on desktop, iPad and iPhone (including the installed home-screen app with safe-area insets). Check every UI change at phone, tablet and desktop widths in both color schemes, with no horizontal scrolling.
+- User-facing text is Italian and lives in `apps/web/src/lib/strings.ts`; numbers and dates use Italian formatting (`apps/web/src/lib/format.ts`). Code, comments and docs stay English.
+- `docs/design/` is the source of truth for the UI: `DESIGN.md` (navigation, timeline behavior, tokens) and the approved mockups in `screens/`. Rebuild screens from them; do not invent new layouts.
+- Colors are tokens in `apps/web/src/styles/tokens.css`, each defined once with `light-dark()` using the light and dark columns of `DESIGN.md`. Components never use raw hex. The theme follows the system, with a manual override (Sistema / Chiaro / Scuro) in the profile menu stored per device (`apps/web/src/lib/theme.ts`). Every colored state also carries a text label (e.g. "ADESSO", "Fibre 7 g", "▲ in eccesso"), never color alone.
+- Font: Manrope, bundled with `@fontsource-variable/manrope` (works offline in the installed app).
+
 ## Layout
 
 - `packages/shared` – code shared by server and web: meal plan zod schema and types, API DTOs.
