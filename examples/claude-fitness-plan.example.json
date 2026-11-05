@@ -1,0 +1,434 @@
+{
+  "schema_version": 1,
+  "updated": "2026-11-05",
+  "timezone": "Europe/Rome",
+  "goal": "Tonificazione e ricomposizione corporea",
+  "targets": {
+    "kcal": 2200,
+    "protein_g": 135,
+    "carbs_g": 255,
+    "fat_g": 70,
+    "fiber_g": 30,
+    "water_l": 2.5
+  },
+  "meal_slots": [
+    { "id": "breakfast", "label": "Colazione", "time": "07:44" },
+    { "id": "snack_am", "label": "Spuntino 11", "time": "11:00" },
+    { "id": "lunch", "label": "Pranzo", "time": "13:00" },
+    { "id": "snack_pm", "label": "Spuntino 16", "time": "16:00" },
+    { "id": "dinner", "label": "Cena", "time": "20:00" }
+  ],
+  "free_meals": [
+    { "day": "saturday", "meal": "dinner" },
+    { "day": "sunday", "meal": "lunch" }
+  ],
+  "notes": [
+    "Target uguali ogni giorno, indipendenti dall'attività svolta.",
+    "Nei pasti liberi le proteine scendono e le calorie salgono: conta la media della settimana.",
+    "Pesare carne, pesce, pasta, farro e patate a crudo; legumi in scatola già cotti e sgocciolati.",
+    "Olio extravergine: circa 30 g al giorno in totale; verdure 200-250 g a pasto.",
+    "Se un giorno ci si allena o si gioca di più, aggiungere pane, pasta o patate a cena.",
+    "Le calorie e le proteine per giorno sono stime: dopo 3-4 settimane correggere le porzioni in base a peso e prestazioni.",
+    "Esclusi: riso, uova sode, tonno negli spuntini, frutti di bosco, proteine in polvere."
+  ],
+  "days": [
+    {
+      "day": "monday",
+      "label": "Lunedì",
+      "expected_protein_g": 135,
+      "meals": {
+        "breakfast": {
+          "description": "Caffellatte + yogurt greco 150 g con muesli 40 g e banana",
+          "items": [
+            { "food": "Caffellatte (latte parzialmente scremato + caffè)", "quantity": 150, "unit": "ml" },
+            { "food": "Yogurt greco 0%", "quantity": 150, "unit": "g" },
+            { "food": "Muesli", "quantity": 40, "unit": "g" },
+            { "food": "Banana", "quantity": 1, "unit": "pz" }
+          ]
+        },
+        "snack_am": {
+          "description": "1 frutto + 25 g di mandorle",
+          "items": [
+            { "food": "Frutto di stagione", "quantity": 1, "unit": "pz" },
+            { "food": "Mandorle sgusciate", "quantity": 25, "unit": "g" }
+          ]
+        },
+        "lunch": {
+          "description": "Pasta 120 g al pomodoro con tonno al naturale 100 g + insalata",
+          "items": [
+            { "food": "Pasta", "quantity": 120, "unit": "g", "note": "a crudo" },
+            { "food": "Pomodoro/passata", "quantity": null, "unit": null },
+            { "food": "Tonno al naturale", "quantity": 100, "unit": "g", "note": "sgocciolato" },
+            { "food": "Insalata", "quantity": null, "unit": null }
+          ]
+        },
+        "snack_pm": {
+          "description": "1 fetta di pane integrale (40 g) con bresaola 40 g + 2 quadratini di cioccolato fondente",
+          "items": [
+            { "food": "Pane integrale", "quantity": 40, "unit": "g" },
+            { "food": "Bresaola", "quantity": 40, "unit": "g" },
+            { "food": "Cioccolato fondente", "quantity": 2, "unit": "quadratini" }
+          ]
+        },
+        "dinner": {
+          "description": "Pollo alla piastra 200 g + verdure + pane integrale 100 g + 1 frutto",
+          "items": [
+            { "food": "Petto di pollo", "quantity": 200, "unit": "g", "note": "a crudo" },
+            { "food": "Verdure", "quantity": null, "unit": null },
+            { "food": "Pane integrale", "quantity": 100, "unit": "g" },
+            { "food": "Frutto di stagione", "quantity": 1, "unit": "pz" }
+          ]
+        }
+      }
+    },
+    {
+      "day": "tuesday",
+      "label": "Martedì",
+      "expected_protein_g": 135,
+      "meals": {
+        "breakfast": {
+          "description": "Caffellatte + 2 uova strapazzate + 2 fette di pane integrale",
+          "items": [
+            { "food": "Caffellatte (latte parzialmente scremato + caffè)", "quantity": 150, "unit": "ml" },
+            { "food": "Uova", "quantity": 2, "unit": "pz", "note": "strapazzate" },
+            { "food": "Pane integrale", "quantity": 2, "unit": "fette" }
+          ]
+        },
+        "snack_am": {
+          "description": "Yogurt greco 150 g con 1 frutto a pezzetti (mela, pera o kiwi)",
+          "items": [
+            { "food": "Yogurt greco 0%", "quantity": 150, "unit": "g" },
+            { "food": "Frutto di stagione", "quantity": 1, "unit": "pz", "note": "mela, pera o kiwi a pezzetti" }
+          ]
+        },
+        "lunch": {
+          "description": "Pasta 80 g con fagioli cotti 250 g (cannellini o borlotti), parmigiano 15 g + verdure",
+          "items": [
+            { "food": "Pasta", "quantity": 80, "unit": "g", "note": "a crudo" },
+            { "food": "Fagioli cannellini o borlotti cotti", "quantity": 250, "unit": "g" },
+            { "food": "Parmigiano Reggiano", "quantity": 15, "unit": "g" },
+            { "food": "Verdure", "quantity": null, "unit": null }
+          ]
+        },
+        "snack_pm": {
+          "description": "1 frutto + bresaola 60 g + 15 g di noci",
+          "items": [
+            { "food": "Frutto di stagione", "quantity": 1, "unit": "pz" },
+            { "food": "Bresaola", "quantity": 60, "unit": "g" },
+            { "food": "Noci sgusciate", "quantity": 15, "unit": "g" }
+          ]
+        },
+        "dinner": {
+          "description": "Salmone 200 g + insalata + patate al forno 250 g",
+          "items": [
+            { "food": "Filetto di salmone", "quantity": 200, "unit": "g", "note": "a crudo" },
+            { "food": "Insalata", "quantity": null, "unit": null },
+            { "food": "Patate al forno", "quantity": 250, "unit": "g", "note": "a crudo" }
+          ]
+        }
+      }
+    },
+    {
+      "day": "wednesday",
+      "label": "Mercoledì",
+      "expected_protein_g": 135,
+      "tags": ["sweet_snack"],
+      "meals": {
+        "breakfast": {
+          "description": "Caffellatte + 2 fette di pane integrale con ricotta 100 g e marmellata",
+          "items": [
+            { "food": "Caffellatte (latte parzialmente scremato + caffè)", "quantity": 150, "unit": "ml" },
+            { "food": "Pane integrale", "quantity": 2, "unit": "fette" },
+            { "food": "Ricotta fresca", "quantity": 100, "unit": "g" },
+            { "food": "Marmellata", "quantity": 1, "unit": "cucchiaino" }
+          ]
+        },
+        "snack_am": {
+          "description": "1 frutto + fesa di tacchino 80 g",
+          "items": [
+            { "food": "Frutto di stagione", "quantity": 1, "unit": "pz" },
+            { "food": "Fesa di tacchino affettata", "quantity": 80, "unit": "g" }
+          ]
+        },
+        "lunch": {
+          "description": "Piadina integrale con bresaola 100 g, stracchino 40 g e rucola + verdure + 1 frutto",
+          "items": [
+            { "food": "Piadina integrale", "quantity": 1, "unit": "pz" },
+            { "food": "Bresaola", "quantity": 100, "unit": "g" },
+            { "food": "Stracchino magro", "quantity": 40, "unit": "g" },
+            { "food": "Rucola", "quantity": null, "unit": null },
+            { "food": "Verdure", "quantity": null, "unit": null },
+            { "food": "Frutto di stagione", "quantity": 1, "unit": "pz" }
+          ]
+        },
+        "snack_pm": {
+          "description": "Yogurt greco 150 g con 2 biscotti sbriciolati o un cucchiaino di crema di nocciole (spuntino dolce)",
+          "items": [
+            { "food": "Yogurt greco 0%", "quantity": 150, "unit": "g" },
+            { "food": "Biscotti secchi", "quantity": 2, "unit": "pz", "note": "in alternativa 1 cucchiaino di crema di nocciole" }
+          ],
+          "sweet": true
+        },
+        "dinner": {
+          "description": "Frittata con 4 uova e 250 g di verdure + 2 fette di pane integrale",
+          "items": [
+            { "food": "Uova", "quantity": 4, "unit": "pz" },
+            { "food": "Verdure", "quantity": 250, "unit": "g" },
+            { "food": "Pane integrale", "quantity": 2, "unit": "fette" }
+          ]
+        }
+      }
+    },
+    {
+      "day": "thursday",
+      "label": "Giovedì",
+      "expected_protein_g": 130,
+      "meals": {
+        "breakfast": {
+          "description": "Caffellatte + yogurt greco 150 g con fiocchi d'avena 40 g, miele e banana",
+          "items": [
+            { "food": "Caffellatte (latte parzialmente scremato + caffè)", "quantity": 150, "unit": "ml" },
+            { "food": "Yogurt greco 0%", "quantity": 150, "unit": "g" },
+            { "food": "Fiocchi d'avena", "quantity": 40, "unit": "g" },
+            { "food": "Miele", "quantity": 1, "unit": "cucchiaino" },
+            { "food": "Banana", "quantity": 1, "unit": "pz" }
+          ]
+        },
+        "snack_am": {
+          "description": "1 frutto + bresaola 40 g",
+          "items": [
+            { "food": "Frutto di stagione", "quantity": 1, "unit": "pz" },
+            { "food": "Bresaola", "quantity": 40, "unit": "g" }
+          ]
+        },
+        "lunch": {
+          "description": "Pasta 100 g al ragù magro di manzo 120 g + insalata",
+          "items": [
+            { "food": "Pasta", "quantity": 100, "unit": "g", "note": "a crudo" },
+            { "food": "Macinato magro di manzo", "quantity": 120, "unit": "g", "note": "a crudo, per il ragù" },
+            { "food": "Insalata", "quantity": null, "unit": null }
+          ]
+        },
+        "snack_pm": {
+          "description": "1 frutto + 25 g di mandorle",
+          "items": [
+            { "food": "Frutto di stagione", "quantity": 1, "unit": "pz" },
+            { "food": "Mandorle sgusciate", "quantity": 25, "unit": "g" }
+          ]
+        },
+        "dinner": {
+          "description": "Merluzzo o orata 250 g + patate al forno 250 g + verdure + 1 fetta di pane integrale",
+          "items": [
+            { "food": "Merluzzo o orata", "quantity": 250, "unit": "g", "note": "a crudo" },
+            { "food": "Patate al forno", "quantity": 250, "unit": "g", "note": "a crudo" },
+            { "food": "Verdure", "quantity": null, "unit": null },
+            { "food": "Pane integrale", "quantity": 1, "unit": "fetta" }
+          ]
+        }
+      }
+    },
+    {
+      "day": "friday",
+      "label": "Venerdì",
+      "expected_protein_g": 135,
+      "meals": {
+        "breakfast": {
+          "description": "Caffellatte + 2 uova strapazzate + 2 fette di pane integrale + 1 frutto",
+          "items": [
+            { "food": "Caffellatte (latte parzialmente scremato + caffè)", "quantity": 150, "unit": "ml" },
+            { "food": "Uova", "quantity": 2, "unit": "pz", "note": "strapazzate" },
+            { "food": "Pane integrale", "quantity": 2, "unit": "fette" },
+            { "food": "Frutto di stagione", "quantity": 1, "unit": "pz" }
+          ]
+        },
+        "snack_am": {
+          "description": "1 frutto + 25 g di mandorle",
+          "items": [
+            { "food": "Frutto di stagione", "quantity": 1, "unit": "pz" },
+            { "food": "Mandorle sgusciate", "quantity": 25, "unit": "g" }
+          ]
+        },
+        "lunch": {
+          "description": "Insalata di farro (70 g a crudo) con tonno 100 g, ceci lessati 100 g, mozzarella 60 g e verdure",
+          "items": [
+            { "food": "Farro", "quantity": 70, "unit": "g", "note": "a crudo" },
+            { "food": "Tonno al naturale", "quantity": 100, "unit": "g", "note": "sgocciolato" },
+            { "food": "Ceci lessati", "quantity": 100, "unit": "g" },
+            { "food": "Mozzarella", "quantity": 60, "unit": "g" },
+            { "food": "Verdure", "quantity": null, "unit": null }
+          ]
+        },
+        "snack_pm": {
+          "description": "Fesa di tacchino 50 g con 1 fetta di pane integrale",
+          "items": [
+            { "food": "Fesa di tacchino affettata", "quantity": 50, "unit": "g" },
+            { "food": "Pane integrale", "quantity": 1, "unit": "fetta" }
+          ]
+        },
+        "dinner": {
+          "description": "Pollo o tacchino 180 g + patate al forno 250 g + verdure",
+          "items": [
+            { "food": "Petto di pollo o tacchino", "quantity": 180, "unit": "g", "note": "a crudo" },
+            { "food": "Patate al forno", "quantity": 250, "unit": "g", "note": "a crudo" },
+            { "food": "Verdure", "quantity": null, "unit": null }
+          ]
+        }
+      }
+    },
+    {
+      "day": "saturday",
+      "label": "Sabato",
+      "expected_protein_g": 95,
+      "free_meals": ["dinner"],
+      "meals": {
+        "breakfast": {
+          "description": "Caffellatte + 3 uova strapazzate + 2 fette di pane integrale",
+          "items": [
+            { "food": "Caffellatte (latte parzialmente scremato + caffè)", "quantity": 150, "unit": "ml" },
+            { "food": "Uova", "quantity": 3, "unit": "pz", "note": "strapazzate" },
+            { "food": "Pane integrale", "quantity": 2, "unit": "fette" }
+          ]
+        },
+        "snack_am": {
+          "description": "Yogurt greco 150 g + 1 frutto",
+          "items": [
+            { "food": "Yogurt greco 0%", "quantity": 150, "unit": "g" },
+            { "food": "Frutto di stagione", "quantity": 1, "unit": "pz" }
+          ]
+        },
+        "lunch": {
+          "description": "Pranzo in famiglia: hamburger di manzo magro 150 g con patate al forno 250 g e verdure; in alternativa pasta 100 g al pomodoro con polpette di carne magra al forno (150 g)",
+          "items": [
+            { "food": "Hamburger di manzo magro", "quantity": 150, "unit": "g", "note": "a crudo" },
+            { "food": "Patate al forno", "quantity": 250, "unit": "g", "note": "a crudo" },
+            { "food": "Verdure", "quantity": null, "unit": null }
+          ],
+          "alternative": [
+            { "food": "Pasta", "quantity": 100, "unit": "g", "note": "a crudo" },
+            { "food": "Pomodoro/passata", "quantity": null, "unit": null },
+            { "food": "Polpette di carne magra al forno", "quantity": 150, "unit": "g", "note": "carne a crudo" }
+          ],
+          "family_friendly": true
+        },
+        "snack_pm": {
+          "description": "1 frutto + bresaola 40 g",
+          "items": [
+            { "food": "Frutto di stagione", "quantity": 1, "unit": "pz" },
+            { "food": "Bresaola", "quantity": 40, "unit": "g" }
+          ]
+        },
+        "dinner": {
+          "description": "Cena libera, senza vincoli",
+          "items": [],
+          "free": true
+        }
+      }
+    },
+    {
+      "day": "sunday",
+      "label": "Domenica",
+      "expected_protein_g": 100,
+      "free_meals": ["lunch"],
+      "meals": {
+        "breakfast": {
+          "description": "Caffellatte + yogurt greco 150 g con muesli 40 g e banana",
+          "items": [
+            { "food": "Caffellatte (latte parzialmente scremato + caffè)", "quantity": 150, "unit": "ml" },
+            { "food": "Yogurt greco 0%", "quantity": 150, "unit": "g" },
+            { "food": "Muesli", "quantity": 40, "unit": "g" },
+            { "food": "Banana", "quantity": 1, "unit": "pz" }
+          ]
+        },
+        "snack_am": {
+          "description": "1 frutto + 20 g di noci (leggero, aspettando il pranzo)",
+          "items": [
+            { "food": "Frutto di stagione", "quantity": 1, "unit": "pz" },
+            { "food": "Noci sgusciate", "quantity": 20, "unit": "g" }
+          ]
+        },
+        "lunch": {
+          "description": "Pranzo libero in famiglia, in completa serenità",
+          "items": [],
+          "free": true
+        },
+        "snack_pm": {
+          "description": "Yogurt greco 150 g + 20 g di noci",
+          "items": [
+            { "food": "Yogurt greco 0%", "quantity": 150, "unit": "g" },
+            { "food": "Noci sgusciate", "quantity": 20, "unit": "g" }
+          ]
+        },
+        "dinner": {
+          "description": "Merluzzo o orata 250 g + patate al forno 250 g + insalata mista",
+          "items": [
+            { "food": "Merluzzo o orata", "quantity": 250, "unit": "g", "note": "a crudo" },
+            { "food": "Patate al forno", "quantity": 250, "unit": "g", "note": "a crudo" },
+            { "food": "Insalata mista", "quantity": null, "unit": null }
+          ]
+        }
+      }
+    }
+  ],
+  "shopping_list": [
+    {
+      "category": "Carne, pesce e salumi",
+      "items": [
+        { "food": "Petto di pollo o tacchino", "quantity": 380, "unit": "g" },
+        { "food": "Filetto di salmone", "quantity": 200, "unit": "g" },
+        { "food": "Merluzzo o orata", "quantity": 500, "unit": "g" },
+        { "food": "Macinato magro di manzo", "quantity": 270, "unit": "g" },
+        { "food": "Bresaola", "quantity": 280, "unit": "g" },
+        { "food": "Fesa di tacchino affettata", "quantity": 130, "unit": "g" },
+        { "food": "Tonno al naturale", "quantity": 200, "unit": "g" }
+      ]
+    },
+    {
+      "category": "Latticini e uova",
+      "items": [
+        { "food": "Latte parzialmente scremato", "quantity": 1, "unit": "l" },
+        { "food": "Yogurt greco 0% (vasetti da 150 g)", "quantity": 7, "unit": "pz" },
+        { "food": "Ricotta fresca", "quantity": 100, "unit": "g" },
+        { "food": "Mozzarella", "quantity": 60, "unit": "g" },
+        { "food": "Stracchino magro", "quantity": 40, "unit": "g" },
+        { "food": "Parmigiano Reggiano", "quantity": 15, "unit": "g" },
+        { "food": "Uova", "quantity": 11, "unit": "pz" }
+      ]
+    },
+    {
+      "category": "Cereali, pane e legumi",
+      "items": [
+        { "food": "Pasta", "quantity": 300, "unit": "g" },
+        { "food": "Farro", "quantity": 70, "unit": "g" },
+        { "food": "Pane integrale", "quantity": 650, "unit": "g" },
+        { "food": "Piadina integrale", "quantity": 1, "unit": "pz" },
+        { "food": "Fiocchi d'avena", "quantity": 40, "unit": "g" },
+        { "food": "Muesli", "quantity": 80, "unit": "g" },
+        { "food": "Fagioli cannellini o borlotti cotti", "quantity": 250, "unit": "g" },
+        { "food": "Ceci lessati", "quantity": 100, "unit": "g" }
+      ]
+    },
+    {
+      "category": "Ortofrutta",
+      "items": [
+        { "food": "Banane", "quantity": 3, "unit": "pz" },
+        { "food": "Frutta di stagione", "quantity": 13, "unit": "pz" },
+        { "food": "Patate", "quantity": 1300, "unit": "g" },
+        { "food": "Verdure da griglia e forno", "quantity": 1750, "unit": "g" },
+        { "food": "Insalata mista e rucola", "quantity": 3, "unit": "buste" },
+        { "food": "Pomodori e passata", "quantity": 500, "unit": "g" }
+      ]
+    },
+    {
+      "category": "Dispensa e condimenti",
+      "items": [
+        { "food": "Mandorle sgusciate", "quantity": 100, "unit": "g" },
+        { "food": "Noci sgusciate", "quantity": 100, "unit": "g" },
+        { "food": "Olio extravergine d'oliva", "quantity": null, "unit": null },
+        { "food": "Miele", "quantity": null, "unit": null },
+        { "food": "Marmellata", "quantity": null, "unit": null },
+        { "food": "Cioccolato fondente 85%", "quantity": null, "unit": null },
+        { "food": "Biscotti secchi o crema di nocciole", "quantity": null, "unit": null }
+      ]
+    }
+  ]
+}

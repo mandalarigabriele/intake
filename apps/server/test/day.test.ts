@@ -39,6 +39,7 @@ function fakeApi(overrides: Partial<DayRoutesOptions["api"]> = {}): DayRoutesOpt
     goalProgress: async () => parseGoalProgress(goalProgressJson).value,
     mealsByDate: async () => parseMeals(fixture("meals-full-by-date.txt")).value,
     addWater: async () => {},
+    logMeal: async () => ({ id: null }),
     ...overrides,
   };
 }
@@ -46,13 +47,13 @@ function fakeApi(overrides: Partial<DayRoutesOptions["api"]> = {}): DayRoutesOpt
 describe("getDayView", () => {
   it("resolves 'today' in the profile timezone", async () => {
     const goalProgress = vi.fn(fakeApi().goalProgress);
-    const view = await getDayView(fakeApi({ goalProgress }), "today");
+    const view = await getDayView(fakeApi({ goalProgress }), null, "today");
     expect(goalProgress).toHaveBeenCalledWith("2026-11-05");
     expect(view.isToday).toBe(true);
   });
 
   it("combines totals and meals for a past date", async () => {
-    const view = await getDayView(fakeApi(), "2026-11-04");
+    const view = await getDayView(fakeApi(), null, "2026-11-04");
     expect(view.isToday).toBe(false);
     expect(view.totals.kcal).toBe(790);
     expect(view.meals.map((m) => m.time)).toEqual(["16:31", "17:02", "17:05", "20:06", "20:10"]);

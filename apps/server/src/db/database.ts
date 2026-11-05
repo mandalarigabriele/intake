@@ -13,6 +13,22 @@ const MIGRATIONS: string[] = [
      value TEXT NOT NULL,
      updated_at TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%fZ', 'now'))
    )`,
+  // 2: meal plan versions and links between planned meals and logged Nutrition meals
+  `CREATE TABLE plans (
+     id INTEGER PRIMARY KEY AUTOINCREMENT,
+     valid_from TEXT NOT NULL,
+     uploaded_at TEXT NOT NULL,
+     content TEXT NOT NULL
+   );
+   CREATE INDEX plans_valid_from ON plans (valid_from);
+   CREATE TABLE plan_links (
+     date TEXT NOT NULL,
+     plan_id INTEGER NOT NULL REFERENCES plans (id) ON DELETE CASCADE,
+     meal_index INTEGER NOT NULL,
+     meal_id TEXT NOT NULL,
+     created_at TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%fZ', 'now')),
+     PRIMARY KEY (date, plan_id, meal_index)
+   );`,
 ];
 
 /** Opens (and migrates) the SQLite database. Pass ":memory:" for tests. */

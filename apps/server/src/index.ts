@@ -26,6 +26,9 @@ const app = await buildApp({
   },
   nutrition: services.nutrition,
   api,
+  mealsApi: api,
+  weekApi: api,
+  plans: services.plans,
 });
 
 app.addHook("onClose", async () => {

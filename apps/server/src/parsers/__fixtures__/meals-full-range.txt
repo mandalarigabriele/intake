@@ -1,0 +1,58 @@
+Times are local (Europe/Rome).
+
+## 2026-11-04 (2 meals)
+
+ID: 00000000-0000-4000-8000-000000000021
+Time: 2026-11-04 17:02
+Type: snack
+Description: Ricotta (150 g) con miele (2 cucchiaini)
+Calories: 262
+Protein: 13.2g
+Carbs: 16.8g
+Fat: 16.4g
+Saturated fat: 10.4g
+Fiber: 0g
+Sugar: 16.7g (11.4g added)
+Sodium: 121 mg
+Items:
+  1. Ricotta vaccina — 150 g — 219 kcal · P 13.2 g · C 5.3 g · F 16.4 g · saturated fat 10.4 g · fiber 0 g · sugar 5.3 g (0 added) · sodium 120 mg
+  2. Miele — 2 cucchiaini — 43 kcal · P 0 g · C 11.5 g · F 0 g · saturated fat 0 g · fiber 0 g · sugar 11.4 g (11.4 added) · sodium 1 mg
+
+---
+
+ID: 00000000-0000-4000-8000-000000000022
+Time: 2026-11-04 20:10
+Type: dinner
+Description: Mandarino (1 medio, ~80 g) a fine cena
+Calories: 35
+Protein: 0.6g
+Carbs: 8.5g
+Fat: 0.2g
+Saturated fat: 0g
+Fiber: 1.4g
+Sugar: 7g (0g added)
+Sodium: 1 mg
+
+===
+
+## 2026-11-05 (1 meal)
+
+ID: 00000000-0000-4000-8000-000000000023
+Time: 2026-11-05 14:02
+Type: lunch
+Description: Pranzo: pasta di farro bio 80 g al ragù (macinato magro di manzo 100 g, passata 125 g, olio EVO 1 cucchiaio, sale) + insalata
+Calories: 547
+Protein: 33.3g
+Carbs: 63.1g
+Fat: 17.2g
+Fiber: 6.4g
+Sugar: 7.1g (0g added)
+Sodium: 487 mg
+Items:
+  1. Pasta di farro biologica — 80 g — 281 kcal · P 9.4 g · C 55 g · F 1.7 g · fiber 3.4 g · sugar 1.5 g (0 added) · sodium 0 mg
+  2. Macinato magro di manzo — 100 g — 130 kcal · P 21 g · C 0 g · F 5 g · fiber 0 g · sugar 0 g (0 added) · sodium 65 mg
+  3. Passata di pomodoro — 125 g — 31 kcal · P 1.6 g · C 5.6 g · F 0.3 g · fiber 1.5 g · sugar 4.4 g (0 added) · sodium 12 mg
+  4. Olio extravergine d'oliva — 10 g — 90 kcal · P 0 g · C 0 g · F 10 g · fiber 0 g · sugar 0 g (0 added) · sodium 0 mg
+  5. Sale — 1 g — 0 kcal · P 0 g · C 0 g · F 0 g · fiber 0 g · sugar 0 g (0 added) · sodium 400 mg
+  6. Insalata — 100 g — 15 kcal · P 1.3 g · C 2.5 g · F 0.2 g · fiber 1.5 g · sugar 1.2 g (0 added) · sodium 10 mg
+Sources: calories a mix (your figures 51%, estimated 49%); protein a mix (estimated 72%, your figures 28%); carbs a mix (your figures 87%, estimated 13%); fat a mix (estimated 90%, your figures 10%); fiber a mix (your figures 53%, estimated 47%); sugar, added sugar estimated; sodium a mix (estimated 100%).

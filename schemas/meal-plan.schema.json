@@ -12,126 +12,215 @@
       "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$",
       "description": "First day the plan is active, YYYY-MM-DD"
     },
+    "notes": {
+      "description": "General notes shown on the Piano page",
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
     "days": {
       "type": "object",
       "properties": {
         "monday": {
           "type": "object",
           "properties": {
+            "label": {
+              "description": "Short tag shown on the day tab, e.g. \"dolce\"",
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 12
+            },
+            "note": {
+              "description": "One-line note for the day, e.g. \"pranzo in famiglia · cena libera\"",
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 80
+            },
+            "expectedProtein": {
+              "description": "Expected protein for the day in grams",
+              "type": "number",
+              "minimum": 0
+            },
             "meals": {
               "type": "array",
               "items": {
-                "type": "object",
-                "properties": {
-                  "time": {
-                    "type": "string",
-                    "pattern": "^([01]\\d|2[0-3]):[0-5]\\d$",
-                    "description": "Local time of the meal, HH:MM (24-hour)"
-                  },
-                  "title": {
-                    "type": "string",
-                    "minLength": 1
-                  },
-                  "foods": {
-                    "minItems": 1,
-                    "type": "array",
-                    "items": {
-                      "type": "object",
-                      "properties": {
-                        "name": {
-                          "type": "string",
-                          "minLength": 1
-                        },
-                        "quantity": {
-                          "type": "number",
-                          "exclusiveMinimum": 0
-                        },
-                        "unit": {
-                          "type": "string",
-                          "minLength": 1,
-                          "description": "Unit of the quantity, e.g. \"g\", \"ml\", \"piece\""
-                        }
-                      },
-                      "required": [
-                        "name",
-                        "quantity",
-                        "unit"
-                      ],
-                      "additionalProperties": false
-                    }
-                  },
-                  "macros": {
+                "anyOf": [
+                  {
                     "type": "object",
                     "properties": {
-                      "kcal": {
-                        "type": "number",
-                        "minimum": 0,
-                        "description": "Energy in kcal"
+                      "title": {
+                        "type": "string",
+                        "minLength": 1
                       },
-                      "protein": {
-                        "type": "number",
-                        "minimum": 0,
-                        "description": "Protein in grams"
+                      "time": {
+                        "description": "Local time of the meal, HH:MM (24-hour). Optional: without it Intake uses a default slot for the meal type",
+                        "type": "string",
+                        "pattern": "^([01]\\d|2[0-3]):[0-5]\\d$"
                       },
-                      "carbs": {
-                        "type": "number",
-                        "minimum": 0,
-                        "description": "Carbohydrates in grams"
+                      "type": {
+                        "description": "Meal type used when logging. Optional: inferred from the title (colazione, pranzo, cena, spuntino) when missing",
+                        "type": "string",
+                        "enum": [
+                          "breakfast",
+                          "lunch",
+                          "dinner",
+                          "snack"
+                        ]
                       },
-                      "fat": {
-                        "type": "number",
-                        "minimum": 0,
-                        "description": "Total fat in grams"
+                      "free": {
+                        "type": "boolean",
+                        "const": false
                       },
-                      "fiber": {
-                        "type": "number",
-                        "minimum": 0,
-                        "description": "Fiber in grams"
+                      "description": {
+                        "description": "Readable one-line summary of the meal",
+                        "type": "string",
+                        "minLength": 1
                       },
-                      "sugar": {
-                        "description": "Total sugar in grams. Must be given together with addedSugar.",
-                        "type": "number",
-                        "minimum": 0
+                      "foods": {
+                        "minItems": 1,
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "name": {
+                              "type": "string",
+                              "minLength": 1,
+                              "description": "Food, e.g. \"Yogurt greco\" or a free-text line such as \"1 frutto\""
+                            },
+                            "quantity": {
+                              "type": "number",
+                              "exclusiveMinimum": 0
+                            },
+                            "unit": {
+                              "description": "Unit of the quantity, e.g. \"g\", \"ml\", \"piece\"",
+                              "type": "string",
+                              "minLength": 1
+                            },
+                            "note": {
+                              "description": "Preparation note, e.g. \"a crudo\"",
+                              "type": "string",
+                              "minLength": 1
+                            }
+                          },
+                          "required": [
+                            "name"
+                          ],
+                          "additionalProperties": false
+                        }
                       },
-                      "addedSugar": {
-                        "description": "Added sugar in grams, part of sugar (never more than sugar). Must be given together with sugar.",
-                        "type": "number",
-                        "minimum": 0
-                      },
-                      "saturatedFat": {
-                        "description": "Saturated fat in grams, part of fat (never more than fat)",
-                        "type": "number",
-                        "minimum": 0
-                      },
-                      "sodiumMg": {
-                        "description": "Sodium in milligrams (not salt: 1 g of salt is about 400 mg of sodium)",
-                        "type": "number",
-                        "minimum": 0
-                      },
-                      "caffeineMg": {
-                        "description": "Caffeine in milligrams, only for caffeine sources",
-                        "type": "number",
-                        "minimum": 0
+                      "macros": {
+                        "description": "Estimated nutrients for the whole meal. Needed for \"Mangiato come previsto\" to log complete values",
+                        "type": "object",
+                        "properties": {
+                          "kcal": {
+                            "type": "number",
+                            "minimum": 0,
+                            "description": "Energy in kcal"
+                          },
+                          "protein": {
+                            "type": "number",
+                            "minimum": 0,
+                            "description": "Protein in grams"
+                          },
+                          "carbs": {
+                            "type": "number",
+                            "minimum": 0,
+                            "description": "Carbohydrates in grams"
+                          },
+                          "fat": {
+                            "type": "number",
+                            "minimum": 0,
+                            "description": "Total fat in grams"
+                          },
+                          "fiber": {
+                            "type": "number",
+                            "minimum": 0,
+                            "description": "Fiber in grams"
+                          },
+                          "sugar": {
+                            "description": "Total sugar in grams. Must be given together with addedSugar.",
+                            "type": "number",
+                            "minimum": 0
+                          },
+                          "addedSugar": {
+                            "description": "Added sugar in grams, part of sugar (never more than sugar). Must be given together with sugar.",
+                            "type": "number",
+                            "minimum": 0
+                          },
+                          "saturatedFat": {
+                            "description": "Saturated fat in grams, part of fat (never more than fat)",
+                            "type": "number",
+                            "minimum": 0
+                          },
+                          "sodiumMg": {
+                            "description": "Sodium in milligrams (not salt: 1 g of salt is about 400 mg of sodium)",
+                            "type": "number",
+                            "minimum": 0
+                          },
+                          "caffeineMg": {
+                            "description": "Caffeine in milligrams, only for caffeine sources",
+                            "type": "number",
+                            "minimum": 0
+                          }
+                        },
+                        "required": [
+                          "kcal",
+                          "protein",
+                          "carbs",
+                          "fat",
+                          "fiber"
+                        ],
+                        "additionalProperties": false
                       }
                     },
                     "required": [
-                      "kcal",
-                      "protein",
-                      "carbs",
-                      "fat",
-                      "fiber"
+                      "title",
+                      "foods"
                     ],
-                    "additionalProperties": false,
-                    "description": "Estimated nutrients for the whole meal"
+                    "additionalProperties": false
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "title": {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      "time": {
+                        "description": "Local time of the meal, HH:MM (24-hour). Optional: without it Intake uses a default slot for the meal type",
+                        "type": "string",
+                        "pattern": "^([01]\\d|2[0-3]):[0-5]\\d$"
+                      },
+                      "type": {
+                        "description": "Meal type used when logging. Optional: inferred from the title (colazione, pranzo, cena, spuntino) when missing",
+                        "type": "string",
+                        "enum": [
+                          "breakfast",
+                          "lunch",
+                          "dinner",
+                          "snack"
+                        ]
+                      },
+                      "free": {
+                        "type": "boolean",
+                        "const": true,
+                        "description": "A \"free\" meal with no planned foods (shown as \"Libero\")"
+                      },
+                      "description": {
+                        "description": "Readable one-line summary of the meal",
+                        "type": "string",
+                        "minLength": 1
+                      }
+                    },
+                    "required": [
+                      "title",
+                      "free"
+                    ],
+                    "additionalProperties": false
                   }
-                },
-                "required": [
-                  "time",
-                  "title",
-                  "foods",
-                  "macros"
-                ],
-                "additionalProperties": false
+                ]
               }
             }
           },
@@ -143,120 +232,201 @@
         "tuesday": {
           "type": "object",
           "properties": {
+            "label": {
+              "description": "Short tag shown on the day tab, e.g. \"dolce\"",
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 12
+            },
+            "note": {
+              "description": "One-line note for the day, e.g. \"pranzo in famiglia · cena libera\"",
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 80
+            },
+            "expectedProtein": {
+              "description": "Expected protein for the day in grams",
+              "type": "number",
+              "minimum": 0
+            },
             "meals": {
               "type": "array",
               "items": {
-                "type": "object",
-                "properties": {
-                  "time": {
-                    "type": "string",
-                    "pattern": "^([01]\\d|2[0-3]):[0-5]\\d$",
-                    "description": "Local time of the meal, HH:MM (24-hour)"
-                  },
-                  "title": {
-                    "type": "string",
-                    "minLength": 1
-                  },
-                  "foods": {
-                    "minItems": 1,
-                    "type": "array",
-                    "items": {
-                      "type": "object",
-                      "properties": {
-                        "name": {
-                          "type": "string",
-                          "minLength": 1
-                        },
-                        "quantity": {
-                          "type": "number",
-                          "exclusiveMinimum": 0
-                        },
-                        "unit": {
-                          "type": "string",
-                          "minLength": 1,
-                          "description": "Unit of the quantity, e.g. \"g\", \"ml\", \"piece\""
-                        }
-                      },
-                      "required": [
-                        "name",
-                        "quantity",
-                        "unit"
-                      ],
-                      "additionalProperties": false
-                    }
-                  },
-                  "macros": {
+                "anyOf": [
+                  {
                     "type": "object",
                     "properties": {
-                      "kcal": {
-                        "type": "number",
-                        "minimum": 0,
-                        "description": "Energy in kcal"
+                      "title": {
+                        "type": "string",
+                        "minLength": 1
                       },
-                      "protein": {
-                        "type": "number",
-                        "minimum": 0,
-                        "description": "Protein in grams"
+                      "time": {
+                        "description": "Local time of the meal, HH:MM (24-hour). Optional: without it Intake uses a default slot for the meal type",
+                        "type": "string",
+                        "pattern": "^([01]\\d|2[0-3]):[0-5]\\d$"
                       },
-                      "carbs": {
-                        "type": "number",
-                        "minimum": 0,
-                        "description": "Carbohydrates in grams"
+                      "type": {
+                        "description": "Meal type used when logging. Optional: inferred from the title (colazione, pranzo, cena, spuntino) when missing",
+                        "type": "string",
+                        "enum": [
+                          "breakfast",
+                          "lunch",
+                          "dinner",
+                          "snack"
+                        ]
                       },
-                      "fat": {
-                        "type": "number",
-                        "minimum": 0,
-                        "description": "Total fat in grams"
+                      "free": {
+                        "type": "boolean",
+                        "const": false
                       },
-                      "fiber": {
-                        "type": "number",
-                        "minimum": 0,
-                        "description": "Fiber in grams"
+                      "description": {
+                        "description": "Readable one-line summary of the meal",
+                        "type": "string",
+                        "minLength": 1
                       },
-                      "sugar": {
-                        "description": "Total sugar in grams. Must be given together with addedSugar.",
-                        "type": "number",
-                        "minimum": 0
+                      "foods": {
+                        "minItems": 1,
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "name": {
+                              "type": "string",
+                              "minLength": 1,
+                              "description": "Food, e.g. \"Yogurt greco\" or a free-text line such as \"1 frutto\""
+                            },
+                            "quantity": {
+                              "type": "number",
+                              "exclusiveMinimum": 0
+                            },
+                            "unit": {
+                              "description": "Unit of the quantity, e.g. \"g\", \"ml\", \"piece\"",
+                              "type": "string",
+                              "minLength": 1
+                            },
+                            "note": {
+                              "description": "Preparation note, e.g. \"a crudo\"",
+                              "type": "string",
+                              "minLength": 1
+                            }
+                          },
+                          "required": [
+                            "name"
+                          ],
+                          "additionalProperties": false
+                        }
                       },
-                      "addedSugar": {
-                        "description": "Added sugar in grams, part of sugar (never more than sugar). Must be given together with sugar.",
-                        "type": "number",
-                        "minimum": 0
-                      },
-                      "saturatedFat": {
-                        "description": "Saturated fat in grams, part of fat (never more than fat)",
-                        "type": "number",
-                        "minimum": 0
-                      },
-                      "sodiumMg": {
-                        "description": "Sodium in milligrams (not salt: 1 g of salt is about 400 mg of sodium)",
-                        "type": "number",
-                        "minimum": 0
-                      },
-                      "caffeineMg": {
-                        "description": "Caffeine in milligrams, only for caffeine sources",
-                        "type": "number",
-                        "minimum": 0
+                      "macros": {
+                        "description": "Estimated nutrients for the whole meal. Needed for \"Mangiato come previsto\" to log complete values",
+                        "type": "object",
+                        "properties": {
+                          "kcal": {
+                            "type": "number",
+                            "minimum": 0,
+                            "description": "Energy in kcal"
+                          },
+                          "protein": {
+                            "type": "number",
+                            "minimum": 0,
+                            "description": "Protein in grams"
+                          },
+                          "carbs": {
+                            "type": "number",
+                            "minimum": 0,
+                            "description": "Carbohydrates in grams"
+                          },
+                          "fat": {
+                            "type": "number",
+                            "minimum": 0,
+                            "description": "Total fat in grams"
+                          },
+                          "fiber": {
+                            "type": "number",
+                            "minimum": 0,
+                            "description": "Fiber in grams"
+                          },
+                          "sugar": {
+                            "description": "Total sugar in grams. Must be given together with addedSugar.",
+                            "type": "number",
+                            "minimum": 0
+                          },
+                          "addedSugar": {
+                            "description": "Added sugar in grams, part of sugar (never more than sugar). Must be given together with sugar.",
+                            "type": "number",
+                            "minimum": 0
+                          },
+                          "saturatedFat": {
+                            "description": "Saturated fat in grams, part of fat (never more than fat)",
+                            "type": "number",
+                            "minimum": 0
+                          },
+                          "sodiumMg": {
+                            "description": "Sodium in milligrams (not salt: 1 g of salt is about 400 mg of sodium)",
+                            "type": "number",
+                            "minimum": 0
+                          },
+                          "caffeineMg": {
+                            "description": "Caffeine in milligrams, only for caffeine sources",
+                            "type": "number",
+                            "minimum": 0
+                          }
+                        },
+                        "required": [
+                          "kcal",
+                          "protein",
+                          "carbs",
+                          "fat",
+                          "fiber"
+                        ],
+                        "additionalProperties": false
                       }
                     },
                     "required": [
-                      "kcal",
-                      "protein",
-                      "carbs",
-                      "fat",
-                      "fiber"
+                      "title",
+                      "foods"
                     ],
-                    "additionalProperties": false,
-                    "description": "Estimated nutrients for the whole meal"
+                    "additionalProperties": false
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "title": {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      "time": {
+                        "description": "Local time of the meal, HH:MM (24-hour). Optional: without it Intake uses a default slot for the meal type",
+                        "type": "string",
+                        "pattern": "^([01]\\d|2[0-3]):[0-5]\\d$"
+                      },
+                      "type": {
+                        "description": "Meal type used when logging. Optional: inferred from the title (colazione, pranzo, cena, spuntino) when missing",
+                        "type": "string",
+                        "enum": [
+                          "breakfast",
+                          "lunch",
+                          "dinner",
+                          "snack"
+                        ]
+                      },
+                      "free": {
+                        "type": "boolean",
+                        "const": true,
+                        "description": "A \"free\" meal with no planned foods (shown as \"Libero\")"
+                      },
+                      "description": {
+                        "description": "Readable one-line summary of the meal",
+                        "type": "string",
+                        "minLength": 1
+                      }
+                    },
+                    "required": [
+                      "title",
+                      "free"
+                    ],
+                    "additionalProperties": false
                   }
-                },
-                "required": [
-                  "time",
-                  "title",
-                  "foods",
-                  "macros"
-                ],
-                "additionalProperties": false
+                ]
               }
             }
           },
@@ -268,120 +438,201 @@
         "wednesday": {
           "type": "object",
           "properties": {
+            "label": {
+              "description": "Short tag shown on the day tab, e.g. \"dolce\"",
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 12
+            },
+            "note": {
+              "description": "One-line note for the day, e.g. \"pranzo in famiglia · cena libera\"",
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 80
+            },
+            "expectedProtein": {
+              "description": "Expected protein for the day in grams",
+              "type": "number",
+              "minimum": 0
+            },
             "meals": {
               "type": "array",
               "items": {
-                "type": "object",
-                "properties": {
-                  "time": {
-                    "type": "string",
-                    "pattern": "^([01]\\d|2[0-3]):[0-5]\\d$",
-                    "description": "Local time of the meal, HH:MM (24-hour)"
-                  },
-                  "title": {
-                    "type": "string",
-                    "minLength": 1
-                  },
-                  "foods": {
-                    "minItems": 1,
-                    "type": "array",
-                    "items": {
-                      "type": "object",
-                      "properties": {
-                        "name": {
-                          "type": "string",
-                          "minLength": 1
-                        },
-                        "quantity": {
-                          "type": "number",
-                          "exclusiveMinimum": 0
-                        },
-                        "unit": {
-                          "type": "string",
-                          "minLength": 1,
-                          "description": "Unit of the quantity, e.g. \"g\", \"ml\", \"piece\""
-                        }
-                      },
-                      "required": [
-                        "name",
-                        "quantity",
-                        "unit"
-                      ],
-                      "additionalProperties": false
-                    }
-                  },
-                  "macros": {
+                "anyOf": [
+                  {
                     "type": "object",
                     "properties": {
-                      "kcal": {
-                        "type": "number",
-                        "minimum": 0,
-                        "description": "Energy in kcal"
+                      "title": {
+                        "type": "string",
+                        "minLength": 1
                       },
-                      "protein": {
-                        "type": "number",
-                        "minimum": 0,
-                        "description": "Protein in grams"
+                      "time": {
+                        "description": "Local time of the meal, HH:MM (24-hour). Optional: without it Intake uses a default slot for the meal type",
+                        "type": "string",
+                        "pattern": "^([01]\\d|2[0-3]):[0-5]\\d$"
                       },
-                      "carbs": {
-                        "type": "number",
-                        "minimum": 0,
-                        "description": "Carbohydrates in grams"
+                      "type": {
+                        "description": "Meal type used when logging. Optional: inferred from the title (colazione, pranzo, cena, spuntino) when missing",
+                        "type": "string",
+                        "enum": [
+                          "breakfast",
+                          "lunch",
+                          "dinner",
+                          "snack"
+                        ]
                       },
-                      "fat": {
-                        "type": "number",
-                        "minimum": 0,
-                        "description": "Total fat in grams"
+                      "free": {
+                        "type": "boolean",
+                        "const": false
                       },
-                      "fiber": {
-                        "type": "number",
-                        "minimum": 0,
-                        "description": "Fiber in grams"
+                      "description": {
+                        "description": "Readable one-line summary of the meal",
+                        "type": "string",
+                        "minLength": 1
                       },
-                      "sugar": {
-                        "description": "Total sugar in grams. Must be given together with addedSugar.",
-                        "type": "number",
-                        "minimum": 0
+                      "foods": {
+                        "minItems": 1,
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "name": {
+                              "type": "string",
+                              "minLength": 1,
+                              "description": "Food, e.g. \"Yogurt greco\" or a free-text line such as \"1 frutto\""
+                            },
+                            "quantity": {
+                              "type": "number",
+                              "exclusiveMinimum": 0
+                            },
+                            "unit": {
+                              "description": "Unit of the quantity, e.g. \"g\", \"ml\", \"piece\"",
+                              "type": "string",
+                              "minLength": 1
+                            },
+                            "note": {
+                              "description": "Preparation note, e.g. \"a crudo\"",
+                              "type": "string",
+                              "minLength": 1
+                            }
+                          },
+                          "required": [
+                            "name"
+                          ],
+                          "additionalProperties": false
+                        }
                       },
-                      "addedSugar": {
-                        "description": "Added sugar in grams, part of sugar (never more than sugar). Must be given together with sugar.",
-                        "type": "number",
-                        "minimum": 0
-                      },
-                      "saturatedFat": {
-                        "description": "Saturated fat in grams, part of fat (never more than fat)",
-                        "type": "number",
-                        "minimum": 0
-                      },
-                      "sodiumMg": {
-                        "description": "Sodium in milligrams (not salt: 1 g of salt is about 400 mg of sodium)",
-                        "type": "number",
-                        "minimum": 0
-                      },
-                      "caffeineMg": {
-                        "description": "Caffeine in milligrams, only for caffeine sources",
-                        "type": "number",
-                        "minimum": 0
+                      "macros": {
+                        "description": "Estimated nutrients for the whole meal. Needed for \"Mangiato come previsto\" to log complete values",
+                        "type": "object",
+                        "properties": {
+                          "kcal": {
+                            "type": "number",
+                            "minimum": 0,
+                            "description": "Energy in kcal"
+                          },
+                          "protein": {
+                            "type": "number",
+                            "minimum": 0,
+                            "description": "Protein in grams"
+                          },
+                          "carbs": {
+                            "type": "number",
+                            "minimum": 0,
+                            "description": "Carbohydrates in grams"
+                          },
+                          "fat": {
+                            "type": "number",
+                            "minimum": 0,
+                            "description": "Total fat in grams"
+                          },
+                          "fiber": {
+                            "type": "number",
+                            "minimum": 0,
+                            "description": "Fiber in grams"
+                          },
+                          "sugar": {
+                            "description": "Total sugar in grams. Must be given together with addedSugar.",
+                            "type": "number",
+                            "minimum": 0
+                          },
+                          "addedSugar": {
+                            "description": "Added sugar in grams, part of sugar (never more than sugar). Must be given together with sugar.",
+                            "type": "number",
+                            "minimum": 0
+                          },
+                          "saturatedFat": {
+                            "description": "Saturated fat in grams, part of fat (never more than fat)",
+                            "type": "number",
+                            "minimum": 0
+                          },
+                          "sodiumMg": {
+                            "description": "Sodium in milligrams (not salt: 1 g of salt is about 400 mg of sodium)",
+                            "type": "number",
+                            "minimum": 0
+                          },
+                          "caffeineMg": {
+                            "description": "Caffeine in milligrams, only for caffeine sources",
+                            "type": "number",
+                            "minimum": 0
+                          }
+                        },
+                        "required": [
+                          "kcal",
+                          "protein",
+                          "carbs",
+                          "fat",
+                          "fiber"
+                        ],
+                        "additionalProperties": false
                       }
                     },
                     "required": [
-                      "kcal",
-                      "protein",
-                      "carbs",
-                      "fat",
-                      "fiber"
+                      "title",
+                      "foods"
                     ],
-                    "additionalProperties": false,
-                    "description": "Estimated nutrients for the whole meal"
+                    "additionalProperties": false
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "title": {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      "time": {
+                        "description": "Local time of the meal, HH:MM (24-hour). Optional: without it Intake uses a default slot for the meal type",
+                        "type": "string",
+                        "pattern": "^([01]\\d|2[0-3]):[0-5]\\d$"
+                      },
+                      "type": {
+                        "description": "Meal type used when logging. Optional: inferred from the title (colazione, pranzo, cena, spuntino) when missing",
+                        "type": "string",
+                        "enum": [
+                          "breakfast",
+                          "lunch",
+                          "dinner",
+                          "snack"
+                        ]
+                      },
+                      "free": {
+                        "type": "boolean",
+                        "const": true,
+                        "description": "A \"free\" meal with no planned foods (shown as \"Libero\")"
+                      },
+                      "description": {
+                        "description": "Readable one-line summary of the meal",
+                        "type": "string",
+                        "minLength": 1
+                      }
+                    },
+                    "required": [
+                      "title",
+                      "free"
+                    ],
+                    "additionalProperties": false
                   }
-                },
-                "required": [
-                  "time",
-                  "title",
-                  "foods",
-                  "macros"
-                ],
-                "additionalProperties": false
+                ]
               }
             }
           },
@@ -393,120 +644,201 @@
         "thursday": {
           "type": "object",
           "properties": {
+            "label": {
+              "description": "Short tag shown on the day tab, e.g. \"dolce\"",
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 12
+            },
+            "note": {
+              "description": "One-line note for the day, e.g. \"pranzo in famiglia · cena libera\"",
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 80
+            },
+            "expectedProtein": {
+              "description": "Expected protein for the day in grams",
+              "type": "number",
+              "minimum": 0
+            },
             "meals": {
               "type": "array",
               "items": {
-                "type": "object",
-                "properties": {
-                  "time": {
-                    "type": "string",
-                    "pattern": "^([01]\\d|2[0-3]):[0-5]\\d$",
-                    "description": "Local time of the meal, HH:MM (24-hour)"
-                  },
-                  "title": {
-                    "type": "string",
-                    "minLength": 1
-                  },
-                  "foods": {
-                    "minItems": 1,
-                    "type": "array",
-                    "items": {
-                      "type": "object",
-                      "properties": {
-                        "name": {
-                          "type": "string",
-                          "minLength": 1
-                        },
-                        "quantity": {
-                          "type": "number",
-                          "exclusiveMinimum": 0
-                        },
-                        "unit": {
-                          "type": "string",
-                          "minLength": 1,
-                          "description": "Unit of the quantity, e.g. \"g\", \"ml\", \"piece\""
-                        }
-                      },
-                      "required": [
-                        "name",
-                        "quantity",
-                        "unit"
-                      ],
-                      "additionalProperties": false
-                    }
-                  },
-                  "macros": {
+                "anyOf": [
+                  {
                     "type": "object",
                     "properties": {
-                      "kcal": {
-                        "type": "number",
-                        "minimum": 0,
-                        "description": "Energy in kcal"
+                      "title": {
+                        "type": "string",
+                        "minLength": 1
                       },
-                      "protein": {
-                        "type": "number",
-                        "minimum": 0,
-                        "description": "Protein in grams"
+                      "time": {
+                        "description": "Local time of the meal, HH:MM (24-hour). Optional: without it Intake uses a default slot for the meal type",
+                        "type": "string",
+                        "pattern": "^([01]\\d|2[0-3]):[0-5]\\d$"
                       },
-                      "carbs": {
-                        "type": "number",
-                        "minimum": 0,
-                        "description": "Carbohydrates in grams"
+                      "type": {
+                        "description": "Meal type used when logging. Optional: inferred from the title (colazione, pranzo, cena, spuntino) when missing",
+                        "type": "string",
+                        "enum": [
+                          "breakfast",
+                          "lunch",
+                          "dinner",
+                          "snack"
+                        ]
                       },
-                      "fat": {
-                        "type": "number",
-                        "minimum": 0,
-                        "description": "Total fat in grams"
+                      "free": {
+                        "type": "boolean",
+                        "const": false
                       },
-                      "fiber": {
-                        "type": "number",
-                        "minimum": 0,
-                        "description": "Fiber in grams"
+                      "description": {
+                        "description": "Readable one-line summary of the meal",
+                        "type": "string",
+                        "minLength": 1
                       },
-                      "sugar": {
-                        "description": "Total sugar in grams. Must be given together with addedSugar.",
-                        "type": "number",
-                        "minimum": 0
+                      "foods": {
+                        "minItems": 1,
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "name": {
+                              "type": "string",
+                              "minLength": 1,
+                              "description": "Food, e.g. \"Yogurt greco\" or a free-text line such as \"1 frutto\""
+                            },
+                            "quantity": {
+                              "type": "number",
+                              "exclusiveMinimum": 0
+                            },
+                            "unit": {
+                              "description": "Unit of the quantity, e.g. \"g\", \"ml\", \"piece\"",
+                              "type": "string",
+                              "minLength": 1
+                            },
+                            "note": {
+                              "description": "Preparation note, e.g. \"a crudo\"",
+                              "type": "string",
+                              "minLength": 1
+                            }
+                          },
+                          "required": [
+                            "name"
+                          ],
+                          "additionalProperties": false
+                        }
                       },
-                      "addedSugar": {
-                        "description": "Added sugar in grams, part of sugar (never more than sugar). Must be given together with sugar.",
-                        "type": "number",
-                        "minimum": 0
-                      },
-                      "saturatedFat": {
-                        "description": "Saturated fat in grams, part of fat (never more than fat)",
-                        "type": "number",
-                        "minimum": 0
-                      },
-                      "sodiumMg": {
-                        "description": "Sodium in milligrams (not salt: 1 g of salt is about 400 mg of sodium)",
-                        "type": "number",
-                        "minimum": 0
-                      },
-                      "caffeineMg": {
-                        "description": "Caffeine in milligrams, only for caffeine sources",
-                        "type": "number",
-                        "minimum": 0
+                      "macros": {
+                        "description": "Estimated nutrients for the whole meal. Needed for \"Mangiato come previsto\" to log complete values",
+                        "type": "object",
+                        "properties": {
+                          "kcal": {
+                            "type": "number",
+                            "minimum": 0,
+                            "description": "Energy in kcal"
+                          },
+                          "protein": {
+                            "type": "number",
+                            "minimum": 0,
+                            "description": "Protein in grams"
+                          },
+                          "carbs": {
+                            "type": "number",
+                            "minimum": 0,
+                            "description": "Carbohydrates in grams"
+                          },
+                          "fat": {
+                            "type": "number",
+                            "minimum": 0,
+                            "description": "Total fat in grams"
+                          },
+                          "fiber": {
+                            "type": "number",
+                            "minimum": 0,
+                            "description": "Fiber in grams"
+                          },
+                          "sugar": {
+                            "description": "Total sugar in grams. Must be given together with addedSugar.",
+                            "type": "number",
+                            "minimum": 0
+                          },
+                          "addedSugar": {
+                            "description": "Added sugar in grams, part of sugar (never more than sugar). Must be given together with sugar.",
+                            "type": "number",
+                            "minimum": 0
+                          },
+                          "saturatedFat": {
+                            "description": "Saturated fat in grams, part of fat (never more than fat)",
+                            "type": "number",
+                            "minimum": 0
+                          },
+                          "sodiumMg": {
+                            "description": "Sodium in milligrams (not salt: 1 g of salt is about 400 mg of sodium)",
+                            "type": "number",
+                            "minimum": 0
+                          },
+                          "caffeineMg": {
+                            "description": "Caffeine in milligrams, only for caffeine sources",
+                            "type": "number",
+                            "minimum": 0
+                          }
+                        },
+                        "required": [
+                          "kcal",
+                          "protein",
+                          "carbs",
+                          "fat",
+                          "fiber"
+                        ],
+                        "additionalProperties": false
                       }
                     },
                     "required": [
-                      "kcal",
-                      "protein",
-                      "carbs",
-                      "fat",
-                      "fiber"
+                      "title",
+                      "foods"
                     ],
-                    "additionalProperties": false,
-                    "description": "Estimated nutrients for the whole meal"
+                    "additionalProperties": false
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "title": {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      "time": {
+                        "description": "Local time of the meal, HH:MM (24-hour). Optional: without it Intake uses a default slot for the meal type",
+                        "type": "string",
+                        "pattern": "^([01]\\d|2[0-3]):[0-5]\\d$"
+                      },
+                      "type": {
+                        "description": "Meal type used when logging. Optional: inferred from the title (colazione, pranzo, cena, spuntino) when missing",
+                        "type": "string",
+                        "enum": [
+                          "breakfast",
+                          "lunch",
+                          "dinner",
+                          "snack"
+                        ]
+                      },
+                      "free": {
+                        "type": "boolean",
+                        "const": true,
+                        "description": "A \"free\" meal with no planned foods (shown as \"Libero\")"
+                      },
+                      "description": {
+                        "description": "Readable one-line summary of the meal",
+                        "type": "string",
+                        "minLength": 1
+                      }
+                    },
+                    "required": [
+                      "title",
+                      "free"
+                    ],
+                    "additionalProperties": false
                   }
-                },
-                "required": [
-                  "time",
-                  "title",
-                  "foods",
-                  "macros"
-                ],
-                "additionalProperties": false
+                ]
               }
             }
           },
@@ -518,120 +850,201 @@
         "friday": {
           "type": "object",
           "properties": {
+            "label": {
+              "description": "Short tag shown on the day tab, e.g. \"dolce\"",
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 12
+            },
+            "note": {
+              "description": "One-line note for the day, e.g. \"pranzo in famiglia · cena libera\"",
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 80
+            },
+            "expectedProtein": {
+              "description": "Expected protein for the day in grams",
+              "type": "number",
+              "minimum": 0
+            },
             "meals": {
               "type": "array",
               "items": {
-                "type": "object",
-                "properties": {
-                  "time": {
-                    "type": "string",
-                    "pattern": "^([01]\\d|2[0-3]):[0-5]\\d$",
-                    "description": "Local time of the meal, HH:MM (24-hour)"
-                  },
-                  "title": {
-                    "type": "string",
-                    "minLength": 1
-                  },
-                  "foods": {
-                    "minItems": 1,
-                    "type": "array",
-                    "items": {
-                      "type": "object",
-                      "properties": {
-                        "name": {
-                          "type": "string",
-                          "minLength": 1
-                        },
-                        "quantity": {
-                          "type": "number",
-                          "exclusiveMinimum": 0
-                        },
-                        "unit": {
-                          "type": "string",
-                          "minLength": 1,
-                          "description": "Unit of the quantity, e.g. \"g\", \"ml\", \"piece\""
-                        }
-                      },
-                      "required": [
-                        "name",
-                        "quantity",
-                        "unit"
-                      ],
-                      "additionalProperties": false
-                    }
-                  },
-                  "macros": {
+                "anyOf": [
+                  {
                     "type": "object",
                     "properties": {
-                      "kcal": {
-                        "type": "number",
-                        "minimum": 0,
-                        "description": "Energy in kcal"
+                      "title": {
+                        "type": "string",
+                        "minLength": 1
                       },
-                      "protein": {
-                        "type": "number",
-                        "minimum": 0,
-                        "description": "Protein in grams"
+                      "time": {
+                        "description": "Local time of the meal, HH:MM (24-hour). Optional: without it Intake uses a default slot for the meal type",
+                        "type": "string",
+                        "pattern": "^([01]\\d|2[0-3]):[0-5]\\d$"
                       },
-                      "carbs": {
-                        "type": "number",
-                        "minimum": 0,
-                        "description": "Carbohydrates in grams"
+                      "type": {
+                        "description": "Meal type used when logging. Optional: inferred from the title (colazione, pranzo, cena, spuntino) when missing",
+                        "type": "string",
+                        "enum": [
+                          "breakfast",
+                          "lunch",
+                          "dinner",
+                          "snack"
+                        ]
                       },
-                      "fat": {
-                        "type": "number",
-                        "minimum": 0,
-                        "description": "Total fat in grams"
+                      "free": {
+                        "type": "boolean",
+                        "const": false
                       },
-                      "fiber": {
-                        "type": "number",
-                        "minimum": 0,
-                        "description": "Fiber in grams"
+                      "description": {
+                        "description": "Readable one-line summary of the meal",
+                        "type": "string",
+                        "minLength": 1
                       },
-                      "sugar": {
-                        "description": "Total sugar in grams. Must be given together with addedSugar.",
-                        "type": "number",
-                        "minimum": 0
+                      "foods": {
+                        "minItems": 1,
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "name": {
+                              "type": "string",
+                              "minLength": 1,
+                              "description": "Food, e.g. \"Yogurt greco\" or a free-text line such as \"1 frutto\""
+                            },
+                            "quantity": {
+                              "type": "number",
+                              "exclusiveMinimum": 0
+                            },
+                            "unit": {
+                              "description": "Unit of the quantity, e.g. \"g\", \"ml\", \"piece\"",
+                              "type": "string",
+                              "minLength": 1
+                            },
+                            "note": {
+                              "description": "Preparation note, e.g. \"a crudo\"",
+                              "type": "string",
+                              "minLength": 1
+                            }
+                          },
+                          "required": [
+                            "name"
+                          ],
+                          "additionalProperties": false
+                        }
                       },
-                      "addedSugar": {
-                        "description": "Added sugar in grams, part of sugar (never more than sugar). Must be given together with sugar.",
-                        "type": "number",
-                        "minimum": 0
-                      },
-                      "saturatedFat": {
-                        "description": "Saturated fat in grams, part of fat (never more than fat)",
-                        "type": "number",
-                        "minimum": 0
-                      },
-                      "sodiumMg": {
-                        "description": "Sodium in milligrams (not salt: 1 g of salt is about 400 mg of sodium)",
-                        "type": "number",
-                        "minimum": 0
-                      },
-                      "caffeineMg": {
-                        "description": "Caffeine in milligrams, only for caffeine sources",
-                        "type": "number",
-                        "minimum": 0
+                      "macros": {
+                        "description": "Estimated nutrients for the whole meal. Needed for \"Mangiato come previsto\" to log complete values",
+                        "type": "object",
+                        "properties": {
+                          "kcal": {
+                            "type": "number",
+                            "minimum": 0,
+                            "description": "Energy in kcal"
+                          },
+                          "protein": {
+                            "type": "number",
+                            "minimum": 0,
+                            "description": "Protein in grams"
+                          },
+                          "carbs": {
+                            "type": "number",
+                            "minimum": 0,
+                            "description": "Carbohydrates in grams"
+                          },
+                          "fat": {
+                            "type": "number",
+                            "minimum": 0,
+                            "description": "Total fat in grams"
+                          },
+                          "fiber": {
+                            "type": "number",
+                            "minimum": 0,
+                            "description": "Fiber in grams"
+                          },
+                          "sugar": {
+                            "description": "Total sugar in grams. Must be given together with addedSugar.",
+                            "type": "number",
+                            "minimum": 0
+                          },
+                          "addedSugar": {
+                            "description": "Added sugar in grams, part of sugar (never more than sugar). Must be given together with sugar.",
+                            "type": "number",
+                            "minimum": 0
+                          },
+                          "saturatedFat": {
+                            "description": "Saturated fat in grams, part of fat (never more than fat)",
+                            "type": "number",
+                            "minimum": 0
+                          },
+                          "sodiumMg": {
+                            "description": "Sodium in milligrams (not salt: 1 g of salt is about 400 mg of sodium)",
+                            "type": "number",
+                            "minimum": 0
+                          },
+                          "caffeineMg": {
+                            "description": "Caffeine in milligrams, only for caffeine sources",
+                            "type": "number",
+                            "minimum": 0
+                          }
+                        },
+                        "required": [
+                          "kcal",
+                          "protein",
+                          "carbs",
+                          "fat",
+                          "fiber"
+                        ],
+                        "additionalProperties": false
                       }
                     },
                     "required": [
-                      "kcal",
-                      "protein",
-                      "carbs",
-                      "fat",
-                      "fiber"
+                      "title",
+                      "foods"
                     ],
-                    "additionalProperties": false,
-                    "description": "Estimated nutrients for the whole meal"
+                    "additionalProperties": false
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "title": {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      "time": {
+                        "description": "Local time of the meal, HH:MM (24-hour). Optional: without it Intake uses a default slot for the meal type",
+                        "type": "string",
+                        "pattern": "^([01]\\d|2[0-3]):[0-5]\\d$"
+                      },
+                      "type": {
+                        "description": "Meal type used when logging. Optional: inferred from the title (colazione, pranzo, cena, spuntino) when missing",
+                        "type": "string",
+                        "enum": [
+                          "breakfast",
+                          "lunch",
+                          "dinner",
+                          "snack"
+                        ]
+                      },
+                      "free": {
+                        "type": "boolean",
+                        "const": true,
+                        "description": "A \"free\" meal with no planned foods (shown as \"Libero\")"
+                      },
+                      "description": {
+                        "description": "Readable one-line summary of the meal",
+                        "type": "string",
+                        "minLength": 1
+                      }
+                    },
+                    "required": [
+                      "title",
+                      "free"
+                    ],
+                    "additionalProperties": false
                   }
-                },
-                "required": [
-                  "time",
-                  "title",
-                  "foods",
-                  "macros"
-                ],
-                "additionalProperties": false
+                ]
               }
             }
           },
@@ -643,120 +1056,201 @@
         "saturday": {
           "type": "object",
           "properties": {
+            "label": {
+              "description": "Short tag shown on the day tab, e.g. \"dolce\"",
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 12
+            },
+            "note": {
+              "description": "One-line note for the day, e.g. \"pranzo in famiglia · cena libera\"",
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 80
+            },
+            "expectedProtein": {
+              "description": "Expected protein for the day in grams",
+              "type": "number",
+              "minimum": 0
+            },
             "meals": {
               "type": "array",
               "items": {
-                "type": "object",
-                "properties": {
-                  "time": {
-                    "type": "string",
-                    "pattern": "^([01]\\d|2[0-3]):[0-5]\\d$",
-                    "description": "Local time of the meal, HH:MM (24-hour)"
-                  },
-                  "title": {
-                    "type": "string",
-                    "minLength": 1
-                  },
-                  "foods": {
-                    "minItems": 1,
-                    "type": "array",
-                    "items": {
-                      "type": "object",
-                      "properties": {
-                        "name": {
-                          "type": "string",
-                          "minLength": 1
-                        },
-                        "quantity": {
-                          "type": "number",
-                          "exclusiveMinimum": 0
-                        },
-                        "unit": {
-                          "type": "string",
-                          "minLength": 1,
-                          "description": "Unit of the quantity, e.g. \"g\", \"ml\", \"piece\""
-                        }
-                      },
-                      "required": [
-                        "name",
-                        "quantity",
-                        "unit"
-                      ],
-                      "additionalProperties": false
-                    }
-                  },
-                  "macros": {
+                "anyOf": [
+                  {
                     "type": "object",
                     "properties": {
-                      "kcal": {
-                        "type": "number",
-                        "minimum": 0,
-                        "description": "Energy in kcal"
+                      "title": {
+                        "type": "string",
+                        "minLength": 1
                       },
-                      "protein": {
-                        "type": "number",
-                        "minimum": 0,
-                        "description": "Protein in grams"
+                      "time": {
+                        "description": "Local time of the meal, HH:MM (24-hour). Optional: without it Intake uses a default slot for the meal type",
+                        "type": "string",
+                        "pattern": "^([01]\\d|2[0-3]):[0-5]\\d$"
                       },
-                      "carbs": {
-                        "type": "number",
-                        "minimum": 0,
-                        "description": "Carbohydrates in grams"
+                      "type": {
+                        "description": "Meal type used when logging. Optional: inferred from the title (colazione, pranzo, cena, spuntino) when missing",
+                        "type": "string",
+                        "enum": [
+                          "breakfast",
+                          "lunch",
+                          "dinner",
+                          "snack"
+                        ]
                       },
-                      "fat": {
-                        "type": "number",
-                        "minimum": 0,
-                        "description": "Total fat in grams"
+                      "free": {
+                        "type": "boolean",
+                        "const": false
                       },
-                      "fiber": {
-                        "type": "number",
-                        "minimum": 0,
-                        "description": "Fiber in grams"
+                      "description": {
+                        "description": "Readable one-line summary of the meal",
+                        "type": "string",
+                        "minLength": 1
                       },
-                      "sugar": {
-                        "description": "Total sugar in grams. Must be given together with addedSugar.",
-                        "type": "number",
-                        "minimum": 0
+                      "foods": {
+                        "minItems": 1,
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "name": {
+                              "type": "string",
+                              "minLength": 1,
+                              "description": "Food, e.g. \"Yogurt greco\" or a free-text line such as \"1 frutto\""
+                            },
+                            "quantity": {
+                              "type": "number",
+                              "exclusiveMinimum": 0
+                            },
+                            "unit": {
+                              "description": "Unit of the quantity, e.g. \"g\", \"ml\", \"piece\"",
+                              "type": "string",
+                              "minLength": 1
+                            },
+                            "note": {
+                              "description": "Preparation note, e.g. \"a crudo\"",
+                              "type": "string",
+                              "minLength": 1
+                            }
+                          },
+                          "required": [
+                            "name"
+                          ],
+                          "additionalProperties": false
+                        }
                       },
-                      "addedSugar": {
-                        "description": "Added sugar in grams, part of sugar (never more than sugar). Must be given together with sugar.",
-                        "type": "number",
-                        "minimum": 0
-                      },
-                      "saturatedFat": {
-                        "description": "Saturated fat in grams, part of fat (never more than fat)",
-                        "type": "number",
-                        "minimum": 0
-                      },
-                      "sodiumMg": {
-                        "description": "Sodium in milligrams (not salt: 1 g of salt is about 400 mg of sodium)",
-                        "type": "number",
-                        "minimum": 0
-                      },
-                      "caffeineMg": {
-                        "description": "Caffeine in milligrams, only for caffeine sources",
-                        "type": "number",
-                        "minimum": 0
+                      "macros": {
+                        "description": "Estimated nutrients for the whole meal. Needed for \"Mangiato come previsto\" to log complete values",
+                        "type": "object",
+                        "properties": {
+                          "kcal": {
+                            "type": "number",
+                            "minimum": 0,
+                            "description": "Energy in kcal"
+                          },
+                          "protein": {
+                            "type": "number",
+                            "minimum": 0,
+                            "description": "Protein in grams"
+                          },
+                          "carbs": {
+                            "type": "number",
+                            "minimum": 0,
+                            "description": "Carbohydrates in grams"
+                          },
+                          "fat": {
+                            "type": "number",
+                            "minimum": 0,
+                            "description": "Total fat in grams"
+                          },
+                          "fiber": {
+                            "type": "number",
+                            "minimum": 0,
+                            "description": "Fiber in grams"
+                          },
+                          "sugar": {
+                            "description": "Total sugar in grams. Must be given together with addedSugar.",
+                            "type": "number",
+                            "minimum": 0
+                          },
+                          "addedSugar": {
+                            "description": "Added sugar in grams, part of sugar (never more than sugar). Must be given together with sugar.",
+                            "type": "number",
+                            "minimum": 0
+                          },
+                          "saturatedFat": {
+                            "description": "Saturated fat in grams, part of fat (never more than fat)",
+                            "type": "number",
+                            "minimum": 0
+                          },
+                          "sodiumMg": {
+                            "description": "Sodium in milligrams (not salt: 1 g of salt is about 400 mg of sodium)",
+                            "type": "number",
+                            "minimum": 0
+                          },
+                          "caffeineMg": {
+                            "description": "Caffeine in milligrams, only for caffeine sources",
+                            "type": "number",
+                            "minimum": 0
+                          }
+                        },
+                        "required": [
+                          "kcal",
+                          "protein",
+                          "carbs",
+                          "fat",
+                          "fiber"
+                        ],
+                        "additionalProperties": false
                       }
                     },
                     "required": [
-                      "kcal",
-                      "protein",
-                      "carbs",
-                      "fat",
-                      "fiber"
+                      "title",
+                      "foods"
                     ],
-                    "additionalProperties": false,
-                    "description": "Estimated nutrients for the whole meal"
+                    "additionalProperties": false
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "title": {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      "time": {
+                        "description": "Local time of the meal, HH:MM (24-hour). Optional: without it Intake uses a default slot for the meal type",
+                        "type": "string",
+                        "pattern": "^([01]\\d|2[0-3]):[0-5]\\d$"
+                      },
+                      "type": {
+                        "description": "Meal type used when logging. Optional: inferred from the title (colazione, pranzo, cena, spuntino) when missing",
+                        "type": "string",
+                        "enum": [
+                          "breakfast",
+                          "lunch",
+                          "dinner",
+                          "snack"
+                        ]
+                      },
+                      "free": {
+                        "type": "boolean",
+                        "const": true,
+                        "description": "A \"free\" meal with no planned foods (shown as \"Libero\")"
+                      },
+                      "description": {
+                        "description": "Readable one-line summary of the meal",
+                        "type": "string",
+                        "minLength": 1
+                      }
+                    },
+                    "required": [
+                      "title",
+                      "free"
+                    ],
+                    "additionalProperties": false
                   }
-                },
-                "required": [
-                  "time",
-                  "title",
-                  "foods",
-                  "macros"
-                ],
-                "additionalProperties": false
+                ]
               }
             }
           },
@@ -768,120 +1262,201 @@
         "sunday": {
           "type": "object",
           "properties": {
+            "label": {
+              "description": "Short tag shown on the day tab, e.g. \"dolce\"",
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 12
+            },
+            "note": {
+              "description": "One-line note for the day, e.g. \"pranzo in famiglia · cena libera\"",
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 80
+            },
+            "expectedProtein": {
+              "description": "Expected protein for the day in grams",
+              "type": "number",
+              "minimum": 0
+            },
             "meals": {
               "type": "array",
               "items": {
-                "type": "object",
-                "properties": {
-                  "time": {
-                    "type": "string",
-                    "pattern": "^([01]\\d|2[0-3]):[0-5]\\d$",
-                    "description": "Local time of the meal, HH:MM (24-hour)"
-                  },
-                  "title": {
-                    "type": "string",
-                    "minLength": 1
-                  },
-                  "foods": {
-                    "minItems": 1,
-                    "type": "array",
-                    "items": {
-                      "type": "object",
-                      "properties": {
-                        "name": {
-                          "type": "string",
-                          "minLength": 1
-                        },
-                        "quantity": {
-                          "type": "number",
-                          "exclusiveMinimum": 0
-                        },
-                        "unit": {
-                          "type": "string",
-                          "minLength": 1,
-                          "description": "Unit of the quantity, e.g. \"g\", \"ml\", \"piece\""
-                        }
-                      },
-                      "required": [
-                        "name",
-                        "quantity",
-                        "unit"
-                      ],
-                      "additionalProperties": false
-                    }
-                  },
-                  "macros": {
+                "anyOf": [
+                  {
                     "type": "object",
                     "properties": {
-                      "kcal": {
-                        "type": "number",
-                        "minimum": 0,
-                        "description": "Energy in kcal"
+                      "title": {
+                        "type": "string",
+                        "minLength": 1
                       },
-                      "protein": {
-                        "type": "number",
-                        "minimum": 0,
-                        "description": "Protein in grams"
+                      "time": {
+                        "description": "Local time of the meal, HH:MM (24-hour). Optional: without it Intake uses a default slot for the meal type",
+                        "type": "string",
+                        "pattern": "^([01]\\d|2[0-3]):[0-5]\\d$"
                       },
-                      "carbs": {
-                        "type": "number",
-                        "minimum": 0,
-                        "description": "Carbohydrates in grams"
+                      "type": {
+                        "description": "Meal type used when logging. Optional: inferred from the title (colazione, pranzo, cena, spuntino) when missing",
+                        "type": "string",
+                        "enum": [
+                          "breakfast",
+                          "lunch",
+                          "dinner",
+                          "snack"
+                        ]
                       },
-                      "fat": {
-                        "type": "number",
-                        "minimum": 0,
-                        "description": "Total fat in grams"
+                      "free": {
+                        "type": "boolean",
+                        "const": false
                       },
-                      "fiber": {
-                        "type": "number",
-                        "minimum": 0,
-                        "description": "Fiber in grams"
+                      "description": {
+                        "description": "Readable one-line summary of the meal",
+                        "type": "string",
+                        "minLength": 1
                       },
-                      "sugar": {
-                        "description": "Total sugar in grams. Must be given together with addedSugar.",
-                        "type": "number",
-                        "minimum": 0
+                      "foods": {
+                        "minItems": 1,
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "name": {
+                              "type": "string",
+                              "minLength": 1,
+                              "description": "Food, e.g. \"Yogurt greco\" or a free-text line such as \"1 frutto\""
+                            },
+                            "quantity": {
+                              "type": "number",
+                              "exclusiveMinimum": 0
+                            },
+                            "unit": {
+                              "description": "Unit of the quantity, e.g. \"g\", \"ml\", \"piece\"",
+                              "type": "string",
+                              "minLength": 1
+                            },
+                            "note": {
+                              "description": "Preparation note, e.g. \"a crudo\"",
+                              "type": "string",
+                              "minLength": 1
+                            }
+                          },
+                          "required": [
+                            "name"
+                          ],
+                          "additionalProperties": false
+                        }
                       },
-                      "addedSugar": {
-                        "description": "Added sugar in grams, part of sugar (never more than sugar). Must be given together with sugar.",
-                        "type": "number",
-                        "minimum": 0
-                      },
-                      "saturatedFat": {
-                        "description": "Saturated fat in grams, part of fat (never more than fat)",
-                        "type": "number",
-                        "minimum": 0
-                      },
-                      "sodiumMg": {
-                        "description": "Sodium in milligrams (not salt: 1 g of salt is about 400 mg of sodium)",
-                        "type": "number",
-                        "minimum": 0
-                      },
-                      "caffeineMg": {
-                        "description": "Caffeine in milligrams, only for caffeine sources",
-                        "type": "number",
-                        "minimum": 0
+                      "macros": {
+                        "description": "Estimated nutrients for the whole meal. Needed for \"Mangiato come previsto\" to log complete values",
+                        "type": "object",
+                        "properties": {
+                          "kcal": {
+                            "type": "number",
+                            "minimum": 0,
+                            "description": "Energy in kcal"
+                          },
+                          "protein": {
+                            "type": "number",
+                            "minimum": 0,
+                            "description": "Protein in grams"
+                          },
+                          "carbs": {
+                            "type": "number",
+                            "minimum": 0,
+                            "description": "Carbohydrates in grams"
+                          },
+                          "fat": {
+                            "type": "number",
+                            "minimum": 0,
+                            "description": "Total fat in grams"
+                          },
+                          "fiber": {
+                            "type": "number",
+                            "minimum": 0,
+                            "description": "Fiber in grams"
+                          },
+                          "sugar": {
+                            "description": "Total sugar in grams. Must be given together with addedSugar.",
+                            "type": "number",
+                            "minimum": 0
+                          },
+                          "addedSugar": {
+                            "description": "Added sugar in grams, part of sugar (never more than sugar). Must be given together with sugar.",
+                            "type": "number",
+                            "minimum": 0
+                          },
+                          "saturatedFat": {
+                            "description": "Saturated fat in grams, part of fat (never more than fat)",
+                            "type": "number",
+                            "minimum": 0
+                          },
+                          "sodiumMg": {
+                            "description": "Sodium in milligrams (not salt: 1 g of salt is about 400 mg of sodium)",
+                            "type": "number",
+                            "minimum": 0
+                          },
+                          "caffeineMg": {
+                            "description": "Caffeine in milligrams, only for caffeine sources",
+                            "type": "number",
+                            "minimum": 0
+                          }
+                        },
+                        "required": [
+                          "kcal",
+                          "protein",
+                          "carbs",
+                          "fat",
+                          "fiber"
+                        ],
+                        "additionalProperties": false
                       }
                     },
                     "required": [
-                      "kcal",
-                      "protein",
-                      "carbs",
-                      "fat",
-                      "fiber"
+                      "title",
+                      "foods"
                     ],
-                    "additionalProperties": false,
-                    "description": "Estimated nutrients for the whole meal"
+                    "additionalProperties": false
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "title": {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      "time": {
+                        "description": "Local time of the meal, HH:MM (24-hour). Optional: without it Intake uses a default slot for the meal type",
+                        "type": "string",
+                        "pattern": "^([01]\\d|2[0-3]):[0-5]\\d$"
+                      },
+                      "type": {
+                        "description": "Meal type used when logging. Optional: inferred from the title (colazione, pranzo, cena, spuntino) when missing",
+                        "type": "string",
+                        "enum": [
+                          "breakfast",
+                          "lunch",
+                          "dinner",
+                          "snack"
+                        ]
+                      },
+                      "free": {
+                        "type": "boolean",
+                        "const": true,
+                        "description": "A \"free\" meal with no planned foods (shown as \"Libero\")"
+                      },
+                      "description": {
+                        "description": "Readable one-line summary of the meal",
+                        "type": "string",
+                        "minLength": 1
+                      }
+                    },
+                    "required": [
+                      "title",
+                      "free"
+                    ],
+                    "additionalProperties": false
                   }
-                },
-                "required": [
-                  "time",
-                  "title",
-                  "foods",
-                  "macros"
-                ],
-                "additionalProperties": false
+                ]
               }
             }
           },

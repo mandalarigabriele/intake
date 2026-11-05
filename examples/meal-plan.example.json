@@ -1,139 +1,153 @@
 {
   "schemaVersion": 1,
-  "validFrom": "2026-11-09",
+  "validFrom": "2026-11-04",
   "days": {
     "monday": {
       "meals": [
         {
-          "time": "07:30",
-          "title": "Breakfast",
+          "title": "Colazione",
           "foods": [
             {
-              "name": "Greek yogurt 2%",
-              "quantity": 200,
+              "name": "Caffellatte"
+            },
+            {
+              "name": "Yogurt greco",
+              "quantity": 150,
               "unit": "g"
             },
             {
-              "name": "Rolled oats",
+              "name": "Muesli",
               "quantity": 40,
               "unit": "g"
             },
             {
-              "name": "Blueberries",
-              "quantity": 80,
-              "unit": "g"
-            },
-            {
-              "name": "Espresso",
-              "quantity": 1,
-              "unit": "cup"
+              "name": "Banana",
+              "quantity": 1
             }
           ],
           "macros": {
-            "kcal": 395,
-            "protein": 26,
-            "carbs": 49,
-            "fat": 8.5,
+            "kcal": 430,
+            "protein": 27,
+            "carbs": 62,
+            "fat": 8,
             "fiber": 6,
+            "sugar": 28,
+            "addedSugar": 6,
+            "saturatedFat": 3,
+            "sodiumMg": 120,
+            "caffeineMg": 63
+          }
+        },
+        {
+          "title": "Spuntino",
+          "time": "11:00",
+          "foods": [
+            {
+              "name": "1 frutto"
+            },
+            {
+              "name": "Mandorle",
+              "quantity": 25,
+              "unit": "g"
+            }
+          ],
+          "macros": {
+            "kcal": 210,
+            "protein": 6,
+            "carbs": 22,
+            "fat": 13,
+            "fiber": 5,
             "sugar": 16,
             "addedSugar": 0,
-            "saturatedFat": 3.6,
-            "sodiumMg": 95,
-            "caffeineMg": 65
+            "saturatedFat": 1,
+            "sodiumMg": 1
           }
         },
         {
-          "time": "13:00",
-          "title": "Lunch",
+          "title": "Pranzo",
           "foods": [
             {
-              "name": "Basmati rice (dry)",
-              "quantity": 80,
+              "name": "Pasta al pomodoro",
+              "quantity": 120,
               "unit": "g"
             },
             {
-              "name": "Chicken breast",
-              "quantity": 150,
+              "name": "Tonno al naturale",
+              "quantity": 100,
               "unit": "g"
             },
             {
-              "name": "Zucchini",
-              "quantity": 200,
-              "unit": "g"
-            },
-            {
-              "name": "Extra virgin olive oil",
-              "quantity": 10,
-              "unit": "ml"
-            }
-          ],
-          "macros": {
-            "kcal": 610,
-            "protein": 52,
-            "carbs": 67,
-            "fat": 13,
-            "fiber": 3,
-            "sugar": 5,
-            "addedSugar": 0,
-            "saturatedFat": 2.4,
-            "sodiumMg": 140
-          }
-        },
-        {
-          "time": "16:30",
-          "title": "Snack",
-          "foods": [
-            {
-              "name": "Apple",
-              "quantity": 1,
-              "unit": "piece"
-            },
-            {
-              "name": "Almonds",
-              "quantity": 20,
-              "unit": "g"
-            }
-          ],
-          "macros": {
-            "kcal": 215,
-            "protein": 4.5,
-            "carbs": 27,
-            "fat": 10,
-            "fiber": 6.5,
-            "sugar": 19,
-            "addedSugar": 0
-          }
-        },
-        {
-          "time": "20:00",
-          "title": "Dinner",
-          "foods": [
-            {
-              "name": "Salmon fillet",
-              "quantity": 150,
-              "unit": "g"
-            },
-            {
-              "name": "Potatoes",
-              "quantity": 250,
-              "unit": "g"
-            },
-            {
-              "name": "Green beans",
-              "quantity": 200,
-              "unit": "g"
+              "name": "Insalata"
             }
           ],
           "macros": {
             "kcal": 640,
-            "protein": 40,
-            "carbs": 52,
-            "fat": 28,
-            "fiber": 10,
+            "protein": 42,
+            "carbs": 92,
+            "fat": 9,
+            "fiber": 7,
+            "sugar": 9,
+            "addedSugar": 2,
+            "saturatedFat": 2,
+            "sodiumMg": 620
+          }
+        },
+        {
+          "title": "Spuntino",
+          "time": "16:00",
+          "foods": [
+            {
+              "name": "Pane integrale",
+              "quantity": 40,
+              "unit": "g"
+            },
+            {
+              "name": "Bresaola",
+              "quantity": 40,
+              "unit": "g"
+            },
+            {
+              "name": "Cioccolato fondente",
+              "quantity": 2,
+              "unit": "quadratini"
+            }
+          ],
+          "macros": {
+            "kcal": 230,
+            "protein": 19,
+            "carbs": 20,
+            "fat": 8,
+            "fiber": 4,
+            "sugar": 5,
+            "addedSugar": 4,
+            "saturatedFat": 4,
+            "sodiumMg": 700
+          }
+        },
+        {
+          "title": "Cena",
+          "foods": [
+            {
+              "name": "Frittata con 4 uova e verdure",
+              "quantity": 250,
+              "unit": "g"
+            },
+            {
+              "name": "Pane integrale",
+              "quantity": 2,
+              "unit": "fette"
+            }
+          ],
+          "macros": {
+            "kcal": 560,
+            "protein": 34,
+            "carbs": 42,
+            "fat": 27,
+            "fiber": 8,
             "sugar": 6,
-            "addedSugar": 0,
-            "saturatedFat": 5,
-            "sodiumMg": 150
+            "addedSugar": 1,
+            "saturatedFat": 8,
+            "sodiumMg": 640
           }
         }
       ]
@@ -141,399 +155,429 @@
     "tuesday": {
       "meals": [
         {
-          "time": "07:30",
-          "title": "Breakfast",
+          "title": "Colazione",
           "foods": [
             {
-              "name": "Greek yogurt 2%",
-              "quantity": 200,
-              "unit": "g"
+              "name": "Caffellatte"
             },
             {
-              "name": "Rolled oats",
-              "quantity": 40,
-              "unit": "g"
+              "name": "Uova strapazzate",
+              "quantity": 2
             },
             {
-              "name": "Blueberries",
-              "quantity": 80,
-              "unit": "g"
-            },
-            {
-              "name": "Espresso",
-              "quantity": 1,
-              "unit": "cup"
+              "name": "Pane integrale",
+              "quantity": 2,
+              "unit": "fette"
             }
           ],
           "macros": {
-            "kcal": 395,
-            "protein": 26,
-            "carbs": 49,
-            "fat": 8.5,
-            "fiber": 6,
-            "sugar": 16,
+            "kcal": 410,
+            "protein": 24,
+            "carbs": 40,
+            "fat": 16,
+            "fiber": 5,
+            "sugar": 8,
             "addedSugar": 0,
-            "saturatedFat": 3.6,
-            "sodiumMg": 95,
-            "caffeineMg": 65
+            "saturatedFat": 5,
+            "sodiumMg": 480,
+            "caffeineMg": 63
           }
         },
         {
-          "time": "13:00",
-          "title": "Lunch",
+          "title": "Spuntino",
+          "time": "11:00",
           "foods": [
             {
-              "name": "Wholewheat pasta (dry)",
-              "quantity": 90,
-              "unit": "g"
-            },
-            {
-              "name": "Canned tuna, drained",
-              "quantity": 110,
-              "unit": "g"
-            },
-            {
-              "name": "Cherry tomatoes",
+              "name": "Yogurt greco",
               "quantity": 150,
               "unit": "g"
             },
             {
-              "name": "Extra virgin olive oil",
-              "quantity": 10,
-              "unit": "ml"
+              "name": "1 frutto a pezzetti"
+            }
+          ],
+          "macros": {
+            "kcal": 190,
+            "protein": 16,
+            "carbs": 24,
+            "fat": 3,
+            "fiber": 3,
+            "sugar": 20,
+            "addedSugar": 0,
+            "saturatedFat": 2,
+            "sodiumMg": 60
+          }
+        },
+        {
+          "title": "Pranzo",
+          "foods": [
+            {
+              "name": "Pasta",
+              "quantity": 80,
+              "unit": "g"
+            },
+            {
+              "name": "Fagioli cotti",
+              "quantity": 250,
+              "unit": "g"
+            },
+            {
+              "name": "Parmigiano",
+              "quantity": 15,
+              "unit": "g"
+            },
+            {
+              "name": "Verdure"
             }
           ],
           "macros": {
             "kcal": 620,
-            "protein": 45,
-            "carbs": 66,
-            "fat": 15,
-            "fiber": 9,
-            "sugar": 7,
+            "protein": 32,
+            "carbs": 96,
+            "fat": 9,
+            "fiber": 18,
+            "sugar": 6,
             "addedSugar": 0,
-            "saturatedFat": 2.5,
-            "sodiumMg": 420
+            "saturatedFat": 4,
+            "sodiumMg": 520
           }
         },
         {
-          "time": "16:30",
-          "title": "Snack",
+          "title": "Spuntino",
+          "time": "16:00",
           "foods": [
             {
-              "name": "Apple",
-              "quantity": 1,
-              "unit": "piece"
+              "name": "1 frutto"
             },
             {
-              "name": "Almonds",
-              "quantity": 20,
+              "name": "Bresaola",
+              "quantity": 60,
+              "unit": "g"
+            },
+            {
+              "name": "Noci",
+              "quantity": 15,
               "unit": "g"
             }
           ],
           "macros": {
-            "kcal": 215,
-            "protein": 4.5,
-            "carbs": 27,
-            "fat": 10,
-            "fiber": 6.5,
-            "sugar": 19,
-            "addedSugar": 0
+            "kcal": 250,
+            "protein": 22,
+            "carbs": 16,
+            "fat": 11,
+            "fiber": 3,
+            "sugar": 12,
+            "addedSugar": 0,
+            "saturatedFat": 2,
+            "sodiumMg": 900
           }
         },
         {
-          "time": "20:00",
-          "title": "Dinner",
+          "title": "Cena",
           "foods": [
             {
-              "name": "Eggs",
-              "quantity": 3,
-              "unit": "piece"
-            },
-            {
-              "name": "Wholegrain bread",
-              "quantity": 80,
+              "name": "Salmone al forno",
+              "quantity": 200,
               "unit": "g"
             },
             {
-              "name": "Mixed salad",
-              "quantity": 150,
+              "name": "Patate al forno",
+              "quantity": 250,
               "unit": "g"
+            },
+            {
+              "name": "Insalata"
             }
           ],
           "macros": {
-            "kcal": 480,
-            "protein": 28,
-            "carbs": 36,
-            "fat": 22,
-            "fiber": 7
+            "kcal": 690,
+            "protein": 44,
+            "carbs": 52,
+            "fat": 32,
+            "fiber": 7,
+            "sugar": 3,
+            "addedSugar": 0,
+            "saturatedFat": 6,
+            "sodiumMg": 240
           }
         }
       ]
     },
     "wednesday": {
+      "label": "dolce",
+      "note": "spuntino dolce",
       "meals": [
         {
-          "time": "07:30",
-          "title": "Breakfast",
+          "title": "Colazione",
           "foods": [
             {
-              "name": "Greek yogurt 2%",
-              "quantity": 200,
+              "name": "Caffellatte"
+            },
+            {
+              "name": "Pane integrale",
+              "quantity": 2,
+              "unit": "fette"
+            },
+            {
+              "name": "Ricotta",
+              "quantity": 100,
               "unit": "g"
             },
             {
-              "name": "Rolled oats",
-              "quantity": 40,
-              "unit": "g"
-            },
-            {
-              "name": "Blueberries",
-              "quantity": 80,
-              "unit": "g"
-            },
-            {
-              "name": "Espresso",
+              "name": "Marmellata",
               "quantity": 1,
-              "unit": "cup"
+              "unit": "cucchiaino"
             }
           ],
           "macros": {
-            "kcal": 395,
-            "protein": 26,
-            "carbs": 49,
-            "fat": 8.5,
-            "fiber": 6,
+            "kcal": 400,
+            "protein": 20,
+            "carbs": 52,
+            "fat": 12,
+            "fiber": 5,
+            "sugar": 16,
+            "addedSugar": 8,
+            "saturatedFat": 7,
+            "sodiumMg": 380,
+            "caffeineMg": 63
+          }
+        },
+        {
+          "title": "Spuntino",
+          "time": "11:00",
+          "foods": [
+            {
+              "name": "1 frutto"
+            },
+            {
+              "name": "Fesa di tacchino",
+              "quantity": 80,
+              "unit": "g"
+            }
+          ],
+          "macros": {
+            "kcal": 160,
+            "protein": 20,
+            "carbs": 16,
+            "fat": 1,
+            "fiber": 3,
+            "sugar": 14,
+            "addedSugar": 0,
+            "saturatedFat": 0,
+            "sodiumMg": 700
+          }
+        },
+        {
+          "title": "Pranzo",
+          "foods": [
+            {
+              "name": "Piadina integrale con bresaola 100 g, stracchino 40 g e rucola"
+            },
+            {
+              "name": "Verdure"
+            },
+            {
+              "name": "1 frutto"
+            }
+          ],
+          "macros": {
+            "kcal": 680,
+            "protein": 48,
+            "carbs": 70,
+            "fat": 22,
+            "fiber": 9,
             "sugar": 16,
             "addedSugar": 0,
-            "saturatedFat": 3.6,
-            "sodiumMg": 95,
-            "caffeineMg": 65
+            "saturatedFat": 10,
+            "sodiumMg": 1500
           }
         },
         {
-          "time": "13:00",
-          "title": "Lunch",
+          "title": "Spuntino dolce",
+          "time": "16:00",
           "foods": [
             {
-              "name": "Basmati rice (dry)",
-              "quantity": 80,
-              "unit": "g"
-            },
+              "name": "Yogurt greco 150 g con 2 biscotti o 1 cucchiaino di crema di nocciole"
+            }
+          ],
+          "macros": {
+            "kcal": 230,
+            "protein": 16,
+            "carbs": 24,
+            "fat": 7,
+            "fiber": 1,
+            "sugar": 16,
+            "addedSugar": 9,
+            "saturatedFat": 3,
+            "sodiumMg": 90
+          }
+        },
+        {
+          "title": "Cena",
+          "foods": [
             {
-              "name": "Chicken breast",
-              "quantity": 150,
-              "unit": "g"
-            },
-            {
-              "name": "Zucchini",
+              "name": "Lonza di maiale ai ferri",
               "quantity": 200,
               "unit": "g"
             },
             {
-              "name": "Extra virgin olive oil",
-              "quantity": 10,
-              "unit": "ml"
-            }
-          ],
-          "macros": {
-            "kcal": 610,
-            "protein": 52,
-            "carbs": 67,
-            "fat": 13,
-            "fiber": 3,
-            "sugar": 5,
-            "addedSugar": 0,
-            "saturatedFat": 2.4,
-            "sodiumMg": 140
-          }
-        },
-        {
-          "time": "16:30",
-          "title": "Snack",
-          "foods": [
-            {
-              "name": "Apple",
-              "quantity": 1,
-              "unit": "piece"
+              "name": "Verdure"
             },
             {
-              "name": "Almonds",
-              "quantity": 20,
-              "unit": "g"
-            }
-          ],
-          "macros": {
-            "kcal": 215,
-            "protein": 4.5,
-            "carbs": 27,
-            "fat": 10,
-            "fiber": 6.5,
-            "sugar": 19,
-            "addedSugar": 0
-          }
-        },
-        {
-          "time": "20:00",
-          "title": "Dinner",
-          "foods": [
-            {
-              "name": "Salmon fillet",
-              "quantity": 150,
+              "name": "Pane integrale",
+              "quantity": 100,
               "unit": "g"
             },
             {
-              "name": "Potatoes",
-              "quantity": 250,
-              "unit": "g"
-            },
-            {
-              "name": "Green beans",
-              "quantity": 200,
-              "unit": "g"
+              "name": "1 frutto"
             }
           ],
           "macros": {
             "kcal": 640,
-            "protein": 40,
-            "carbs": 52,
-            "fat": 28,
+            "protein": 48,
+            "carbs": 64,
+            "fat": 18,
             "fiber": 10,
-            "sugar": 6,
+            "sugar": 16,
             "addedSugar": 0,
-            "saturatedFat": 5,
-            "sodiumMg": 150
+            "saturatedFat": 6,
+            "sodiumMg": 520
           }
         }
       ]
     },
     "thursday": {
+      "note": "~130 g proteine",
       "meals": [
         {
-          "time": "07:30",
-          "title": "Breakfast",
+          "title": "Colazione",
           "foods": [
             {
-              "name": "Greek yogurt 2%",
-              "quantity": 200,
-              "unit": "g"
+              "name": "Caffellatte"
             },
             {
-              "name": "Rolled oats",
-              "quantity": 40,
-              "unit": "g"
-            },
-            {
-              "name": "Blueberries",
-              "quantity": 80,
-              "unit": "g"
-            },
-            {
-              "name": "Espresso",
-              "quantity": 1,
-              "unit": "cup"
+              "name": "Yogurt greco 150 g con avena 40 g, miele e banana"
             }
           ],
           "macros": {
-            "kcal": 395,
+            "kcal": 460,
             "protein": 26,
-            "carbs": 49,
-            "fat": 8.5,
+            "carbs": 72,
+            "fat": 7,
             "fiber": 6,
-            "sugar": 16,
-            "addedSugar": 0,
-            "saturatedFat": 3.6,
-            "sodiumMg": 95,
-            "caffeineMg": 65
+            "sugar": 34,
+            "addedSugar": 8,
+            "saturatedFat": 3,
+            "sodiumMg": 110,
+            "caffeineMg": 63
           }
         },
         {
-          "time": "13:00",
-          "title": "Lunch",
+          "title": "Spuntino",
+          "time": "11:00",
           "foods": [
             {
-              "name": "Wholewheat pasta (dry)",
-              "quantity": 90,
-              "unit": "g"
+              "name": "1 frutto"
             },
             {
-              "name": "Canned tuna, drained",
-              "quantity": 110,
+              "name": "Bresaola",
+              "quantity": 40,
               "unit": "g"
-            },
-            {
-              "name": "Cherry tomatoes",
-              "quantity": 150,
-              "unit": "g"
-            },
-            {
-              "name": "Extra virgin olive oil",
-              "quantity": 10,
-              "unit": "ml"
             }
           ],
           "macros": {
-            "kcal": 620,
-            "protein": 45,
-            "carbs": 66,
-            "fat": 15,
-            "fiber": 9,
-            "sugar": 7,
+            "kcal": 150,
+            "protein": 15,
+            "carbs": 16,
+            "fat": 1,
+            "fiber": 3,
+            "sugar": 14,
             "addedSugar": 0,
-            "saturatedFat": 2.5,
+            "saturatedFat": 0,
+            "sodiumMg": 600
+          }
+        },
+        {
+          "title": "Pranzo",
+          "foods": [
+            {
+              "name": "Pasta al ragù magro di manzo",
+              "quantity": 100,
+              "unit": "g"
+            },
+            {
+              "name": "Insalata"
+            }
+          ],
+          "macros": {
+            "kcal": 650,
+            "protein": 40,
+            "carbs": 80,
+            "fat": 16,
+            "fiber": 7,
+            "sugar": 8,
+            "addedSugar": 0,
+            "saturatedFat": 6,
             "sodiumMg": 420
           }
         },
         {
-          "time": "16:30",
-          "title": "Snack",
+          "title": "Spuntino",
+          "time": "16:00",
           "foods": [
             {
-              "name": "Apple",
-              "quantity": 1,
-              "unit": "piece"
+              "name": "1 frutto"
             },
             {
-              "name": "Almonds",
-              "quantity": 20,
+              "name": "Mandorle",
+              "quantity": 25,
               "unit": "g"
             }
           ],
           "macros": {
-            "kcal": 215,
-            "protein": 4.5,
-            "carbs": 27,
-            "fat": 10,
-            "fiber": 6.5,
-            "sugar": 19,
-            "addedSugar": 0
+            "kcal": 210,
+            "protein": 6,
+            "carbs": 22,
+            "fat": 13,
+            "fiber": 5,
+            "sugar": 16,
+            "addedSugar": 0,
+            "saturatedFat": 1,
+            "sodiumMg": 1
           }
         },
         {
-          "time": "20:00",
-          "title": "Dinner",
+          "title": "Cena",
           "foods": [
             {
-              "name": "Eggs",
-              "quantity": 3,
-              "unit": "piece"
-            },
-            {
-              "name": "Wholegrain bread",
-              "quantity": 80,
+              "name": "Merluzzo o orata al forno",
+              "quantity": 250,
               "unit": "g"
             },
             {
-              "name": "Mixed salad",
-              "quantity": 150,
+              "name": "Patate al forno",
+              "quantity": 250,
               "unit": "g"
+            },
+            {
+              "name": "Verdure"
+            },
+            {
+              "name": "Pane integrale",
+              "quantity": 1,
+              "unit": "fetta"
             }
           ],
           "macros": {
-            "kcal": 480,
-            "protein": 28,
-            "carbs": 36,
-            "fat": 22,
-            "fiber": 7
+            "kcal": 600,
+            "protein": 48,
+            "carbs": 70,
+            "fat": 12,
+            "fiber": 9,
+            "sugar": 6,
+            "addedSugar": 0,
+            "saturatedFat": 2,
+            "sodiumMg": 420
           }
         }
       ]
@@ -541,357 +585,371 @@
     "friday": {
       "meals": [
         {
-          "time": "07:30",
-          "title": "Breakfast",
+          "title": "Colazione",
           "foods": [
             {
-              "name": "Greek yogurt 2%",
-              "quantity": 200,
-              "unit": "g"
+              "name": "Caffellatte"
             },
             {
-              "name": "Rolled oats",
-              "quantity": 40,
-              "unit": "g"
+              "name": "Uova strapazzate",
+              "quantity": 2
             },
             {
-              "name": "Blueberries",
-              "quantity": 80,
-              "unit": "g"
+              "name": "Pane integrale",
+              "quantity": 2,
+              "unit": "fette"
             },
             {
-              "name": "Espresso",
-              "quantity": 1,
-              "unit": "cup"
+              "name": "1 frutto"
             }
           ],
           "macros": {
-            "kcal": 395,
-            "protein": 26,
-            "carbs": 49,
-            "fat": 8.5,
-            "fiber": 6,
+            "kcal": 480,
+            "protein": 25,
+            "carbs": 58,
+            "fat": 16,
+            "fiber": 7,
+            "sugar": 20,
+            "addedSugar": 0,
+            "saturatedFat": 5,
+            "sodiumMg": 480,
+            "caffeineMg": 63
+          }
+        },
+        {
+          "title": "Spuntino",
+          "time": "11:00",
+          "foods": [
+            {
+              "name": "1 frutto"
+            },
+            {
+              "name": "Mandorle",
+              "quantity": 25,
+              "unit": "g"
+            }
+          ],
+          "macros": {
+            "kcal": 210,
+            "protein": 6,
+            "carbs": 22,
+            "fat": 13,
+            "fiber": 5,
             "sugar": 16,
             "addedSugar": 0,
-            "saturatedFat": 3.6,
-            "sodiumMg": 95,
-            "caffeineMg": 65
+            "saturatedFat": 1,
+            "sodiumMg": 1
           }
         },
         {
-          "time": "13:00",
-          "title": "Lunch",
+          "title": "Pranzo",
           "foods": [
             {
-              "name": "Basmati rice (dry)",
-              "quantity": 80,
-              "unit": "g"
-            },
-            {
-              "name": "Chicken breast",
-              "quantity": 150,
-              "unit": "g"
-            },
-            {
-              "name": "Zucchini",
-              "quantity": 200,
-              "unit": "g"
-            },
-            {
-              "name": "Extra virgin olive oil",
-              "quantity": 10,
-              "unit": "ml"
+              "name": "Insalata di farro 70 g con tonno 100 g, ceci 100 g, mozzarella 60 g e verdure"
             }
           ],
           "macros": {
-            "kcal": 610,
-            "protein": 52,
-            "carbs": 67,
-            "fat": 13,
-            "fiber": 3,
+            "kcal": 690,
+            "protein": 50,
+            "carbs": 66,
+            "fat": 22,
+            "fiber": 12,
             "sugar": 5,
             "addedSugar": 0,
-            "saturatedFat": 2.4,
-            "sodiumMg": 140
+            "saturatedFat": 9,
+            "sodiumMg": 780
           }
         },
         {
-          "time": "16:30",
-          "title": "Snack",
+          "title": "Spuntino",
+          "time": "16:00",
           "foods": [
             {
-              "name": "Apple",
-              "quantity": 1,
-              "unit": "piece"
+              "name": "Fesa di tacchino",
+              "quantity": 50,
+              "unit": "g"
             },
             {
-              "name": "Almonds",
-              "quantity": 20,
-              "unit": "g"
+              "name": "Pane integrale",
+              "quantity": 1,
+              "unit": "fetta"
             }
           ],
           "macros": {
-            "kcal": 215,
-            "protein": 4.5,
-            "carbs": 27,
-            "fat": 10,
-            "fiber": 6.5,
-            "sugar": 19,
-            "addedSugar": 0
+            "kcal": 140,
+            "protein": 13,
+            "carbs": 16,
+            "fat": 2,
+            "fiber": 2,
+            "sugar": 1,
+            "addedSugar": 0,
+            "saturatedFat": 0,
+            "sodiumMg": 620
           }
         },
         {
-          "time": "20:00",
-          "title": "Dinner",
+          "title": "Cena",
           "foods": [
             {
-              "name": "Salmon fillet",
-              "quantity": 150,
+              "name": "Straccetti di pollo o tacchino al limone",
+              "quantity": 180,
               "unit": "g"
             },
             {
-              "name": "Potatoes",
+              "name": "Patate al forno",
               "quantity": 250,
               "unit": "g"
             },
             {
-              "name": "Green beans",
-              "quantity": 200,
-              "unit": "g"
+              "name": "Verdure"
             }
           ],
           "macros": {
-            "kcal": 640,
-            "protein": 40,
-            "carbs": 52,
-            "fat": 28,
-            "fiber": 10,
-            "sugar": 6,
+            "kcal": 580,
+            "protein": 46,
+            "carbs": 56,
+            "fat": 15,
+            "fiber": 7,
+            "sugar": 4,
             "addedSugar": 0,
-            "saturatedFat": 5,
-            "sodiumMg": 150
+            "saturatedFat": 3,
+            "sodiumMg": 360
           }
         }
       ]
     },
     "saturday": {
+      "label": "libero",
+      "note": "pranzo in famiglia · cena libera",
       "meals": [
         {
-          "time": "09:00",
-          "title": "Late breakfast",
+          "title": "Colazione",
           "foods": [
             {
-              "name": "Greek yogurt 2%",
-              "quantity": 200,
-              "unit": "g"
+              "name": "Caffellatte"
             },
             {
-              "name": "Rolled oats",
-              "quantity": 40,
-              "unit": "g"
+              "name": "Uova strapazzate",
+              "quantity": 3
             },
             {
-              "name": "Blueberries",
-              "quantity": 80,
-              "unit": "g"
-            },
-            {
-              "name": "Espresso",
-              "quantity": 1,
-              "unit": "cup"
+              "name": "Pane integrale",
+              "quantity": 2,
+              "unit": "fette"
             }
           ],
           "macros": {
-            "kcal": 395,
-            "protein": 26,
-            "carbs": 49,
-            "fat": 8.5,
-            "fiber": 6,
-            "sugar": 16,
+            "kcal": 480,
+            "protein": 30,
+            "carbs": 40,
+            "fat": 21,
+            "fiber": 5,
+            "sugar": 8,
             "addedSugar": 0,
-            "saturatedFat": 3.6,
-            "sodiumMg": 95,
-            "caffeineMg": 65
+            "saturatedFat": 7,
+            "sodiumMg": 560,
+            "caffeineMg": 63
           }
         },
         {
-          "time": "13:30",
-          "title": "Lunch",
+          "title": "Spuntino",
+          "time": "11:00",
           "foods": [
             {
-              "name": "Wholewheat pasta (dry)",
-              "quantity": 90,
-              "unit": "g"
-            },
-            {
-              "name": "Canned tuna, drained",
-              "quantity": 110,
-              "unit": "g"
-            },
-            {
-              "name": "Cherry tomatoes",
+              "name": "Yogurt greco",
               "quantity": 150,
               "unit": "g"
             },
             {
-              "name": "Extra virgin olive oil",
-              "quantity": 10,
-              "unit": "ml"
+              "name": "1 frutto"
             }
           ],
           "macros": {
-            "kcal": 620,
-            "protein": 45,
-            "carbs": 66,
-            "fat": 15,
-            "fiber": 9,
-            "sugar": 7,
+            "kcal": 190,
+            "protein": 16,
+            "carbs": 24,
+            "fat": 3,
+            "fiber": 3,
+            "sugar": 20,
             "addedSugar": 0,
-            "saturatedFat": 2.5,
-            "sodiumMg": 420
+            "saturatedFat": 2,
+            "sodiumMg": 60
           }
         },
         {
-          "time": "20:00",
-          "title": "Dinner",
+          "title": "Pranzo in famiglia",
           "foods": [
             {
-              "name": "Salmon fillet",
-              "quantity": 150,
-              "unit": "g"
+              "name": "Hamburger di manzo magro 150 g, patate al forno 250 g e verdure"
             },
             {
-              "name": "Potatoes",
-              "quantity": 250,
-              "unit": "g"
-            },
-            {
-              "name": "Green beans",
-              "quantity": 200,
-              "unit": "g"
+              "name": "oppure pasta 100 g al pomodoro con polpette al forno 150 g"
             }
           ],
           "macros": {
-            "kcal": 640,
-            "protein": 40,
-            "carbs": 52,
-            "fat": 28,
-            "fiber": 10,
+            "kcal": 700,
+            "protein": 42,
+            "carbs": 68,
+            "fat": 26,
+            "fiber": 8,
             "sugar": 6,
             "addedSugar": 0,
-            "saturatedFat": 5,
-            "sodiumMg": 150
+            "saturatedFat": 10,
+            "sodiumMg": 560
           }
+        },
+        {
+          "title": "Spuntino",
+          "time": "16:00",
+          "foods": [
+            {
+              "name": "1 frutto"
+            },
+            {
+              "name": "Bresaola",
+              "quantity": 40,
+              "unit": "g"
+            }
+          ],
+          "macros": {
+            "kcal": 150,
+            "protein": 15,
+            "carbs": 16,
+            "fat": 1,
+            "fiber": 3,
+            "sugar": 14,
+            "addedSugar": 0,
+            "saturatedFat": 0,
+            "sodiumMg": 600
+          }
+        },
+        {
+          "title": "Cena",
+          "free": true
         }
       ]
     },
     "sunday": {
+      "label": "libero",
+      "note": "pranzo libero",
       "meals": [
         {
-          "time": "09:00",
-          "title": "Late breakfast",
+          "title": "Colazione",
           "foods": [
             {
-              "name": "Greek yogurt 2%",
-              "quantity": 200,
+              "name": "Caffellatte"
+            },
+            {
+              "name": "Yogurt greco",
+              "quantity": 150,
               "unit": "g"
             },
             {
-              "name": "Rolled oats",
+              "name": "Muesli",
               "quantity": 40,
               "unit": "g"
             },
             {
-              "name": "Blueberries",
-              "quantity": 80,
-              "unit": "g"
-            },
-            {
-              "name": "Espresso",
-              "quantity": 1,
-              "unit": "cup"
+              "name": "Banana",
+              "quantity": 1
             }
           ],
           "macros": {
-            "kcal": 395,
-            "protein": 26,
-            "carbs": 49,
-            "fat": 8.5,
+            "kcal": 430,
+            "protein": 27,
+            "carbs": 62,
+            "fat": 8,
             "fiber": 6,
-            "sugar": 16,
-            "addedSugar": 0,
-            "saturatedFat": 3.6,
-            "sodiumMg": 95,
-            "caffeineMg": 65
+            "sugar": 28,
+            "addedSugar": 6,
+            "saturatedFat": 3,
+            "sodiumMg": 120,
+            "caffeineMg": 63
           }
         },
         {
-          "time": "13:30",
-          "title": "Lunch",
+          "title": "Spuntino",
+          "time": "11:00",
           "foods": [
             {
-              "name": "Wholewheat pasta (dry)",
-              "quantity": 90,
-              "unit": "g"
+              "name": "1 frutto"
             },
             {
-              "name": "Canned tuna, drained",
-              "quantity": 110,
+              "name": "Noci",
+              "quantity": 20,
               "unit": "g"
-            },
-            {
-              "name": "Cherry tomatoes",
-              "quantity": 150,
-              "unit": "g"
-            },
-            {
-              "name": "Extra virgin olive oil",
-              "quantity": 10,
-              "unit": "ml"
             }
           ],
           "macros": {
-            "kcal": 620,
-            "protein": 45,
-            "carbs": 66,
-            "fat": 15,
-            "fiber": 9,
-            "sugar": 7,
+            "kcal": 200,
+            "protein": 4,
+            "carbs": 20,
+            "fat": 13,
+            "fiber": 4,
+            "sugar": 14,
             "addedSugar": 0,
-            "saturatedFat": 2.5,
-            "sodiumMg": 420
+            "saturatedFat": 1,
+            "sodiumMg": 1
           }
         },
         {
-          "time": "20:00",
-          "title": "Dinner",
+          "title": "Pranzo",
+          "free": true
+        },
+        {
+          "title": "Spuntino",
+          "time": "16:00",
           "foods": [
             {
-              "name": "Salmon fillet",
+              "name": "Yogurt greco",
               "quantity": 150,
               "unit": "g"
             },
             {
-              "name": "Potatoes",
+              "name": "Noci",
+              "quantity": 20,
+              "unit": "g"
+            }
+          ],
+          "macros": {
+            "kcal": 240,
+            "protein": 17,
+            "carbs": 8,
+            "fat": 16,
+            "fiber": 1,
+            "sugar": 6,
+            "addedSugar": 0,
+            "saturatedFat": 3,
+            "sodiumMg": 60
+          }
+        },
+        {
+          "title": "Cena",
+          "foods": [
+            {
+              "name": "Polpette di tacchino al forno",
+              "quantity": 200,
+              "unit": "g"
+            },
+            {
+              "name": "Patate al forno",
               "quantity": 250,
               "unit": "g"
             },
             {
-              "name": "Green beans",
-              "quantity": 200,
-              "unit": "g"
+              "name": "Insalata mista"
             }
           ],
           "macros": {
-            "kcal": 640,
-            "protein": 40,
-            "carbs": 52,
-            "fat": 28,
-            "fiber": 10,
-            "sugar": 6,
+            "kcal": 600,
+            "protein": 46,
+            "carbs": 56,
+            "fat": 18,
+            "fiber": 7,
+            "sugar": 4,
             "addedSugar": 0,
-            "saturatedFat": 5,
-            "sodiumMg": 150
+            "saturatedFat": 4,
+            "sodiumMg": 620
           }
         }
       ]

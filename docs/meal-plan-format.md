@@ -1,47 +1,71 @@
 # Meal plan file format
 
-Meal plans are generated in the Claude Fitness project and uploaded to Intake as a JSON file. A plan becomes active from its `validFrom` date onward; previous versions are kept as history.
+Meal plans are generated in the Claude Fitness project and uploaded on the **Piano** page (`⋯` → *Carica nuovo piano*). A plan becomes active from its valid-from date; previous versions are kept as history (*Storico versioni*).
 
-- JSON Schema: [`schemas/meal-plan.schema.json`](../schemas/meal-plan.schema.json). Paste it into the Claude Fitness project so that generated plans match it.
-- Example: [`examples/meal-plan.example.json`](../examples/meal-plan.example.json)
-- Source of truth: the zod schema in [`packages/shared/src/mealPlan.ts`](../packages/shared/src/mealPlan.ts). The JSON Schema is generated from it with `npm run schema`.
+Intake accepts two formats and detects which one a file uses:
 
-## Structure
+1. **Claude Fitness format** (recommended, what Claude Fitness generates): converted to Intake's model on upload.
+2. **Intake format**: the internal model, described by [`schemas/meal-plan.schema.json`](../schemas/meal-plan.schema.json) (generated from [`packages/shared/src/mealPlan.ts`](../packages/shared/src/mealPlan.ts) with `npm run schema`).
 
-| Field | Type | Notes |
-|---|---|---|
-| `schemaVersion` | `1` | Format version |
-| `validFrom` | `YYYY-MM-DD` | First day the plan is active |
-| `days` | object | Keys `monday` … `sunday`, all seven required |
-| `days.<day>.meals[]` | array | Meals of that weekday (may be empty) |
-| `meals[].time` | `HH:MM` | Local time, 24-hour |
-| `meals[].title` | string | e.g. "Breakfast" |
-| `meals[].foods[]` | array | At least one food: `name`, `quantity` (> 0), `unit` (e.g. `g`, `ml`, `piece`) |
-| `meals[].macros` | object | Estimated nutrients for the whole meal, see below |
+Examples: [`examples/claude-fitness-plan.example.json`](../examples/claude-fitness-plan.example.json) and [`examples/meal-plan.example.json`](../examples/meal-plan.example.json).
 
-## Nutrients (`macros`)
+## Claude Fitness format
+
+The fields Intake reads; anything else (`targets`, `goal`, `shopping_list`…) is ignored.
+
+| Field | Notes |
+|---|---|
+| `schema_version` | `1` |
+| `updated` | `YYYY-MM-DD`; the plan becomes active from this date unless `valid_from` is given |
+| `valid_from` | Optional `YYYY-MM-DD`, overrides `updated` as the first active day |
+| `meal_slots[]` | `id`, `label`, `time` (`HH:MM`). Order defines the order of the day. `Spuntino 11` is shown as "Spuntino" at 11:00 |
+| `free_meals[]` | Optional `{ day, meal }` pairs marking free slots |
+| `notes[]` | Optional, shown under *Note del piano* |
+| `days[]` | All seven days (`monday` … `sunday`) |
+| `days[].expected_protein_g` | Shown on the day tab ("135 g") and as the day note |
+| `days[].tags` | `sweet_snack` shows "dolce" on the day tab |
+| `days[].free_meals` | Free slots of that day |
+| `days[].meals.<slot id>` | `description`, `items[]` (`food`, `quantity`, `unit`, `note`), optional `alternative[]`, `free`, `sweet`, `family_friendly`, `macros` |
+
+A meal with `free: true`, listed in a free-meals field, or with no items is shown as **Libero**. The meal type (breakfast, lunch, dinner, snack) comes from the slot id or label.
+
+### Per-meal `macros` (needed for "Mangiato come previsto")
+
+"Mangiato come previsto" logs the planned meal to Nutrition with its nutrients. Without them the meal would be stored with no calories or macros, and that day would drop out of the averages. So **the button is disabled for meals without `macros`**, and the timeline suggests logging them through *Altro…* or Claude.
+
+Add a `macros` object to every non-free meal:
+
+```json
+"macros": {
+  "kcal": 430,
+  "protein_g": 27,
+  "carbs_g": 62,
+  "fat_g": 8,
+  "fiber_g": 6,
+  "sugar_g": 28,
+  "added_sugar_g": 6,
+  "saturated_fat_g": 3,
+  "sodium_mg": 120,
+  "caffeine_mg": 63
+}
+```
 
 | Field | Unit | Required |
 |---|---|---|
-| `kcal` | kcal | yes |
-| `protein` | g | yes |
-| `carbs` | g | yes |
-| `fat` | g | yes |
-| `fiber` | g | yes |
-| `sugar` | g | no, but must be given together with `addedSugar` |
-| `addedSugar` | g | no, but must be given together with `sugar` |
-| `saturatedFat` | g | no |
-| `sodiumMg` | mg | no |
-| `caffeineMg` | mg | no |
+| `kcal`, `protein_g`, `carbs_g`, `fat_g`, `fiber_g` | kcal / g | yes |
+| `sugar_g` + `added_sugar_g` | g | no, but always together; `added_sugar_g` ≤ `sugar_g` |
+| `saturated_fat_g` | g | no; ≤ `fat_g` |
+| `sodium_mg` | mg | no; sodium, not salt (1 g salt ≈ 400 mg sodium) |
+| `caffeine_mg` | mg | no; only for caffeine sources (coffee, tea, chocolate…) |
 
-Rules:
+`0` is the correct value for a nutrient the meal does not contain.
 
-- `addedSugar` ≤ `sugar` and `saturatedFat` ≤ `fat`.
-- `sodiumMg` is sodium, not salt: 1 g of salt holds about 400 mg of sodium.
-- `caffeineMg` only applies to caffeine sources (coffee, tea, cola, energy drinks, chocolate…). Leave it out for other meals.
-- `0` is the correct value for a nutrient the meal does not contain (e.g. `addedSugar: 0` for plain yogurt and fruit).
-- Unknown fields are rejected.
+## Intake format (summary)
 
-## Why the optional nutrients matter
+`schemaVersion: 1`, `validFrom`, optional `notes[]`, and `days.monday` … `days.sunday`. Each day has optional `label`, `note`, `expectedProtein` and `meals[]`. A meal has `title`, optional `time` and `type`, optional `description`, and either `free: true` or `foods[]` (`name`, optional `quantity`, `unit`, `note`) plus optional `macros` (`kcal`, `protein`, `carbs`, `fat`, `fiber`, `sugar` + `addedSugar`, `saturatedFat`, `sodiumMg`, `caffeineMg`).
 
-"Mark as eaten as planned" logs the planned meal to the Nutrition MCP server with these values. The server stores a missing nutrient as "not measured" and leaves that whole day out of the averages, goal lines and charts for that nutrient. Filling in sugar, added sugar, saturated fat, sodium and caffeine keeps those days in.
+## Timeline behavior
+
+- Meals without a time use default slots: breakfast 08:00, lunch 13:00, dinner 20:00, snacks 11:00 before lunch and 16:00 after.
+- A planned meal is hidden once covered: by "Mangiato come previsto", or by any logged meal of the same type within 3 hours (e.g. a meal logged through Claude).
+- Uncovered planned meals are "Da registrare" once their time has passed (or on past days), "Dal piano" before that, and "Libero" for free slots.
