@@ -1,5 +1,4 @@
 import type { Meal } from "@intake/shared";
-import { Fragment } from "react";
 import { formatGramsShort, formatKcal, formatTime } from "../lib/format";
 import { t } from "../lib/strings";
 import { MACROS } from "./MacroCard";
@@ -9,6 +8,8 @@ interface Props {
   /** Local time HH:MM:SS when the day is today; the "now" marker is shown only then. */
   now: string | null;
 }
+
+type Entry = { kind: "meal"; meal: Meal } | { kind: "now"; time: string };
 
 function mealTitle(meal: Meal): string {
   return t.mealTypes[meal.type] ?? (meal.type ? meal.type.charAt(0).toUpperCase() + meal.type.slice(1) : "Pasto");
@@ -24,6 +25,7 @@ function mealSummary(meal: Meal): string {
 
 function MealCard({ meal }: { meal: Meal }) {
   const values = { protein: meal.nutrients.protein, carbs: meal.nutrients.carbs, fat: meal.nutrients.fat, fiber: meal.nutrients.fiber };
+  const chips = MACROS.filter((key) => values[key] !== null && Math.round(values[key]) > 0);
   return (
     <article className="meal-card">
       <header className="meal-card-head">
@@ -31,37 +33,31 @@ function MealCard({ meal }: { meal: Meal }) {
         <span className="meal-kcal">{formatKcal(meal.nutrients.kcal)} kcal</span>
       </header>
       <p className="meal-summary">{mealSummary(meal)}</p>
-      {MACROS.some((key) => values[key] !== null && Math.round(values[key]) > 0) && (
+      {chips.length > 0 && (
         <ul className="chips" aria-label="Macronutrienti del pasto">
-          {MACROS.map((key) =>
-            // Hide unmeasured and negligible values (e.g. an espresso) to keep the card readable
-            values[key] === null || Math.round(values[key]) === 0 ? null : (
-              <li key={key} className="chip" data-macro={key}>
-                {t.macroChips[key]} {formatGramsShort(values[key])} g
-              </li>
-            ),
-          )}
+          {chips.map((key) => (
+            <li key={key} className="chip" data-macro={key}>
+              {t.macroChips[key]} {formatGramsShort(values[key]!)} g
+            </li>
+          ))}
         </ul>
       )}
     </article>
   );
 }
 
-function NowMarker({ time }: { time: string }) {
-  return (
-    <li className="timeline-item now-marker" aria-label={`${t.timeline.now} ${formatTime(time)}`}>
-      <span className="now-time">{formatTime(time)}</span>
-      <span className="now-line" aria-hidden="true" />
-      <span className="now-label">{t.timeline.now}</span>
-    </li>
-  );
-}
-
-/** Vertical timeline of the day's logged meals, with a "now" marker for today. */
+/**
+ * Vertical timeline of the day. A continuous rod runs behind the time labels:
+ * solid accent up to the "now" marker, dashed grey after it.
+ */
 export function Timeline({ meals, now }: Props) {
   const nowHm = now ? formatTime(now) : null;
-  const nowIndex = nowHm === null ? -1 : meals.findIndex((meal) => meal.time > nowHm);
-  const markerAt = nowHm === null ? -1 : nowIndex === -1 ? meals.length : nowIndex;
+  const entries: Entry[] = meals.map((meal) => ({ kind: "meal", meal }));
+  if (nowHm) {
+    const index = meals.findIndex((meal) => meal.time > nowHm);
+    entries.splice(index === -1 ? entries.length : index, 0, { kind: "now", time: nowHm });
+  }
+  const nowIndex = entries.findIndex((entry) => entry.kind === "now");
 
   return (
     <section className="timeline-section" aria-label={t.timeline.title}>
@@ -69,22 +65,37 @@ export function Timeline({ meals, now }: Props) {
         <h2>{t.timeline.title}</h2>
         <span className="muted">{t.timeline.logged(meals.length)}</span>
       </header>
-      {meals.length === 0 && !nowHm && <p className="muted">{t.timeline.empty}</p>}
+      {meals.length === 0 && <p className="muted timeline-empty">{t.timeline.empty}</p>}
       <ol className="timeline">
-        {meals.map((meal, i) => (
-          <Fragment key={meal.id}>
-            {i === markerAt && nowHm && <NowMarker time={now!} />}
-            <li className="timeline-item" data-kind="logged">
-              <time className="timeline-time" dateTime={`${meal.date}T${meal.time}`}>
-                {meal.time}
-              </time>
+        {entries.map((entry, i) => {
+          const rod = nowIndex === -1 || i < nowIndex ? "past" : "future";
+          const position = entries.length === 1 ? "only" : i === 0 ? "first" : i === entries.length - 1 ? "last" : undefined;
+          if (entry.kind === "now") {
+            return (
+              <li key="now" className="timeline-item now-marker" data-rod="future" data-position={position} aria-label={`${t.timeline.nowLabel} ${entry.time}`}>
+                <span className="timeline-gutter">
+                  <span className="now-time">{entry.time}</span>
+                </span>
+                <span className="now-line" aria-hidden="true" />
+                <span className="now-label" aria-hidden="true">
+                  {t.timeline.now}
+                </span>
+              </li>
+            );
+          }
+          const { meal } = entry;
+          return (
+            <li key={meal.id} className="timeline-item" data-rod={rod} data-position={position}>
+              <span className="timeline-gutter">
+                <time className="timeline-time" dateTime={`${meal.date}T${meal.time}`}>
+                  {meal.time}
+                </time>
+              </span>
               <MealCard meal={meal} />
             </li>
-          </Fragment>
-        ))}
-        {markerAt === meals.length && nowHm && <NowMarker time={now!} />}
+          );
+        })}
       </ol>
-      {meals.length === 0 && nowHm && <p className="muted">{t.timeline.empty}</p>}
     </section>
   );
 }

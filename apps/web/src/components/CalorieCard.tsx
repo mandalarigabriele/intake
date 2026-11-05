@@ -6,9 +6,10 @@ interface Props {
   goal: number | null;
 }
 
-const SIZE = 148;
+// Geometry from the design mockup: 132 px box, radius 56, 12 px stroke
+const SIZE = 132;
 const STROKE = 12;
-const RADIUS = (SIZE - STROKE) / 2;
+const RADIUS = 56;
 const CIRCUMFERENCE = 2 * Math.PI * RADIUS;
 
 /** Calorie meter: a ring with eaten / goal, the remaining amount as the hero number. */

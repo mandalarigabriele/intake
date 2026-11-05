@@ -1,15 +1,18 @@
 import { useEffect, useState } from "react";
 import { ApiError } from "../api/client";
-import { useAddWater, useDay, useSignOut, type User } from "../api/queries";
+import { useAddWater, useDay, type User } from "../api/queries";
 import { CalorieCard } from "../components/CalorieCard";
-import { Header } from "../components/Header";
+import { PlusIcon } from "../components/icons";
+import { Logo } from "../components/Logo";
 import { MacroCard } from "../components/MacroCard";
+import { ProfileMenu } from "../components/ProfileMenu";
 import { Timeline } from "../components/Timeline";
 import { WaterCard } from "../components/WaterCard";
 import { WeekStrip } from "../components/WeekStrip";
 import { isIsoDate } from "../lib/dates";
 import { formatLongDate, formatWeekday } from "../lib/format";
 import { t } from "../lib/strings";
+import { ConnectPage } from "./ConnectPage";
 
 /** "today" or a YYYY-MM-DD date, kept in the URL (?d=) so reloads and the back button keep the day. */
 function useSelectedDay(): [string, (date: string) => void] {
@@ -21,38 +24,64 @@ function useSelectedDay(): [string, (date: string) => void] {
     const url = new URL(window.location.href);
     if (selected === "today") url.searchParams.delete("d");
     else url.searchParams.set("d", selected);
-    window.history.replaceState(null, "", url);
+    window.history.replaceState(window.history.state, "", url);
   }, [selected]);
   return [selected, setSelected];
 }
 
-export function TodayPage({ user, notice }: { user: User; notice: string | null }) {
+interface Props {
+  user: User;
+  notice: string | null;
+  onAdd: () => void;
+}
+
+export function TodayPage({ user, notice, onAdd }: Props) {
   const [selected, setSelected] = useSelectedDay();
   const [today, setToday] = useState<string | null>(null);
   const day = useDay(selected);
   const addWater = useAddWater(selected);
-  const signOut = useSignOut();
 
   useEffect(() => {
     if (day.data) setToday(day.data.clock.localDate);
   }, [day.data]);
 
+  if (day.error instanceof ApiError && day.error.code === "nutrition_not_connected") {
+    return <ConnectPage />;
+  }
+
   const view = day.data;
   const selectDate = (date: string) => setSelected(date === today ? "today" : date);
-
   const title = view ? (view.isToday ? t.today : formatWeekday(view.date)) : t.today;
-  const dateLabel = view ? formatLongDate(view.date) : "";
 
   return (
-    <div className="page">
-      <Header dateLabel={dateLabel} title={title} user={user} onSignOut={() => signOut.mutate()} />
-      {notice && <p className="notice">{notice}</p>}
+    <div className="page today-page">
+      <div className="today-top">
+        <div className="page-heading">
+          <div className="brand-row">
+            <Logo />
+            <span>{t.appName}</span>
+          </div>
+          <p className="page-date">{view ? formatLongDate(view.date) : " "}</p>
+          <h1 className="page-title">{title}</h1>
+        </div>
+        <div className="today-avatar">
+          <ProfileMenu user={user} variant="avatar" />
+        </div>
+        {view && today && <WeekStrip selected={view.date} today={today} onSelect={selectDate} />}
+      </div>
 
-      {view && today && <WeekStrip selected={view.date} today={today} onSelect={selectDate} />}
+      {notice && <p className="notice">{notice}</p>}
 
       {day.isPending && <DaySkeleton />}
 
-      {day.isError && !view && <DayError error={day.error} onRetry={() => day.refetch()} />}
+      {day.isError && !view && (
+        <section className="card empty-state">
+          <p>{t.errors.loadFailed}</p>
+          <button type="button" className="button" onClick={() => day.refetch()}>
+            {t.retry}
+          </button>
+        </section>
+      )}
 
       {view && (
         <div className="day-layout" aria-busy={day.isFetching}>
@@ -71,6 +100,10 @@ export function TodayPage({ user, notice }: { user: User; notice: string | null 
           <Timeline meals={view.meals} now={view.isToday ? view.clock.localTime : null} />
         </div>
       )}
+
+      <button type="button" className="fab" aria-label={t.nav.add} onClick={onAdd}>
+        <PlusIcon size={26} strokeWidth={2.5} />
+      </button>
     </div>
   );
 }
@@ -79,33 +112,11 @@ function DaySkeleton() {
   return (
     <div className="day-layout" aria-label={t.loading}>
       <div className="day-summary">
-        <div className="card skeleton" style={{ height: 180 }} />
-        <div className="card skeleton" style={{ height: 200 }} />
-        <div className="card skeleton" style={{ height: 88 }} />
+        <div className="card skeleton" style={{ height: 172 }} />
+        <div className="card skeleton" style={{ height: 196 }} />
+        <div className="card skeleton" style={{ height: 80 }} />
       </div>
       <div className="card skeleton" style={{ height: 240 }} />
     </div>
-  );
-}
-
-function DayError({ error, onRetry }: { error: Error; onRetry: () => void }) {
-  if (error instanceof ApiError && error.code === "nutrition_not_connected") {
-    return (
-      <section className="card empty-state">
-        <h2>{t.errors.notConnectedTitle}</h2>
-        <p className="muted">{t.errors.notConnectedBody}</p>
-        <a className="button" href="/connect/nutrition">
-          {t.errors.connect}
-        </a>
-      </section>
-    );
-  }
-  return (
-    <section className="card empty-state">
-      <p>{t.errors.loadFailed}</p>
-      <button type="button" className="button" onClick={onRetry}>
-        {t.retry}
-      </button>
-    </section>
   );
 }

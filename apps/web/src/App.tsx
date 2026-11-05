@@ -1,7 +1,14 @@
+import "@fontsource-variable/manrope";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
+import { Route, Switch } from "wouter";
 import { useMe } from "./api/queries";
+import { AddSheet } from "./components/AddSheet";
+import { AppShell } from "./components/AppShell";
+import { PlanIcon, TrainingIcon, WeekIcon } from "./components/icons";
 import { t } from "./lib/strings";
+import { ComingSoonPage } from "./pages/ComingSoonPage";
+import { SignInPage } from "./pages/SignInPage";
 import { TodayPage } from "./pages/TodayPage";
 
 const queryClient = new QueryClient({
@@ -23,7 +30,7 @@ function useRedirectNotice(): string | null {
     const url = new URL(window.location.href);
     url.searchParams.delete("signin");
     url.searchParams.delete("nutrition");
-    window.history.replaceState(null, "", url);
+    window.history.replaceState(window.history.state, "", url);
   }, [notice]);
   return notice;
 }
@@ -31,25 +38,31 @@ function useRedirectNotice(): string | null {
 function Root() {
   const me = useMe();
   const notice = useRedirectNotice();
+  const [adding, setAdding] = useState(false);
+  const openAdd = useCallback(() => setAdding(true), []);
+  const closeAdd = useCallback(() => setAdding(false), []);
 
-  if (me.isPending) return <div className="page"><p className="muted">{t.loading}</p></div>;
+  if (me.isPending) return <div className="page" aria-busy="true" />;
   if (!me.data) return <SignInPage notice={notice} />;
-  return <TodayPage user={me.data} notice={notice} />;
-}
 
-function SignInPage({ notice }: { notice: string | null }) {
   return (
-    <div className="page">
-      <section className="card signin">
-        <img src="/favicon.svg" alt="" width={56} height={56} />
-        <h1>{t.signIn.title}</h1>
-        <p className="muted">{t.signIn.subtitle}</p>
-        {notice && <p className="notice">{notice}</p>}
-        <a className="button" href="/auth/google">
-          {t.signIn.button}
-        </a>
-      </section>
-    </div>
+    <AppShell user={me.data} onAdd={openAdd}>
+      <Switch>
+        <Route path="/settimana">
+          <ComingSoonPage title={t.nav.week} heading={t.placeholder.soon} body={t.placeholder.week} Icon={WeekIcon} />
+        </Route>
+        <Route path="/piano">
+          <ComingSoonPage title={t.nav.plan} heading={t.placeholder.soon} body={t.placeholder.plan} Icon={PlanIcon} />
+        </Route>
+        <Route path="/allenamenti">
+          <ComingSoonPage title={t.training.title} heading={t.training.soon} body={t.training.body} Icon={TrainingIcon} />
+        </Route>
+        <Route>
+          <TodayPage user={me.data} notice={notice} onAdd={openAdd} />
+        </Route>
+      </Switch>
+      {adding && <AddSheet onClose={closeAdd} />}
+    </AppShell>
   );
 }
 

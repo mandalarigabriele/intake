@@ -16,11 +16,15 @@ Self-hosted nutrition dashboard with a daily meal timeline, macro tracking and m
 - Parsers for Nutrition MCP responses (meals with foods and all tracked nutrients, nutrition goals, current time and timezone), tested against real server output. Unrecognized fields are reported as warnings instead of being silently dropped.
 - Sign in with Google, restricted to the owner's account (`OWNER_EMAIL`): OpenID Connect with PKCE and nonce, signed httpOnly session cookie valid for 30 days, sign-out. All data routes and the Nutrition connection require it. See [docs/google-sign-in.md](docs/google-sign-in.md).
 - Today view: calorie ring (eaten / goal / remaining), macro bars for protein, carbs, fat and fiber with remaining or excess amounts, water as 250 ml glasses with a quick "+250 ml" button (idempotent, optimistic update).
+- Navigation: fixed bottom tab bar on iPhone (Oggi · Settimana · Piano · Allenamenti) with a floating "+" on Today; sticky sidebar with "+ Aggiungi" on iPad and desktop (from 800 px).
+- "Aggiungi" sheet with water shortcuts (+250 / +500 ml).
+- Sign-in and one-time Nutrition connection screens; profile menu with sign-out and "Scollega Nutrition".
+- Allenamenti placeholder ("In arrivo", Hevy integration is phase 2); Settimana and Piano placeholders until those sections are built.
 - Week strip (Monday to Sunday) to switch day; the selected day is kept in the URL.
 - Meal timeline with logged meals (foods with quantities, kcal, macro chips) and a "now" marker for today.
-- Italian UI with Italian number and date formatting; responsive layout (one column on iPhone, two columns on iPad and desktop); automatic light and dark mode with colorblind-validated chart colors.
+- UI built from the approved design in `docs/design/` (Manrope, design tokens), in Italian with Italian number and date formatting; responsive (iPhone, iPad, desktop); light and dark mode following the system, with a manual Sistema / Chiaro / Scuro choice saved per device.
 - Day API: `GET /api/days/:date` (or `today`, in the Nutrition profile's timezone) and `POST /api/water`.
-- Web app shell with sign-in screen, installable on iPhone via Safari "Add to Home Screen" (web app manifest and icons, safe-area aware, light and dark themes).
+- Installable on iPhone via Safari "Add to Home Screen" (web app manifest and icons, safe-area aware, light and dark themes).
 
 ### Planned – version 1
 

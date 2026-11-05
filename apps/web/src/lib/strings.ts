@@ -1,17 +1,54 @@
-/** User-facing texts (Italian). Keep every UI string here so wording is easy to review. */
+/** User-facing texts (Italian), taken from docs/design. Keep every UI string here. */
 
 export const t = {
   appName: "Intake",
   today: "Oggi",
   loading: "Caricamento…",
   retry: "Riprova",
+  close: "Chiudi",
+
+  nav: {
+    label: "Navigazione",
+    today: "Oggi",
+    week: "Settimana",
+    plan: "Piano",
+    training: "Allenamenti",
+    add: "Aggiungi",
+    addButton: "+ Aggiungi",
+    nutritionConnected: "Nutrition collegato",
+  },
 
   signIn: {
-    title: "Benvenuto",
-    subtitle: "Accedi con il tuo account Google per continuare.",
+    tagline: "Il tuo diario alimentare, con i dati reali del giorno e il tuo piano.",
     button: "Accedi con Google",
-    signOut: "Esci",
+    ownerOnly: "Accesso riservato al proprietario dell'app.",
+  },
+
+  profile: {
+    label: "Profilo",
     signedInAs: "Accesso come",
+    signOut: "Esci",
+    disconnectNutrition: "Scollega Nutrition",
+    disconnectConfirm: "Scollegare Nutrition? Dovrai ricollegarlo per vedere i tuoi dati.",
+    theme: "Tema",
+    themeOptions: { system: "Sistema", light: "Chiaro", dark: "Scuro" },
+  },
+
+  connect: {
+    step: "PASSO 2 DI 2 · SOLO LA PRIMA VOLTA",
+    title: "Collega i tuoi dati Nutrition",
+    body: "Intake legge in diretta gli stessi pasti, l'acqua e il peso che registri parlando con Claude. Il collegamento si fa una volta e resta attivo.",
+    google: "Google",
+    googleOk: "Accesso all'app verificato",
+    nutrition: "Nutrition",
+    nutritionPending: "nutrition-mcp.com · da collegare",
+    steps: [
+      "Si apre la pagina di accesso di Nutrition",
+      "Autorizzi Intake a leggere e modificare i tuoi pasti",
+      "Torni qui e vedi subito la giornata di oggi",
+    ],
+    button: "Collega Nutrition",
+    footnote: "Puoi scollegarlo quando vuoi dal menu del profilo.",
   },
 
   notices: {
@@ -22,9 +59,6 @@ export const t = {
   } as Record<string, string>,
 
   errors: {
-    notConnectedTitle: "Collega il tuo account Nutrition",
-    notConnectedBody: "Intake legge pasti, obiettivi e acqua dal tuo account Nutrition.",
-    connect: "Collega account",
     loadFailed: "Impossibile caricare i dati della giornata.",
     waterFailed: "Acqua non registrata. Riprova.",
   },
@@ -36,7 +70,7 @@ export const t = {
     over: "kcal in eccesso",
     eaten: "Mangiate",
     goal: "Obiettivo",
-    noGoal: "Nessun obiettivo impostato",
+    noGoal: "Nessun obiettivo",
     ofDay: (percent: string) => `${percent} della giornata`,
     overGoal: (percent: string) => `${percent} · oltre l'obiettivo`,
   },
@@ -56,14 +90,36 @@ export const t = {
   water: {
     title: "Acqua",
     add: (amount: string) => `+ ${amount}`,
+    addLong: (amount: string) => `Acqua + ${amount}`,
     glasses: (filled: number, total: number) => `${filled} bicchieri su ${total}`,
   },
 
   timeline: {
     title: "Timeline",
     logged: (count: number) => (count === 1 ? "1 registrato" : `${count} registrati`),
-    now: "Adesso",
+    now: "ADESSO",
+    nowLabel: "Adesso",
     empty: "Nessun pasto registrato.",
+  },
+
+  addSheet: {
+    title: "Aggiungi",
+    comingSoon: "Pasti del piano, pasti recenti e ricerca alimenti arriveranno nei prossimi aggiornamenti.",
+    claudeHint:
+      'Per foto del piatto o descrizioni libere ("ho mangiato una pizza margherita") continua a usare Claude: registra direttamente su Nutrition.',
+    waterAdded: (amount: string) => `${amount} di acqua registrati.`,
+  },
+
+  training: {
+    title: "Allenamenti",
+    soon: "In arrivo",
+    body: "Qui compariranno gli allenamenti della settimana da Hevy, accanto a quello che mangi.",
+  },
+
+  placeholder: {
+    soon: "In arrivo",
+    week: "Calorie della settimana, medie e peso arriveranno in un prossimo aggiornamento.",
+    plan: "Qui vedrai il piano alimentare caricato da Claude, giorno per giorno.",
   },
 
   mealTypes: {

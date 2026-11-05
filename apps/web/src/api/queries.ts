@@ -75,3 +75,19 @@ export function useAddWater(date: string) {
     onSettled: () => queryClient.invalidateQueries({ queryKey: ["day"] }),
   });
 }
+
+export function useNutritionStatus(enabled: boolean) {
+  return useQuery({
+    queryKey: ["nutrition-status"],
+    queryFn: () => apiFetch<{ connected: boolean }>("/api/nutrition/status"),
+    enabled,
+  });
+}
+
+export function useDisconnectNutrition() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: () => apiFetch("/api/nutrition/disconnect", { method: "POST" }),
+    onSuccess: () => queryClient.invalidateQueries(),
+  });
+}
