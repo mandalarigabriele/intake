@@ -1,0 +1,21 @@
+services:
+  intake:
+    build: .
+    image: intake:latest
+    container_name: intake
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      DATA_DIR: /data
+    ports:
+      - "3000:3000"
+    volumes:
+      - intake-data:/data
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://127.0.0.1:3000/api/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+
+volumes:
+  intake-data:

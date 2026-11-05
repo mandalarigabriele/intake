@@ -1,0 +1,900 @@
+{
+  "schemaVersion": 1,
+  "validFrom": "2026-11-09",
+  "days": {
+    "monday": {
+      "meals": [
+        {
+          "time": "07:30",
+          "title": "Breakfast",
+          "foods": [
+            {
+              "name": "Greek yogurt 2%",
+              "quantity": 200,
+              "unit": "g"
+            },
+            {
+              "name": "Rolled oats",
+              "quantity": 40,
+              "unit": "g"
+            },
+            {
+              "name": "Blueberries",
+              "quantity": 80,
+              "unit": "g"
+            },
+            {
+              "name": "Espresso",
+              "quantity": 1,
+              "unit": "cup"
+            }
+          ],
+          "macros": {
+            "kcal": 395,
+            "protein": 26,
+            "carbs": 49,
+            "fat": 8.5,
+            "fiber": 6,
+            "sugar": 16,
+            "addedSugar": 0,
+            "saturatedFat": 3.6,
+            "sodiumMg": 95,
+            "caffeineMg": 65
+          }
+        },
+        {
+          "time": "13:00",
+          "title": "Lunch",
+          "foods": [
+            {
+              "name": "Basmati rice (dry)",
+              "quantity": 80,
+              "unit": "g"
+            },
+            {
+              "name": "Chicken breast",
+              "quantity": 150,
+              "unit": "g"
+            },
+            {
+              "name": "Zucchini",
+              "quantity": 200,
+              "unit": "g"
+            },
+            {
+              "name": "Extra virgin olive oil",
+              "quantity": 10,
+              "unit": "ml"
+            }
+          ],
+          "macros": {
+            "kcal": 610,
+            "protein": 52,
+            "carbs": 67,
+            "fat": 13,
+            "fiber": 3,
+            "sugar": 5,
+            "addedSugar": 0,
+            "saturatedFat": 2.4,
+            "sodiumMg": 140
+          }
+        },
+        {
+          "time": "16:30",
+          "title": "Snack",
+          "foods": [
+            {
+              "name": "Apple",
+              "quantity": 1,
+              "unit": "piece"
+            },
+            {
+              "name": "Almonds",
+              "quantity": 20,
+              "unit": "g"
+            }
+          ],
+          "macros": {
+            "kcal": 215,
+            "protein": 4.5,
+            "carbs": 27,
+            "fat": 10,
+            "fiber": 6.5,
+            "sugar": 19,
+            "addedSugar": 0
+          }
+        },
+        {
+          "time": "20:00",
+          "title": "Dinner",
+          "foods": [
+            {
+              "name": "Salmon fillet",
+              "quantity": 150,
+              "unit": "g"
+            },
+            {
+              "name": "Potatoes",
+              "quantity": 250,
+              "unit": "g"
+            },
+            {
+              "name": "Green beans",
+              "quantity": 200,
+              "unit": "g"
+            }
+          ],
+          "macros": {
+            "kcal": 640,
+            "protein": 40,
+            "carbs": 52,
+            "fat": 28,
+            "fiber": 10,
+            "sugar": 6,
+            "addedSugar": 0,
+            "saturatedFat": 5,
+            "sodiumMg": 150
+          }
+        }
+      ]
+    },
+    "tuesday": {
+      "meals": [
+        {
+          "time": "07:30",
+          "title": "Breakfast",
+          "foods": [
+            {
+              "name": "Greek yogurt 2%",
+              "quantity": 200,
+              "unit": "g"
+            },
+            {
+              "name": "Rolled oats",
+              "quantity": 40,
+              "unit": "g"
+            },
+            {
+              "name": "Blueberries",
+              "quantity": 80,
+              "unit": "g"
+            },
+            {
+              "name": "Espresso",
+              "quantity": 1,
+              "unit": "cup"
+            }
+          ],
+          "macros": {
+            "kcal": 395,
+            "protein": 26,
+            "carbs": 49,
+            "fat": 8.5,
+            "fiber": 6,
+            "sugar": 16,
+            "addedSugar": 0,
+            "saturatedFat": 3.6,
+            "sodiumMg": 95,
+            "caffeineMg": 65
+          }
+        },
+        {
+          "time": "13:00",
+          "title": "Lunch",
+          "foods": [
+            {
+              "name": "Wholewheat pasta (dry)",
+              "quantity": 90,
+              "unit": "g"
+            },
+            {
+              "name": "Canned tuna, drained",
+              "quantity": 110,
+              "unit": "g"
+            },
+            {
+              "name": "Cherry tomatoes",
+              "quantity": 150,
+              "unit": "g"
+            },
+            {
+              "name": "Extra virgin olive oil",
+              "quantity": 10,
+              "unit": "ml"
+            }
+          ],
+          "macros": {
+            "kcal": 620,
+            "protein": 45,
+            "carbs": 66,
+            "fat": 15,
+            "fiber": 9,
+            "sugar": 7,
+            "addedSugar": 0,
+            "saturatedFat": 2.5,
+            "sodiumMg": 420
+          }
+        },
+        {
+          "time": "16:30",
+          "title": "Snack",
+          "foods": [
+            {
+              "name": "Apple",
+              "quantity": 1,
+              "unit": "piece"
+            },
+            {
+              "name": "Almonds",
+              "quantity": 20,
+              "unit": "g"
+            }
+          ],
+          "macros": {
+            "kcal": 215,
+            "protein": 4.5,
+            "carbs": 27,
+            "fat": 10,
+            "fiber": 6.5,
+            "sugar": 19,
+            "addedSugar": 0
+          }
+        },
+        {
+          "time": "20:00",
+          "title": "Dinner",
+          "foods": [
+            {
+              "name": "Eggs",
+              "quantity": 3,
+              "unit": "piece"
+            },
+            {
+              "name": "Wholegrain bread",
+              "quantity": 80,
+              "unit": "g"
+            },
+            {
+              "name": "Mixed salad",
+              "quantity": 150,
+              "unit": "g"
+            }
+          ],
+          "macros": {
+            "kcal": 480,
+            "protein": 28,
+            "carbs": 36,
+            "fat": 22,
+            "fiber": 7
+          }
+        }
+      ]
+    },
+    "wednesday": {
+      "meals": [
+        {
+          "time": "07:30",
+          "title": "Breakfast",
+          "foods": [
+            {
+              "name": "Greek yogurt 2%",
+              "quantity": 200,
+              "unit": "g"
+            },
+            {
+              "name": "Rolled oats",
+              "quantity": 40,
+              "unit": "g"
+            },
+            {
+              "name": "Blueberries",
+              "quantity": 80,
+              "unit": "g"
+            },
+            {
+              "name": "Espresso",
+              "quantity": 1,
+              "unit": "cup"
+            }
+          ],
+          "macros": {
+            "kcal": 395,
+            "protein": 26,
+            "carbs": 49,
+            "fat": 8.5,
+            "fiber": 6,
+            "sugar": 16,
+            "addedSugar": 0,
+            "saturatedFat": 3.6,
+            "sodiumMg": 95,
+            "caffeineMg": 65
+          }
+        },
+        {
+          "time": "13:00",
+          "title": "Lunch",
+          "foods": [
+            {
+              "name": "Basmati rice (dry)",
+              "quantity": 80,
+              "unit": "g"
+            },
+            {
+              "name": "Chicken breast",
+              "quantity": 150,
+              "unit": "g"
+            },
+            {
+              "name": "Zucchini",
+              "quantity": 200,
+              "unit": "g"
+            },
+            {
+              "name": "Extra virgin olive oil",
+              "quantity": 10,
+              "unit": "ml"
+            }
+          ],
+          "macros": {
+            "kcal": 610,
+            "protein": 52,
+            "carbs": 67,
+            "fat": 13,
+            "fiber": 3,
+            "sugar": 5,
+            "addedSugar": 0,
+            "saturatedFat": 2.4,
+            "sodiumMg": 140
+          }
+        },
+        {
+          "time": "16:30",
+          "title": "Snack",
+          "foods": [
+            {
+              "name": "Apple",
+              "quantity": 1,
+              "unit": "piece"
+            },
+            {
+              "name": "Almonds",
+              "quantity": 20,
+              "unit": "g"
+            }
+          ],
+          "macros": {
+            "kcal": 215,
+            "protein": 4.5,
+            "carbs": 27,
+            "fat": 10,
+            "fiber": 6.5,
+            "sugar": 19,
+            "addedSugar": 0
+          }
+        },
+        {
+          "time": "20:00",
+          "title": "Dinner",
+          "foods": [
+            {
+              "name": "Salmon fillet",
+              "quantity": 150,
+              "unit": "g"
+            },
+            {
+              "name": "Potatoes",
+              "quantity": 250,
+              "unit": "g"
+            },
+            {
+              "name": "Green beans",
+              "quantity": 200,
+              "unit": "g"
+            }
+          ],
+          "macros": {
+            "kcal": 640,
+            "protein": 40,
+            "carbs": 52,
+            "fat": 28,
+            "fiber": 10,
+            "sugar": 6,
+            "addedSugar": 0,
+            "saturatedFat": 5,
+            "sodiumMg": 150
+          }
+        }
+      ]
+    },
+    "thursday": {
+      "meals": [
+        {
+          "time": "07:30",
+          "title": "Breakfast",
+          "foods": [
+            {
+              "name": "Greek yogurt 2%",
+              "quantity": 200,
+              "unit": "g"
+            },
+            {
+              "name": "Rolled oats",
+              "quantity": 40,
+              "unit": "g"
+            },
+            {
+              "name": "Blueberries",
+              "quantity": 80,
+              "unit": "g"
+            },
+            {
+              "name": "Espresso",
+              "quantity": 1,
+              "unit": "cup"
+            }
+          ],
+          "macros": {
+            "kcal": 395,
+            "protein": 26,
+            "carbs": 49,
+            "fat": 8.5,
+            "fiber": 6,
+            "sugar": 16,
+            "addedSugar": 0,
+            "saturatedFat": 3.6,
+            "sodiumMg": 95,
+            "caffeineMg": 65
+          }
+        },
+        {
+          "time": "13:00",
+          "title": "Lunch",
+          "foods": [
+            {
+              "name": "Wholewheat pasta (dry)",
+              "quantity": 90,
+              "unit": "g"
+            },
+            {
+              "name": "Canned tuna, drained",
+              "quantity": 110,
+              "unit": "g"
+            },
+            {
+              "name": "Cherry tomatoes",
+              "quantity": 150,
+              "unit": "g"
+            },
+            {
+              "name": "Extra virgin olive oil",
+              "quantity": 10,
+              "unit": "ml"
+            }
+          ],
+          "macros": {
+            "kcal": 620,
+            "protein": 45,
+            "carbs": 66,
+            "fat": 15,
+            "fiber": 9,
+            "sugar": 7,
+            "addedSugar": 0,
+            "saturatedFat": 2.5,
+            "sodiumMg": 420
+          }
+        },
+        {
+          "time": "16:30",
+          "title": "Snack",
+          "foods": [
+            {
+              "name": "Apple",
+              "quantity": 1,
+              "unit": "piece"
+            },
+            {
+              "name": "Almonds",
+              "quantity": 20,
+              "unit": "g"
+            }
+          ],
+          "macros": {
+            "kcal": 215,
+            "protein": 4.5,
+            "carbs": 27,
+            "fat": 10,
+            "fiber": 6.5,
+            "sugar": 19,
+            "addedSugar": 0
+          }
+        },
+        {
+          "time": "20:00",
+          "title": "Dinner",
+          "foods": [
+            {
+              "name": "Eggs",
+              "quantity": 3,
+              "unit": "piece"
+            },
+            {
+              "name": "Wholegrain bread",
+              "quantity": 80,
+              "unit": "g"
+            },
+            {
+              "name": "Mixed salad",
+              "quantity": 150,
+              "unit": "g"
+            }
+          ],
+          "macros": {
+            "kcal": 480,
+            "protein": 28,
+            "carbs": 36,
+            "fat": 22,
+            "fiber": 7
+          }
+        }
+      ]
+    },
+    "friday": {
+      "meals": [
+        {
+          "time": "07:30",
+          "title": "Breakfast",
+          "foods": [
+            {
+              "name": "Greek yogurt 2%",
+              "quantity": 200,
+              "unit": "g"
+            },
+            {
+              "name": "Rolled oats",
+              "quantity": 40,
+              "unit": "g"
+            },
+            {
+              "name": "Blueberries",
+              "quantity": 80,
+              "unit": "g"
+            },
+            {
+              "name": "Espresso",
+              "quantity": 1,
+              "unit": "cup"
+            }
+          ],
+          "macros": {
+            "kcal": 395,
+            "protein": 26,
+            "carbs": 49,
+            "fat": 8.5,
+            "fiber": 6,
+            "sugar": 16,
+            "addedSugar": 0,
+            "saturatedFat": 3.6,
+            "sodiumMg": 95,
+            "caffeineMg": 65
+          }
+        },
+        {
+          "time": "13:00",
+          "title": "Lunch",
+          "foods": [
+            {
+              "name": "Basmati rice (dry)",
+              "quantity": 80,
+              "unit": "g"
+            },
+            {
+              "name": "Chicken breast",
+              "quantity": 150,
+              "unit": "g"
+            },
+            {
+              "name": "Zucchini",
+              "quantity": 200,
+              "unit": "g"
+            },
+            {
+              "name": "Extra virgin olive oil",
+              "quantity": 10,
+              "unit": "ml"
+            }
+          ],
+          "macros": {
+            "kcal": 610,
+            "protein": 52,
+            "carbs": 67,
+            "fat": 13,
+            "fiber": 3,
+            "sugar": 5,
+            "addedSugar": 0,
+            "saturatedFat": 2.4,
+            "sodiumMg": 140
+          }
+        },
+        {
+          "time": "16:30",
+          "title": "Snack",
+          "foods": [
+            {
+              "name": "Apple",
+              "quantity": 1,
+              "unit": "piece"
+            },
+            {
+              "name": "Almonds",
+              "quantity": 20,
+              "unit": "g"
+            }
+          ],
+          "macros": {
+            "kcal": 215,
+            "protein": 4.5,
+            "carbs": 27,
+            "fat": 10,
+            "fiber": 6.5,
+            "sugar": 19,
+            "addedSugar": 0
+          }
+        },
+        {
+          "time": "20:00",
+          "title": "Dinner",
+          "foods": [
+            {
+              "name": "Salmon fillet",
+              "quantity": 150,
+              "unit": "g"
+            },
+            {
+              "name": "Potatoes",
+              "quantity": 250,
+              "unit": "g"
+            },
+            {
+              "name": "Green beans",
+              "quantity": 200,
+              "unit": "g"
+            }
+          ],
+          "macros": {
+            "kcal": 640,
+            "protein": 40,
+            "carbs": 52,
+            "fat": 28,
+            "fiber": 10,
+            "sugar": 6,
+            "addedSugar": 0,
+            "saturatedFat": 5,
+            "sodiumMg": 150
+          }
+        }
+      ]
+    },
+    "saturday": {
+      "meals": [
+        {
+          "time": "09:00",
+          "title": "Late breakfast",
+          "foods": [
+            {
+              "name": "Greek yogurt 2%",
+              "quantity": 200,
+              "unit": "g"
+            },
+            {
+              "name": "Rolled oats",
+              "quantity": 40,
+              "unit": "g"
+            },
+            {
+              "name": "Blueberries",
+              "quantity": 80,
+              "unit": "g"
+            },
+            {
+              "name": "Espresso",
+              "quantity": 1,
+              "unit": "cup"
+            }
+          ],
+          "macros": {
+            "kcal": 395,
+            "protein": 26,
+            "carbs": 49,
+            "fat": 8.5,
+            "fiber": 6,
+            "sugar": 16,
+            "addedSugar": 0,
+            "saturatedFat": 3.6,
+            "sodiumMg": 95,
+            "caffeineMg": 65
+          }
+        },
+        {
+          "time": "13:30",
+          "title": "Lunch",
+          "foods": [
+            {
+              "name": "Wholewheat pasta (dry)",
+              "quantity": 90,
+              "unit": "g"
+            },
+            {
+              "name": "Canned tuna, drained",
+              "quantity": 110,
+              "unit": "g"
+            },
+            {
+              "name": "Cherry tomatoes",
+              "quantity": 150,
+              "unit": "g"
+            },
+            {
+              "name": "Extra virgin olive oil",
+              "quantity": 10,
+              "unit": "ml"
+            }
+          ],
+          "macros": {
+            "kcal": 620,
+            "protein": 45,
+            "carbs": 66,
+            "fat": 15,
+            "fiber": 9,
+            "sugar": 7,
+            "addedSugar": 0,
+            "saturatedFat": 2.5,
+            "sodiumMg": 420
+          }
+        },
+        {
+          "time": "20:00",
+          "title": "Dinner",
+          "foods": [
+            {
+              "name": "Salmon fillet",
+              "quantity": 150,
+              "unit": "g"
+            },
+            {
+              "name": "Potatoes",
+              "quantity": 250,
+              "unit": "g"
+            },
+            {
+              "name": "Green beans",
+              "quantity": 200,
+              "unit": "g"
+            }
+          ],
+          "macros": {
+            "kcal": 640,
+            "protein": 40,
+            "carbs": 52,
+            "fat": 28,
+            "fiber": 10,
+            "sugar": 6,
+            "addedSugar": 0,
+            "saturatedFat": 5,
+            "sodiumMg": 150
+          }
+        }
+      ]
+    },
+    "sunday": {
+      "meals": [
+        {
+          "time": "09:00",
+          "title": "Late breakfast",
+          "foods": [
+            {
+              "name": "Greek yogurt 2%",
+              "quantity": 200,
+              "unit": "g"
+            },
+            {
+              "name": "Rolled oats",
+              "quantity": 40,
+              "unit": "g"
+            },
+            {
+              "name": "Blueberries",
+              "quantity": 80,
+              "unit": "g"
+            },
+            {
+              "name": "Espresso",
+              "quantity": 1,
+              "unit": "cup"
+            }
+          ],
+          "macros": {
+            "kcal": 395,
+            "protein": 26,
+            "carbs": 49,
+            "fat": 8.5,
+            "fiber": 6,
+            "sugar": 16,
+            "addedSugar": 0,
+            "saturatedFat": 3.6,
+            "sodiumMg": 95,
+            "caffeineMg": 65
+          }
+        },
+        {
+          "time": "13:30",
+          "title": "Lunch",
+          "foods": [
+            {
+              "name": "Wholewheat pasta (dry)",
+              "quantity": 90,
+              "unit": "g"
+            },
+            {
+              "name": "Canned tuna, drained",
+              "quantity": 110,
+              "unit": "g"
+            },
+            {
+              "name": "Cherry tomatoes",
+              "quantity": 150,
+              "unit": "g"
+            },
+            {
+              "name": "Extra virgin olive oil",
+              "quantity": 10,
+              "unit": "ml"
+            }
+          ],
+          "macros": {
+            "kcal": 620,
+            "protein": 45,
+            "carbs": 66,
+            "fat": 15,
+            "fiber": 9,
+            "sugar": 7,
+            "addedSugar": 0,
+            "saturatedFat": 2.5,
+            "sodiumMg": 420
+          }
+        },
+        {
+          "time": "20:00",
+          "title": "Dinner",
+          "foods": [
+            {
+              "name": "Salmon fillet",
+              "quantity": 150,
+              "unit": "g"
+            },
+            {
+              "name": "Potatoes",
+              "quantity": 250,
+              "unit": "g"
+            },
+            {
+              "name": "Green beans",
+              "quantity": 200,
+              "unit": "g"
+            }
+          ],
+          "macros": {
+            "kcal": 640,
+            "protein": 40,
+            "carbs": 52,
+            "fat": 28,
+            "fiber": 10,
+            "sugar": 6,
+            "addedSugar": 0,
+            "saturatedFat": 5,
+            "sodiumMg": 150
+          }
+        }
+      ]
+    }
+  }
+}

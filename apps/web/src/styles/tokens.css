@@ -1,0 +1,33 @@
+:root {
+  color-scheme: light dark;
+
+  --color-bg: #f6f5f1;
+  --color-surface: #ffffff;
+  --color-text: #1d211e;
+  --color-text-muted: #5f665f;
+  --color-border: #dedbd2;
+  --color-accent: #2f6b4f;
+  --color-highlight: #e08a3c;
+
+  --radius-md: 12px;
+  --radius-lg: 20px;
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-6: 24px;
+
+  --font-sans: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, sans-serif;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-bg: #151714;
+    --color-surface: #1f221e;
+    --color-text: #eceee9;
+    --color-text-muted: #a3aaa2;
+    --color-border: #343832;
+    --color-accent: #6fbf95;
+    --color-highlight: #f0a35e;
+  }
+}
