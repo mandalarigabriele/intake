@@ -1,5 +1,6 @@
 import { resolve } from "node:path";
 import { buildApp } from "./app.js";
+import { GoogleSignIn } from "./auth/google.js";
 import { loadConfig } from "./config.js";
 import { createServices } from "./services.js";
 
@@ -9,7 +10,16 @@ const services = createServices(config);
 const app = await buildApp({
   webDistDir: config.WEB_DIST_DIR ?? resolve(import.meta.dirname, "../../web/dist"),
   logger: true,
-  isProduction: config.NODE_ENV === "production",
+  auth: {
+    google: new GoogleSignIn({
+      clientId: config.GOOGLE_CLIENT_ID,
+      clientSecret: config.GOOGLE_CLIENT_SECRET,
+      redirectUri: `${config.PUBLIC_BASE_URL}/auth/callback`,
+    }),
+    ownerEmail: config.OWNER_EMAIL,
+    sessionSecret: config.SESSION_SECRET,
+    secureCookies: config.PUBLIC_BASE_URL.startsWith("https://"),
+  },
   nutrition: services.nutrition,
 });
 

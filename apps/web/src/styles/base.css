@@ -40,3 +40,50 @@ body {
 .muted {
   color: var(--color-text-muted);
 }
+
+.app-header .button-link {
+  margin-left: auto;
+}
+
+.card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: var(--space-6);
+}
+
+.signin {
+  max-width: 420px;
+  margin: 10vh auto 0;
+  text-align: center;
+}
+
+.signin h2 {
+  margin-top: 0;
+}
+
+.button {
+  display: inline-block;
+  padding: var(--space-3) var(--space-6);
+  border-radius: var(--radius-md);
+  background: var(--color-accent);
+  color: var(--color-bg);
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.button-link {
+  background: none;
+  border: none;
+  padding: var(--space-2);
+  color: var(--color-accent);
+  font: inherit;
+  cursor: pointer;
+}
+
+.notice {
+  padding: var(--space-3) var(--space-4);
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+}
