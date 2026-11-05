@@ -1,0 +1,26 @@
+{
+  "name": "intake",
+  "private": true,
+  "type": "module",
+  "description": "Self-hosted nutrition dashboard with a daily meal timeline, macro tracking and meal plans, powered by the Nutrition MCP server.",
+  "engines": {
+    "node": ">=22"
+  },
+  "workspaces": [
+    "packages/*",
+    "apps/*"
+  ],
+  "scripts": {
+    "build": "npm run build -w @intake/shared && npm run build -w @intake/server && npm run build -w @intake/web",
+    "dev:server": "npm run build -w @intake/shared && npm run dev -w @intake/server",
+    "dev:web": "npm run build -w @intake/shared && npm run dev -w @intake/web",
+    "test": "npm run build -w @intake/shared && npm test --workspaces --if-present",
+    "typecheck": "npm run build -w @intake/shared && npm run typecheck --workspaces --if-present",
+    "schema": "npm run build -w @intake/shared && node scripts/generate-plan-schema.mjs"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.0",
+    "typescript": "^5.7.2",
+    "vitest": "^3.0.0"
+  }
+}
