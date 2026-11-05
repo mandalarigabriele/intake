@@ -1,0 +1,97 @@
+{
+  "date": "2026-11-04",
+  "drink_unit": "us",
+  "locale": "it",
+  "meal_count": 5,
+  "water_entries": 0,
+  "goals": {
+    "calories": 2200,
+    "protein_g": 135,
+    "carbs_g": 255,
+    "fat_g": 70,
+    "fiber_g": 30,
+    "sugar_g": null,
+    "alcohol_g": null,
+    "caffeine_mg": null,
+    "water_ml": 2500
+  },
+  "totals": {
+    "calories": 790,
+    "protein_g": 49.4,
+    "carbs_g": 53.8,
+    "fat_g": 43.2,
+    "fiber_g": 5.8,
+    "sugar_g": 31,
+    "alcohol_g": 0,
+    "caffeine_mg": 126,
+    "water_ml": 0
+  },
+  "weight": null,
+  "meals": [
+    {
+      "description": "Caffè espresso (1 tazzina, senza zucchero)",
+      "meal_type": "snack",
+      "date": null,
+      "calories": 2,
+      "protein_g": 0.1,
+      "carbs_g": 0.3,
+      "fat_g": 0,
+      "fiber_g": 0,
+      "sugar_g": 0,
+      "alcohol_g": 0,
+      "caffeine_mg": 63
+    },
+    {
+      "description": "Ricotta (150 g) con miele (2 cucchiaini)",
+      "meal_type": "snack",
+      "date": null,
+      "calories": 262,
+      "protein_g": 13.2,
+      "carbs_g": 16.8,
+      "fat_g": 16.4,
+      "fiber_g": 0,
+      "sugar_g": 16.7,
+      "alcohol_g": 0,
+      "caffeine_mg": null
+    },
+    {
+      "description": "Caffè espresso (1 tazzina, senza zucchero)",
+      "meal_type": "snack",
+      "date": null,
+      "calories": 2,
+      "protein_g": 0.1,
+      "carbs_g": 0.3,
+      "fat_g": 0,
+      "fiber_g": 0,
+      "sugar_g": 0,
+      "alcohol_g": 0,
+      "caffeine_mg": 63
+    },
+    {
+      "description": "Cena: filetto di salmone Lidl al forno (1 filetto da 125 g), 1 pezzo di piadina al farro Selex (~40 g), salsa allo yogurt intero con erbe (~2 cucchiai), rucola (~50 g) e pomodoro (~150 g) con 1 cucchi…",
+      "meal_type": "dinner",
+      "date": null,
+      "calories": 489,
+      "protein_g": 35.4,
+      "carbs_g": 27.9,
+      "fat_g": 26.6,
+      "fiber_g": 4.4,
+      "sugar_g": 7.3,
+      "alcohol_g": 0,
+      "caffeine_mg": null
+    },
+    {
+      "description": "Mandarino (1 medio, ~80 g) a fine cena",
+      "meal_type": "dinner",
+      "date": null,
+      "calories": 35,
+      "protein_g": 0.6,
+      "carbs_g": 8.5,
+      "fat_g": 0.2,
+      "fiber_g": 1.4,
+      "sugar_g": 7,
+      "alcohol_g": 0,
+      "caffeine_mg": null
+    }
+  ]
+}

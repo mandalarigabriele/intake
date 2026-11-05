@@ -1,33 +1,73 @@
+/*
+ * Design tokens. Light and dark are both chosen explicitly (not an automatic inversion).
+ * Chart colors were validated for colorblind separation and contrast on their surface:
+ * meter / over / water as one set, and the four macro hues in their fixed order.
+ */
 :root {
   color-scheme: light dark;
 
-  --color-bg: #f6f5f1;
+  --color-bg: #f4f3ef;
   --color-surface: #ffffff;
-  --color-text: #1d211e;
-  --color-text-muted: #5f665f;
-  --color-border: #dedbd2;
-  --color-accent: #2f6b4f;
-  --color-highlight: #e08a3c;
+  --color-surface-2: #f0efea;
+  --color-text: #17191a;
+  --color-text-muted: #5f6460;
+  --color-border: #e4e2db;
+  --color-accent: #16794f;
+  --color-on-accent: #ffffff;
 
-  --radius-md: 12px;
-  --radius-lg: 20px;
+  --color-meter: #16794f;
+  --color-over: #c2410c;
+  --color-water: #2563c9;
+  --color-water-soft: #e3ecf9;
+  --color-now: #c2410c;
+
+  --macro-protein: #1baf7a;
+  --macro-carbs: #eda100;
+  --macro-fat: #e87ba4;
+  --macro-fiber: #6250d6;
+
+  --track-mix: 14%;
+  --chip-mix: 16%;
+  --shadow-card: 0 1px 2px rgb(23 25 26 / 4%), 0 4px 16px rgb(23 25 26 / 4%);
+
+  --radius-sm: 10px;
+  --radius-md: 14px;
+  --radius-lg: 22px;
   --space-1: 4px;
   --space-2: 8px;
   --space-3: 12px;
   --space-4: 16px;
+  --space-5: 20px;
   --space-6: 24px;
+  --space-8: 32px;
 
-  --font-sans: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, sans-serif;
+  --font-sans: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --color-bg: #151714;
+    --color-bg: #121412;
     --color-surface: #1f221e;
+    --color-surface-2: #2a2e29;
     --color-text: #eceee9;
     --color-text-muted: #a3aaa2;
-    --color-border: #343832;
-    --color-accent: #6fbf95;
-    --color-highlight: #f0a35e;
+    --color-border: #31352f;
+    --color-accent: #3aa776;
+    --color-on-accent: #0d1a12;
+
+    --color-meter: #3aa776;
+    --color-over: #cf6f24;
+    --color-water: #4a86d8;
+    --color-water-soft: #1f2d42;
+    --color-now: #cf6f24;
+
+    --macro-protein: #199e70;
+    --macro-carbs: #c98500;
+    --macro-fat: #d55181;
+    --macro-fiber: #9085e9;
+
+    --track-mix: 22%;
+    --chip-mix: 24%;
+    --shadow-card: none;
   }
 }

@@ -12,6 +12,12 @@ Intake is a self-hosted, responsive nutrition dashboard with a daily meal timeli
 - The **README must always be kept up to date** with the complete list of features, on every change.
 - **Secrets** (Google OAuth credentials, MCP tokens, session keys) live only in an environment file on the server, **never in the repository**. Only variable names go in `.env.example`.
 
+## UI
+
+- The UI must be flexible and modern, follow the system light/dark mode automatically, and work on desktop, iPad and iPhone (including the installed home-screen app with safe-area insets). Check every UI change at phone, tablet and desktop widths in both color schemes, with no horizontal scrolling.
+- User-facing text is Italian and lives in `apps/web/src/lib/strings.ts`; numbers and dates use Italian formatting (`apps/web/src/lib/format.ts`). Code, comments and docs stay English.
+- Colors are tokens in `apps/web/src/styles/tokens.css`, chosen separately for light and dark. Chart colors (meters, macros, water, over-goal) were validated for colorblind separation and contrast; re-validate before changing them. Over-goal states use an icon and a label, never color alone.
+
 ## Layout
 
 - `packages/shared` – code shared by server and web: meal plan zod schema and types, API DTOs.
