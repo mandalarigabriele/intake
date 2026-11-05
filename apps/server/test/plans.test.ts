@@ -212,7 +212,10 @@ describe("plan routes", () => {
   it("includes planned meals in the day view, with breakfast covered by the logged one", async () => {
     const { app, headers } = await signedIn();
     await app.inject({ method: "POST", url: "/api/plans", headers, payload: examplePlan });
+    const before = (await app.inject({ method: "GET", url: "/api/days/2026-11-03", headers })).json();
+    expect(before.hasPlan).toBe(false);
     const day = (await app.inject({ method: "GET", url: "/api/days/today", headers })).json();
+    expect(day.hasPlan).toBe(true);
     expect(day.planned.map((p: { title: string; status: string }) => `${p.title}:${p.status}`)).toEqual([
       "Spuntino:todo",
       "Pranzo:todo",

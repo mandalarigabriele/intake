@@ -2769,3 +2769,19 @@ a.bar-column:hover .bar:not([data-empty]) {
     gap: 1rem;
   }
 }
+
+/* "Adesso" as the last entry: no rod below it (nothing comes after) */
+.timeline-item.now-marker[data-position="last"]::before {
+  display: none;
+}
+
+.timeline-hint {
+  padding: 0 4px 12px;
+  font-size: 13px;
+  color: var(--color-text-muted);
+}
+
+.timeline-hint a {
+  color: var(--color-accent);
+  font-weight: 700;
+}

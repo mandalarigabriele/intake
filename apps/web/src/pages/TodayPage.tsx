@@ -102,6 +102,7 @@ export function TodayPage({ user, notice, onAdd }: Props) {
             date={view.date}
             meals={view.meals}
             planned={view.planned}
+            hasPlan={view.hasPlan}
             now={view.isToday ? view.clock.localTime : null}
             onLogPlanned={(entry) => logPlanned.mutate({ date: view.date, planId: entry.planId, index: entry.index })}
             loggingPlanned={

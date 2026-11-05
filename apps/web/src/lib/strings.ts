@@ -110,6 +110,8 @@ export const t = {
     now: "ADESSO",
     nowLabel: "Adesso",
     empty: "Nessun pasto registrato.",
+    noPlan: "Nessun piano attivo per questo giorno ·",
+    uploadPlan: "Carica il piano",
   },
 
   meal: {

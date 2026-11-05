@@ -107,6 +107,8 @@ export interface DayView {
   meals: Meal[];
   /** Planned meals from the active plan that no logged meal covers, sorted by time. */
   planned: PlannedEntry[];
+  /** Whether a meal plan is in effect on this date. */
+  hasPlan: boolean;
 }
 
 export interface AddWaterRequest {
