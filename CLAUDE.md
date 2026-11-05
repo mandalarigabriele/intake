@@ -23,6 +23,7 @@ Intake is a self-hosted, responsive nutrition dashboard with a daily meal timeli
 ## Architecture notes
 
 - Nutrition data (meals, goals, water, weight) is read **live** from the Nutrition MCP server on every request. Do not cache it in the local database.
+- SQLite uses the built-in `node:sqlite` module (no native dependencies). Migrations are an append-only list in `apps/server/src/db/database.ts`.
 - The local SQLite database (in `/data`) only stores what the MCP server does not have: meal plan versions, links between planned meals and logged meals, and the encrypted MCP refresh token.
 - MCP tool responses are often formatted text. Parsing lives in `apps/server/src/parsers/`, and every parser is covered by tests that use real responses saved in `__fixtures__/`. Prefer `structuredContent` when a tool provides it.
 - "Today" and the timeline's "now" marker use the timezone of the Nutrition profile, not the container's timezone.
@@ -35,4 +36,5 @@ Intake is a self-hosted, responsive nutrition dashboard with a daily meal timeli
 - `npm test` – run all tests.
 - `npm run typecheck` – type-check all workspaces.
 - `npm run build` – build shared, server and web.
+- `npm run capture -w @intake/server` – save raw Nutrition MCP responses to `apps/server/captures/` (gitignored, real data). Copy one into `src/parsers/__fixtures__/` with IDs replaced before changing a parser.
 - `npm run schema` – regenerate `schemas/meal-plan.schema.json` after changing the meal plan schema.

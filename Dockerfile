@@ -29,4 +29,4 @@ RUN mkdir -p /data && chown node:node /data
 USER node
 
 EXPOSE 3000
-CMD ["node", "apps/server/dist/index.js"]
+CMD ["node", "--disable-warning=ExperimentalWarning", "apps/server/dist/index.js"]

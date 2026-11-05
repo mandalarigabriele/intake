@@ -151,3 +151,4 @@ vite.config.ts.timestamp-*
 # Intake
 !.env.example
 data/
+apps/server/captures/
