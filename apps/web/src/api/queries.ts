@@ -2,12 +2,14 @@ import type {
   AddWaterRequest,
   DayView,
   FavoriteMealRequest,
+  LogWeightRequest,
   Meal,
   PlanUploadError,
   PlansResponse,
   RepeatMealRequest,
   StoredPlan,
   UpdateMealRequest,
+  WeekView,
 } from "@intake/shared";
 import { keepPreviousData, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { ApiError, apiFetch, newIdempotencyKey } from "./client";
@@ -204,5 +206,22 @@ export function useFavoriteMeal() {
   return useMutation({
     mutationFn: ({ id, name }: { id: string; name: string }) =>
       apiFetch(`/api/meals/${id}/favorite`, { method: "POST", json: { name } satisfies FavoriteMealRequest }),
+  });
+}
+
+export function useWeek(date: string) {
+  return useQuery({
+    queryKey: ["week", date],
+    queryFn: () => apiFetch<WeekView>(`/api/weeks/${date}`),
+    placeholderData: keepPreviousData,
+  });
+}
+
+export function useLogWeight() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (weightKg: number) =>
+      apiFetch("/api/weight", { method: "POST", json: { weightKg, idempotencyKey: newIdempotencyKey() } satisfies LogWeightRequest }),
+    onSettled: () => queryClient.invalidateQueries({ queryKey: ["week"] }),
   });
 }

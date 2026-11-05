@@ -13,5 +13,7 @@ Meal IDs are replaced with placeholder UUIDs; everything else is kept verbatim.
 | `current-time.txt` | `get_current_time` | – |
 | `profile.txt` | `get_profile` | – |
 | `goal-progress.json` | `get_goal_progress` | `date` (structuredContent only) |
+| `nutrition-summary.json` | `get_nutrition_summary` | 7 days (structuredContent only) |
+| `weight-trends-empty.json` | `get_weight_trends` | no weigh-ins yet (structuredContent only) |
 
 When the server output changes, add the new response as a fixture before changing the parser.

@@ -5,12 +5,13 @@ import { Route, Switch } from "wouter";
 import { useMe } from "./api/queries";
 import { AddSheet } from "./components/AddSheet";
 import { AppShell } from "./components/AppShell";
-import { TrainingIcon, WeekIcon } from "./components/icons";
+import { TrainingIcon } from "./components/icons";
 import { t } from "./lib/strings";
 import { ComingSoonPage } from "./pages/ComingSoonPage";
 import { EditMealPage } from "./pages/EditMealPage";
 import { MealPage } from "./pages/MealPage";
 import { PlanPage } from "./pages/PlanPage";
+import { WeekPage } from "./pages/WeekPage";
 import { SignInPage } from "./pages/SignInPage";
 import { TodayPage } from "./pages/TodayPage";
 
@@ -52,7 +53,7 @@ function Root() {
     <AppShell user={me.data} onAdd={openAdd}>
       <Switch>
         <Route path="/settimana">
-          <ComingSoonPage title={t.nav.week} heading={t.placeholder.soon} body={t.placeholder.week} Icon={WeekIcon} />
+          <WeekPage />
         </Route>
         <Route path="/pasto/:date/:id/modifica">{(params) => <EditMealPage date={params.date} id={params.id} />}</Route>
         <Route path="/pasto/:date/:id">{(params) => <MealPage date={params.date} id={params.id} />}</Route>

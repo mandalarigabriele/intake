@@ -4,7 +4,11 @@ import {
   parseGoalProgress,
   parseGoals,
   parseMeals,
+  parseNutritionSummary,
+  parseWeightTrends,
   type GoalProgress,
+  type NutritionSummary,
+  type WeightTrend,
   type Parsed,
   type ParsedMeals,
 } from "../parsers/index.js";
@@ -70,6 +74,21 @@ export class NutritionApi {
   /** Daily goals and totals (including water) from structured content. */
   goalProgress(date: string): Promise<GoalProgress> {
     return this.callStructured("get_goal_progress", { date }, parseGoalProgress);
+  }
+
+  /** Daily totals for a date range (at most 92 days), from structured content. */
+  summary(startDate: string, endDate: string): Promise<NutritionSummary> {
+    return this.callStructured("get_nutrition_summary", { start_date: startDate, end_date: endDate }, parseNutritionSummary);
+  }
+
+  /** Daily weigh-ins over `days` days ending on `endDate`, from structured content. */
+  weightTrends(days: number, endDate: string): Promise<WeightTrend> {
+    return this.callStructured("get_weight_trends", { days, end_date: endDate }, parseWeightTrends);
+  }
+
+  /** Logs a weigh-in now, in kilograms. */
+  async logWeight(weightKg: number, idempotencyKey: string): Promise<void> {
+    await this.call("log_weight", { weight: weightKg, unit: "kg", idempotency_key: idempotencyKey });
   }
 
   /** Meals of a date range (at most 31 days), with full detail. */

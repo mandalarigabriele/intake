@@ -27,6 +27,7 @@ const app = await buildApp({
   nutrition: services.nutrition,
   api,
   mealsApi: api,
+  weekApi: api,
   plans: services.plans,
 });
 

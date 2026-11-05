@@ -82,3 +82,38 @@ export interface RepeatMealRequest {
 export interface FavoriteMealRequest {
   name: string;
 }
+
+export interface WeekDay {
+  date: string;
+  /** null when nothing was logged that day. */
+  kcal: number | null;
+  protein: number | null;
+  mealCount: number;
+}
+
+export interface WeightEntry {
+  date: string;
+  weight: number;
+}
+
+export interface WeekView {
+  /** Monday and Sunday of the week. */
+  start: string;
+  end: string;
+  today: string;
+  goals: { kcal: number | null; protein: number | null };
+  days: WeekDay[];
+  /** Averages over the days with meals; null when none. */
+  averages: { kcal: number; protein: number; days: number } | null;
+  weight: {
+    unit: string;
+    target: number | null;
+    /** Daily weigh-ins over the last 90 days up to the end of the week, oldest first. */
+    entries: WeightEntry[];
+  };
+}
+
+export interface LogWeightRequest {
+  weightKg: number;
+  idempotencyKey: string;
+}
