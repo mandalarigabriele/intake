@@ -11,6 +11,8 @@ Self-hosted nutrition dashboard with a daily meal timeline, macro tracking and m
 - Project scaffold: npm workspaces (`packages/shared`, `apps/server`, `apps/web`), single Docker image, docker compose.
 - Meal plan file format with validation (zod) and a generated JSON Schema, including optional sugar, added sugar, saturated fat, sodium and caffeine so that meals logged from the plan are complete. See [docs/meal-plan-format.md](docs/meal-plan-format.md).
 - Server health endpoint (`GET /api/health`) and environment validation at startup.
+- Nutrition MCP connection: one-time OAuth login at `/connect/nutrition` (dynamic client registration, PKCE), refresh token stored encrypted (AES-256-GCM) in SQLite and renewed automatically, connection status at `GET /api/nutrition/status` and `POST /api/nutrition/disconnect`.
+- `npm run capture -w @intake/server` saves raw responses of the read-only Nutrition tools for building parser fixtures.
 - Parsers for Nutrition MCP responses (meals with foods and all tracked nutrients, nutrition goals, current time and timezone), tested against real server output. Unrecognized fields are reported as warnings instead of being silently dropped.
 - Web app shell, installable on iPhone via Safari "Add to Home Screen" (web app manifest and icons, safe-area aware, light and dark themes).
 
@@ -35,7 +37,7 @@ Self-hosted nutrition dashboard with a daily meal timeline, macro tracking and m
 
 - Backend: Node.js 22, TypeScript, Fastify, MCP client of the Nutrition MCP server.
 - Frontend: React, Vite.
-- Storage: live data from the Nutrition MCP server; local SQLite only for meal plans and tokens.
+- Storage: live data from the Nutrition MCP server; local SQLite (`node:sqlite`, no native dependencies) only for meal plans and tokens.
 - Packaging: Docker and docker compose.
 
 ## Repository layout
@@ -60,6 +62,10 @@ npm run dev:server        # http://localhost:3000
 npm run dev:web           # http://localhost:5173, proxies /api, /auth and /connect to the server
 ```
 
+For local development set `PUBLIC_BASE_URL=http://localhost:3000` and `DATA_DIR=./data` in `.env`. Then open http://localhost:3000/connect/nutrition once to connect the Nutrition account; the token is stored in `apps/server/data/intake.db`.
+
+Until Google sign-in is implemented, the Nutrition routes are refused when `NODE_ENV=production`.
+
 Other commands:
 
 | Command | Purpose |
@@ -67,6 +73,7 @@ Other commands:
 | `npm test` | Run all tests |
 | `npm run typecheck` | Type-check all workspaces |
 | `npm run build` | Build shared, server and web |
+| `npm run capture -w @intake/server` | Save raw Nutrition MCP responses to `apps/server/captures/` (gitignored) |
 | `npm run schema` | Regenerate `schemas/meal-plan.schema.json` after changing the meal plan schema |
 
 ## Deployment
