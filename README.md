@@ -14,7 +14,8 @@ Self-hosted nutrition dashboard with a daily meal timeline, macro tracking and m
 - Nutrition MCP connection: one-time OAuth login at `/connect/nutrition` (dynamic client registration, PKCE), refresh token stored encrypted (AES-256-GCM) in SQLite and renewed automatically, connection status at `GET /api/nutrition/status` and `POST /api/nutrition/disconnect`.
 - `npm run capture -w @intake/server` saves raw responses of the read-only Nutrition tools for building parser fixtures.
 - Parsers for Nutrition MCP responses (meals with foods and all tracked nutrients, nutrition goals, current time and timezone), tested against real server output. Unrecognized fields are reported as warnings instead of being silently dropped.
-- Web app shell, installable on iPhone via Safari "Add to Home Screen" (web app manifest and icons, safe-area aware, light and dark themes).
+- Sign in with Google, restricted to the owner's account (`OWNER_EMAIL`): OpenID Connect with PKCE and nonce, signed httpOnly session cookie valid for 30 days, sign-out. All data routes and the Nutrition connection require it. See [docs/google-sign-in.md](docs/google-sign-in.md).
+- Web app shell with sign-in screen and Nutrition connection status, installable on iPhone via Safari "Add to Home Screen" (web app manifest and icons, safe-area aware, light and dark themes).
 
 ### Planned – version 1
 
@@ -25,8 +26,6 @@ Self-hosted nutrition dashboard with a daily meal timeline, macro tracking and m
 - Week day navigation.
 - Weight logging view and weekly trends.
 - Meal plan section: upload a JSON plan file; it becomes active from its `validFrom` date onward; previous versions are kept as history.
-- Sign in with Google, restricted to the owner's account.
-- One-time Nutrition MCP OAuth connection with the refresh token stored server-side.
 
 ### Planned – phase 2
 
@@ -57,14 +56,12 @@ Requires Node.js 22 or later.
 
 ```sh
 npm install
-cp .env.example .env      # fill in the values (placeholders are fine until auth is implemented)
+cp .env.example .env      # fill in the values, see docs/google-sign-in.md for the Google ones
 npm run dev:server        # http://localhost:3000
 npm run dev:web           # http://localhost:5173, proxies /api, /auth and /connect to the server
 ```
 
-For local development set `PUBLIC_BASE_URL=http://localhost:3000` and `DATA_DIR=./data` in `.env`. Then open http://localhost:3000/connect/nutrition once to connect the Nutrition account; the token is stored in `apps/server/data/intake.db`.
-
-Until Google sign-in is implemented, the Nutrition routes are refused when `NODE_ENV=production`.
+For local development set `PUBLIC_BASE_URL=http://localhost:3000` and `DATA_DIR=./data` in `.env`. Then open http://localhost:3000, sign in with Google and, if needed, connect the Nutrition account once; its token is stored in `apps/server/data/intake.db`.
 
 Other commands:
 

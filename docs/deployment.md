@@ -15,7 +15,7 @@ Intake runs as a single Docker container in an LXC container on Proxmox, exposed
    chmod 600 .env
    ```
    Generate random secrets with `openssl rand -base64 48`.
-4. In Google Cloud Console, create an OAuth client of type "Web application" and add `<PUBLIC_BASE_URL>/auth/callback` as an authorized redirect URI.
+4. In Google Cloud Console, add `<PUBLIC_BASE_URL>/auth/callback` as an authorized redirect URI of the OAuth client (see [google-sign-in.md](google-sign-in.md)).
 5. Start the app:
    ```sh
    docker compose up -d --build
