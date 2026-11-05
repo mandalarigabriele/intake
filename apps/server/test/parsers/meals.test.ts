@@ -121,3 +121,17 @@ describe("parseMeals – robustness", () => {
     expect(() => parseMeals("Time: 2026-11-05 12:30\nCalories: 500")).toThrow(ParseError);
   });
 });
+
+describe("parseMeals – date range", () => {
+  it("parses meals grouped by day, ignoring headings and the Sources line", () => {
+    const { value, warnings } = parseMeals(fixture("meals-full-range.txt"));
+    expect(warnings).toEqual([]);
+    expect(value.meals.map((m) => [m.date, m.time, m.type])).toEqual([
+      ["2026-11-04", "17:02", "snack"],
+      ["2026-11-04", "20:10", "dinner"],
+      ["2026-11-05", "14:02", "lunch"],
+    ]);
+    expect(value.meals[2]!.items).toHaveLength(6);
+    expect(value.meals[2]!.items[4]).toMatchObject({ name: "Sale", nutrients: { sodiumMg: 400 } });
+  });
+});

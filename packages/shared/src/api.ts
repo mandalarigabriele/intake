@@ -1,4 +1,5 @@
 import type { MealPlan, MealTypeValue, PlannedMacros } from "./mealPlan.js";
+import type { MealType, Nutrients } from "./nutrition.js";
 
 /** A stored meal plan version. */
 export interface StoredPlan {
@@ -50,4 +51,34 @@ export interface PlannedEntry {
   foods: string;
   status: PlannedStatus;
   macros: PlannedMacros | null;
+}
+
+/** A meal ingredient as sent back when editing (nutrients already scaled to the quantity). */
+export interface MealItemInput {
+  name: string;
+  quantity: number | null;
+  unit: string | null;
+  nutrients: Nutrients;
+}
+
+export interface UpdateMealRequest {
+  /** Local date and time of the meal. */
+  date: string;
+  time: string;
+  type: MealType;
+  description: string;
+  /** Full ingredient list (replaces the existing one); totals are then the sum of the items. */
+  items?: MealItemInput[];
+  /** Totals for a meal without items. */
+  totals?: { kcal: number; protein: number; carbs: number; fat: number };
+}
+
+export interface RepeatMealRequest {
+  /** Date of the meal to copy, to find it. */
+  date: string;
+  idempotencyKey: string;
+}
+
+export interface FavoriteMealRequest {
+  name: string;
 }

@@ -20,6 +20,7 @@ import { ParseError, emptyNutrients, leadingNumber, parseNutrientTokens, type Pa
  *     1. Banana — 120 g — 107 kcal · P 1.3 g · … · sugar 14.7 g (0 added)
  *
  * The compact format truncates descriptions and has no items, so Intake always asks for "full".
+ * get_meals_by_date_range uses the same blocks, grouped under "## date" headings and "===" separators.
  */
 
 export interface ParsedMeals {
@@ -48,7 +49,8 @@ const NUTRIENT_FIELDS: Record<string, keyof Nutrients> = {
   Sodium: "sodiumMg",
 };
 
-const TEXT_FIELDS = new Set(["ID", "Time", "Type", "Description", "Notes", "Sugar", "Items"]);
+// "Sources" (where each nutrient figure came from) is informational and not used
+const TEXT_FIELDS = new Set(["ID", "Time", "Type", "Description", "Notes", "Sugar", "Items", "Sources"]);
 
 export function parseMeals(text: string): Parsed<ParsedMeals> {
   const warnings: string[] = [];
@@ -67,7 +69,12 @@ export function parseMeals(text: string): Parsed<ParsedMeals> {
     return { value: { timezone, meals: [] }, warnings };
   }
 
-  const blocks = body.split(/^\s*---\s*$/m).map((block) => block.trim()).filter(Boolean);
+  // get_meals_by_date_range groups days under "## YYYY-MM-DD (N meals)" headings separated by "==="
+  const blocks = body
+    .replace(/^##\s+\d{4}-\d{2}-\d{2}.*$/gm, "")
+    .split(/^\s*(?:---|===)\s*$/m)
+    .map((block) => block.trim())
+    .filter(Boolean);
   const meals = blocks.map((block, index) => parseMealBlock(block, index, warnings));
   return { value: { timezone, meals }, warnings };
 }

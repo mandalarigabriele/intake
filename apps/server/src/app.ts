@@ -10,6 +10,7 @@ import { ToolError } from "./mcp/nutritionApi.js";
 import { ParseError } from "./parsers/common.js";
 import type { PlanStore } from "./db/planStore.js";
 import { dayRoutes, type DayRoutesOptions } from "./routes/days.js";
+import { mealRoutes, type MealRoutesOptions } from "./routes/meals.js";
 import { planRoutes } from "./routes/plans.js";
 import { authRoutes } from "./routes/auth.js";
 import { healthRoutes } from "./routes/health.js";
@@ -34,6 +35,8 @@ export interface AppOptions {
   nutrition?: NutritionConnectionPort;
   /** Parsed Nutrition data access for the day routes; registered together with `auth`. */
   api?: DayRoutesOptions["api"];
+  /** Logged meal writes (edit, delete, favorite, repeat); registered together with `auth`. */
+  mealsApi?: MealRoutesOptions["api"];
   /** Meal plan storage; registered together with `api`. */
   plans?: PlanStore;
 }
@@ -56,7 +59,7 @@ export async function buildApp(options: AppOptions = {}): Promise<FastifyInstanc
 
   await app.register(healthRoutes, { prefix: "/api" });
 
-  if ((options.nutrition || options.api) && !options.auth) {
+  if ((options.nutrition || options.api || options.mealsApi) && !options.auth) {
     throw new Error("Nutrition routes need authentication options");
   }
 
@@ -71,6 +74,9 @@ export async function buildApp(options: AppOptions = {}): Promise<FastifyInstanc
     if (options.nutrition) {
       await app.register(nutritionConnectRoutes, { connection: options.nutrition, requireOwner });
       await app.register(nutritionApiRoutes, { prefix: "/api", connection: options.nutrition, requireOwner });
+    }
+    if (options.mealsApi) {
+      await app.register(mealRoutes, { prefix: "/api", api: options.mealsApi, requireOwner });
     }
     if (options.api) {
       await app.register(dayRoutes, { prefix: "/api", api: options.api, plans: options.plans, requireOwner });

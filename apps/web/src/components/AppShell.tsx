@@ -27,15 +27,18 @@ export function AppShell({ user, onAdd, children }: Props) {
   const [location] = useLocation();
   const status = useNutritionStatus(true);
 
+  // Meal detail and edit are pushed screens without the bottom tab bar (docs/design)
+  const pushed = location.startsWith("/pasto/");
+
   return (
-    <div className="shell">
+    <div className="shell" data-pushed={pushed || undefined}>
       <nav className="sidebar" aria-label={t.nav.label}>
         <div className="sidebar-brand">
           <Logo size={30} />
           <span>{t.appName}</span>
         </div>
         {SECTIONS.map(({ path, label }) => (
-          <Link key={path} href={path} className="sidebar-link" aria-current={location === path ? "page" : undefined}>
+          <Link key={path} href={path} className="sidebar-link" aria-current={location === path || (path === "/" && pushed) ? "page" : undefined}>
             {label}
           </Link>
         ))}
