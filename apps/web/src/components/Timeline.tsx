@@ -1,5 +1,7 @@
 import type { Meal, PlannedEntry } from "@intake/shared";
+import { useState } from "react";
 import { Link } from "wouter";
+import { ConfirmDeleteSheet } from "./ConfirmDeleteSheet";
 import { formatGramsShort, formatKcal, formatTime } from "../lib/format";
 import { t } from "../lib/strings";
 import { MACROS } from "./MacroCard";
@@ -34,25 +36,47 @@ export function mealSummary(meal: Meal): string {
 const plannedText = (entry: PlannedEntry) => entry.foods.replace(/^[^:]{1,30}:\s*/, (prefix) => (prefix.toLowerCase().startsWith(entry.title.toLowerCase().slice(0, 5)) ? "" : prefix));
 
 function LoggedCard({ meal }: { meal: Meal }) {
+  const [confirmDelete, setConfirmDelete] = useState(false);
   const values = { protein: meal.nutrients.protein, carbs: meal.nutrients.carbs, fat: meal.nutrients.fat, fiber: meal.nutrients.fiber };
   const chips = MACROS.filter((key) => values[key] !== null && Math.round(values[key]) > 0);
+  const title = mealTitle(meal);
   return (
-    <Link href={`/pasto/${meal.date}/${meal.id}`} className="meal-card" data-kind="logged">
-      <span className="meal-card-head">
-        <h3>{mealTitle(meal)}</h3>
+    <article className="meal-card" data-kind="logged">
+      <header className="meal-card-head">
+        <h3>
+          {/* The link covers the whole card; the edit/delete buttons sit above it */}
+          <Link href={`/pasto/${meal.date}/${meal.id}`} className="card-link">
+            {title}
+          </Link>
+        </h3>
         <span className="meal-kcal">{formatKcal(meal.nutrients.kcal)} kcal</span>
-      </span>
-      <span className="meal-summary">{mealSummary(meal)}</span>
-      {chips.length > 0 && (
-        <span className="chips" aria-label="Macronutrienti del pasto">
-          {chips.map((key) => (
-            <span key={key} className="chip" data-macro={key}>
-              {t.macroChips[key]} {formatGramsShort(values[key]!)} g
-            </span>
-          ))}
+        <span className="card-tools">
+          <Link href={`/pasto/${meal.date}/${meal.id}/modifica`} className="tool-button" aria-label={`${t.meal.edit} ${title.toLowerCase()}`}>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+              <path d="M4 20h4L19 9l-4-4L4 16z" />
+            </svg>
+          </Link>
+          <button type="button" className="tool-button" data-danger aria-label={`${t.edit.delete} ${title.toLowerCase()}`} onClick={() => setConfirmDelete(true)}>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+              <path d="M5 7h14M10 7V4h4v3M7 7l1 13h8l1-13" />
+            </svg>
+          </button>
         </span>
+      </header>
+      <p className="meal-summary">{mealSummary(meal)}</p>
+      {chips.length > 0 && (
+        <ul className="chips" aria-label="Macronutrienti del pasto">
+          {chips.map((key) => (
+            <li key={key} className="chip" data-macro={key}>
+              {t.macroChips[key]} {formatGramsShort(values[key]!)} g
+            </li>
+          ))}
+        </ul>
       )}
-    </Link>
+      {confirmDelete && (
+        <ConfirmDeleteSheet mealId={meal.id} mealType={meal.type} onClose={() => setConfirmDelete(false)} onDeleted={() => setConfirmDelete(false)} />
+      )}
+    </article>
   );
 }
 

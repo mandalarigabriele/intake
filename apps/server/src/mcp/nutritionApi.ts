@@ -72,6 +72,24 @@ export class NutritionApi {
     return this.callStructured("get_goal_progress", { date }, parseGoalProgress);
   }
 
+  /** Meals of a date range (at most 31 days), with full detail. */
+  mealsByRange(startDate: string, endDate: string): Promise<ParsedMeals> {
+    return this.callText("get_meals_by_date_range", { start_date: startDate, end_date: endDate, detail: "full" }, parseMeals);
+  }
+
+  async updateMeal(id: string, fields: MealWriteFields): Promise<void> {
+    await this.call("update_meal", { id, ...fields });
+  }
+
+  async deleteMeal(id: string): Promise<void> {
+    await this.call("delete_meal", { id });
+  }
+
+  /** Saves a logged meal as a favorite ("saved meal") on Nutrition. */
+  async saveMeal(name: string, fromMealId: string): Promise<void> {
+    await this.call("save_meal", { name, from_meal_id: fromMealId });
+  }
+
   /** Logs a meal; returns its id when the response carries one. */
   async logMeal(fields: MealWriteFields & { description: string; meal_type: string }): Promise<{ id: string | null }> {
     const result = await this.call("log_meal", { ...fields });

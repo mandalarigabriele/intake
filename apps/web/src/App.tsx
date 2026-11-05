@@ -8,6 +8,8 @@ import { AppShell } from "./components/AppShell";
 import { TrainingIcon, WeekIcon } from "./components/icons";
 import { t } from "./lib/strings";
 import { ComingSoonPage } from "./pages/ComingSoonPage";
+import { EditMealPage } from "./pages/EditMealPage";
+import { MealPage } from "./pages/MealPage";
 import { PlanPage } from "./pages/PlanPage";
 import { SignInPage } from "./pages/SignInPage";
 import { TodayPage } from "./pages/TodayPage";
@@ -52,6 +54,8 @@ function Root() {
         <Route path="/settimana">
           <ComingSoonPage title={t.nav.week} heading={t.placeholder.soon} body={t.placeholder.week} Icon={WeekIcon} />
         </Route>
+        <Route path="/pasto/:date/:id/modifica">{(params) => <EditMealPage date={params.date} id={params.id} />}</Route>
+        <Route path="/pasto/:date/:id">{(params) => <MealPage date={params.date} id={params.id} />}</Route>
         <Route path="/piano">
           <PlanPage />
         </Route>

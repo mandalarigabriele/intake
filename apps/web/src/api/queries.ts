@@ -1,4 +1,14 @@
-import type { AddWaterRequest, DayView, PlanUploadError, PlansResponse, StoredPlan } from "@intake/shared";
+import type {
+  AddWaterRequest,
+  DayView,
+  FavoriteMealRequest,
+  Meal,
+  PlanUploadError,
+  PlansResponse,
+  RepeatMealRequest,
+  StoredPlan,
+  UpdateMealRequest,
+} from "@intake/shared";
 import { keepPreviousData, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { ApiError, apiFetch, newIdempotencyKey } from "./client";
 
@@ -148,5 +158,51 @@ export function useUploadPlan() {
       queryClient.invalidateQueries({ queryKey: ["plans"] });
       queryClient.invalidateQueries({ queryKey: ["day"] });
     },
+  });
+}
+
+const invalidateDays = (queryClient: ReturnType<typeof useQueryClient>) => queryClient.invalidateQueries({ queryKey: ["day"] });
+
+export function useRecentMeals(enabled: boolean) {
+  return useQuery({
+    queryKey: ["recent-meals"],
+    queryFn: () => apiFetch<{ meals: Meal[] }>("/api/meals/recent").then((r) => r.meals),
+    enabled,
+  });
+}
+
+/** Logs a copy of an earlier meal now. */
+export function useRepeatMeal() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (meal: Pick<Meal, "id" | "date">) =>
+      apiFetch(`/api/meals/${meal.id}/repeat`, {
+        method: "POST",
+        json: { date: meal.date, idempotencyKey: newIdempotencyKey() } satisfies RepeatMealRequest,
+      }),
+    onSettled: () => invalidateDays(queryClient),
+  });
+}
+
+export function useUpdateMeal() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({ id, request }: { id: string; request: UpdateMealRequest }) => apiFetch(`/api/meals/${id}`, { method: "PATCH", json: request }),
+    onSettled: () => invalidateDays(queryClient),
+  });
+}
+
+export function useDeleteMeal() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (id: string) => apiFetch(`/api/meals/${id}`, { method: "DELETE" }),
+    onSettled: () => invalidateDays(queryClient),
+  });
+}
+
+export function useFavoriteMeal() {
+  return useMutation({
+    mutationFn: ({ id, name }: { id: string; name: string }) =>
+      apiFetch(`/api/meals/${id}/favorite`, { method: "POST", json: { name } satisfies FavoriteMealRequest }),
   });
 }
