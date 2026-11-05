@@ -1,75 +1,121 @@
-import type { Meal } from "@intake/shared";
+import type { Meal, PlannedEntry } from "@intake/shared";
+import { Link } from "wouter";
 import { formatGramsShort, formatKcal, formatTime } from "../lib/format";
 import { t } from "../lib/strings";
 import { MACROS } from "./MacroCard";
 
 interface Props {
+  date: string;
   meals: Meal[];
+  planned: PlannedEntry[];
   /** Local time HH:MM:SS when the day is today; the "now" marker is shown only then. */
   now: string | null;
+  onLogPlanned: (entry: PlannedEntry) => void;
+  loggingPlanned: PlannedEntry | null;
+  logFailed: boolean;
+  onOther: () => void;
 }
 
-type Entry = { kind: "meal"; meal: Meal } | { kind: "now"; time: string };
+type Entry = { kind: "meal"; time: string; meal: Meal } | { kind: "planned"; time: string; entry: PlannedEntry } | { kind: "now"; time: string };
 
-function mealTitle(meal: Meal): string {
+export function mealTitle(meal: Pick<Meal, "type">): string {
   return t.mealTypes[meal.type] ?? (meal.type ? meal.type.charAt(0).toUpperCase() + meal.type.slice(1) : "Pasto");
 }
 
 /** Foods with quantities when the meal has items, otherwise the description without a "Cena:" prefix. */
-function mealSummary(meal: Meal): string {
+export function mealSummary(meal: Meal): string {
   if (meal.items.length > 0) {
     return meal.items.map((item) => (item.name.includes(item.quantityText) ? item.name : `${item.name} ${item.quantityText}`)).join(" · ");
   }
   return meal.description.replace(/^[^:]{1,20}:\s*/, "");
 }
 
-function MealCard({ meal }: { meal: Meal }) {
+/** Planned meal text without a leading "Pranzo in famiglia:" that repeats the title. */
+const plannedText = (entry: PlannedEntry) => entry.foods.replace(/^[^:]{1,30}:\s*/, (prefix) => (prefix.toLowerCase().startsWith(entry.title.toLowerCase().slice(0, 5)) ? "" : prefix));
+
+function LoggedCard({ meal }: { meal: Meal }) {
   const values = { protein: meal.nutrients.protein, carbs: meal.nutrients.carbs, fat: meal.nutrients.fat, fiber: meal.nutrients.fiber };
   const chips = MACROS.filter((key) => values[key] !== null && Math.round(values[key]) > 0);
   return (
-    <article className="meal-card">
-      <header className="meal-card-head">
+    <Link href={`/pasto/${meal.date}/${meal.id}`} className="meal-card" data-kind="logged">
+      <span className="meal-card-head">
         <h3>{mealTitle(meal)}</h3>
         <span className="meal-kcal">{formatKcal(meal.nutrients.kcal)} kcal</span>
-      </header>
-      <p className="meal-summary">{mealSummary(meal)}</p>
+      </span>
+      <span className="meal-summary">{mealSummary(meal)}</span>
       {chips.length > 0 && (
-        <ul className="chips" aria-label="Macronutrienti del pasto">
+        <span className="chips" aria-label="Macronutrienti del pasto">
           {chips.map((key) => (
-            <li key={key} className="chip" data-macro={key}>
+            <span key={key} className="chip" data-macro={key}>
               {t.macroChips[key]} {formatGramsShort(values[key]!)} g
-            </li>
+            </span>
           ))}
-        </ul>
+        </span>
+      )}
+    </Link>
+  );
+}
+
+function PlannedCard({ entry, onLog, logging, failed, onOther }: { entry: PlannedEntry; onLog: () => void; logging: boolean; failed: boolean; onOther: () => void }) {
+  const label = entry.status === "todo" ? t.timeline.todo : entry.status === "free" ? t.timeline.free : t.timeline.planned;
+  return (
+    <article className="meal-card" data-kind={entry.status}>
+      <header className="meal-card-head">
+        <h3>{entry.title}</h3>
+        <span className="planned-label">{label}</span>
+      </header>
+      {entry.foods && <p className="meal-summary">{plannedText(entry)}</p>}
+      {entry.status === "todo" && (
+        <>
+          <div className="planned-actions">
+            <button type="button" className="button-small button-inverse" onClick={onLog} disabled={logging || !entry.macros}>
+              {t.timeline.eatenAsPlanned}
+            </button>
+            <button type="button" className="button-small button-outline" onClick={onOther}>
+              {t.timeline.other}
+            </button>
+          </div>
+          {!entry.macros && <p className="planned-hint">{t.timeline.noMacros}</p>}
+          {failed && <p className="error-text">{t.timeline.logFailed}</p>}
+        </>
       )}
     </article>
   );
 }
 
 /**
- * Vertical timeline of the day. A continuous rod runs behind the time labels:
- * solid accent up to the "now" marker, dashed grey after it.
+ * Vertical timeline of the day: logged meals, planned meals from the active plan and, for today,
+ * the "now" marker. A continuous rod runs behind the time labels: solid until now, dashed after.
  */
-export function Timeline({ meals, now }: Props) {
+export function Timeline({ meals, planned, now, onLogPlanned, loggingPlanned, logFailed, onOther }: Props) {
+  const entries: Entry[] = [
+    ...meals.map((meal): Entry => ({ kind: "meal", time: meal.time, meal })),
+    ...planned.map((entry): Entry => ({ kind: "planned", time: entry.time, entry })),
+  ].sort((a, b) => a.time.localeCompare(b.time) || (a.kind === "meal" ? -1 : 1));
+
   const nowHm = now ? formatTime(now) : null;
-  const entries: Entry[] = meals.map((meal) => ({ kind: "meal", meal }));
   if (nowHm) {
-    const index = meals.findIndex((meal) => meal.time > nowHm);
+    const index = entries.findIndex((entry) => entry.time > nowHm);
     entries.splice(index === -1 ? entries.length : index, 0, { kind: "now", time: nowHm });
   }
   const nowIndex = entries.findIndex((entry) => entry.kind === "now");
+
+  const todo = planned.filter((p) => p.status === "todo").length;
+  const upcoming = planned.filter((p) => p.status !== "todo").length;
+  const counts = [t.timeline.logged(meals.length), todo > 0 ? t.timeline.todoCount(todo) : upcoming > 0 ? t.timeline.plannedCount(upcoming) : null];
 
   return (
     <section className="timeline-section" aria-label={t.timeline.title}>
       <header className="section-head">
         <h2>{t.timeline.title}</h2>
-        <span className="muted">{t.timeline.logged(meals.length)}</span>
+        <span className="muted">{counts.filter(Boolean).join(" · ")}</span>
       </header>
-      {meals.length === 0 && <p className="muted timeline-empty">{t.timeline.empty}</p>}
+      {meals.length === 0 && planned.length === 0 && <p className="muted timeline-empty">{t.timeline.empty}</p>}
       <ol className="timeline">
         {entries.map((entry, i) => {
           const rod = nowIndex === -1 || i < nowIndex ? "past" : "future";
           const position = entries.length === 1 ? "only" : i === 0 ? "first" : i === entries.length - 1 ? "last" : undefined;
+
           if (entry.kind === "now") {
             return (
               <li key="now" className="timeline-item now-marker" data-rod="future" data-position={position} aria-label={`${t.timeline.nowLabel} ${entry.time}`}>
@@ -83,15 +129,27 @@ export function Timeline({ meals, now }: Props) {
               </li>
             );
           }
-          const { meal } = entry;
+
+          const key = entry.kind === "meal" ? entry.meal.id : `plan-${entry.entry.planId}-${entry.entry.index}`;
+          const upcomingPlan = entry.kind === "planned" && entry.entry.status !== "todo";
           return (
-            <li key={meal.id} className="timeline-item" data-rod={rod} data-position={position}>
+            <li key={key} className="timeline-item" data-rod={rod} data-position={position}>
               <span className="timeline-gutter">
-                <time className="timeline-time" dateTime={`${meal.date}T${meal.time}`}>
-                  {meal.time}
+                <time className="timeline-time" data-upcoming={upcomingPlan || undefined}>
+                  {entry.time}
                 </time>
               </span>
-              <MealCard meal={meal} />
+              {entry.kind === "meal" ? (
+                <LoggedCard meal={entry.meal} />
+              ) : (
+                <PlannedCard
+                  entry={entry.entry}
+                  onLog={() => onLogPlanned(entry.entry)}
+                  logging={loggingPlanned?.planId === entry.entry.planId && loggingPlanned.index === entry.entry.index}
+                  failed={logFailed && loggingPlanned?.planId === entry.entry.planId && loggingPlanned.index === entry.entry.index}
+                  onOther={onOther}
+                />
+              )}
             </li>
           );
         })}

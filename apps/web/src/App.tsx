@@ -5,9 +5,10 @@ import { Route, Switch } from "wouter";
 import { useMe } from "./api/queries";
 import { AddSheet } from "./components/AddSheet";
 import { AppShell } from "./components/AppShell";
-import { PlanIcon, TrainingIcon, WeekIcon } from "./components/icons";
+import { TrainingIcon, WeekIcon } from "./components/icons";
 import { t } from "./lib/strings";
 import { ComingSoonPage } from "./pages/ComingSoonPage";
+import { PlanPage } from "./pages/PlanPage";
 import { SignInPage } from "./pages/SignInPage";
 import { TodayPage } from "./pages/TodayPage";
 
@@ -52,7 +53,7 @@ function Root() {
           <ComingSoonPage title={t.nav.week} heading={t.placeholder.soon} body={t.placeholder.week} Icon={WeekIcon} />
         </Route>
         <Route path="/piano">
-          <ComingSoonPage title={t.nav.plan} heading={t.placeholder.soon} body={t.placeholder.plan} Icon={PlanIcon} />
+          <PlanPage />
         </Route>
         <Route path="/allenamenti">
           <ComingSoonPage title={t.training.title} heading={t.training.soon} body={t.training.body} Icon={TrainingIcon} />

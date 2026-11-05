@@ -1501,3 +1501,430 @@ strong,
     font-size: 24px;
   }
 }
+
+/* ================= Planned meals in the timeline ================= */
+
+.meal-card[data-kind="logged"] {
+  color: inherit;
+  transition: transform 0.1s;
+}
+
+.meal-card[data-kind="logged"]:active {
+  transform: scale(0.99);
+}
+
+.meal-card[data-kind="todo"] {
+  gap: 6px;
+  background: var(--color-todo-bg);
+  border: 1.5px solid var(--color-todo-border);
+}
+
+.meal-card[data-kind="planned"],
+.meal-card[data-kind="free"] {
+  gap: 6px;
+  background: transparent;
+  border: 1.5px dashed var(--color-dashed);
+}
+
+.meal-card[data-kind="planned"] h3,
+.meal-card[data-kind="free"] h3 {
+  font-weight: 700;
+  color: var(--color-text-2);
+}
+
+.meal-card[data-kind="planned"] .meal-summary,
+.meal-card[data-kind="free"] .meal-summary {
+  color: var(--color-text-muted);
+}
+
+.planned-label {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  color: var(--color-text-muted);
+  white-space: nowrap;
+}
+
+.meal-card[data-kind="todo"] .planned-label {
+  font-weight: 800;
+  color: var(--color-todo-text);
+}
+
+.timeline-time[data-upcoming] {
+  font-weight: 700;
+  color: var(--color-text-muted);
+}
+
+.planned-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 2px;
+}
+
+.button-small {
+  height: 36px;
+  padding: 0 12px;
+  border-radius: var(--radius-sm);
+  font-size: 13px;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.button-small:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.button-inverse {
+  border: none;
+  background: var(--color-inverse);
+  color: var(--color-on-inverse);
+}
+
+.button-outline {
+  border: 1px solid var(--color-todo-button-border);
+  background: var(--color-surface);
+  font-weight: 700;
+}
+
+.planned-hint {
+  font-size: 12px;
+  line-height: 1.45;
+  color: var(--color-todo-text);
+}
+
+/* ================= Sheet lists ================= */
+
+.sheet-section {
+  padding: 4px 4px 0;
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.05em;
+  color: var(--color-text-muted);
+}
+
+.sheet-list {
+  padding: 0 16px;
+  border-radius: var(--radius-card-sm);
+  background: var(--color-surface);
+}
+
+.sheet-row {
+  width: 100%;
+  min-height: 56px;
+  padding: 8px 0;
+  border: none;
+  border-bottom: 1px solid var(--color-divider);
+  background: none;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  text-align: left;
+  cursor: pointer;
+}
+
+.sheet-row:last-child {
+  border-bottom: none;
+}
+
+.sheet-row[data-static] {
+  cursor: default;
+}
+
+.sheet-row:disabled {
+  cursor: not-allowed;
+}
+
+.sheet-row-text {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  font-size: 13px;
+}
+
+.sheet-row-text strong {
+  font-size: 15px;
+  font-weight: 800;
+}
+
+.sheet-row-text .muted {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.sheet-row-action {
+  flex: none;
+  font-size: 13px;
+  font-weight: 800;
+  color: var(--color-accent);
+}
+
+.sheet-row:disabled .sheet-row-action {
+  color: var(--color-text-muted);
+  font-weight: 600;
+}
+
+/* ================= Plan page ================= */
+
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 12px;
+  padding: 0 4px;
+}
+
+.section-header .page-title {
+  font-size: 30px;
+}
+
+.icon-button {
+  color: var(--color-text);
+}
+
+.menu-item-rich {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-height: 52px;
+}
+
+.menu-item-rich strong {
+  font-size: 15px;
+  font-weight: 800;
+}
+
+.menu-item-rich .muted {
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.menu-item:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+.notice[data-kind="error"] {
+  background: var(--color-danger-soft);
+  color: var(--color-danger);
+}
+
+.notice[data-kind="ok"] {
+  background: var(--color-accent-soft);
+  color: var(--color-accent-strong);
+}
+
+.issues {
+  margin: 6px 0 0;
+  padding-left: 18px;
+  font-size: 13px;
+}
+
+.issues code {
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.plan-tabs {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: 6px;
+}
+
+.plan-tab {
+  height: 52px;
+  padding: 0;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--color-border);
+  background: var(--color-surface);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1px;
+  cursor: pointer;
+}
+
+.plan-tab-letter {
+  font-size: 15px;
+  font-weight: 700;
+}
+
+.plan-tab-tag {
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--color-text-muted);
+}
+
+.plan-tab[aria-selected="true"] {
+  border-color: var(--color-accent);
+  background: var(--color-accent);
+}
+
+.plan-tab[aria-selected="true"] .plan-tab-letter,
+.plan-tab[aria-selected="true"] .plan-tab-tag {
+  color: var(--color-on-accent);
+  font-weight: 800;
+}
+
+.plan-day {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.plan-day-head {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 4px 12px;
+  padding: 2px 4px;
+}
+
+.plan-day-head h2 {
+  font-size: 20px;
+  font-weight: 800;
+}
+
+.plan-day-head .muted {
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.plan-meal {
+  padding: 14px 18px;
+  border-radius: var(--radius-card-sm);
+  background: var(--color-surface);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.plan-meal header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.plan-meal h3 {
+  font-size: 15px;
+  font-weight: 800;
+}
+
+.plan-meal header .muted {
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.plan-meal ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.plan-meal li {
+  display: flex;
+  gap: 8px;
+  align-items: baseline;
+  font-size: 14px;
+  line-height: 1.45;
+  color: var(--color-text-2);
+}
+
+.plan-meal li::before {
+  content: "";
+  width: 5px;
+  height: 5px;
+  flex: none;
+  border-radius: 3px;
+  background: var(--color-text-muted);
+  transform: translateY(-2px);
+}
+
+.plan-meal[data-free] {
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 18px;
+  background: var(--color-accent-soft);
+}
+
+.free-badge {
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: var(--color-surface);
+  color: var(--color-accent-strong);
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.plan-notes {
+  margin-top: 6px;
+  padding: 14px 18px;
+  border-radius: var(--radius-card-sm);
+  background: var(--color-surface);
+  font-size: 14px;
+}
+
+.plan-notes summary {
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.plan-notes ul {
+  margin: 10px 0 0;
+  padding-left: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  line-height: 1.5;
+  color: var(--color-text-2);
+}
+
+.version-status {
+  flex: none;
+  padding: 3px 9px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 700;
+  background: var(--color-track);
+  color: var(--color-text-2);
+}
+
+.version-status[data-status="active"] {
+  background: var(--color-accent-soft);
+  color: var(--color-accent-strong);
+}
+
+@media (min-width: 800px) {
+  .section-header {
+    padding: 0;
+  }
+
+  .section-header .page-title {
+    font-size: 36px;
+  }
+
+  .plan-page .plan-tabs {
+    max-width: 640px;
+  }
+
+  .plan-day {
+    max-width: 760px;
+  }
+}
+
+.section-header .page-title {
+  padding: 0;
+}

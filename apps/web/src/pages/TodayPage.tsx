@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { ApiError } from "../api/client";
-import { useAddWater, useDay, type User } from "../api/queries";
+import { useAddWater, useDay, useLogPlanned, type User } from "../api/queries";
 import { CalorieCard } from "../components/CalorieCard";
 import { PlusIcon } from "../components/icons";
 import { Logo } from "../components/Logo";
@@ -40,6 +40,7 @@ export function TodayPage({ user, notice, onAdd }: Props) {
   const [today, setToday] = useState<string | null>(null);
   const day = useDay(selected);
   const addWater = useAddWater(selected);
+  const logPlanned = useLogPlanned(selected);
 
   useEffect(() => {
     if (day.data) setToday(day.data.clock.localDate);
@@ -97,7 +98,20 @@ export function TodayPage({ user, notice, onAdd }: Props) {
               onAdd={(amount) => addWater.mutate(amount)}
             />
           </div>
-          <Timeline meals={view.meals} now={view.isToday ? view.clock.localTime : null} />
+          <Timeline
+            date={view.date}
+            meals={view.meals}
+            planned={view.planned}
+            now={view.isToday ? view.clock.localTime : null}
+            onLogPlanned={(entry) => logPlanned.mutate({ date: view.date, planId: entry.planId, index: entry.index })}
+            loggingPlanned={
+              logPlanned.variables && (logPlanned.isPending || logPlanned.isError)
+                ? (view.planned.find((p) => p.planId === logPlanned.variables!.planId && p.index === logPlanned.variables!.index) ?? null)
+                : null
+            }
+            logFailed={logPlanned.isError}
+            onOther={onAdd}
+          />
         </div>
       )}
 
