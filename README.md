@@ -11,6 +11,7 @@ Self-hosted nutrition dashboard with a daily meal timeline, macro tracking and m
 - Project scaffold: npm workspaces (`packages/shared`, `apps/server`, `apps/web`), single Docker image, docker compose.
 - Meal plan file format with validation (zod) and a generated JSON Schema, including optional sugar, added sugar, saturated fat, sodium and caffeine so that meals logged from the plan are complete. See [docs/meal-plan-format.md](docs/meal-plan-format.md).
 - Server health endpoint (`GET /api/health`) and environment validation at startup.
+- `deploy.sh`: first install (`--init`, generates secrets) and updates with automatic data backup, Docker build, restart and health check.
 - Nutrition MCP connection: one-time OAuth login at `/connect/nutrition` (dynamic client registration, PKCE), refresh token stored encrypted (AES-256-GCM) in SQLite and renewed automatically, connection status at `GET /api/nutrition/status` and `POST /api/nutrition/disconnect`.
 - `npm run capture -w @intake/server` saves raw responses of the read-only Nutrition tools for building parser fixtures.
 - Parsers for Nutrition MCP responses (meals with foods and all tracked nutrients, nutrition goals, current time and timezone), tested against real server output. Unrecognized fields are reported as warnings instead of being silently dropped.
@@ -75,7 +76,7 @@ Other commands:
 
 ## Deployment
 
-See [docs/deployment.md](docs/deployment.md). In short: `git pull && docker compose up -d --build` on the server, with secrets in `.env` next to `docker-compose.yml`.
+See [docs/deployment.md](docs/deployment.md). In short, on the server: `bash deploy.sh --init` once (creates `.env` with generated secrets), then `bash deploy.sh` for every update (backup of the data volume, pull, Docker build, restart and health check).
 
 ## Configuration
 

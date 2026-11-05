@@ -152,3 +152,4 @@ vite.config.ts.timestamp-*
 !.env.example
 data/
 apps/server/captures/
+backups/
