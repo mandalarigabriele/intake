@@ -1,0 +1,9 @@
+Timezone: Europe/Rome. Local time now: Thursday 2026-11-05 10:01:52 (Europe/Rome). UTC now: 2026-11-05T09:01:52.891Z.
+Language: Italiano (it).
+Weight unit: not set. Weights display in kg by default, and logging requires an explicit unit ('kg' or 'lb').
+Length unit: not set. Body measurements display in the unit each was entered in, and logging one needs an explicit unit ('cm' or 'in').
+Widgets: enabled. Supported tools show a visual widget alongside their text.
+Alcohol tracking: enabled, displayed in grams alongside US standard drinks (14 g each) (the default — no preference saved).
+Active calories: 100% counts against intake for entries logged from now on (the default; never set). Burned energy is shown beside intake and never changes the calorie goal. Entries already logged keep the share they were logged with. The user can change it with set_activity_credit.
+Apple Health sync: connected 2026-11-04, sent through 2026-11-04, last sync 2026-11-05 07:40.
+Apple Health activity sync: connected 2026-11-04, reads the daily Active Energy total, last sync 2026-11-05 09:25.
