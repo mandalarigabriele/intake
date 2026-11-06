@@ -102,4 +102,13 @@ export class PlanStore {
     const rows = this.db.prepare("SELECT plan_id, meal_index FROM plan_skips WHERE date = ?").all(date) as Array<{ plan_id: number; meal_index: number }>;
     return rows.map((row) => ({ planId: row.plan_id, index: row.meal_index }));
   }
+
+  /** Planned meals logged with "Mangiato come previsto" between two dates (inclusive). */
+  linkCountBetween(start: string, end: string): number {
+    return (this.db.prepare("SELECT COUNT(*) AS n FROM plan_links WHERE date BETWEEN ? AND ?").get(start, end) as { n: number }).n;
+  }
+
+  skipCountBetween(start: string, end: string): number {
+    return (this.db.prepare("SELECT COUNT(*) AS n FROM plan_skips WHERE date BETWEEN ? AND ?").get(start, end) as { n: number }).n;
+  }
 }

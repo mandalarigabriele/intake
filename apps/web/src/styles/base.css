@@ -84,9 +84,9 @@ strong,
   flex: none;
   z-index: 20;
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-template-columns: repeat(5, minmax(0, 1fr));
   align-items: center;
-  padding: 10px calc(12px + env(safe-area-inset-right)) calc(10px + env(safe-area-inset-bottom)) calc(12px + env(safe-area-inset-left));
+  padding: 10px calc(8px + env(safe-area-inset-right)) calc(10px + env(safe-area-inset-bottom)) calc(8px + env(safe-area-inset-left));
   background: var(--color-surface);
   border-top: 1px solid var(--color-border-2);
 }
@@ -108,27 +108,23 @@ strong,
   font-weight: 800;
 }
 
-/* Fixed to the (non-scrolling) window, just above the tab bar */
-.fab {
-  position: fixed;
-  right: calc(20px + env(safe-area-inset-right));
-  bottom: calc(var(--tabbar-height) + env(safe-area-inset-bottom) + 18px);
-  z-index: 15;
-  width: 60px;
-  height: 60px;
-  border-radius: 30px;
+/* Round "+" in the middle slot of the tab bar; it opens the add sheet */
+.tab-add {
+  justify-self: center;
+  width: 52px;
+  height: 52px;
   border: none;
+  border-radius: 26px;
   background: var(--color-inverse);
   color: var(--color-on-inverse);
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: var(--shadow-fab);
   cursor: pointer;
   transition: transform 0.1s;
 }
 
-.fab:active {
+.tab-add:active {
   transform: scale(0.94);
 }
 
@@ -137,8 +133,7 @@ strong,
     flex-direction: row;
   }
 
-  .tabbar,
-  .fab {
+  .tabbar {
     display: none;
   }
 
@@ -1945,9 +1940,6 @@ strong,
   padding-bottom: env(safe-area-inset-bottom);
 }
 
-.shell[data-pushed] .fab {
-  display: none;
-}
 
 /* ================= Logged meal card: whole card is a link, tools above it ================= */
 
@@ -2543,6 +2535,8 @@ button.button-primary {
 
 .visually-hidden {
   position: absolute;
+  top: 0;
+  left: 0;
   width: 1px;
   height: 1px;
   overflow: hidden;
@@ -2728,6 +2722,8 @@ a.bar-column:hover .bar:not([data-empty]) {
 }
 
 .weight-input {
+  /* Anchors the visually hidden label, which would otherwise extend the document */
+  position: relative;
   flex: 1;
   min-width: 0;
   height: 48px;
@@ -2875,4 +2871,305 @@ a.bar-column:hover .bar:not([data-empty]) {
 .undo-skip {
   height: 32px;
   font-size: 13px;
+}
+
+/* ================= Design v2: next meal, insight, skipped, consistency ================= */
+
+/* Oggi: one column on phones (Next meal first), two columns on wide screens */
+.today-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.today-main,
+.today-side {
+  display: contents;
+}
+
+.today-side .next-meal {
+  order: -1;
+}
+
+@media (min-width: 1000px) {
+  .today-grid {
+    flex-direction: row;
+    align-items: flex-start;
+    gap: 1.25rem;
+  }
+
+  .today-main,
+  .today-side {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    flex: 1 1 360px;
+    min-width: 0;
+  }
+}
+
+.next-meal {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 18px 20px;
+  border: 1.5px solid var(--color-accent);
+}
+
+.next-meal-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.next-meal-label {
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  color: var(--color-accent);
+}
+
+.next-meal-title {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 8px;
+}
+
+.next-meal-title h2 {
+  font-size: 22px;
+  font-weight: 800;
+  letter-spacing: -0.01em;
+}
+
+.next-meal-title .muted {
+  font-size: 13px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.next-meal-lines {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.next-meal-lines li {
+  display: flex;
+  gap: 8px;
+  align-items: baseline;
+  font-size: 15px;
+  line-height: 1.45;
+  color: var(--color-text-2);
+}
+
+.next-meal-lines li::before {
+  content: "";
+  width: 5px;
+  height: 5px;
+  flex: none;
+  border-radius: 3px;
+  background: var(--color-text-muted);
+  transform: translateY(-2px);
+}
+
+button.next-meal-primary {
+  height: 46px;
+  margin-top: 2px;
+  font-size: 14px;
+}
+
+.next-meal-actions {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.button-secondary-small {
+  height: 44px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+  color: var(--color-text);
+  font-size: 14px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.next-meal-after {
+  padding-top: 10px;
+  border-top: 1px solid var(--color-divider);
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--color-text-muted);
+}
+
+.skip-banner {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  border-radius: var(--radius-sm);
+  background: var(--color-skipped-bg);
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--color-text-2);
+}
+
+.skip-banner button,
+.undo-skip {
+  height: 32px;
+  padding: 0 10px;
+  border: none;
+  border-radius: 10px;
+  background: var(--color-surface);
+  color: var(--color-text);
+  font-size: 13px;
+  font-weight: 800;
+  cursor: pointer;
+  flex: none;
+}
+
+.insight-card {
+  display: flex;
+  gap: 14px;
+  align-items: flex-start;
+  padding: 18px 20px;
+}
+
+.insight-icon {
+  width: 40px;
+  height: 40px;
+  flex: none;
+  border-radius: var(--radius-md);
+  background: var(--color-accent-soft);
+  color: var(--color-accent);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.insight-body {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+}
+
+.insight-label {
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  color: var(--color-text-muted);
+}
+
+.insight-text {
+  font-size: 15px;
+  line-height: 1.45;
+  font-weight: 700;
+}
+
+.insight-body .muted {
+  font-size: 12px;
+  font-weight: 600;
+}
+
+/* Timeline: skipped card (grey, title struck through) and outlined "Salta" */
+.meal-card[data-kind="skipped"] {
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 12px 16px;
+  border: none;
+  background: var(--color-skipped-bg);
+  opacity: 1;
+}
+
+.skipped-text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.skipped-text h3 {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--color-text-muted);
+  text-decoration: line-through;
+}
+
+.skipped-text .planned-label {
+  font-weight: 800;
+}
+
+.skip-upcoming {
+  align-self: flex-start;
+  height: 34px;
+  padding: 0 12px;
+  margin-top: 2px;
+  border: 1px solid var(--color-border);
+  border-radius: 10px;
+  background: var(--color-surface);
+  color: var(--color-text-2);
+  font-weight: 700;
+}
+
+/* Settimana: consistency card */
+.consistency-card {
+  display: flex;
+  flex-direction: column;
+  padding: 6px 20px;
+}
+
+.consistency-card h2 {
+  padding: 12px 0 6px;
+  font-size: 15px;
+  font-weight: 800;
+}
+
+.consistency-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  min-height: 52px;
+  border-top: 1px solid var(--color-divider);
+  padding: 6px 0;
+}
+
+.consistency-row > div {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.consistency-row strong {
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.consistency-row .muted {
+  font-size: 12px;
+}
+
+.consistency-value {
+  font-size: 17px;
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+.consistency-value[data-accent] {
+  color: var(--color-accent);
 }

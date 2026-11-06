@@ -135,3 +135,19 @@ describe("parseMeals – date range", () => {
     expect(value.meals[2]!.items[4]).toMatchObject({ name: "Sale", nutrients: { sodiumMg: 400 } });
   });
 });
+
+describe("parseMealPatterns", () => {
+  it("parses the window and the breakfast effect", async () => {
+    const { parseMealPatterns } = await import("../../src/parsers/mealPatterns.js");
+    expect(parseMealPatterns(fixture("meal-patterns-7d.txt")).value).toEqual({
+      startDate: "2026-10-31",
+      endDate: "2026-11-06",
+      loggedDays: 3,
+      windowDays: 7,
+      breakfast: {
+        with: { days: 2, kcal: 1514.5, protein: 76.1, waterMl: 1250 },
+        without: { days: 1, kcal: 790, protein: 49.4, waterMl: 0 },
+      },
+    });
+  });
+});

@@ -21,9 +21,16 @@ export function formatGramsShort(value: number): string {
   return integer.format(Math.round(value));
 }
 
-/** 2500 -> "2,5 L", 750 -> "750 ml". */
+const twoDecimals = new Intl.NumberFormat(LOCALE, { maximumFractionDigits: 2 });
+
+/** Liters with up to two decimals, as in the design: 750 -> "0,75", 2500 -> "2,5". */
+export function formatLiters(ml: number): string {
+  return twoDecimals.format(Math.round(ml / 10) / 100);
+}
+
+/** 2500 -> "2,5 L", 1750 -> "1,75 L". */
 export function formatWater(ml: number): string {
-  return ml >= 1000 ? `${oneDecimal.format(ml / 1000)} L` : `${integer.format(ml)} ml`;
+  return `${formatLiters(ml)} L`;
 }
 
 export function formatPercent(value: number): string {

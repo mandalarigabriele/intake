@@ -1,4 +1,4 @@
-import { formatWater } from "../lib/format";
+import { formatLiters, formatWater } from "../lib/format";
 import { t } from "../lib/strings";
 import { WaterIcon } from "./icons";
 
@@ -18,7 +18,8 @@ interface Props {
 export function WaterCard({ totalMl, goalMl, canAdd, adding, failed, onAdd }: Props) {
   const segments = goalMl ? Math.min(Math.max(Math.round(goalMl / GLASS_ML), 1), MAX_SEGMENTS) : 0;
   const filled = Math.min(Math.floor(totalMl / GLASS_ML), segments);
-  const total = totalMl === 0 ? "0" : formatWater(totalMl);
+  // "0,75 / 2,5 L" as in the design (unit once, after the goal)
+  const total = goalMl ? formatLiters(totalMl) : formatWater(totalMl);
 
   return (
     <section className="card water-card" aria-label={t.water.title}>

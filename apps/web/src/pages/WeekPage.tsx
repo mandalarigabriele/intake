@@ -3,7 +3,7 @@ import { useState } from "react";
 import { Link } from "wouter";
 import { useLogWeight, useWeek } from "../api/queries";
 import { addDays } from "../lib/dates";
-import { formatGrams, formatKcal, formatShortDate, formatWeekday } from "../lib/format";
+import { formatGrams, formatKcal, formatShortDate, formatWater, formatWeekday } from "../lib/format";
 import { t } from "../lib/strings";
 
 const CHART_HEIGHT = 140;
@@ -18,7 +18,8 @@ function weekRange(start: string, end: string): string {
 
 function CaloriesChart({ week }: { week: WeekView }) {
   const goal = week.goals.kcal;
-  const max = Math.max(goal ?? 0, ...week.days.map((d) => d.kcal ?? 0), 1);
+  // The scale leaves room above the goal so days over target stay inside the card (DESIGN.md)
+  const max = Math.max((goal ?? 0) * 1.18, ...week.days.map((d) => (d.kcal ?? 0) * 1.05), 1);
   const goalOffset = goal ? CHART_HEIGHT - (goal / max) * CHART_HEIGHT : null;
   const empty = week.days.filter((d) => d.kcal === null && d.date < week.today).map((d) => formatWeekday(d.date));
   const todayInWeek = week.days.find((d) => d.date === week.today);
@@ -63,6 +64,41 @@ function CaloriesChart({ week }: { week: WeekView }) {
           {[todayInWeek ? t.week.inProgress(formatWeekday(week.today)) : null, empty.length > 0 ? t.week.noMeals(empty) : null].filter(Boolean).join(" ")}
         </p>
       )}
+    </section>
+  );
+}
+
+function ConsistencyCard({ week }: { week: WeekView }) {
+  const c = week.consistency;
+  const weekday = (date: string) => formatWeekday(date).toLowerCase();
+  const streakNote =
+    c.streak.length === 0 ? t.week.noStreak : c.streak.length <= 3 ? c.streak.map(weekday).join(", ") : t.week.streakSince(weekday(c.streak[0]!), formatShortDate(c.streak[0]!));
+  const almost = (value: number, goal: number | null) => (goal && value < goal && value >= goal * 0.85 ? t.week.almost : "");
+  const proteinNote = c.protein.best ? `${weekday(c.protein.best.date)} ${formatKcal(c.protein.best.value)} g${almost(c.protein.best.value, c.protein.goal)}` : t.week.noCompletedDays;
+  const waterNote =
+    c.water.best && c.water.goal
+      ? `${weekday(c.water.best.date)} ${formatWater(c.water.best.value)} su ${formatWater(c.water.goal)}${almost(c.water.best.value, c.water.goal)}`
+      : t.week.noCompletedDays;
+  const rows = [
+    { label: t.week.streak, note: streakNote, value: String(c.streak.length), accent: c.streak.length > 0 },
+    { label: t.week.proteinTarget, note: proteinNote, value: `${c.protein.hit}/${c.protein.total}` },
+    { label: t.week.waterTarget, note: waterNote, value: `${c.water.hit}/${c.water.total}` },
+    { label: t.week.asPlanned, note: t.week.asPlannedNote(c.skipped), value: String(c.asPlanned) },
+  ];
+  return (
+    <section className="card consistency-card" aria-label={t.week.consistency}>
+      <h2>{t.week.consistency}</h2>
+      {rows.map((row) => (
+        <div key={row.label} className="consistency-row">
+          <div>
+            <strong>{row.label}</strong>
+            <span className="muted">{row.note}</span>
+          </div>
+          <span className="consistency-value stat-value" data-accent={row.accent || undefined}>
+            {row.value}
+          </span>
+        </div>
+      ))}
     </section>
   );
 }
@@ -157,7 +193,7 @@ export function WeekPage() {
               <div className="detail-tile">
                 <span className="muted">{t.week.avgKcal}</span>
                 <strong className="stat-value">{data.averages ? formatKcal(data.averages.kcal) : "–"}</strong>
-                {data.averages && <span className="muted tile-note">{t.week.onLoggedDays(data.averages.days)}</span>}
+                <span className="muted tile-note">{t.week.completedDays}</span>
               </div>
               <div className="detail-tile">
                 <span className="muted">{t.week.avgProtein}</span>
@@ -165,6 +201,7 @@ export function WeekPage() {
                 {data.goals.protein && <span className="muted tile-note">{t.week.proteinGoal(formatKcal(data.goals.protein))}</span>}
               </div>
             </div>
+            <ConsistencyCard week={data} />
             <WeightCard week={data} />
           </div>
         </div>

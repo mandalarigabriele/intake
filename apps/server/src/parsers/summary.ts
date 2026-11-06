@@ -9,7 +9,11 @@ import { ParseError, type Parsed } from "./common.js";
 
 const summarySchema = z.object({
   goals: z
-    .object({ calories: z.number().nullable().optional(), protein_g: z.number().nullable().optional() })
+    .object({
+      calories: z.number().nullable().optional(),
+      protein_g: z.number().nullable().optional(),
+      water_ml: z.number().nullable().optional(),
+    })
     .nullable()
     .optional(),
   days: z.array(
@@ -17,14 +21,15 @@ const summarySchema = z.object({
       date: z.string(),
       calories: z.number(),
       protein_g: z.number(),
+      water_ml: z.number().nullable().optional(),
       meal_count: z.number(),
     }),
   ),
 });
 
 export interface NutritionSummary {
-  goals: { kcal: number | null; protein: number | null };
-  days: Array<{ date: string; kcal: number; protein: number; mealCount: number }>;
+  goals: { kcal: number | null; protein: number | null; waterMl: number | null };
+  days: Array<{ date: string; kcal: number; protein: number; waterMl: number; mealCount: number }>;
 }
 
 export function parseNutritionSummary(structured: unknown): Parsed<NutritionSummary> {
@@ -32,8 +37,12 @@ export function parseNutritionSummary(structured: unknown): Parsed<NutritionSumm
   if (!result.success) throw new ParseError("unexpected get_nutrition_summary structuredContent", JSON.stringify(structured));
   return {
     value: {
-      goals: { kcal: result.data.goals?.calories ?? null, protein: result.data.goals?.protein_g ?? null },
-      days: result.data.days.map((d) => ({ date: d.date, kcal: d.calories, protein: d.protein_g, mealCount: d.meal_count })),
+      goals: {
+        kcal: result.data.goals?.calories ?? null,
+        protein: result.data.goals?.protein_g ?? null,
+        waterMl: result.data.goals?.water_ml ?? null,
+      },
+      days: result.data.days.map((d) => ({ date: d.date, kcal: d.calories, protein: d.protein_g, waterMl: d.water_ml ?? 0, mealCount: d.meal_count })),
     },
     warnings: [],
   };
