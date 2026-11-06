@@ -147,6 +147,8 @@ export const t = {
     failed: "Hevy non risponde: gli allenamenti non sono disponibili ora.",
     trainingDays: (days: string[]) => `Allenamento: ${days.join(", ")}.`,
     training: "allenamento",
+    showExercises: (count: number) => (count === 1 ? "1 esercizio" : `${count} esercizi`),
+    hideExercises: "Nascondi esercizi",
   },
 
   compare: {
