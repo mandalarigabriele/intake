@@ -30,6 +30,7 @@ Browser → Cloudflare Tunnel → Nginx Proxy Manager → <lxc-ip>:3000 (intake 
 3. Fill in the remaining values (`nano .env`):
    - `PUBLIC_BASE_URL`: the public https URL, without a trailing slash
    - `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`, `OWNER_EMAIL`
+   - optional `HEVY_API_KEY` (Hevy Pro → Settings → Developer) to show workouts; add it later at any time and run `bash deploy.sh` again
 4. In Google Cloud Console add `<PUBLIC_BASE_URL>/auth/callback` to the OAuth client's authorized redirect URIs (see [google-sign-in.md](google-sign-in.md)). The localhost one can stay for development.
 5. Build and start:
    ```sh

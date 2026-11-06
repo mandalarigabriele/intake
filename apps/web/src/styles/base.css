@@ -3364,3 +3364,79 @@ button.next-meal-primary {
   background: var(--color-water-soft);
   color: var(--color-water-text);
 }
+
+/* ================= Workouts (Hevy) ================= */
+
+.workout-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.workout-chip {
+  padding: 3px 8px;
+  border-radius: 999px;
+  background: var(--color-accent-soft);
+  color: var(--color-accent-strong);
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+}
+
+.workout-card h3 {
+  font-size: 16px;
+  font-weight: 800;
+}
+
+.workout-summary {
+  font-size: 13px;
+}
+
+.workout-exercises {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 13px;
+}
+
+.workout-exercises {
+  gap: 8px;
+}
+
+/* Exercise name, then its sets on a second line: the same rhythm at every width */
+.workout-exercises li {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.workout-exercises li .muted {
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+}
+
+.workout-empty {
+  padding: 4px 0 14px;
+  font-size: 13px;
+}
+
+/* Training day marker under the weekday letter; the chart note lists the days in words */
+.bar-labels > span {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+}
+
+.training-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 3px;
+  background: var(--color-accent);
+}

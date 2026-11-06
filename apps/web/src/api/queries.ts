@@ -14,6 +14,7 @@ import type {
   StoredPlan,
   UpdateMealRequest,
   WeekView,
+  WorkoutsResponse,
 } from "@intake/shared";
 import { keepPreviousData, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { ApiError, apiFetch, newIdempotencyKey } from "./client";
@@ -295,4 +296,14 @@ export function useReminderSettings() {
 
 export function useTestPush() {
   return useMutation({ mutationFn: () => apiFetch<{ sent: number }>("/api/push/test", { method: "POST" }) });
+}
+
+/** Hevy workouts between two local dates (empty and configured: false without a Hevy API key). */
+export function useWorkouts(from: string | undefined, to: string | undefined) {
+  return useQuery({
+    queryKey: ["workouts", from, to],
+    queryFn: () => apiFetch<WorkoutsResponse>(`/api/workouts?from=${from}&to=${to}`),
+    enabled: Boolean(from && to),
+    staleTime: 5 * 60_000,
+  });
 }

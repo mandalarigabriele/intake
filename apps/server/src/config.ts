@@ -14,6 +14,11 @@ const envSchema = z.object({
   TOKEN_ENCRYPTION_KEY: secret,
   NUTRITION_MCP_URL: z.url().default("https://nutrition-mcp.com/mcp"),
   WEB_DIST_DIR: z.string().optional(),
+  /** Hevy API key (Hevy Pro → Settings → Developer); workouts are hidden without it. */
+  HEVY_API_KEY: z
+    .string()
+    .optional()
+    .transform((value) => value?.trim() || undefined),
 });
 
 export type Config = z.infer<typeof envSchema>;
