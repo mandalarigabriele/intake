@@ -1,15 +1,18 @@
-import type { Meal, PlannedEntry } from "@intake/shared";
+import type { Meal, PlannedEntry, Workout } from "@intake/shared";
 import { useState } from "react";
 import { Link } from "wouter";
 import { ConfirmDeleteSheet } from "./ConfirmDeleteSheet";
 import { formatGramsShort, formatKcal, formatTime } from "../lib/format";
 import { t } from "../lib/strings";
 import { MACROS } from "./MacroCard";
+import { WorkoutCard } from "./WorkoutCard";
 
 interface Props {
   date: string;
   meals: Meal[];
   planned: PlannedEntry[];
+  /** Hevy workouts of the day, shown between the meals at their start time. */
+  workouts?: Workout[];
   hasPlan: boolean;
   /** Show the "Timeline" heading (off on the Timeline page, whose title already says it). */
   heading?: boolean;
@@ -23,7 +26,11 @@ interface Props {
   onOther: () => void;
 }
 
-type Entry = { kind: "meal"; time: string; meal: Meal } | { kind: "planned"; time: string; entry: PlannedEntry } | { kind: "now"; time: string };
+type Entry =
+  | { kind: "meal"; time: string; meal: Meal }
+  | { kind: "planned"; time: string; entry: PlannedEntry }
+  | { kind: "workout"; time: string; workout: Workout }
+  | { kind: "now"; time: string };
 
 export function mealTitle(meal: Pick<Meal, "type">): string {
   return t.mealTypes[meal.type] ?? (meal.type ? meal.type.charAt(0).toUpperCase() + meal.type.slice(1) : "Pasto");
@@ -152,10 +159,11 @@ function PlannedCard({
  * Vertical timeline of the day: logged meals, planned meals from the active plan and, for today,
  * the "now" marker. A continuous rod runs behind the time labels: solid until now, dashed after.
  */
-export function Timeline({ meals, planned, hasPlan, heading = true, now, onLogPlanned, onSkipPlanned, loggingPlanned, logFailed, onOther }: Props) {
+export function Timeline({ meals, planned, workouts = [], hasPlan, heading = true, now, onLogPlanned, onSkipPlanned, loggingPlanned, logFailed, onOther }: Props) {
   const entries: Entry[] = [
     ...meals.map((meal): Entry => ({ kind: "meal", time: meal.time, meal })),
     ...planned.map((entry): Entry => ({ kind: "planned", time: entry.time, entry })),
+    ...workouts.map((workout): Entry => ({ kind: "workout", time: workout.start, workout })),
   ].sort((a, b) => a.time.localeCompare(b.time) || (a.kind === "meal" ? -1 : 1));
 
   const nowHm = now ? formatTime(now) : null;
@@ -180,7 +188,7 @@ export function Timeline({ meals, planned, hasPlan, heading = true, now, onLogPl
         {heading && <h2>{t.timeline.title}</h2>}
         <span className="muted">{counts.filter(Boolean).join(" · ")}</span>
       </header>
-      {meals.length === 0 && planned.length === 0 && <p className="muted timeline-empty">{t.timeline.empty}</p>}
+      {meals.length === 0 && planned.length === 0 && workouts.length === 0 && <p className="muted timeline-empty">{t.timeline.empty}</p>}
       {!hasPlan && (
         <p className="timeline-hint">
           {t.timeline.noPlan}{" "}
@@ -202,6 +210,17 @@ export function Timeline({ meals, planned, hasPlan, heading = true, now, onLogPl
                 <span className="now-label" aria-hidden="true">
                   {t.timeline.now}
                 </span>
+              </li>
+            );
+          }
+
+          if (entry.kind === "workout") {
+            return (
+              <li key={`workout-${entry.workout.id}`} className="timeline-item" data-rod={rod} data-position={position}>
+                <span className="timeline-gutter">
+                  <time className="timeline-time">{entry.time}</time>
+                </span>
+                <WorkoutCard workout={entry.workout} />
               </li>
             );
           }

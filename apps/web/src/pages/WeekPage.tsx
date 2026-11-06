@@ -1,11 +1,12 @@
 import type { WeekView } from "@intake/shared";
 import { useState } from "react";
 import { Link } from "wouter";
-import { useLogWeight, useWeek } from "../api/queries";
+import { useLogWeight, useWeek, useWorkouts } from "../api/queries";
 import { addDays } from "../lib/dates";
 import { formatGrams, formatKcal, formatShortDate, formatWater, formatWeekday } from "../lib/format";
 import { t } from "../lib/strings";
 import { WeekPlanCard } from "../components/PlanCompare";
+import { WeekWorkoutsCard } from "../components/WorkoutCard";
 
 const CHART_HEIGHT = 140;
 
@@ -17,7 +18,7 @@ function weekRange(start: string, end: string): string {
   return sameMonth ? `${Number(startDay)} – ${endLabel}` : `${formatShortDate(start)} – ${endLabel}`;
 }
 
-function CaloriesChart({ week }: { week: WeekView }) {
+function CaloriesChart({ week, trainingDays }: { week: WeekView; trainingDays: Set<string> }) {
   const goal = week.goals.kcal;
   // The scale leaves room above the goal so days over target stay inside the card (DESIGN.md)
   const max = Math.max((goal ?? 0) * 1.18, ...week.days.map((d) => (d.kcal ?? 0) * 1.05), 1);
@@ -35,7 +36,7 @@ function CaloriesChart({ week }: { week: WeekView }) {
         {goalOffset !== null && <div className="goal-line" style={{ top: goalOffset + 18 }} aria-hidden="true" />}
         {week.days.map((day, i) => {
           const height = day.kcal === null ? 4 : Math.max(4, (day.kcal / max) * CHART_HEIGHT);
-          const label = `${t.weekdaysLong[i]}: ${day.kcal === null ? t.week.noData : `${formatKcal(day.kcal)} kcal`}`;
+          const label = `${t.weekdaysLong[i]}: ${day.kcal === null ? t.week.noData : `${formatKcal(day.kcal)} kcal`}${trainingDays.has(day.date) ? ` · ${t.workouts.training}` : ""}`;
           const href = day.date === week.today ? "/" : `/?d=${day.date}`;
           const future = day.date > week.today;
           const bar = (
@@ -57,12 +58,21 @@ function CaloriesChart({ week }: { week: WeekView }) {
       </div>
       <div className="bar-labels" aria-hidden="true">
         {t.weekdaysShort.map((letter, i) => (
-          <span key={i}>{letter}</span>
+          <span key={i}>
+            {letter}
+            {trainingDays.has(week.days[i]!.date) && <span className="training-dot" />}
+          </span>
         ))}
       </div>
-      {(todayInWeek || empty.length > 0) && (
+      {(todayInWeek || empty.length > 0 || trainingDays.size > 0) && (
         <p className="sheet-note">
-          {[todayInWeek ? t.week.inProgress(formatWeekday(week.today)) : null, empty.length > 0 ? t.week.noMeals(empty) : null].filter(Boolean).join(" ")}
+          {[
+            todayInWeek ? t.week.inProgress(formatWeekday(week.today)) : null,
+            empty.length > 0 ? t.week.noMeals(empty) : null,
+            trainingDays.size > 0 ? t.workouts.trainingDays(week.days.filter((d) => trainingDays.has(d.date)).map((d) => formatWeekday(d.date).toLowerCase())) : null,
+          ]
+            .filter(Boolean)
+            .join(" ")}
         </p>
       )}
     </section>
@@ -161,6 +171,8 @@ export function WeekPage() {
   const [anchor, setAnchor] = useState<string>("current");
   const week = useWeek(anchor);
   const data = week.data;
+  const workouts = useWorkouts(data?.start, data?.end);
+  const trainingDays = new Set((workouts.data?.workouts ?? []).map((w) => w.date));
   const isCurrent = data ? data.today >= data.start && data.today <= data.end : true;
 
   return (
@@ -188,7 +200,7 @@ export function WeekPage() {
 
       {data && (
         <div className="week-layout" aria-busy={week.isFetching}>
-          <CaloriesChart week={data} />
+          <CaloriesChart week={data} trainingDays={trainingDays} />
           <div className="week-side">
             <div className="stat-tiles">
               <div className="detail-tile">
@@ -204,6 +216,9 @@ export function WeekPage() {
             </div>
             <ConsistencyCard week={data} />
             {data.plan && <WeekPlanCard plan={data.plan} />}
+            {workouts.data?.configured !== false && (workouts.data || workouts.isError) && (
+              <WeekWorkoutsCard workouts={workouts.data?.workouts ?? []} failed={workouts.isError} />
+            )}
             <WeightCard week={data} />
           </div>
         </div>

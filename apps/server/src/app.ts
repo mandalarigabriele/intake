@@ -14,6 +14,8 @@ import { mealRoutes, type MealRoutesOptions } from "./routes/meals.js";
 import { insightRoutes, type InsightRoutesOptions } from "./routes/insight.js";
 import { planRoutes } from "./routes/plans.js";
 import { pushRoutes, type PushRoutesOptions } from "./routes/push.js";
+import { workoutRoutes, type WorkoutRoutesOptions } from "./routes/workouts.js";
+import { HevyError } from "./hevy/hevyApi.js";
 import { weekRoutes, type WeekRoutesOptions } from "./routes/weeks.js";
 import { authRoutes } from "./routes/auth.js";
 import { healthRoutes } from "./routes/health.js";
@@ -48,6 +50,8 @@ export interface AppOptions {
   plans?: PlanStore;
   /** Reminders (Web Push); registered together with `auth`. */
   push?: Omit<PushRoutesOptions, "requireOwner">;
+  /** Hevy workouts; registered together with `auth`. */
+  workouts?: Omit<WorkoutRoutesOptions, "requireOwner">;
 }
 
 export async function buildApp(options: AppOptions = {}): Promise<FastifyInstance> {
@@ -64,6 +68,10 @@ export async function buildApp(options: AppOptions = {}): Promise<FastifyInstanc
         .header("retry-after", String(error.retryAfterSeconds))
         .send({ error: "nutrition_rate_limited", retryAfter: error.retryAfterSeconds });
     }
+    if (error instanceof HevyError) {
+      request.log.error({ err: error }, "Hevy request failed");
+      return reply.code(502).send({ error: "hevy_unavailable", message: "Hevy did not answer as expected" });
+    }
     if (error instanceof ToolError || error instanceof ParseError) {
       request.log.error({ err: error }, "Nutrition MCP request failed");
       return reply.code(502).send({ error: "nutrition_unavailable", message: "The Nutrition server returned an unexpected response" });
@@ -75,7 +83,7 @@ export async function buildApp(options: AppOptions = {}): Promise<FastifyInstanc
 
   await app.register(healthRoutes, { prefix: "/api" });
 
-  if ((options.nutrition || options.api || options.mealsApi || options.weekApi || options.insightApi || options.push) && !options.auth) {
+  if ((options.nutrition || options.api || options.mealsApi || options.weekApi || options.insightApi || options.push || options.workouts) && !options.auth) {
     throw new Error("Nutrition routes need authentication options");
   }
 
@@ -90,6 +98,9 @@ export async function buildApp(options: AppOptions = {}): Promise<FastifyInstanc
     if (options.nutrition) {
       await app.register(nutritionConnectRoutes, { connection: options.nutrition, requireOwner });
       await app.register(nutritionApiRoutes, { prefix: "/api", connection: options.nutrition, requireOwner });
+    }
+    if (options.workouts) {
+      await app.register(workoutRoutes, { prefix: "/api", ...options.workouts, requireOwner });
     }
     if (options.push) {
       await app.register(pushRoutes, { prefix: "/api", ...options.push, requireOwner });

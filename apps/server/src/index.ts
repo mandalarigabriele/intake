@@ -2,6 +2,7 @@ import { resolve } from "node:path";
 import { buildApp } from "./app.js";
 import { GoogleSignIn } from "./auth/google.js";
 import { loadConfig } from "./config.js";
+import { HevyApi } from "./hevy/hevyApi.js";
 import { NutritionApi } from "./mcp/nutritionApi.js";
 import { createServices } from "./services.js";
 import { ReminderScheduler } from "./services/reminderScheduler.js";
@@ -43,6 +44,7 @@ const app = await buildApp({
   insightApi: api,
   plans: services.plans,
   push: { store: services.reminders, scheduler, publicKey: vapid.publicKey },
+  workouts: { hevy: config.HEVY_API_KEY ? new HevyApi(config.HEVY_API_KEY) : null, api },
 });
 
 app.addHook("onClose", async () => {

@@ -223,3 +223,36 @@ export interface PushSubscriptionRequest {
   endpoint: string;
   keys: { p256dh: string; auth: string };
 }
+
+/** One exercise of a Hevy workout, summarized. */
+export interface WorkoutExercise {
+  title: string;
+  /** Sets that are not warm-ups. */
+  workingSets: number;
+  /** Heaviest working set (weight and its reps); null for bodyweight or timed exercises. */
+  best: { weightKg: number; reps: number | null } | null;
+  /** Total seconds of timed sets (planks, cardio); 0 when none. */
+  durationSeconds: number;
+}
+
+/** A Hevy workout in the Nutrition profile's timezone. */
+export interface Workout {
+  id: string;
+  title: string;
+  /** Local date and times (YYYY-MM-DD, HH:MM). */
+  date: string;
+  start: string;
+  end: string;
+  durationMinutes: number;
+  exercises: WorkoutExercise[];
+  /** Working sets in the whole workout. */
+  sets: number;
+  /** Sum of weight × reps over the working sets, in kg. */
+  volumeKg: number;
+}
+
+export interface WorkoutsResponse {
+  /** false when no Hevy API key is configured on the server. */
+  configured: boolean;
+  workouts: Workout[];
+}

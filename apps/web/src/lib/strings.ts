@@ -132,6 +132,23 @@ export const t = {
     none: "Nessun altro pasto previsto oggi.",
   },
 
+  workouts: {
+    label: "Allenamento",
+    summary: (duration: string, sets: number, volume: string) => `${duration} · ${sets} serie · ${volume} kg sollevati`,
+    sets: (count: number) => (count === 1 ? "1 serie" : `${count} serie`),
+    best: (weight: string, reps: number | null) => `max ${weight} kg${reps ? ` × ${reps}` : ""}`,
+    weekTitle: "Allenamenti",
+    weekSummary: (count: number, duration: string, volume: string) => `${count === 1 ? "1 sessione" : `${count} sessioni`} · ${duration} · ${volume} kg`,
+    weekRow: (date: string, start: string, duration: string, sets: number, volume: string) => {
+      const day = new Intl.DateTimeFormat("it-IT", { weekday: "short", day: "numeric", timeZone: "UTC" }).format(new Date(`${date}T12:00:00Z`));
+      return `${day} · ${start} · ${duration} · ${sets} serie · ${volume} kg`;
+    },
+    none: "Nessun allenamento registrato su Hevy questa settimana.",
+    failed: "Hevy non risponde: gli allenamenti non sono disponibili ora.",
+    trainingDays: (days: string[]) => `Allenamento: ${days.join(", ")}.`,
+    training: "allenamento",
+  },
+
   compare: {
     title: "Piano e realtà",
     dayPlanned: (kcal: string) => `${kcal} kcal previste`,

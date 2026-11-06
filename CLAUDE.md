@@ -37,6 +37,7 @@ Intake is a self-hosted, responsive nutrition dashboard with a daily meal timeli
 - Reminders (`apps/server/src/services/reminders.ts`, `reminderScheduler.ts`) run in the server once a minute. They decide from the local plan times and read Nutrition only when a reminder is due; keep it that way. Notification text is built on the server, in Italian, in `reminders.ts` (the only user-facing text outside `strings.ts`). The service worker (`apps/web/public/sw.js`) only shows notifications and never caches.
 - MCP tool responses are often formatted text. Parsing lives in `apps/server/src/parsers/`, and every parser is covered by tests that use real responses saved in `__fixtures__/`. Prefer `structuredContent` when a tool provides it.
 - The daily insight (`GET /api/insight`) costs several Nutrition calls, so the route keeps the chosen sentence in memory for an hour per date; the sentence is picked deterministically from the day, not at random.
+- Hevy workouts (`apps/server/src/hevy/`, parser `parsers/hevy.ts`) are read live from the Hevy public API with the optional `HEVY_API_KEY`; pages are kept in memory for 5 minutes and never stored. Workout dates use the Nutrition profile timezone.
 - "Today" and the timeline's "now" marker use the timezone of the Nutrition profile, not the container's timezone.
 - Google sign-in protects the app and admits only `OWNER_EMAIL`. It is separate from the one-time Nutrition OAuth connection.
 
