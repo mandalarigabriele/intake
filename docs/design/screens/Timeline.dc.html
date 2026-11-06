@@ -1,0 +1,137 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<title>Timeline</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+a{color:#17201B;text-decoration:none}a:hover{color:#2F6B47}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; box-sizing: border-box; background: #F4F5F1; font-family: 'Manrope', system-ui, sans-serif; color: #17201B; display: flex; flex-direction: column; overflow: hidden; position: relative">
+
+<header style="padding: 52px 20px 10px; display: flex; justify-content: space-between; align-items: flex-end">
+<div style="display: flex; flex-direction: column; gap: 2px"><span style="font-size: 13px; font-weight: 600; color: #56605A">Venerdì 6 novembre · 574 kcal</span><h1 style="margin: 0; font-size: 30px; font-weight: 800; letter-spacing: -0.02em">Timeline</h1></div>
+<div style="display: flex; gap: 6px">
+<button aria-label="Giorno precedente" style="width: 44px; height: 44px; border-radius: 22px; border: none; background: #FFFFFF; display: flex; align-items: center; justify-content: center; color: #17201B"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 6l-6 6 6 6"></path></svg></button>
+<button aria-label="Giorno successivo" style="width: 44px; height: 44px; border-radius: 22px; border: none; background: #FFFFFF; display: flex; align-items: center; justify-content: center; color: #8A928C"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"></path></svg></button>
+</div>
+</header>
+
+<div style="flex: 1; min-height: 0; overflow-y: auto; overflow-x: hidden; padding: 8px 16px 0">
+<div style="display: flex; justify-content: flex-end; padding: 0 4px 10px"><span style="font-size: 12px; font-weight: 600; color: #56605A">1 registrato · 4 dal piano</span></div>
+
+<sc-for list="{{timeline}}" as="it" hint-placeholder-count="6">
+<div style="position: relative; display: flex; gap: 10px">
+<div style="position: absolute; left: 25px; top: {{it.rodTop}}; bottom: {{it.rodBottom}}; border-left: 2px {{it.rod}}"></div>
+
+<sc-if value="{{it.isNow}}" hint-placeholder-val="{{false}}">
+<div style="width: 52px; flex: none; display: flex; justify-content: center; padding: 6px 0 18px; position: relative"><span style="font-size: 11px; font-weight: 800; color: #FFFFFF; background: #C2492E; padding: 3px 6px; border-radius: 6px; font-variant-numeric: tabular-nums">{{it.time}}</span></div>
+<div style="flex: 1; display: flex; align-items: center; gap: 8px; padding: 6px 0 18px"><div style="flex: 1; height: 2px; background: #C2492E"></div><span style="font-size: 11px; font-weight: 800; color: #A53A22; letter-spacing: 0.06em">ADESSO</span></div>
+</sc-if>
+
+<sc-if value="{{it.isMeal}}" hint-placeholder-val="{{true}}">
+<div style="width: 52px; flex: none; display: flex; justify-content: center; padding-top: 12px; position: relative"><span style="height: 22px; padding: 0 5px; border-radius: 6px; background: #F4F5F1; font-size: 13px; font-weight: {{it.timeWeight}}; color: {{it.timeColor}}; font-variant-numeric: tabular-nums; line-height: 22px">{{it.time}}</span></div>
+
+<sc-if value="{{it.logged}}" hint-placeholder-val="{{true}}">
+<a href="Pasto.dc.html" style="flex: 1; min-width: 0; margin-bottom: 12px; padding: 14px 16px; background: #FFFFFF; border-radius: 20px; display: flex; flex-direction: column; gap: 8px; color: #17201B">
+<div style="display: flex; justify-content: space-between; align-items: center"><span style="font-size: 15px; font-weight: 800">{{it.title}}</span><span style="font-size: 15px; font-weight: 800; font-variant-numeric: tabular-nums">{{it.kcal}}</span></div>
+<span style="font-size: 13px; line-height: 1.45; color: #3C453F">{{it.food}}</span>
+<div style="display: flex; gap: 6px; flex-wrap: wrap">
+<span style="font-size: 12px; font-weight: 700; padding: 3px 9px; border-radius: 999px; background: #E3EEF0; color: #1B5A62">P {{it.p}} g</span>
+<span style="font-size: 12px; font-weight: 700; padding: 3px 9px; border-radius: 999px; background: #F6ECD8; color: #7A5410">C {{it.c}} g</span>
+<span style="font-size: 12px; font-weight: 700; padding: 3px 9px; border-radius: 999px; background: #EFE6F2; color: #66407A">G {{it.f}} g</span>
+<span style="font-size: 12px; font-weight: 700; padding: 3px 9px; border-radius: 999px; background: #E8EBE5; color: #3C453F">Fibre {{it.fib}} g</span>
+</div>
+</a>
+</sc-if>
+
+<sc-if value="{{it.overdue}}" hint-placeholder-val="{{false}}">
+<div style="flex: 1; min-width: 0; margin-bottom: 12px; padding: 14px 16px; background: #FFF7F0; border: 1.5px solid #EDC3A3; border-radius: 20px; display: flex; flex-direction: column; gap: 6px">
+<div style="display: flex; justify-content: space-between; align-items: center"><span style="font-size: 15px; font-weight: 800">{{it.title}}</span><span style="font-size: 11px; font-weight: 800; color: #8F4310; letter-spacing: 0.04em">DA REGISTRARE</span></div>
+<span style="font-size: 13px; line-height: 1.45; color: #3C453F">{{it.food}}</span>
+<div style="display: flex; gap: 6px; margin-top: 2px">
+<button style="height: 36px; padding: 0 12px; border-radius: 12px; border: none; background: #17201B; color: #FFFFFF; font-family: inherit; font-weight: 800; font-size: 13px">Mangiato come previsto</button>
+<a href="Aggiungi.dc.html" style="height: 36px; box-sizing: border-box; padding: 0 12px; border-radius: 12px; border: 1px solid #DCC7B6; background: #FFFFFF; color: #17201B; font-weight: 700; font-size: 13px; display: flex; align-items: center">Altro…</a>
+<button onClick="{{it.skip}}" style="height: 36px; padding: 0 12px; border-radius: 12px; border: 1px solid #DCC7B6; background: #FFFFFF; color: #17201B; font-family: inherit; font-weight: 700; font-size: 13px">Salta</button>
+</div>
+</div>
+</sc-if>
+
+<sc-if value="{{it.planned}}" hint-placeholder-val="{{false}}">
+<div style="flex: 1; min-width: 0; margin-bottom: 12px; padding: 14px 16px; border: 1.5px dashed #C3C9C0; border-radius: 20px; display: flex; flex-direction: column; gap: 6px">
+<div style="display: flex; justify-content: space-between; align-items: center"><span style="font-size: 15px; font-weight: 700; color: #3C453F">{{it.title}}</span><span style="font-size: 11px; font-weight: 700; color: #56605A; letter-spacing: 0.04em">DAL PIANO</span></div>
+<span style="font-size: 13px; line-height: 1.45; color: #56605A">{{it.food}}</span>
+<button onClick="{{it.skip}}" style="align-self: flex-start; height: 34px; padding: 0 12px; margin-top: 2px; border-radius: 10px; border: 1px solid #DDE1DA; background: #FFFFFF; font-family: inherit; font-size: 13px; font-weight: 700; color: #3C453F">Salta</button>
+</div>
+</sc-if>
+
+<sc-if value="{{it.skipped}}" hint-placeholder-val="{{false}}">
+<div style="flex: 1; min-width: 0; margin-bottom: 12px; padding: 12px 16px; border-radius: 20px; background: #ECEEEA; display: flex; justify-content: space-between; align-items: center; gap: 8px">
+<div style="display: flex; flex-direction: column; gap: 2px; min-width: 0"><span style="font-size: 15px; font-weight: 700; color: #56605A; text-decoration: line-through">{{it.title}}</span><span style="font-size: 11px; font-weight: 800; color: #56605A; letter-spacing: 0.04em">SALTATO</span></div>
+<button onClick="{{it.undo}}" style="height: 34px; padding: 0 12px; border: none; border-radius: 10px; background: #FFFFFF; font-family: inherit; font-size: 13px; font-weight: 800; color: #17201B">Annulla</button>
+</div>
+</sc-if>
+</sc-if>
+</div>
+</sc-for>
+
+<div style="height: 24px"></div>
+</div>
+
+
+<div style="flex: none; padding: 10px 8px 26px; background: #FFFFFF; border-top: 1px solid #E2E5DF; display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); align-items: center">
+<a href="Main.dc.html" aria-label="Oggi" style="height: 48px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px; color: #56605A"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="8"></circle><path d="M12 8v4l3 2"></path></svg><span style="font-size: 11px; font-weight: 700">Oggi</span></a>
+<a href="Settimana.dc.html" aria-label="Settimana" style="height: 48px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px; color: #56605A"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 20V10M12 20V4M19 20v-7"></path></svg><span style="font-size: 11px; font-weight: 700">Settimana</span></a>
+<a href="Aggiungi.dc.html" aria-label="Aggiungi" style="width: 52px; height: 52px; justify-self: center; border-radius: 26px; background: #17201B; color: #FFFFFF; display: flex; align-items: center; justify-content: center"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"></path></svg></a>
+<a href="Piano.dc.html" aria-label="Piano" style="height: 48px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px; color: #56605A"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="4" width="14" height="17" rx="2"></rect><path d="M9 9h6M9 13h6M9 17h3"></path></svg><span style="font-size: 11px; font-weight: 700">Piano</span></a>
+<a href="Timeline.dc.html" aria-label="Timeline" aria-current="page" style="height: 48px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px; color: #2F6B47"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 3v18"></path><circle cx="7" cy="7" r="2"></circle><circle cx="7" cy="17" r="2"></circle><path d="M12 7h8M12 17h8"></path></svg><span style="font-size: 11px; font-weight: 800">Timeline</span></a>
+</div>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  constructor(props) { super(props); this.state = { skipped: {} }; }
+  renderVals() {
+    const solid = 'solid #2F6B47';
+    const dashed = 'dashed #B9C0B6';
+    const raw = [
+      { kind: 'logged', time: '08:00', title: 'Colazione', food: 'Caffellatte · 2 uova strapazzate · pane integrale 2 fette · mela', kcal: '574 kcal', p: '30', c: '68', f: '22', fib: '9' },
+      { kind: 'now', time: '10:05' },
+      { kind: 'planned', time: '11:00', title: 'Spuntino', food: '1 frutto + mandorle 25 g' },
+      { kind: 'planned', time: '13:00', title: 'Pranzo', food: 'Insalata di farro 70 g con tonno 100 g, ceci 100 g, mozzarella 60 g e verdure' },
+      { kind: 'planned', time: '16:00', title: 'Spuntino', food: 'Fesa di tacchino 50 g + pane integrale 1 fetta' },
+      { kind: 'planned', time: '20:00', title: 'Cena', food: 'Straccetti di pollo al limone 180 g + patate al forno 250 g + verdure' }
+    ];
+    const nowIdx = raw.findIndex((r) => r.kind === 'now');
+    const sk = this.state.skipped;
+    const setSk = (i, v) => { const n = Object.assign({}, sk); n[i] = v; this.setState({ skipped: n }); };
+    const timeline = raw.map((r, i) => ({
+      time: r.time, title: r.title || '', food: r.food || '',
+      kcal: r.kcal || '', p: r.p || '', c: r.c || '', f: r.f || '', fib: r.fib || '',
+      isNow: r.kind === 'now', isMeal: r.kind !== 'now',
+      logged: r.kind === 'logged',
+      overdue: r.kind === 'overdue' && !sk[i],
+      planned: r.kind === 'planned' && !sk[i],
+      skipped: !!sk[i],
+      skip: () => setSk(i, true),
+      undo: () => setSk(i, false),
+      timeWeight: r.kind === 'planned' ? '700' : '800',
+      timeColor: r.kind === 'planned' ? '#56605A' : '#17201B',
+      rod: i < nowIdx ? solid : dashed,
+      rodTop: i === 0 ? '22px' : '0px',
+      rodBottom: i === raw.length - 1 ? 'calc(100% - 34px)' : '0px'
+    }));
+    return { timeline: timeline };
+  }
+}
+</script>
+</body>
+</html>

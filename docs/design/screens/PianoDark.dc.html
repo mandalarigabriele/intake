@@ -66,18 +66,19 @@ a{color:#EEF1EC;text-decoration:none}a:hover{color:#5FB083}
 </div>
 </sc-if>
 
-<div style="flex: none; padding: 10px 12px 26px; background: #1C1F1C; border-top: 1px solid #2B2E2A; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); align-items: center">
+<div style="flex: none; padding: 10px 8px 26px; background: #1C1F1C; border-top: 1px solid #2B2E2A; display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); align-items: center">
 <a href="OggiDark.dc.html" aria-label="Oggi" style="height: 48px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px; color: #A3ABA4"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="8"></circle><path d="M12 8v4l3 2"></path></svg><span style="font-size: 11px; font-weight: 700">Oggi</span></a>
 <a href="Settimana.dc.html" aria-label="Settimana" style="height: 48px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px; color: #A3ABA4"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 20V10M12 20V4M19 20v-7"></path></svg><span style="font-size: 11px; font-weight: 700">Settimana</span></a>
+<a href="Aggiungi.dc.html" aria-label="Aggiungi" style="width: 52px; height: 52px; justify-self: center; border-radius: 26px; background: #EEF1EC; color: #0F1A13; display: flex; align-items: center; justify-content: center"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"></path></svg></a>
 <a href="PianoDark.dc.html" aria-label="Piano" aria-current="page" style="height: 48px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px; color: #5FB083"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="4" width="14" height="17" rx="2"></rect><path d="M9 9h6M9 13h6M9 17h3"></path></svg><span style="font-size: 11px; font-weight: 800">Piano</span></a>
-<a href="Allenamenti.dc.html" aria-label="Allenamenti" style="height: 48px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px; color: #A3ABA4"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 7v10M18 7v10M3 10v4M21 10v4M6 12h12"></path></svg><span style="font-size: 11px; font-weight: 700">Allenamenti</span></a>
+<a href="Timeline.dc.html" aria-label="Timeline" style="height: 48px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px; color: #A3ABA4"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 3v18"></path><circle cx="7" cy="7" r="2"></circle><circle cx="7" cy="17" r="2"></circle><path d="M12 7h8M12 17h8"></path></svg><span style="font-size: 11px; font-weight: 700">Timeline</span></a>
 </div>
 
 </div>
 </x-dc>
 <script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
 class Component extends DCLogic {
-  constructor(props) { super(props); this.state = { day: 3, menu: false }; }
+  constructor(props) { super(props); this.state = { day: 4, menu: false }; }
   renderVals() {
     const F = (title, time, lines) => ({ title: title, time: time, lines: lines.map((t) => ({ t: t })), free: false, fixed: true });
     const L = (title) => ({ title: title, free: true, fixed: false, time: '', lines: [] });
@@ -100,13 +101,13 @@ class Component extends DCLogic {
         F('Pranzo', '', ['Piadina integrale con bresaola 100 g, stracchino 40 g e rucola', 'Verdure', '1 frutto']),
         F('Spuntino dolce', '16:00', ['Yogurt greco 150 g con 2 biscotti o 1 cucchiaino di crema di nocciole']),
         F('Cena', '', ['Lonza di maiale ai ferri 200 g', 'Verdure', 'Pane integrale 100 g', '1 frutto'])] },
-      { name: 'Giovedì', l: 'G', tag: 'oggi', note: '~130 g proteine', meals: [
+      { name: 'Giovedì', l: 'G', tag: '130 g', note: '~130 g proteine', meals: [
         F('Colazione', '', ['Caffellatte', "Yogurt greco 150 g con avena 40 g, miele e banana"]),
         F('Spuntino', '11:00', ['1 frutto', 'Bresaola 40 g']),
         F('Pranzo', '', ['Pasta 100 g al ragù magro di manzo 120 g', 'Insalata']),
         F('Spuntino', '16:00', ['1 frutto', 'Mandorle 25 g']),
         F('Cena', '', ['Merluzzo o orata al forno 250 g', 'Patate al forno 250 g', 'Verdure', 'Pane integrale 1 fetta'])] },
-      { name: 'Venerdì', l: 'V', tag: '135 g', note: '~135 g proteine', meals: [
+      { name: 'Venerdì', l: 'V', tag: 'oggi', note: '~135 g proteine', meals: [
         F('Colazione', '', ['Caffellatte', '2 uova strapazzate', 'Pane integrale 2 fette', '1 frutto']),
         F('Spuntino', '11:00', ['1 frutto', 'Mandorle 25 g']),
         F('Pranzo', '', ['Insalata di farro 70 g con tonno 100 g, ceci 100 g, mozzarella 60 g e verdure']),
