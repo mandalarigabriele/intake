@@ -22,6 +22,7 @@
   --color-rod-future: light-dark(#b9c0b6, #4a5049);
   --color-track: light-dark(#e8ebe5, #2b2f2b);
   --color-switch-knob: light-dark(#ffffff, #f1f3ef);
+  --color-status-strip: light-dark(#17201b, #121412);
 
   --color-accent: light-dark(#2f6b47, #5fb083);
   --color-accent-soft: light-dark(#e3f0e6, #1f3628);
