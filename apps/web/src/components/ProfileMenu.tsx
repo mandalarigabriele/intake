@@ -52,7 +52,7 @@ export function ProfileMenu({ user, variant }: Props) {
             <span className="avatar avatar-sm" aria-hidden="true">
               {avatar}
             </span>
-            <span className="profile-email">{user.email}</span>
+            <span className="profile-email">{user.name ?? user.email}</span>
           </>
         )}
       </button>
@@ -61,7 +61,13 @@ export function ProfileMenu({ user, variant }: Props) {
           <p className="menu-caption">
             {t.profile.signedInAs}
             <br />
-            <strong>{user.email}</strong>
+            <strong>{user.name ?? user.email}</strong>
+            {user.name && (
+              <>
+                <br />
+                {user.email}
+              </>
+            )}
           </p>
           <div className="menu-section">
             <span className="menu-label" id="theme-label">

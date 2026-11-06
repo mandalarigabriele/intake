@@ -16,6 +16,8 @@ interface Props {
   /** Local time HH:MM:SS when the day is today; the "now" marker is shown only then. */
   now: string | null;
   onLogPlanned: (entry: PlannedEntry) => void;
+  /** Skip (true) or restore (false) a planned meal. */
+  onSkipPlanned: (entry: PlannedEntry, skip: boolean) => void;
   loggingPlanned: PlannedEntry | null;
   logFailed: boolean;
   onOther: () => void;
@@ -83,7 +85,35 @@ function LoggedCard({ meal }: { meal: Meal }) {
   );
 }
 
-function PlannedCard({ entry, onLog, logging, failed, onOther }: { entry: PlannedEntry; onLog: () => void; logging: boolean; failed: boolean; onOther: () => void }) {
+function PlannedCard({
+  entry,
+  onLog,
+  onSkip,
+  logging,
+  failed,
+  onOther,
+}: {
+  entry: PlannedEntry;
+  onLog: () => void;
+  onSkip: (skip: boolean) => void;
+  logging: boolean;
+  failed: boolean;
+  onOther: () => void;
+}) {
+  if (entry.status === "skipped") {
+    return (
+      <article className="meal-card" data-kind="skipped">
+        <header className="meal-card-head">
+          <h3>{entry.title}</h3>
+          <span className="planned-label">{t.timeline.skipped}</span>
+        </header>
+        <button type="button" className="text-button text-button-strong undo-skip" onClick={() => onSkip(false)}>
+          {t.timeline.undoSkip}
+        </button>
+      </article>
+    );
+  }
+
   const label = entry.status === "todo" ? t.timeline.todo : entry.status === "free" ? t.timeline.free : t.timeline.planned;
   return (
     <article className="meal-card" data-kind={entry.status}>
@@ -101,10 +131,18 @@ function PlannedCard({ entry, onLog, logging, failed, onOther }: { entry: Planne
             <button type="button" className="button-small button-outline" onClick={onOther}>
               {t.timeline.other}
             </button>
+            <button type="button" className="button-small button-ghost" onClick={() => onSkip(true)}>
+              {t.timeline.skip}
+            </button>
           </div>
           {!entry.macros && <p className="planned-hint">{t.timeline.noMacros}</p>}
           {failed && <p className="error-text">{t.timeline.logFailed}</p>}
         </>
+      )}
+      {entry.status === "planned" && (
+        <button type="button" className="text-button skip-upcoming" onClick={() => onSkip(true)}>
+          {t.timeline.skip}
+        </button>
       )}
     </article>
   );
@@ -114,7 +152,7 @@ function PlannedCard({ entry, onLog, logging, failed, onOther }: { entry: Planne
  * Vertical timeline of the day: logged meals, planned meals from the active plan and, for today,
  * the "now" marker. A continuous rod runs behind the time labels: solid until now, dashed after.
  */
-export function Timeline({ meals, planned, hasPlan, heading = true, now, onLogPlanned, loggingPlanned, logFailed, onOther }: Props) {
+export function Timeline({ meals, planned, hasPlan, heading = true, now, onLogPlanned, onSkipPlanned, loggingPlanned, logFailed, onOther }: Props) {
   const entries: Entry[] = [
     ...meals.map((meal): Entry => ({ kind: "meal", time: meal.time, meal })),
     ...planned.map((entry): Entry => ({ kind: "planned", time: entry.time, entry })),
@@ -128,8 +166,13 @@ export function Timeline({ meals, planned, hasPlan, heading = true, now, onLogPl
   const nowIndex = entries.findIndex((entry) => entry.kind === "now");
 
   const todo = planned.filter((p) => p.status === "todo").length;
-  const upcoming = planned.filter((p) => p.status !== "todo").length;
-  const counts = [t.timeline.logged(meals.length), todo > 0 ? t.timeline.todoCount(todo) : upcoming > 0 ? t.timeline.plannedCount(upcoming) : null];
+  const upcoming = planned.filter((p) => p.status === "planned" || p.status === "free").length;
+  const skipped = planned.filter((p) => p.status === "skipped").length;
+  const counts = [
+    t.timeline.logged(meals.length),
+    todo > 0 ? t.timeline.todoCount(todo) : upcoming > 0 ? t.timeline.plannedCount(upcoming) : null,
+    skipped > 0 ? t.timeline.skippedCount(skipped) : null,
+  ];
 
   return (
     <section className="timeline-section" aria-label={t.timeline.title}>
@@ -178,6 +221,7 @@ export function Timeline({ meals, planned, hasPlan, heading = true, now, onLogPl
                 <PlannedCard
                   entry={entry.entry}
                   onLog={() => onLogPlanned(entry.entry)}
+                  onSkip={(skip) => onSkipPlanned(entry.entry, skip)}
                   logging={loggingPlanned?.planId === entry.entry.planId && loggingPlanned.index === entry.entry.index}
                   failed={logFailed && loggingPlanned?.planId === entry.entry.planId && loggingPlanned.index === entry.entry.index}
                   onOther={onOther}

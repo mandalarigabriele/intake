@@ -1,3 +1,4 @@
+import { isFixedMeal, planDay } from "@intake/shared";
 import type { FastifyPluginAsync, preHandlerHookHandler } from "fastify";
 import { z } from "zod";
 import type { PlanStore } from "../db/planStore.js";
@@ -7,7 +8,7 @@ import { logPlannedMeal, PlanMealNotFoundError, PlanMealWithoutMacrosError } fro
 
 export interface DayRoutesOptions {
   api: Pick<NutritionApi, "clock" | "goalProgress" | "mealsByDate" | "addWater" | "logMeal">;
-  plans?: Pick<PlanStore, "activeOn" | "linksOn" | "get" | "addLink">;
+  plans?: Pick<PlanStore, "activeOn" | "linksOn" | "skipsOn" | "get" | "addLink" | "addSkip" | "removeSkip">;
   requireOwner: preHandlerHookHandler;
 }
 
@@ -49,6 +50,27 @@ export const dayRoutes: FastifyPluginAsync<DayRoutesOptions> = async (app, { api
       }
     },
   );
+
+  // "Salta" / "Annulla": skip a planned meal of the given day, or restore it
+  for (const method of ["POST", "DELETE"] as const) {
+    app.route<{ Params: { date: string; planId: string; index: string } }>({
+      method,
+      url: "/days/:date/planned/:planId/:index/skip",
+      handler: async (request, reply) => {
+        const { date } = request.params;
+        const planId = Number(request.params.planId);
+        const index = Number(request.params.index);
+        if (!plans || !isValidDate(date) || !Number.isInteger(planId) || !Number.isInteger(index) || index < 0) {
+          return reply.code(400).send({ error: "Invalid planned meal" });
+        }
+        const meal = plans.get(planId) && planDay(plans.get(planId)!.plan, date).meals[index];
+        if (!meal || !isFixedMeal(meal)) return reply.code(404).send({ error: "Planned meal not found" });
+        if (method === "POST") plans.addSkip(date, planId, index);
+        else plans.removeSkip(date, planId, index);
+        return { skipped: method === "POST" };
+      },
+    });
+  }
 
   app.post("/water", async (request, reply) => {
     const body = addWaterBody.safeParse(request.body);

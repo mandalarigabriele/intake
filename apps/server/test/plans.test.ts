@@ -274,3 +274,60 @@ describe("Claude Fitness plan upload", () => {
     expect(log.json().error).toBe("missing_macros");
   });
 });
+
+describe("skipping planned meals", () => {
+  const stored = { id: 1, validFrom: "2026-11-04", uploadedAt: "", plan: examplePlan };
+  const context = { date: "2026-11-05", today: "2026-11-05", now: "13:17:00" };
+
+  it("marks an uncovered skipped meal as skipped, past or upcoming", () => {
+    const entries = plannedEntries(stored, [], [], context, [{ planId: 1, index: 1 }, { planId: 1, index: 4 }]);
+    expect(entries.map((e) => `${e.time}:${e.status}`)).toEqual(["08:00:todo", "11:00:skipped", "13:00:todo", "16:00:planned", "20:00:skipped"]);
+  });
+
+  it("ignores skips of another plan version", () => {
+    const entries = plannedEntries(stored, [], [], context, [{ planId: 2, index: 1 }]);
+    expect(entries.find((e) => e.time === "11:00")!.status).toBe("todo");
+  });
+
+  it("stores skips per date and removes them", () => {
+    const store = new PlanStore(openDatabase(":memory:"));
+    const plan = store.add(planOn("2026-11-02"));
+    store.addSkip("2026-11-05", plan.id, 1);
+    store.addSkip("2026-11-05", plan.id, 1);
+    expect(store.skipsOn("2026-11-05")).toEqual([{ planId: plan.id, index: 1 }]);
+    expect(store.skipsOn("2026-11-06")).toEqual([]);
+    store.removeSkip("2026-11-05", plan.id, 1);
+    expect(store.skipsOn("2026-11-05")).toEqual([]);
+  });
+
+  it("skips and restores through the API, refusing free or unknown meals", async () => {
+    const clock = { timezone: "Europe/Rome", localDate: "2026-11-05", localTime: "13:17:00", utc: "" };
+    const api: DayRoutesOptions["api"] = {
+      clock: async () => clock,
+      goalProgress: async () => parseGoalProgress(JSON.parse(fixture("goal-progress.json"))).value,
+      mealsByDate: async () => ({ timezone: null, meals: [] }),
+      addWater: async () => {},
+      logMeal: async () => ({ id: null }),
+    };
+    const plans = new PlanStore(openDatabase(":memory:"));
+    const app = await buildApp({ auth: authOptions(), api, plans });
+    const { cookie } = await signIn(app);
+    const headers = { cookie };
+    const plan = (await app.inject({ method: "POST", url: "/api/plans", headers, payload: examplePlan })).json();
+
+    const skip = await app.inject({ method: "POST", url: `/api/days/2026-11-05/planned/${plan.id}/1/skip`, headers });
+    expect(skip.json()).toEqual({ skipped: true });
+    let day = (await app.inject({ method: "GET", url: "/api/days/today", headers })).json();
+    expect(day.planned.find((p: { index: number }) => p.index === 1).status).toBe("skipped");
+
+    const restore = await app.inject({ method: "DELETE", url: `/api/days/2026-11-05/planned/${plan.id}/1/skip`, headers });
+    expect(restore.json()).toEqual({ skipped: false });
+    day = (await app.inject({ method: "GET", url: "/api/days/today", headers })).json();
+    expect(day.planned.find((p: { index: number }) => p.index === 1).status).toBe("todo");
+
+    // Saturday dinner is a free meal: nothing to skip
+    expect((await app.inject({ method: "POST", url: `/api/days/2026-11-07/planned/${plan.id}/4/skip`, headers })).statusCode).toBe(404);
+    expect((await app.inject({ method: "POST", url: `/api/days/2026-11-05/planned/${plan.id}/9/skip`, headers })).statusCode).toBe(404);
+    expect((await app.inject({ method: "POST", url: `/api/days/2026-11-05/planned/${plan.id}/1/skip` })).statusCode).toBe(401);
+  });
+});

@@ -54,7 +54,7 @@ export function AddSheet({ onClose }: Props) {
     };
   }, [onClose]);
 
-  const planMeals = (today.data?.planned ?? []).filter((entry) => entry.status !== "free");
+  const planMeals = (today.data?.planned ?? []).filter((entry) => entry.status === "todo" || entry.status === "planned");
 
   return (
     <div className="scrim" onClick={onClose}>

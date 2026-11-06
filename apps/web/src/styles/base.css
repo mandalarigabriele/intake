@@ -2833,3 +2833,46 @@ a.bar-column:hover .bar:not([data-empty]) {
 .timeline-page .section-head {
   justify-content: flex-end;
 }
+
+/* ================= Skipped planned meals ================= */
+
+.button-ghost {
+  border: none;
+  background: transparent;
+  color: var(--color-text-muted);
+  font-weight: 700;
+}
+
+.skip-upcoming {
+  align-self: flex-start;
+  height: 32px;
+  padding: 0;
+  font-size: 13px;
+}
+
+.meal-card[data-kind="skipped"] {
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 16px;
+  background: transparent;
+  border: 1.5px dashed var(--color-dashed);
+  opacity: 0.75;
+}
+
+.meal-card[data-kind="skipped"] .meal-card-head {
+  flex: 1;
+  justify-content: flex-start;
+}
+
+.meal-card[data-kind="skipped"] h3 {
+  font-weight: 700;
+  color: var(--color-text-muted);
+  text-decoration: line-through;
+}
+
+.undo-skip {
+  height: 32px;
+  font-size: 13px;
+}
