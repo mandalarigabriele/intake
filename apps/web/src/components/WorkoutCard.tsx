@@ -1,4 +1,5 @@
 import type { Workout, WorkoutExercise } from "@intake/shared";
+import { useId, useState } from "react";
 import { formatGrams, formatKcal } from "../lib/format";
 import { t } from "../lib/strings";
 
@@ -16,8 +17,13 @@ function exerciseNote(exercise: WorkoutExercise): string {
   return parts.join(" · ");
 }
 
-/** A Hevy workout in the day timeline: title, time, duration, sets, volume and exercises. */
+/**
+ * A Hevy workout in the day timeline. Collapsed by default (title, time, duration, sets, volume);
+ * the exercises open with a tap.
+ */
 export function WorkoutCard({ workout }: { workout: Workout }) {
+  const [open, setOpen] = useState(false);
+  const listId = useId();
   return (
     <article className="meal-card workout-card" aria-label={`${t.workouts.label} ${workout.title}`}>
       <div className="workout-head">
@@ -28,7 +34,15 @@ export function WorkoutCard({ workout }: { workout: Workout }) {
       </div>
       <h3>{workout.title}</h3>
       <p className="muted workout-summary">{t.workouts.summary(formatDuration(workout.durationMinutes), workout.sets, formatKcal(workout.volumeKg))}</p>
-      <ul className="workout-exercises">
+      {workout.exercises.length > 0 && (
+        <button type="button" className="workout-toggle" aria-expanded={open} aria-controls={listId} onClick={() => setOpen((v) => !v)}>
+          <span>{open ? t.workouts.hideExercises : t.workouts.showExercises(workout.exercises.length)}</span>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+            <path d="M6 9l6 6 6-6" />
+          </svg>
+        </button>
+      )}
+      <ul id={listId} className="workout-exercises" hidden={!open}>
         {workout.exercises.map((exercise, i) => (
           <li key={i}>
             <span>{exercise.title}</span>
