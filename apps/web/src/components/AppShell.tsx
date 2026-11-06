@@ -2,6 +2,7 @@ import { useEffect, useRef, type ReactNode } from "react";
 import { Link, useLocation } from "wouter";
 import { useNutritionStatus, type User } from "../api/queries";
 import { t } from "../lib/strings";
+import { trackViewportHeight } from "../lib/viewport";
 import { PlanIcon, PlusIcon, TimelineIcon, TodayIcon, WeekIcon } from "./icons";
 import { Logo } from "./Logo";
 import { ProfileMenu } from "./ProfileMenu";
@@ -39,17 +40,8 @@ export function AppShell({ user, onAdd, children }: Props) {
     main.current?.scrollTo({ top: 0 });
   }, [location]);
 
-  // iOS Safari can leave the document scrolled by the toolbar height after a rotation, which
-  // shows an empty band above the layout; the document itself never needs to scroll.
-  useEffect(() => {
-    const reset = () => window.scrollTo(0, 0);
-    window.addEventListener("resize", reset);
-    window.addEventListener("orientationchange", reset);
-    return () => {
-      window.removeEventListener("resize", reset);
-      window.removeEventListener("orientationchange", reset);
-    };
-  }, []);
+  // Size the layout to the visible height (iOS Safari gets it wrong after a rotation)
+  useEffect(() => trackViewportHeight(), []);
 
   return (
     <div className="shell" data-pushed={pushed || undefined}>
