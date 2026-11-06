@@ -10,9 +10,11 @@ import { Scrim } from "./Scrim";
 const ROW_ICONS = {
   repeat: "M4 12a8 8 0 1 0 3-6.2M4 4v5h5",
   saved: "M12 17l-5 3 1-6-4-4 6-1 2-5 2 5 6 1-4 4 1 6z",
-  search: "M11 18a7 7 0 1 0 0-14 7 7 0 0 0 0 14zM20 20l-4-4",
-  barcode: "M4 6v12M8 6v12M11 6v12M15 6v12M18 6v12M20 6v12",
+  claude: "M4 5h16v11H9l-5 4zM8 9h8M8 12h5",
 };
+
+/** Opens Claude (the app when installed, via universal link) with the start of the request. */
+const CLAUDE_URL = `https://claude.ai/new?q=${encodeURIComponent(t.addSheet.claudePrompt)}`;
 
 function RowIcon({ path }: { path: string }) {
   return (
@@ -147,24 +149,23 @@ export function AddSheet({ onClose }: Props) {
               {repeat.isError && <p className="error-text">{t.timeline.logFailed}</p>}
             </div>
           )}
-          {(
-            [
-              ["saved", t.addSheet.saved, t.addSheet.savedHint],
-              ["search", t.addSheet.search, t.addSheet.searchHint],
-              ["barcode", t.addSheet.barcode, t.addSheet.barcodeHint],
-            ] as const
-          ).map(([key, title, hint]) => (
-            <button key={key} type="button" className="sheet-row" disabled>
-              <RowIcon path={ROW_ICONS[key]} />
-              <span className="sheet-row-text">
-                <strong>{title}</strong>
-                <span className="muted">{hint}</span>
-              </span>
-              <span className="sheet-row-action">{t.addSheet.soon}</span>
-            </button>
-          ))}
+          <button type="button" className="sheet-row" disabled>
+            <RowIcon path={ROW_ICONS.saved} />
+            <span className="sheet-row-text">
+              <strong>{t.addSheet.saved}</strong>
+              <span className="muted">{t.addSheet.savedHint}</span>
+            </span>
+            <span className="sheet-row-action">{t.addSheet.soon}</span>
+          </button>
+          <a className="sheet-row" href={CLAUDE_URL} target="_blank" rel="noreferrer">
+            <RowIcon path={ROW_ICONS.claude} />
+            <span className="sheet-row-text">
+              <strong>{t.addSheet.claude}</strong>
+              <span className="muted">{t.addSheet.claudeHint}</span>
+            </span>
+            <span className="sheet-row-action">{t.addSheet.open}</span>
+          </a>
         </div>
-        <p className="sheet-note">{t.addSheet.claudeHint}</p>
       </div>
     </Scrim>
   );
