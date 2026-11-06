@@ -39,3 +39,14 @@ export function setThemePreference(preference: ThemePreference): void {
   }
   applyTheme(preference);
 }
+
+/**
+ * Replaces the theme-color metas with fresh copies. iOS Safari tints its status bar from fixed
+ * elements such as a sheet's dark backdrop and can keep that tint after the sheet closes; a new
+ * element makes it evaluate the color again.
+ */
+export function refreshThemeColor(): void {
+  for (const meta of document.querySelectorAll<HTMLMetaElement>('meta[name="theme-color"]')) {
+    meta.replaceWith(meta.cloneNode(true));
+  }
+}

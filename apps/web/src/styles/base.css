@@ -70,6 +70,8 @@ strong,
   right: 0;
   height: 100dvh;
   height: var(--app-height, 100dvh);
+  /* Opaque, so Safari samples the page color for its status bar and toolbar tint */
+  background: var(--color-bg);
   display: flex;
   flex-direction: column;
   overflow: hidden;
