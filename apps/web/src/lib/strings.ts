@@ -32,6 +32,30 @@ export const t = {
     disconnectConfirm: "Scollegare Nutrition? Dovrai ricollegarlo per vedere i tuoi dati.",
     theme: "Tema",
     themeOptions: { system: "Sistema", light: "Chiaro", dark: "Scuro" },
+    reminders: "Promemoria",
+  },
+
+  reminders: {
+    title: "Promemoria",
+    device: "Questo dispositivo",
+    on: "Notifiche attive",
+    off: "Notifiche non attive",
+    enable: "Attiva",
+    disable: "Disattiva",
+    needsInstall: "Su iPhone e iPad arrivano solo all'app installata: in Safari tocca Condividi → Aggiungi alla schermata Home, poi apri Intake da lì.",
+    unsupported: "Questo browser non supporta le notifiche.",
+    denied: "Notifiche bloccate: abilitale in Impostazioni → Notifiche → Intake, poi riprova.",
+    failed: "Operazione non riuscita. Riprova.",
+    which: "QUALI PROMEMORIA",
+    kinds: {
+      meal: { title: "All'ora del pasto", hint: "Per i pasti del piano non ancora registrati o saltati" },
+      todo: { title: "Pasto da registrare", hint: "45 minuti dopo, se il pasto non è ancora registrato" },
+      water: { title: "Acqua", hint: "Alle 16:00 e alle 20:00, se sei indietro con l'obiettivo" },
+      summary: { title: "Riepilogo serale", hint: "Alle 21:30: kcal e proteine della giornata" },
+    },
+    test: "Invia una notifica di prova",
+    testSent: (count: number) => (count === 0 ? "Nessun dispositivo raggiunto." : count === 1 ? "Inviata a 1 dispositivo." : `Inviata a ${count} dispositivi.`),
+    devices: (count: number) => (count === 0 ? "Nessun dispositivo attivo." : count === 1 ? "1 dispositivo attivo." : `${count} dispositivi attivi.`),
   },
 
   connect: {

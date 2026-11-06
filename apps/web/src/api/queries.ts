@@ -7,6 +7,9 @@ import type {
   Meal,
   PlanUploadError,
   PlansResponse,
+  PushStatus,
+  PushSubscriptionRequest,
+  ReminderSettings,
   RepeatMealRequest,
   StoredPlan,
   UpdateMealRequest,
@@ -259,4 +262,37 @@ export function useInsight() {
     queryFn: () => apiFetch<InsightResponse>("/api/insight"),
     staleTime: 30 * 60 * 1000,
   });
+}
+
+/** Reminder settings and the number of subscribed devices. */
+export function usePushStatus(enabled: boolean) {
+  return useQuery({ queryKey: ["push"], queryFn: () => apiFetch<PushStatus>("/api/push"), enabled });
+}
+
+export function useSubscribePush() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (subscription: PushSubscriptionRequest) => apiFetch<PushStatus>("/api/push/subscriptions", { method: "POST", json: subscription }),
+    onSuccess: (status) => queryClient.setQueryData(["push"], status),
+  });
+}
+
+export function useUnsubscribePush() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (endpoint: string) => apiFetch<PushStatus>("/api/push/subscriptions", { method: "DELETE", json: { endpoint } }),
+    onSuccess: (status) => queryClient.setQueryData(["push"], status),
+  });
+}
+
+export function useReminderSettings() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (settings: ReminderSettings) => apiFetch<PushStatus>("/api/push/settings", { method: "PUT", json: settings }),
+    onSuccess: (status) => queryClient.setQueryData(["push"], status),
+  });
+}
+
+export function useTestPush() {
+  return useMutation({ mutationFn: () => apiFetch<{ sent: number }>("/api/push/test", { method: "POST" }) });
 }

@@ -21,6 +21,7 @@
   --color-dashed: light-dark(#c3c9c0, #4a5049);
   --color-rod-future: light-dark(#b9c0b6, #4a5049);
   --color-track: light-dark(#e8ebe5, #2b2f2b);
+  --color-switch-knob: light-dark(#ffffff, #f1f3ef);
 
   --color-accent: light-dark(#2f6b47, #5fb083);
   --color-accent-soft: light-dark(#e3f0e6, #1f3628);
@@ -63,6 +64,7 @@
 
   --shadow-fab: 0 6px 18px rgb(23 32 27 / 28%);
   --shadow-menu: 0 10px 30px light-dark(rgb(23 32 27 / 20%), rgb(0 0 0 / 50%));
+  --shadow-switch: 0 1px 3px light-dark(rgb(23 32 27 / 25%), rgb(0 0 0 / 50%));
   --scrim: light-dark(rgb(23 32 27 / 45%), rgb(0 0 0 / 60%));
 
   --radius-xs: 6px;

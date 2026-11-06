@@ -198,3 +198,28 @@ export interface WeekConsistency {
   /** Planned meals skipped this week. */
   skipped: number;
 }
+
+/** Which reminders are sent (Web Push, to the installed app). */
+export interface ReminderSettings {
+  /** At the planned time of a meal that is not logged or skipped. */
+  meal: boolean;
+  /** 45 minutes later, if the planned meal is still not logged. */
+  todo: boolean;
+  /** At 16:00 and 20:00, when water is behind the goal for that time of day. */
+  water: boolean;
+  /** At 21:30: kcal and protein of the day against the goals. */
+  summary: boolean;
+}
+
+export interface PushStatus {
+  /** VAPID public key (base64url) for PushManager.subscribe. */
+  publicKey: string;
+  /** Devices subscribed. */
+  devices: number;
+  settings: ReminderSettings;
+}
+
+export interface PushSubscriptionRequest {
+  endpoint: string;
+  keys: { p256dh: string; auth: string };
+}

@@ -13,6 +13,7 @@ import { dayRoutes, type DayRoutesOptions } from "./routes/days.js";
 import { mealRoutes, type MealRoutesOptions } from "./routes/meals.js";
 import { insightRoutes, type InsightRoutesOptions } from "./routes/insight.js";
 import { planRoutes } from "./routes/plans.js";
+import { pushRoutes, type PushRoutesOptions } from "./routes/push.js";
 import { weekRoutes, type WeekRoutesOptions } from "./routes/weeks.js";
 import { authRoutes } from "./routes/auth.js";
 import { healthRoutes } from "./routes/health.js";
@@ -45,6 +46,8 @@ export interface AppOptions {
   weekApi?: WeekRoutesOptions["api"];
   /** Meal plan storage; registered together with `api`. */
   plans?: PlanStore;
+  /** Reminders (Web Push); registered together with `auth`. */
+  push?: Omit<PushRoutesOptions, "requireOwner">;
 }
 
 export async function buildApp(options: AppOptions = {}): Promise<FastifyInstance> {
@@ -72,7 +75,7 @@ export async function buildApp(options: AppOptions = {}): Promise<FastifyInstanc
 
   await app.register(healthRoutes, { prefix: "/api" });
 
-  if ((options.nutrition || options.api || options.mealsApi || options.weekApi || options.insightApi) && !options.auth) {
+  if ((options.nutrition || options.api || options.mealsApi || options.weekApi || options.insightApi || options.push) && !options.auth) {
     throw new Error("Nutrition routes need authentication options");
   }
 
@@ -87,6 +90,9 @@ export async function buildApp(options: AppOptions = {}): Promise<FastifyInstanc
     if (options.nutrition) {
       await app.register(nutritionConnectRoutes, { connection: options.nutrition, requireOwner });
       await app.register(nutritionApiRoutes, { prefix: "/api", connection: options.nutrition, requireOwner });
+    }
+    if (options.push) {
+      await app.register(pushRoutes, { prefix: "/api", ...options.push, requireOwner });
     }
     if (options.insightApi) {
       await app.register(insightRoutes, { prefix: "/api", api: options.insightApi, requireOwner });

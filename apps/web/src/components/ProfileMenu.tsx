@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { useDisconnectNutrition, useSignOut, type User } from "../api/queries";
 import { t } from "../lib/strings";
 import { getThemePreference, setThemePreference, type ThemePreference } from "../lib/theme";
+import { RemindersSheet } from "./RemindersSheet";
 
 const THEMES: ThemePreference[] = ["system", "light", "dark"];
 
@@ -14,6 +15,7 @@ interface Props {
 /** Profile button with sign-out and Nutrition disconnect. */
 export function ProfileMenu({ user, variant }: Props) {
   const [open, setOpen] = useState(false);
+  const [reminders, setReminders] = useState(false);
   const [theme, setTheme] = useState<ThemePreference>(getThemePreference);
   const ref = useRef<HTMLDivElement>(null);
   const signOut = useSignOut();
@@ -96,6 +98,17 @@ export function ProfileMenu({ user, variant }: Props) {
             role="menuitem"
             className="menu-item"
             onClick={() => {
+              setReminders(true);
+              setOpen(false);
+            }}
+          >
+            {t.profile.reminders}
+          </button>
+          <button
+            type="button"
+            role="menuitem"
+            className="menu-item"
+            onClick={() => {
               if (window.confirm(t.profile.disconnectConfirm)) disconnect.mutate();
               setOpen(false);
             }}
@@ -107,6 +120,7 @@ export function ProfileMenu({ user, variant }: Props) {
           </button>
         </div>
       )}
+      {reminders && <RemindersSheet onClose={() => setReminders(false)} />}
     </div>
   );
 }
