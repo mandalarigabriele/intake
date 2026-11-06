@@ -2,11 +2,10 @@ import type { DayView } from "@intake/shared";
 import { useEffect, useState, type ReactNode } from "react";
 import { ApiError } from "../api/client";
 import { useDay, type User } from "../api/queries";
-import { isIsoDate } from "../lib/dates";
-import { formatLongDate } from "../lib/format";
+import { addDays, isIsoDate } from "../lib/dates";
+import { formatKcal, formatLongDate } from "../lib/format";
 import { t } from "../lib/strings";
 import { ConnectPage } from "../pages/ConnectPage";
-import { PlusIcon } from "./icons";
 import { Logo } from "./Logo";
 import { ProfileMenu } from "./ProfileMenu";
 import { WeekStrip } from "./WeekStrip";
@@ -29,19 +28,19 @@ function useSelectedDay(): [string, (date: string) => void] {
 interface Props {
   user: User;
   notice: string | null;
-  onAdd: () => void;
-  /** Page title for the selected day ("Oggi" / weekday, or "Timeline"). */
+  /**
+   * "today": logo row, profile avatar and week strip (Oggi).
+   * "timeline": "date · kcal" subtitle and previous/next day arrows (Timeline mockup).
+   */
+  variant: "today" | "timeline";
   title: (view: DayView | undefined) => string;
   className?: string;
   skeleton: ReactNode;
   children: (view: DayView, selected: string) => ReactNode;
 }
 
-/**
- * Shared frame of the day screens (Oggi and Timeline): header with date and title, profile
- * avatar on phones, week strip, loading and error states, and the floating "+" button.
- */
-export function DayScreen({ user, notice, onAdd, title, className, skeleton, children }: Props) {
+/** Shared frame of the day screens: header, day selection, loading and error states. */
+export function DayScreen({ user, notice, variant, title, className, skeleton, children }: Props) {
   const [selected, setSelected] = useSelectedDay();
   const [today, setToday] = useState<string | null>(null);
   const day = useDay(selected);
@@ -59,20 +58,47 @@ export function DayScreen({ user, notice, onAdd, title, className, skeleton, chi
 
   return (
     <div className={`page today-page ${className ?? ""}`}>
-      <div className="today-top">
-        <div className="page-heading">
-          <div className="brand-row">
-            <Logo />
-            <span>{t.appName}</span>
+      {variant === "today" ? (
+        <div className="today-top">
+          <div className="page-heading">
+            <div className="brand-row">
+              <Logo />
+              <span>{t.appName}</span>
+            </div>
+            <p className="page-date">{view ? formatLongDate(view.date) : " "}</p>
+            <h1 className="page-title">{title(view)}</h1>
           </div>
-          <p className="page-date">{view ? formatLongDate(view.date) : " "}</p>
-          <h1 className="page-title">{title(view)}</h1>
+          <div className="today-avatar">
+            <ProfileMenu user={user} variant="avatar" />
+          </div>
+          {view && today && <WeekStrip selected={view.date} today={today} onSelect={selectDate} />}
         </div>
-        <div className="today-avatar">
-          <ProfileMenu user={user} variant="avatar" />
-        </div>
-        {view && today && <WeekStrip selected={view.date} today={today} onSelect={selectDate} />}
-      </div>
+      ) : (
+        <header className="section-header">
+          <div className="page-heading">
+            <p className="page-date">{view ? `${formatLongDate(view.date)} · ${formatKcal(view.totals.kcal)} kcal` : " "}</p>
+            <h1 className="page-title">{title(view)}</h1>
+          </div>
+          <div className="week-nav">
+            <button type="button" className="icon-button" aria-label={t.timeline.previousDay} disabled={!view} onClick={() => view && selectDate(addDays(view.date, -1))}>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                <path d="M15 6l-6 6 6 6" />
+              </svg>
+            </button>
+            <button
+              type="button"
+              className="icon-button"
+              aria-label={t.timeline.nextDay}
+              disabled={!view || !today || view.date >= today}
+              onClick={() => view && selectDate(addDays(view.date, 1))}
+            >
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                <path d="M9 6l6 6-6 6" />
+              </svg>
+            </button>
+          </div>
+        </header>
+      )}
 
       {notice && <p className="notice">{notice}</p>}
 
@@ -92,10 +118,6 @@ export function DayScreen({ user, notice, onAdd, title, className, skeleton, chi
       )}
 
       {view && <div aria-busy={day.isFetching}>{children(view, selected)}</div>}
-
-      <button type="button" className="fab" aria-label={t.nav.add} onClick={onAdd}>
-        <PlusIcon size={26} strokeWidth={2.5} />
-      </button>
     </div>
   );
 }

@@ -1,7 +1,7 @@
 import { describe, expect, it, vi } from "vitest";
 import { buildApp } from "../src/app.js";
 import { parseNutritionSummary, parseWeightTrends } from "../src/parsers/summary.js";
-import { mondayOf, type WeekRoutesOptions } from "../src/routes/weeks.js";
+import { loggingStreak, mondayOf, type WeekRoutesOptions } from "../src/routes/weeks.js";
 import { authOptions, signIn } from "./helpers.js";
 import { fixture } from "./parsers/fixtures.js";
 
@@ -9,10 +9,10 @@ const summary = parseNutritionSummary(JSON.parse(fixture("nutrition-summary.json
 
 describe("summary parsers", () => {
   it("parses real nutrition summary structured content", () => {
-    expect(summary.goals).toEqual({ kcal: 2200, protein: 135 });
+    expect(summary.goals).toEqual({ kcal: 2200, protein: 135, waterMl: 2500 });
     expect(summary.days).toEqual([
-      { date: "2026-11-04", kcal: 790, protein: 49.4, mealCount: 5 },
-      { date: "2026-11-05", kcal: 438, protein: 28.2, mealCount: 1 },
+      { date: "2026-11-04", kcal: 790, protein: 49.4, waterMl: 0, mealCount: 5 },
+      { date: "2026-11-05", kcal: 438, protein: 28.2, waterMl: 0, mealCount: 1 },
     ]);
   });
 
@@ -50,11 +50,20 @@ describe("week routes", () => {
     const summaryFn = vi.fn(fakeApi().summary);
     const { app, headers } = await signedIn(fakeApi({ summary: summaryFn }));
     const week = (await app.inject({ method: "GET", url: "/api/weeks/current", headers })).json();
-    expect(summaryFn).toHaveBeenCalledWith("2026-11-02", "2026-11-05");
+    // The week plus 28 days before it, for the logging streak
+    expect(summaryFn).toHaveBeenCalledWith("2026-10-05", "2026-11-05");
     expect(week.start).toBe("2026-11-02");
     expect(week.end).toBe("2026-11-08");
     expect(week.days.map((d: { kcal: number | null }) => d.kcal)).toEqual([null, null, 790, 438, null, null, null]);
-    expect(week.averages).toEqual({ kcal: 614, protein: 38.8, days: 2 });
+    // Today (Thursday) is still in progress: only Wednesday is a completed day
+    expect(week.averages).toEqual({ kcal: 790, protein: 49.4, days: 1 });
+    expect(week.consistency).toEqual({
+      streak: ["2026-11-04", "2026-11-05"],
+      protein: { hit: 0, total: 1, best: { date: "2026-11-04", value: 49.4 }, goal: 135 },
+      water: { hit: 0, total: 1, best: { date: "2026-11-04", value: 0 }, goal: 2500 },
+      asPlanned: 0,
+      skipped: 0,
+    });
     expect(week.weight.entries).toHaveLength(1);
   });
 
@@ -79,5 +88,20 @@ describe("week routes", () => {
   it("requires sign-in", async () => {
     const app = await buildApp({ auth: authOptions(), weekApi: fakeApi() });
     expect((await app.inject({ method: "GET", url: "/api/weeks/current" })).statusCode).toBe(401);
+  });
+});
+
+describe("loggingStreak", () => {
+  const day = (date: string, mealCount: number) => ({ date, kcal: 1, protein: 1, waterMl: 0, mealCount });
+
+  it("counts today once it has meals, otherwise ends yesterday", () => {
+    const days = [day("2026-11-03", 2), day("2026-11-04", 1), day("2026-11-05", 3)];
+    expect(loggingStreak(days, "2026-11-05")).toEqual(["2026-11-03", "2026-11-04", "2026-11-05"]);
+    expect(loggingStreak(days, "2026-11-06")).toEqual(["2026-11-03", "2026-11-04", "2026-11-05"]);
+  });
+
+  it("stops at the first day without meals", () => {
+    expect(loggingStreak([day("2026-11-02", 1), day("2026-11-04", 1)], "2026-11-04")).toEqual(["2026-11-04"]);
+    expect(loggingStreak([day("2026-11-01", 1)], "2026-11-04")).toEqual([]);
   });
 });

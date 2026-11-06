@@ -2,7 +2,7 @@ import { useEffect, useRef, type ReactNode } from "react";
 import { Link, useLocation } from "wouter";
 import { useNutritionStatus, type User } from "../api/queries";
 import { t } from "../lib/strings";
-import { PlanIcon, TimelineIcon, TodayIcon, WeekIcon } from "./icons";
+import { PlanIcon, PlusIcon, TimelineIcon, TodayIcon, WeekIcon } from "./icons";
 import { Logo } from "./Logo";
 import { ProfileMenu } from "./ProfileMenu";
 
@@ -12,6 +12,9 @@ export const SECTIONS = [
   { path: "/piano", label: t.nav.plan, Icon: PlanIcon },
   { path: "/timeline", label: t.nav.timeline, Icon: TimelineIcon },
 ] as const;
+
+/** Tab bar order on phones: the round "+" sits in the middle slot (docs/design/DESIGN.md). */
+const TAB_ORDER = ["/", "/settimana", "+", "/piano", "/timeline"] as const;
 
 interface Props {
   user: User;
@@ -61,12 +64,22 @@ export function AppShell({ user, onAdd, children }: Props) {
       </main>
 
       <nav className="tabbar" aria-label={t.nav.label}>
-        {SECTIONS.map(({ path, label, Icon }) => (
-          <Link key={path} href={path} className="tab" aria-current={location === path ? "page" : undefined}>
-            <Icon />
-            <span>{label}</span>
-          </Link>
-        ))}
+        {TAB_ORDER.map((slot) => {
+          if (slot === "+") {
+            return (
+              <button key="add" type="button" className="tab-add" aria-label={t.nav.add} onClick={onAdd}>
+                <PlusIcon size={24} strokeWidth={2.5} />
+              </button>
+            );
+          }
+          const { path, label, Icon } = SECTIONS.find((section) => section.path === slot)!;
+          return (
+            <Link key={path} href={path} className="tab" aria-current={location === path ? "page" : undefined}>
+              <Icon />
+              <span>{label}</span>
+            </Link>
+          );
+        })}
       </nav>
     </div>
   );

@@ -12,6 +12,7 @@ Meal IDs are replaced with placeholder UUIDs; everything else is kept verbatim.
 | `goals.txt` | `get_nutrition_goals` | – |
 | `current-time.txt` | `get_current_time` | – |
 | `profile.txt` | `get_profile` | – |
+| `meal-patterns-7d.txt` | `get_meal_patterns` | `days: 7` |
 | `goal-progress.json` | `get_goal_progress` | `date` (structuredContent only) |
 | `nutrition-summary.json` | `get_nutrition_summary` | 7 days (structuredContent only) |
 | `weight-trends-empty.json` | `get_weight_trends` | no weigh-ins yet (structuredContent only) |

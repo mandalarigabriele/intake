@@ -2,6 +2,7 @@ import type {
   AddWaterRequest,
   DayView,
   FavoriteMealRequest,
+  InsightResponse,
   LogWeightRequest,
   Meal,
   PlanUploadError,
@@ -248,5 +249,14 @@ export function useSkipPlanned(date: string) {
       if (context?.previous) queryClient.setQueryData(dayKey(date), context.previous);
     },
     onSettled: () => queryClient.invalidateQueries({ queryKey: ["day"] }),
+  });
+}
+
+/** Daily insight; the server computes it once an hour, so it is also kept long on the client. */
+export function useInsight() {
+  return useQuery({
+    queryKey: ["insight"],
+    queryFn: () => apiFetch<InsightResponse>("/api/insight"),
+    staleTime: 30 * 60 * 1000,
   });
 }

@@ -103,11 +103,11 @@ function PlannedCard({
   if (entry.status === "skipped") {
     return (
       <article className="meal-card" data-kind="skipped">
-        <header className="meal-card-head">
+        <div className="skipped-text">
           <h3>{entry.title}</h3>
           <span className="planned-label">{t.timeline.skipped}</span>
-        </header>
-        <button type="button" className="text-button text-button-strong undo-skip" onClick={() => onSkip(false)}>
+        </div>
+        <button type="button" className="undo-skip" onClick={() => onSkip(false)}>
           {t.timeline.undoSkip}
         </button>
       </article>
@@ -131,7 +131,7 @@ function PlannedCard({
             <button type="button" className="button-small button-outline" onClick={onOther}>
               {t.timeline.other}
             </button>
-            <button type="button" className="button-small button-ghost" onClick={() => onSkip(true)}>
+            <button type="button" className="button-small button-outline" onClick={() => onSkip(true)}>
               {t.timeline.skip}
             </button>
           </div>
@@ -140,7 +140,7 @@ function PlannedCard({
         </>
       )}
       {entry.status === "planned" && (
-        <button type="button" className="text-button skip-upcoming" onClick={() => onSkip(true)}>
+        <button type="button" className="button-small skip-upcoming" onClick={() => onSkip(true)}>
           {t.timeline.skip}
         </button>
       )}

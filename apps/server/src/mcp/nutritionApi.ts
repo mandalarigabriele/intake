@@ -3,10 +3,12 @@ import {
   parseClock,
   parseGoalProgress,
   parseGoals,
+  parseMealPatterns,
   parseMeals,
   parseNutritionSummary,
   parseWeightTrends,
   type GoalProgress,
+  type MealPatterns,
   type NutritionSummary,
   type WeightTrend,
   type Parsed,
@@ -133,6 +135,11 @@ export class NutritionApi {
   /** Daily goals and totals (including water) from structured content. */
   goalProgress(date: string): Promise<GoalProgress> {
     return this.callStructured("get_goal_progress", { date }, parseGoalProgress);
+  }
+
+  /** Behavioural patterns over `days` days ending on `endDate` (text only). */
+  mealPatterns(days: number, endDate: string): Promise<MealPatterns> {
+    return this.callText("get_meal_patterns", { days, end_date: endDate }, parseMealPatterns);
   }
 
   /** Daily totals for a date range (at most 92 days), from structured content. */

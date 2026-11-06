@@ -50,6 +50,8 @@ export interface PlannedEntry {
   time: string;
   type: MealTypeValue;
   foods: string;
+  /** One line per planned food ("Mandorle 25 g"); empty for free meals. */
+  lines: string[];
   status: PlannedStatus;
   macros: PlannedMacros | null;
 }
@@ -104,8 +106,9 @@ export interface WeekView {
   today: string;
   goals: { kcal: number | null; protein: number | null };
   days: WeekDay[];
-  /** Averages over the days with meals; null when none. */
+  /** Averages over the completed days (today excluded) with meals; null when none. */
   averages: { kcal: number; protein: number; days: number } | null;
+  consistency: WeekConsistency;
   weight: {
     unit: string;
     target: number | null;
@@ -117,4 +120,31 @@ export interface WeekView {
 export interface LogWeightRequest {
   weightKg: number;
   idempotencyKey: string;
+}
+
+/** The "Dai tuoi dati" card on Oggi: one sentence from the owner's own data, or null when there is too little. */
+export interface InsightResponse {
+  insight: { text: string; window: string } | null;
+}
+
+export interface TargetDays {
+  /** Completed logged days of the week at or above the goal. */
+  hit: number;
+  /** Completed logged days of the week (today counts once it is over). */
+  total: number;
+  /** Best completed day, for the note ("giovedì 122 g"). */
+  best: { date: string; value: number } | null;
+  goal: number | null;
+}
+
+/** "Costanza" card on Settimana (docs/design/DESIGN.md). */
+export interface WeekConsistency {
+  /** Consecutive logged days up to today (today included once it has meals), oldest first. */
+  streak: string[];
+  protein: TargetDays;
+  water: TargetDays;
+  /** Planned meals logged with "Mangiato come previsto" this week. */
+  asPlanned: number;
+  /** Planned meals skipped this week. */
+  skipped: number;
 }

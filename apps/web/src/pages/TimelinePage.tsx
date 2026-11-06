@@ -15,7 +15,7 @@ export function TimelinePage({ user, onAdd }: Props) {
     <DayScreen
       user={user}
       notice={null}
-      onAdd={onAdd}
+      variant="timeline"
       className="timeline-page"
       title={() => t.timeline.title}
       skeleton={<div className="card skeleton" style={{ height: 320 }} aria-label={t.loading} />}

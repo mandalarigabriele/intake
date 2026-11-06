@@ -97,8 +97,24 @@ export const t = {
     glasses: (filled: number, total: number) => `${filled} bicchieri su ${total}`,
   },
 
+  nextMeal: {
+    label: "Prossimo pasto",
+    inTime: (text: string) => `tra ${text}`,
+    ago: (text: string) => `da registrare · ${text} fa`,
+    skipped: (title: string, time: string) => `${title} delle ${time} saltato`,
+    then: (title: string, time: string, foods: string) => `Poi · ${title} ${time}${foods ? ` · ${foods}` : ""}`,
+    day: "Giornata",
+    none: "Nessun altro pasto previsto oggi.",
+  },
+
+  insight: {
+    label: "Dai tuoi dati",
+  },
+
   timeline: {
     title: "Timeline",
+    previousDay: "Giorno precedente",
+    nextDay: "Giorno successivo",
     logged: (count: number) => (count === 1 ? "1 registrato" : `${count} registrati`),
     todoCount: (count: number) => `${count} da registrare`,
     plannedCount: (count: number) => `${count} dal piano`,
@@ -229,7 +245,17 @@ export const t = {
       days.length === 1 ? `${days[0]} non ha pasti registrati.` : `${days.slice(0, -1).join(", ")} e ${days.at(-1)!.toLowerCase()} non hanno pasti registrati.`,
     avgKcal: "Media kcal",
     avgProtein: "Media proteine",
-    onLoggedDays: (days: number) => (days === 1 ? "su 1 giorno registrato" : `su ${days} giorni registrati`),
+    completedDays: "giorni completi registrati",
+    consistency: "Costanza",
+    streak: "Giorni registrati di fila",
+    noStreak: "nessun giorno registrato di recente",
+    streakSince: (weekday: string, date: string) => `da ${weekday} ${date}`,
+    proteinTarget: "Proteine a target",
+    waterTarget: "Acqua a target",
+    almost: ", quasi",
+    noCompletedDays: "nessun giorno completo registrato",
+    asPlanned: "Pasti come da piano",
+    asPlannedNote: (skipped: number) => `registrati con un tocco · ${skipped === 1 ? "1 saltato" : `${skipped} saltati`}`,
     proteinGoal: (grams: string) => `obiettivo ${grams} g`,
     noData: "Nessun pasto registrato",
     weight: "Peso",

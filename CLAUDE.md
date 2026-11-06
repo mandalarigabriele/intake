@@ -35,6 +35,7 @@ Intake is a self-hosted, responsive nutrition dashboard with a daily meal timeli
 - SQLite uses the built-in `node:sqlite` module (no native dependencies). Migrations are an append-only list in `apps/server/src/db/database.ts`.
 - The local SQLite database (in `/data`) only stores what the MCP server does not have: meal plan versions, links between planned meals and logged meals, skipped planned meals, and the encrypted MCP refresh token.
 - MCP tool responses are often formatted text. Parsing lives in `apps/server/src/parsers/`, and every parser is covered by tests that use real responses saved in `__fixtures__/`. Prefer `structuredContent` when a tool provides it.
+- The daily insight (`GET /api/insight`) costs several Nutrition calls, so the route keeps the chosen sentence in memory for an hour per date; the sentence is picked deterministically from the day, not at random.
 - "Today" and the timeline's "now" marker use the timezone of the Nutrition profile, not the container's timezone.
 - Google sign-in protects the app and admits only `OWNER_EMAIL`. It is separate from the one-time Nutrition OAuth connection.
 

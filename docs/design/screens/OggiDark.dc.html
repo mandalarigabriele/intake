@@ -16,12 +16,12 @@ a{color:#EEF1EC;text-decoration:none}a:hover{color:#5FB083}
 </style>
 </helmet>
 <div style="width: 390px; height: 844px; box-sizing: border-box; background: #121412; font-family: 'Manrope', system-ui, sans-serif; color: #EEF1EC; display: flex; flex-direction: column; overflow: hidden; position: relative">
-<div style="flex: 1; min-height: 0; overflow-y: auto">
+<div style="flex: 1; min-height: 0; overflow-y: auto; overflow-x: hidden">
 
 <header style="padding: 56px 20px 12px; display: flex; justify-content: space-between; align-items: flex-end">
 <div style="display: flex; flex-direction: column; gap: 2px">
 <div style="display: flex; align-items: center; gap: 6px; margin-bottom: 6px"><svg width="22" height="22" viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="14" fill="none" stroke="{{accent}}" stroke-width="2.5"></circle><circle cx="16" cy="16" r="8.5" fill="none" stroke="{{accent}}" stroke-width="2"></circle><path d="M10.5 12.5a7 7 0 0 1 5.5-4" fill="none" stroke="{{accent}}" stroke-width="2" stroke-linecap="round"></path></svg><span style="font-size: 15px; font-weight: 800; letter-spacing: -0.01em">Intake</span></div>
-<span style="font-size: 13px; font-weight: 600; color: #A3ABA4; letter-spacing: 0.02em">Giovedì 5 novembre</span>
+<span style="font-size: 13px; font-weight: 600; color: #A3ABA4; letter-spacing: 0.02em">Venerdì 6 novembre</span>
 <h1 style="margin: 0; font-size: 34px; font-weight: 800; letter-spacing: -0.02em">Oggi</h1>
 </div>
 <button aria-label="Profilo" style="width: 44px; height: 44px; border-radius: 22px; border: none; background: #EEF1EC; color: #121412; font-family: inherit; font-weight: 700; font-size: 16px">G</button>
@@ -38,21 +38,45 @@ a{color:#EEF1EC;text-decoration:none}a:hover{color:#5FB083}
 </sc-for>
 </nav>
 
-<section aria-label="Calorie" style="margin: 0 16px; padding: 20px; background: #1C1F1C; border-radius: 24px; display: flex; align-items: center; gap: 20px">
+<section aria-label="Prossimo pasto" style="margin: 0 16px; padding: 18px 20px; background: #1C1F1C; border-radius: 24px; border: 1.5px solid {{accent}}; display: flex; flex-direction: column; gap: 10px">
+<sc-if value="{{skipped}}" hint-placeholder-val="{{false}}">
+<div style="display: flex; justify-content: space-between; align-items: center; gap: 8px; padding: 8px 12px; border-radius: 12px; background: #2B2E2A"><span style="font-size: 13px; font-weight: 700; color: #C9D0CA">Spuntino delle 11:00 saltato</span><button onClick="{{undoSkip}}" style="height: 32px; padding: 0 10px; border: none; border-radius: 10px; background: #1C1F1C; font-family: inherit; font-size: 13px; font-weight: 800; color: #EEF1EC">Annulla</button></div>
+</sc-if>
+<div style="display: flex; justify-content: space-between; align-items: center">
+<span style="font-size: 11px; font-weight: 800; color: #5FB083; letter-spacing: 0.06em">PROSSIMO PASTO</span>
+<span style="font-size: 12px; font-weight: 700; color: #A3ABA4">{{next.eta}}</span>
+</div>
+<div style="display: flex; justify-content: space-between; align-items: baseline; gap: 8px">
+<span style="font-size: 22px; font-weight: 800; letter-spacing: -0.01em">{{next.title}}</span>
+<span style="font-size: 13px; font-weight: 700; color: #A3ABA4; white-space: nowrap">{{next.kcal}}</span>
+</div>
+<div style="display: flex; flex-direction: column; gap: 4px">
+<sc-for list="{{next.lines}}" as="ln" hint-placeholder-count="2"><div style="display: flex; gap: 8px; align-items: baseline"><span style="width: 5px; height: 5px; flex: none; border-radius: 3px; background: #6B736C; transform: translateY(-2px)"></span><span style="font-size: 15px; line-height: 1.45; color: #C9D0CA">{{ln.t}}</span></div></sc-for>
+</div>
+<button style="height: 46px; margin-top: 2px; border-radius: 14px; border: none; background: #EEF1EC; color: #0F1A13; font-family: inherit; font-weight: 800; font-size: 14px">Mangiato come previsto</button>
+<div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px">
+<a href="Aggiungi.dc.html" style="height: 44px; box-sizing: border-box; border-radius: 14px; border: 1px solid #343832; background: #1C1F1C; color: #EEF1EC; font-weight: 700; font-size: 14px; display: flex; align-items: center; justify-content: center">Altro…</a>
+<button onClick="{{skip}}" style="height: 44px; border-radius: 14px; border: 1px solid #343832; background: #1C1F1C; color: #EEF1EC; font-family: inherit; font-weight: 700; font-size: 14px">Salta</button>
+<a href="Timeline.dc.html" style="height: 44px; box-sizing: border-box; border-radius: 14px; border: 1px solid #343832; background: #1C1F1C; color: #EEF1EC; font-weight: 700; font-size: 14px; display: flex; align-items: center; justify-content: center">Giornata</a>
+</div>
+<span style="font-size: 12px; line-height: 1.5; color: #A3ABA4; border-top: 1px solid #2B2E2A; padding-top: 10px">{{next.after}}</span>
+</section>
+
+<section aria-label="Calorie" style="margin: 12px 16px 0; padding: 20px; background: #1C1F1C; border-radius: 24px; display: flex; align-items: center; gap: 20px">
 <div style="position: relative; width: 132px; height: 132px; flex: none">
-<svg width="132" height="132" viewBox="0 0 132 132" role="img" aria-label="438 di 2200 kcal">
+<svg width="132" height="132" viewBox="0 0 132 132" role="img" aria-label="574 di 2200 kcal">
 <circle cx="66" cy="66" r="56" fill="none" stroke="#2B2F2B" stroke-width="12"></circle>
 <circle cx="66" cy="66" r="56" fill="none" stroke="{{accent}}" stroke-width="12" stroke-linecap="round" stroke-dasharray="{{ringDash}}" transform="rotate(-90 66 66)"></circle>
 </svg>
 <div style="position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center">
-<span style="font-size: 28px; font-weight: 800; letter-spacing: -0.02em; font-variant-numeric: tabular-nums">1.762</span>
+<span style="font-size: 28px; font-weight: 800; letter-spacing: -0.02em; font-variant-numeric: tabular-nums">1.626</span>
 <span style="font-size: 11px; font-weight: 600; color: #A3ABA4">kcal rimanenti</span>
 </div>
 </div>
 <div style="display: flex; flex-direction: column; gap: 14px; flex: 1">
-<div style="display: flex; flex-direction: column; gap: 2px"><span style="font-size: 12px; font-weight: 600; color: #A3ABA4">Mangiate</span><span style="font-size: 20px; font-weight: 800; font-variant-numeric: tabular-nums">438 <span style="font-size: 13px; font-weight: 600; color: #A3ABA4">kcal</span></span></div>
+<div style="display: flex; flex-direction: column; gap: 2px"><span style="font-size: 12px; font-weight: 600; color: #A3ABA4">Mangiate</span><span style="font-size: 20px; font-weight: 800; font-variant-numeric: tabular-nums">574 <span style="font-size: 13px; font-weight: 600; color: #A3ABA4">kcal</span></span></div>
 <div style="display: flex; flex-direction: column; gap: 2px"><span style="font-size: 12px; font-weight: 600; color: #A3ABA4">Obiettivo</span><span style="font-size: 20px; font-weight: 800; font-variant-numeric: tabular-nums">2.200 <span style="font-size: 13px; font-weight: 600; color: #A3ABA4">kcal</span></span></div>
-<span style="font-size: 12px; font-weight: 700; color: #5FB083; background: #1F3628; padding: 4px 10px; border-radius: 999px; align-self: flex-start">20% della giornata</span>
+<span style="font-size: 12px; font-weight: 700; color: #5FB083; background: #1F3628; padding: 4px 10px; border-radius: 999px; align-self: flex-start">26% della giornata</span>
 </div>
 </section>
 
@@ -71,126 +95,68 @@ a{color:#EEF1EC;text-decoration:none}a:hover{color:#5FB083}
 <section aria-label="Acqua" style="margin: 12px 16px 0; padding: 16px 20px; background: #1C1F1C; border-radius: 24px; display: flex; align-items: center; gap: 14px">
 <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#6FA8DC" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3c3.5 4.2 6 7.6 6 10.5a6 6 0 0 1-12 0C6 10.6 8.5 7.2 12 3z"></path></svg>
 <div style="display: flex; flex-direction: column; gap: 6px; flex: 1">
-<span style="font-size: 14px; font-weight: 700">Acqua <span style="font-weight: 600; color: #A3ABA4">0 / 2,5 L</span></span>
+<span style="font-size: 14px; font-weight: 700">Acqua <span style="font-weight: 600; color: #A3ABA4">0,75 / 2,5 L</span></span>
 <div style="display: grid; grid-template-columns: repeat(10, minmax(0, 1fr)); gap: 3px">
-<sc-for list="{{glasses}}" as="g" hint-placeholder-count="10"><div style="height: 8px; border-radius: 3px; background: #22303D"></div></sc-for>
+<sc-for list="{{glasses}}" as="g" hint-placeholder-count="10"><div style="height: 8px; border-radius: 3px; background: {{g.color}}"></div></sc-for>
 </div>
 </div>
 <button style="height: 44px; padding: 0 14px; border-radius: 14px; border: none; background: #1C2B3A; color: #9CC6EE; font-family: inherit; font-weight: 800; font-size: 14px">+ 250 ml</button>
 </section>
 
-<section aria-label="Timeline dei pasti" style="margin: 24px 16px 0">
-<div style="display: flex; justify-content: space-between; align-items: baseline; padding: 0 4px 12px">
-<h2 style="margin: 0; font-size: 20px; font-weight: 800">Timeline</h2>
-<span style="font-size: 12px; font-weight: 600; color: #A3ABA4">1 registrato · 2 da registrare</span>
+<section aria-label="Analisi" style="margin: 12px 16px 0; padding: 18px 20px; background: #1C1F1C; border-radius: 24px; display: flex; gap: 14px; align-items: flex-start">
+<div style="width: 40px; height: 40px; flex: none; border-radius: 14px; background: #1F3628; display: flex; align-items: center; justify-content: center"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#5FB083" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18h6M10 21h4M12 3a6 6 0 0 0-4 10.5c.8.8 1 1.6 1 2.5h6c0-.9.2-1.7 1-2.5A6 6 0 0 0 12 3z"></path></svg></div>
+<div style="display: flex; flex-direction: column; gap: 6px; min-width: 0">
+<span style="font-size: 11px; font-weight: 800; color: #A3ABA4; letter-spacing: 0.06em">DAI TUOI DATI</span>
+<span style="font-size: 15px; line-height: 1.45; font-weight: 700">Nei giorni in cui fai colazione arrivi a 76 g di proteine, contro 49 g quando la salti.</span>
+<span style="font-size: 12px; font-weight: 600; color: #A3ABA4">Ultimi 7 giorni · 3 giorni registrati</span>
 </div>
-
-<sc-for list="{{timeline}}" as="it" hint-placeholder-count="6">
-<div style="position: relative; display: flex; gap: 10px">
-<div style="position: absolute; left: 25px; top: {{it.rodTop}}; bottom: {{it.rodBottom}}; border-left: 2px {{it.rod}}"></div>
-
-<sc-if value="{{it.isNow}}" hint-placeholder-val="{{false}}">
-<div style="width: 52px; flex: none; display: flex; justify-content: center; padding: 6px 0 18px; position: relative"><span style="font-size: 11px; font-weight: 800; color: #0F1A13; background: #E0714F; padding: 3px 6px; border-radius: 6px; font-variant-numeric: tabular-nums">{{it.time}}</span></div>
-<div style="flex: 1; display: flex; align-items: center; gap: 8px; padding: 6px 0 18px"><div style="flex: 1; height: 2px; background: #E0714F"></div><span style="font-size: 11px; font-weight: 800; color: #F08F6E; letter-spacing: 0.06em">ADESSO</span></div>
-</sc-if>
-
-<sc-if value="{{it.isMeal}}" hint-placeholder-val="{{true}}">
-<div style="width: 52px; flex: none; display: flex; justify-content: center; padding-top: 12px; position: relative"><span style="height: 22px; padding: 0 5px; border-radius: 6px; background: #121412; font-size: 13px; font-weight: {{it.timeWeight}}; color: {{it.timeColor}}; font-variant-numeric: tabular-nums; line-height: 22px">{{it.time}}</span></div>
-
-<sc-if value="{{it.logged}}" hint-placeholder-val="{{true}}">
-<a href="Pasto.dc.html" style="flex: 1; margin-bottom: 12px; padding: 14px 16px; background: #1C1F1C; border-radius: 20px; display: flex; flex-direction: column; gap: 8px; color: #EEF1EC">
-<div style="display: flex; justify-content: space-between; align-items: center"><span style="font-size: 15px; font-weight: 800">{{it.title}}</span><span style="font-size: 15px; font-weight: 800; font-variant-numeric: tabular-nums">438 kcal</span></div>
-<span style="font-size: 13px; line-height: 1.45; color: #C9D0CA">{{it.food}}</span>
-<div style="display: flex; gap: 6px; flex-wrap: wrap">
-<span style="font-size: 12px; font-weight: 700; padding: 3px 9px; border-radius: 999px; background: #1B3236; color: #8FD0D6">P 28 g</span>
-<span style="font-size: 12px; font-weight: 700; padding: 3px 9px; border-radius: 999px; background: #3A2E17; color: #E7C17A">C 69 g</span>
-<span style="font-size: 12px; font-weight: 700; padding: 3px 9px; border-radius: 999px; background: #33263A; color: #D4B1E4">G 7 g</span>
-<span style="font-size: 12px; font-weight: 700; padding: 3px 9px; border-radius: 999px; background: #2B2F2B; color: #C9D0CA">Fibre 7 g</span>
-</div>
-</a>
-</sc-if>
-
-<sc-if value="{{it.overdue}}" hint-placeholder-val="{{false}}">
-<div style="flex: 1; margin-bottom: 12px; padding: 14px 16px; background: #2A1F17; border: 1.5px solid #6E4428; border-radius: 20px; display: flex; flex-direction: column; gap: 6px">
-<div style="display: flex; justify-content: space-between; align-items: center"><span style="font-size: 15px; font-weight: 800">{{it.title}}</span><span style="font-size: 11px; font-weight: 800; color: #F0A872; letter-spacing: 0.04em">DA REGISTRARE</span></div>
-<span style="font-size: 13px; line-height: 1.45; color: #C9D0CA">{{it.food}}</span>
-<div style="display: flex; gap: 6px; margin-top: 2px">
-<button style="height: 36px; padding: 0 12px; border-radius: 12px; border: none; background: #EEF1EC; color: #0F1A13; font-family: inherit; font-weight: 800; font-size: 13px">Mangiato come previsto</button>
-<a href="Aggiungi.dc.html" style="height: 36px; box-sizing: border-box; padding: 0 12px; border-radius: 12px; border: 1px solid #4A3A2E; background: #1C1F1C; color: #EEF1EC; font-weight: 700; font-size: 13px; display: flex; align-items: center">Altro…</a>
-</div>
-</div>
-</sc-if>
-
-<sc-if value="{{it.planned}}" hint-placeholder-val="{{false}}">
-<div style="flex: 1; margin-bottom: 12px; padding: 14px 16px; border: 1.5px dashed #4A5049; border-radius: 20px; display: flex; flex-direction: column; gap: 6px">
-<div style="display: flex; justify-content: space-between; align-items: center"><span style="font-size: 15px; font-weight: 700; color: #C9D0CA">{{it.title}}</span><span style="font-size: 11px; font-weight: 700; color: #A3ABA4; letter-spacing: 0.04em">DAL PIANO</span></div>
-<span style="font-size: 13px; line-height: 1.45; color: #A3ABA4">{{it.food}}</span>
-</div>
-</sc-if>
-</sc-if>
-</div>
-</sc-for>
 </section>
 
-<div style="height: 84px"></div>
+<div style="height: 24px"></div>
 </div>
 
-<a href="Aggiungi.dc.html" aria-label="Aggiungi" style="position: absolute; right: 20px; bottom: 108px; width: 60px; height: 60px; border-radius: 30px; background: #EEF1EC; color: #0F1A13; display: flex; align-items: center; justify-content: center; box-shadow: 0 6px 18px rgba(23, 32, 27, 0.28)"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"></path></svg></a>
 
-<div style="flex: none; padding: 10px 12px 26px; background: #1C1F1C; border-top: 1px solid #2B2E2A; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); align-items: center">
-<a href="OggiDark.dc.html" aria-label="Oggi" aria-current="page" style="height: 48px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px; color: {{accent}}"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="8"></circle><path d="M12 8v4l3 2"></path></svg><span style="font-size: 11px; font-weight: 800">Oggi</span></a>
+<div style="flex: none; padding: 10px 8px 26px; background: #1C1F1C; border-top: 1px solid #2B2E2A; display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); align-items: center">
+<a href="OggiDark.dc.html" aria-label="Oggi" aria-current="page" style="height: 48px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px; color: #5FB083"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="8"></circle><path d="M12 8v4l3 2"></path></svg><span style="font-size: 11px; font-weight: 800">Oggi</span></a>
 <a href="Settimana.dc.html" aria-label="Settimana" style="height: 48px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px; color: #A3ABA4"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 20V10M12 20V4M19 20v-7"></path></svg><span style="font-size: 11px; font-weight: 700">Settimana</span></a>
+<a href="Aggiungi.dc.html" aria-label="Aggiungi" style="width: 52px; height: 52px; justify-self: center; border-radius: 26px; background: #EEF1EC; color: #0F1A13; display: flex; align-items: center; justify-content: center"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"></path></svg></a>
 <a href="PianoDark.dc.html" aria-label="Piano" style="height: 48px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px; color: #A3ABA4"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="4" width="14" height="17" rx="2"></rect><path d="M9 9h6M9 13h6M9 17h3"></path></svg><span style="font-size: 11px; font-weight: 700">Piano</span></a>
-<a href="Allenamenti.dc.html" aria-label="Allenamenti" style="height: 48px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px; color: #A3ABA4"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 7v10M18 7v10M3 10v4M21 10v4M6 12h12"></path></svg><span style="font-size: 11px; font-weight: 700">Allenamenti</span></a>
+<a href="Timeline.dc.html" aria-label="Timeline" style="height: 48px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px; color: #A3ABA4"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 3v18"></path><circle cx="7" cy="7" r="2"></circle><circle cx="7" cy="17" r="2"></circle><path d="M12 7h8M12 17h8"></path></svg><span style="font-size: 11px; font-weight: 700">Timeline</span></a>
 </div>
 
 </div>
 </x-dc>
 <script type="text/x-dc" data-dc-script data-props='{"accent":{"editor":"color","default":"#5FB083","options":["#5FB083","#4FB3BF","#E0714F","#EEF1EC"]},"$preview":{"width":390,"height":844}}'>
 class Component extends DCLogic {
+  constructor(props) { super(props); this.state = { skipped: false }; }
   renderVals() {
     const accent = this.props.accent ?? '#5FB083';
+    const T = (a) => a.map((t) => ({ t: t }));
+    const snack = { eta: 'tra 55 min', title: 'Spuntino · 11:00', kcal: '~240 kcal', lines: T(['1 frutto', 'Mandorle 25 g']), after: 'Poi · Pranzo 13:00 · insalata di farro con tonno, ceci e mozzarella' };
+    const lunch = { eta: 'tra 2 h 55 min', title: 'Pranzo · 13:00', kcal: '~650 kcal', lines: T(['Insalata di farro 70 g', 'Tonno 100 g, ceci 100 g, mozzarella 60 g', 'Verdure']), after: 'Poi · Spuntino 16:00 · fesa di tacchino 50 g + pane integrale' };
     const circ = 2 * Math.PI * 56;
-    const dash = (circ * 438 / 2200).toFixed(1) + ' ' + circ.toFixed(1);
+    const dash = (circ * 574 / 2200).toFixed(1) + ' ' + circ.toFixed(1);
     const labels = ['L','M','M','G','V','S','D'];
     const mk = (name, val, goal, color) => ({
       name: name, val: String(val).replace('.', ','), goal: goal,
       left: String(Math.round((goal - val) * 10) / 10).replace('.', ','),
       pct: Math.min(100, val / goal * 100).toFixed(1) + '%', color: color
     });
-    const solid = 'solid ' + accent;
-    const dashed = 'dashed #4A5049';
-    const raw = [
-      { kind: 'logged', time: '08:03', title: 'Colazione', food: "Caffellatte · yogurt greco 0% 150 g · fiocchi d'avena 40 g · banana" },
-      { kind: 'overdue', time: '11:00', title: 'Spuntino', food: '1 frutto + bresaola 40 g' },
-      { kind: 'overdue', time: '13:00', title: 'Pranzo', food: 'Pasta 100 g al ragù magro di manzo 120 g + insalata' },
-      { kind: 'now', time: '13:17' },
-      { kind: 'planned', time: '16:00', title: 'Spuntino', food: '1 frutto + mandorle 25 g' },
-      { kind: 'planned', time: '20:00', title: 'Cena', food: 'Merluzzo o orata al forno 250 g + patate al forno 250 g + verdure + 1 fetta di pane integrale' }
-    ];
-    const nowIdx = raw.findIndex((r) => r.kind === 'now');
-    const timeline = raw.map((r, i) => ({
-      time: r.time, title: r.title || '', food: r.food || '',
-      isNow: r.kind === 'now', isMeal: r.kind !== 'now',
-      logged: r.kind === 'logged', overdue: r.kind === 'overdue', planned: r.kind === 'planned',
-      timeWeight: r.kind === 'planned' ? '700' : '800',
-      timeColor: r.kind === 'planned' ? '#A3ABA4' : '#EEF1EC',
-      rod: i < nowIdx ? solid : dashed,
-      rodTop: i === 0 ? '22px' : '0px',
-      rodBottom: i === raw.length - 1 ? 'calc(100% - 34px)' : '0px'
-    }));
     return {
+      skipped: this.state.skipped,
+      next: this.state.skipped ? lunch : snack,
+      skip: () => this.setState({ skipped: true }),
+      undoSkip: () => this.setState({ skipped: false }),
       accent: accent,
       ringDash: dash,
-      days: labels.map((l, i) => ({ l: l, n: 2 + i, active: i === 3, idle: i !== 3 })),
+      days: labels.map((l, i) => ({ l: l, n: 2 + i, active: i === 4, idle: i !== 4 })),
       macros: [
-        mk('Proteine', 28.2, 135, '#4FB3BF'),
-        mk('Carboidrati', 68.9, 255, '#E0A63E'),
-        mk('Grassi', 7, 70, '#B98BD0'),
-        mk('Fibre', 7.1, 30, '#9AA39C')
+        mk('Proteine', 29.9, 135, '#4FB3BF'),
+        mk('Carboidrati', 67.6, 255, '#E0A63E'),
+        mk('Grassi', 21.5, 70, '#B98BD0'),
+        mk('Fibre', 9.2, 30, '#9AA39C')
       ],
-      glasses: [1,2,3,4,5,6,7,8,9,10],
-      timeline: timeline
+      glasses: [1,2,3,4,5,6,7,8,9,10].map((n) => ({ color: n <= 3 ? '#6FA8DC' : '#22303D' }))
     };
   }
 }

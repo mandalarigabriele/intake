@@ -1,4 +1,4 @@
-import { isFixedMeal, mealFoodsText, mealTimes, mealTypeOf, planDay, type Meal, type PlannedEntry, type StoredPlan } from "@intake/shared";
+import { foodLine, isFixedMeal, mealFoodsText, mealTimes, mealTypeOf, planDay, type Meal, type PlannedEntry, type StoredPlan } from "@intake/shared";
 import type { PlanLink, PlanSkip } from "../db/planStore.js";
 
 /** A logged meal can cover a planned meal of the same type within this many minutes. */
@@ -76,6 +76,7 @@ export function plannedEntries(
       time,
       type: mealTypeOf(planned),
       foods: mealFoodsText(planned),
+      lines: isFixedMeal(planned) ? planned.foods.map(foodLine) : [],
       status: !isFixedMeal(planned) ? "free" : skipped.has(index) ? "skipped" : passed ? "todo" : "planned",
       macros: isFixedMeal(planned) ? (planned.macros ?? null) : null,
     });
