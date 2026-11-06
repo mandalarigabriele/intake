@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, type CSSProperties } from "react";
 import { useDisconnectNutrition, useSignOut, type User } from "../api/queries";
 import { t } from "../lib/strings";
 import { getThemePreference, setThemePreference, type ThemePreference } from "../lib/theme";
@@ -20,6 +20,8 @@ export function ProfileMenu({ user, variant }: Props) {
   const [diagnostics, setDiagnostics] = useState(false);
   const [theme, setTheme] = useState<ThemePreference>(getThemePreference);
   const ref = useRef<HTMLDivElement>(null);
+  const button = useRef<HTMLButtonElement>(null);
+  const [menuStyle, setMenuStyle] = useState<CSSProperties | undefined>();
   const signOut = useSignOut();
   const disconnect = useDisconnectNutrition();
   const initial = (user.name ?? user.email).trim().charAt(0).toUpperCase();
@@ -47,7 +49,16 @@ export function ProfileMenu({ user, variant }: Props) {
         aria-haspopup="menu"
         aria-expanded={open}
         aria-label={t.profile.label}
-        onClick={() => setOpen((v) => !v)}
+        ref={button}
+        onClick={() => {
+          // In the sidebar the menu is wider than the column, which scrolls and would clip it:
+          // pin it to the viewport above the profile row instead, scrolling if the height is short
+          if (variant === "row" && !open && button.current) {
+            const rect = button.current.getBoundingClientRect();
+            setMenuStyle({ position: "fixed", left: rect.left, right: "auto", top: "auto", bottom: window.innerHeight - rect.top + 8, maxHeight: rect.top - 16, overflowY: "auto" });
+          }
+          setOpen((v) => !v);
+        }}
       >
         {variant === "avatar" ? (
           avatar
@@ -61,7 +72,7 @@ export function ProfileMenu({ user, variant }: Props) {
         )}
       </button>
       {open && (
-        <div className="menu" role="menu">
+        <div className="menu" role="menu" style={variant === "row" ? menuStyle : undefined}>
           <p className="menu-caption">
             {t.profile.signedInAs}
             <br />
