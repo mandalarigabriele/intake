@@ -29,6 +29,14 @@ const MIGRATIONS: string[] = [
      created_at TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%fZ', 'now')),
      PRIMARY KEY (date, plan_id, meal_index)
    );`,
+  // 3: planned meals the owner chose to skip on a given date
+  `CREATE TABLE plan_skips (
+     date TEXT NOT NULL,
+     plan_id INTEGER NOT NULL REFERENCES plans (id) ON DELETE CASCADE,
+     meal_index INTEGER NOT NULL,
+     created_at TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%fZ', 'now')),
+     PRIMARY KEY (date, plan_id, meal_index)
+   )`,
 ];
 
 /** Opens (and migrates) the SQLite database. Pass ":memory:" for tests. */

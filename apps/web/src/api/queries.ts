@@ -224,3 +224,29 @@ export function useLogWeight() {
     onSettled: () => queryClient.invalidateQueries({ queryKey: ["week"] }),
   });
 }
+
+/** "Salta" / "Annulla" on a planned meal; the card changes right away. */
+export function useSkipPlanned(date: string) {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (entry: { date: string; planId: number; index: number; skip: boolean }) =>
+      apiFetch(`/api/days/${entry.date}/planned/${entry.planId}/${entry.index}/skip`, { method: entry.skip ? "POST" : "DELETE" }),
+    onMutate: async (entry) => {
+      await queryClient.cancelQueries({ queryKey: dayKey(date) });
+      const previous = queryClient.getQueryData<DayView>(dayKey(date));
+      if (previous) {
+        queryClient.setQueryData<DayView>(dayKey(date), {
+          ...previous,
+          planned: previous.planned.map((p) =>
+            p.planId === entry.planId && p.index === entry.index ? { ...p, status: entry.skip ? "skipped" : p.time <= previous.clock.localTime.slice(0, 5) || !previous.isToday ? "todo" : "planned" } : p,
+          ),
+        });
+      }
+      return { previous };
+    },
+    onError: (_error, _entry, context) => {
+      if (context?.previous) queryClient.setQueryData(dayKey(date), context.previous);
+    },
+    onSettled: () => queryClient.invalidateQueries({ queryKey: ["day"] }),
+  });
+}

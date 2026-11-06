@@ -1,5 +1,5 @@
 import { isFixedMeal, mealFoodsText, mealTimes, mealTypeOf, planDay, type Meal, type PlannedEntry, type StoredPlan } from "@intake/shared";
-import type { PlanLink } from "../db/planStore.js";
+import type { PlanLink, PlanSkip } from "../db/planStore.js";
 
 /** A logged meal can cover a planned meal of the same type within this many minutes. */
 const MATCH_WINDOW_MINUTES = 180;
@@ -21,8 +21,15 @@ export interface PlannedContext {
  * 1. an explicit link (created by "Mangiato come previsto") to a meal that still exists, or
  * 2. a logged meal of the same type within ±3 hours (e.g. a breakfast logged through Claude),
  *    each logged meal covering at most one planned meal, nearest first.
+ * Uncovered meals the owner skipped are returned with status "skipped", so they can be restored.
  */
-export function plannedEntries(stored: StoredPlan | null, meals: Meal[], links: PlanLink[], context: PlannedContext): PlannedEntry[] {
+export function plannedEntries(
+  stored: StoredPlan | null,
+  meals: Meal[],
+  links: PlanLink[],
+  context: PlannedContext,
+  skips: PlanSkip[] = [],
+): PlannedEntry[] {
   if (!stored) return [];
   const day = planDay(stored.plan, context.date);
   const times = mealTimes(day.meals);
@@ -55,6 +62,7 @@ export function plannedEntries(stored: StoredPlan | null, meals: Meal[], links: 
     usedMeals.add(pair.mealId);
   }
 
+  const skipped = new Set(skips.filter((skip) => skip.planId === stored.id).map((skip) => skip.index));
   const nowHm = context.now.slice(0, 5);
   const entries: PlannedEntry[] = [];
   day.meals.forEach((planned, index) => {
@@ -68,7 +76,7 @@ export function plannedEntries(stored: StoredPlan | null, meals: Meal[], links: 
       time,
       type: mealTypeOf(planned),
       foods: mealFoodsText(planned),
-      status: !isFixedMeal(planned) ? "free" : passed ? "todo" : "planned",
+      status: !isFixedMeal(planned) ? "free" : skipped.has(index) ? "skipped" : passed ? "todo" : "planned",
       macros: isFixedMeal(planned) ? (planned.macros ?? null) : null,
     });
   });

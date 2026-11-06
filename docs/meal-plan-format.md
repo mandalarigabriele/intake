@@ -68,4 +68,4 @@ Add a `macros` object to every non-free meal:
 
 - Meals without a time use default slots: breakfast 08:00, lunch 13:00, dinner 20:00, snacks 11:00 before lunch and 16:00 after.
 - A planned meal is hidden once covered: by "Mangiato come previsto", or by any logged meal of the same type within 3 hours (e.g. a meal logged through Claude).
-- Uncovered planned meals are "Da registrare" once their time has passed (or on past days), "Dal piano" before that, and "Libero" for free slots.
+- Uncovered planned meals are "Da registrare" once their time has passed (or on past days), "Dal piano" before that, and "Libero" for free slots. "Salta" marks one as "Saltato" for that day (stored locally, restorable with "Annulla").

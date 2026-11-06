@@ -1,5 +1,5 @@
 import type { DayView } from "@intake/shared";
-import { useLogPlanned, type User } from "../api/queries";
+import { useLogPlanned, useSkipPlanned, type User } from "../api/queries";
 import { DayScreen } from "../components/DayScreen";
 import { Timeline } from "../components/Timeline";
 import { t } from "../lib/strings";
@@ -27,6 +27,7 @@ export function TimelinePage({ user, onAdd }: Props) {
 
 function DayTimeline({ view, selected, onAdd }: { view: DayView; selected: string; onAdd: () => void }) {
   const logPlanned = useLogPlanned(selected);
+  const skipPlanned = useSkipPlanned(selected);
   const pending = logPlanned.variables && (logPlanned.isPending || logPlanned.isError) ? logPlanned.variables : null;
   return (
     <Timeline
@@ -37,6 +38,7 @@ function DayTimeline({ view, selected, onAdd }: { view: DayView; selected: strin
       now={view.isToday ? view.clock.localTime : null}
       heading={false}
       onLogPlanned={(entry) => logPlanned.mutate({ date: view.date, planId: entry.planId, index: entry.index })}
+      onSkipPlanned={(entry, skip) => skipPlanned.mutate({ date: view.date, planId: entry.planId, index: entry.index, skip })}
       loggingPlanned={pending ? (view.planned.find((p) => p.planId === pending.planId && p.index === pending.index) ?? null) : null}
       logFailed={logPlanned.isError}
       onOther={onAdd}

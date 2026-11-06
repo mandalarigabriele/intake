@@ -8,6 +8,11 @@ interface PlanRow {
   content: string;
 }
 
+export interface PlanSkip {
+  planId: number;
+  index: number;
+}
+
 export interface PlanLink {
   planId: number;
   index: number;
@@ -82,5 +87,19 @@ export class PlanStore {
       meal_id: string;
     }>;
     return rows.map((row) => ({ planId: row.plan_id, index: row.meal_index, mealId: row.meal_id }));
+  }
+
+  /** Marks a planned meal as skipped on `date` (idempotent). */
+  addSkip(date: string, planId: number, index: number): void {
+    this.db.prepare("INSERT OR IGNORE INTO plan_skips (date, plan_id, meal_index) VALUES (?, ?, ?)").run(date, planId, index);
+  }
+
+  removeSkip(date: string, planId: number, index: number): void {
+    this.db.prepare("DELETE FROM plan_skips WHERE date = ? AND plan_id = ? AND meal_index = ?").run(date, planId, index);
+  }
+
+  skipsOn(date: string): PlanSkip[] {
+    const rows = this.db.prepare("SELECT plan_id, meal_index FROM plan_skips WHERE date = ?").all(date) as Array<{ plan_id: number; meal_index: number }>;
+    return rows.map((row) => ({ planId: row.plan_id, index: row.meal_index }));
   }
 }

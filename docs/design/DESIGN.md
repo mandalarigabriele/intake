@@ -40,7 +40,8 @@ All UI copy is in Italian (the app language); code, comments and docs stay in En
   - **Logged** (from Nutrition MCP): solid white card with kcal and macro chips. Tap → meal detail.
   - **To log / "Da registrare"**: a planned meal whose time has passed and that has no linked logged meal.
     Light orange card, buttons "Mangiato come previsto" and "Altro…" (opens the add sheet).
-  - **Planned / "Dal piano"**: an upcoming planned meal. Dashed card, no buttons.
+  - **Planned / "Dal piano"**: an upcoming planned meal. Dashed card; only a small "Salta" text button.
+  - **Skipped / "Saltato"** (owner decision, Nov 2026): "Salta" on a to-log or upcoming planned meal turns it into a compact dashed card with the title struck through, the "SALTATO" label and "Annulla". It is stored locally only (nothing is logged to Nutrition). "Da registrare" cards get a third button, "Salta".
 - The red "ADESSO" marker sits between past and upcoming items, using the Nutrition profile timezone.
 - Planned meals without a time in the plan use default slots (breakfast 08:00, lunch 13:00, dinner 20:00), configurable later.
 - Known bug to fix in the current build: upcoming planned meals are not rendered below the "now" marker.

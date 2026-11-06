@@ -37,8 +37,9 @@ export interface PlanUploadError {
  * - "todo": its time has passed and no logged meal covers it ("Da registrare")
  * - "planned": still to come ("Dal piano")
  * - "free": a free slot from the plan ("Libero")
+ * - "skipped": the owner chose to skip it ("Saltato"); it can be restored
  */
-export type PlannedStatus = "todo" | "planned" | "free";
+export type PlannedStatus = "todo" | "planned" | "free" | "skipped";
 
 export interface PlannedEntry {
   planId: number;

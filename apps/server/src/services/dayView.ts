@@ -12,7 +12,7 @@ export function isValidDate(value: string): boolean {
 }
 
 export type DayApi = Pick<NutritionApi, "clock" | "goalProgress" | "mealsByDate">;
-export type DayPlans = Pick<PlanStore, "activeOn" | "linksOn">;
+export type DayPlans = Pick<PlanStore, "activeOn" | "linksOn" | "skipsOn">;
 
 /**
  * Builds the Today view for a date ("today" resolves in the Nutrition profile's timezone).
@@ -26,7 +26,9 @@ export async function getDayView(api: DayApi, plans: DayPlans | null, requested:
   const meals = [...parsed.meals].sort((a, b) => a.time.localeCompare(b.time));
 
   const activePlan = plans ? plans.activeOn(date) : null;
-  const planned = plans ? plannedEntries(activePlan, meals, plans.linksOn(date), { date, today: clock.localDate, now: clock.localTime }) : [];
+  const planned = plans
+    ? plannedEntries(activePlan, meals, plans.linksOn(date), { date, today: clock.localDate, now: clock.localTime }, plans.skipsOn(date))
+    : [];
 
   return {
     date,
