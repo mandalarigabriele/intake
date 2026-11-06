@@ -143,7 +143,6 @@ Reference screens: `OggiDark.dc.html` and `PianoDark.dc.html`.
 | Dashed border, rod after now | `#C3C9C0` / `#B9C0B6` | `#4A5049` |
 | Track (ring, bars) | `#E8EBE5` | `#2B2F2B` |
 | Switch knob (Promemoria toggles; on = Accent, off = Track) | `#FFFFFF` | `#F1F3EF` |
-| Status bar strip (installed app, behind the white status bar text) | `#17201B` | `#121412` |
 | Segmented control bg | `#E6E9E3` | `#262926` |
 | Input bg | `#F7F8F5` | `#191B19` |
 | Accent | `#2F6B47` | `#5FB083` |
