@@ -1,5 +1,6 @@
 import { useDeleteMeal } from "../api/queries";
 import { t } from "../lib/strings";
+import { Scrim } from "./Scrim";
 
 interface Props {
   mealId: string;
@@ -13,7 +14,7 @@ export function ConfirmDeleteSheet({ mealId, mealType, onClose, onDeleted }: Pro
   const remove = useDeleteMeal();
   const title = t.edit.deleteConfirmTitle(mealType);
   return (
-    <div className="scrim" onClick={onClose}>
+    <Scrim onClose={onClose}>
       <div className="sheet confirm-sheet" role="alertdialog" aria-modal="true" aria-label={title} onClick={(e) => e.stopPropagation()}>
         <h2>{title}</h2>
         <p>{t.edit.deleteBody}</p>
@@ -25,6 +26,6 @@ export function ConfirmDeleteSheet({ mealId, mealType, onClose, onDeleted }: Pro
           {t.edit.cancel}
         </button>
       </div>
-    </div>
+    </Scrim>
   );
 }

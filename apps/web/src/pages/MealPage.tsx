@@ -6,6 +6,7 @@ import { CloseIcon } from "../components/icons";
 import { mealTitle } from "../components/Timeline";
 import { formatGrams, formatKcal, formatPercent, formatWeekday } from "../lib/format";
 import { t } from "../lib/strings";
+import { Scrim } from "../components/Scrim";
 
 /** Timeline of the meal's day (the meal cards live there). */
 export function dayHref(date: string, today: string | undefined): string {
@@ -149,7 +150,7 @@ function FavoriteSheet({ meal, onClose }: { meal: Meal; onClose: () => void }) {
   const [name, setName] = useState(() => meal.description.replace(/^[^:]{1,20}:\s*/, "").slice(0, 60));
 
   return (
-    <div className="scrim" onClick={onClose}>
+    <Scrim onClose={onClose}>
       <form
         className="sheet"
         role="dialog"
@@ -185,6 +186,6 @@ function FavoriteSheet({ meal, onClose }: { meal: Meal; onClose: () => void }) {
           </button>
         )}
       </form>
-    </div>
+    </Scrim>
   );
 }
