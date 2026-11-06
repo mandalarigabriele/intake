@@ -5,6 +5,7 @@ import { DayScreen } from "../components/DayScreen";
 import { InsightCard } from "../components/InsightCard";
 import { MacroCard } from "../components/MacroCard";
 import { NextMealCard } from "../components/NextMealCard";
+import { DayPlanCard } from "../components/PlanCompare";
 import { WaterCard } from "../components/WaterCard";
 import { formatWeekday } from "../lib/format";
 import { t } from "../lib/strings";
@@ -58,6 +59,7 @@ function Summary({ view, selected, onAdd }: { view: DayView; selected: string; o
       </div>
       <div className="today-side">
         <NextMealCard view={view} onAdd={onAdd} />
+        <DayPlanCard view={view} />
         {view.isToday && <InsightCard />}
       </div>
     </div>

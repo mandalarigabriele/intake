@@ -5,6 +5,7 @@ import { useLogWeight, useWeek } from "../api/queries";
 import { addDays } from "../lib/dates";
 import { formatGrams, formatKcal, formatShortDate, formatWater, formatWeekday } from "../lib/format";
 import { t } from "../lib/strings";
+import { WeekPlanCard } from "../components/PlanCompare";
 
 const CHART_HEIGHT = 140;
 
@@ -202,6 +203,7 @@ export function WeekPage() {
               </div>
             </div>
             <ConsistencyCard week={data} />
+            {data.plan && <WeekPlanCard plan={data.plan} />}
             <WeightCard week={data} />
           </div>
         </div>

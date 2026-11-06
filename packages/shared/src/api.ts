@@ -56,6 +56,35 @@ export interface PlannedEntry {
   macros: PlannedMacros | null;
 }
 
+/** kcal and protein of a planned or logged meal. */
+export interface KcalProtein {
+  kcal: number;
+  protein: number;
+}
+
+/** One planned meal of the day, next to the logged meal that covers it. */
+export interface ComparedMeal {
+  title: string;
+  /** HH:MM, planned or default slot. */
+  time: string;
+  /** "eaten": covered by a logged meal; "free": a free meal (logged may still be set). */
+  status: "eaten" | "skipped" | "todo" | "planned" | "free";
+  /** null for free meals and meals without macros in the plan. */
+  planned: KcalProtein | null;
+  /** The covering logged meal; null when nothing covers it. */
+  logged: KcalProtein | null;
+}
+
+/** "Piano e realtà": the day's plan against what was logged. */
+export interface PlanComparison {
+  meals: ComparedMeal[];
+  /** Meals logged that cover no planned meal. */
+  extras: KcalProtein & { count: number };
+  /** Sum of the planned meals with macros; null when none has them. */
+  plannedDay: KcalProtein | null;
+  hasFreeMeal: boolean;
+}
+
 /** A meal ingredient as sent back when editing (nutrients already scaled to the quantity). */
 export interface MealItemInput {
   name: string;
@@ -99,6 +128,25 @@ export interface WeightEntry {
   weight: number;
 }
 
+/** A planned meal whose logged meal differed from the plan. */
+export interface MealDeviation {
+  date: string;
+  title: string;
+  time: string;
+  planned: number;
+  logged: number;
+}
+
+/** "Piano e realtà" over a week: completed days with a plan, and the largest deviations. */
+export interface WeekPlanComparison {
+  /** Completed days (today excluded) with a plan in effect and meals logged. */
+  days: Array<{ date: string; planned: number; eaten: number; hasFreeMeal: boolean }>;
+  /** Average eaten − planned kcal over those days without free meals; null when none. */
+  averageDiff: number | null;
+  /** Up to 3 planned meals with the largest kcal difference from the plan (today included). */
+  deviations: MealDeviation[];
+}
+
 export interface WeekView {
   /** Monday and Sunday of the week. */
   start: string;
@@ -109,6 +157,8 @@ export interface WeekView {
   /** Averages over the completed days (today excluded) with meals; null when none. */
   averages: { kcal: number; protein: number; days: number } | null;
   consistency: WeekConsistency;
+  /** null when no plan with macros was in effect during the week. */
+  plan: WeekPlanComparison | null;
   weight: {
     unit: string;
     target: number | null;

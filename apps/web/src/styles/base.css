@@ -3311,3 +3311,55 @@ button.next-meal-primary {
     transition: none;
   }
 }
+
+/* ================= Piano e realtà (Oggi, Settimana) ================= */
+
+.plan-compare-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 8px;
+}
+
+.plan-compare-head .muted {
+  font-size: 12px;
+  white-space: nowrap;
+}
+
+.plan-compare .consistency-row[data-muted] strong {
+  color: var(--color-text-muted);
+}
+
+.plan-compare-sub {
+  padding: 14px 0 4px;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  color: var(--color-text-muted);
+}
+
+/* Difference from the plan: always a text label, the color only reinforces it */
+.delta {
+  flex: none;
+  padding: 3px 9px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 800;
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+
+.delta[data-kind="ok"] {
+  background: var(--color-accent-soft);
+  color: var(--color-accent-strong);
+}
+
+.delta[data-kind="over"] {
+  background: var(--color-todo-bg);
+  color: var(--color-todo-text);
+}
+
+.delta[data-kind="under"] {
+  background: var(--color-water-soft);
+  color: var(--color-water-text);
+}

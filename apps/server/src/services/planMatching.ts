@@ -1,4 +1,16 @@
-import { foodLine, isFixedMeal, mealFoodsText, mealTimes, mealTypeOf, planDay, type Meal, type PlannedEntry, type StoredPlan } from "@intake/shared";
+import {
+  foodLine,
+  isFixedMeal,
+  mealFoodsText,
+  mealTimes,
+  mealTypeOf,
+  planDay,
+  type ComparedMeal,
+  type Meal,
+  type PlanComparison,
+  type PlannedEntry,
+  type StoredPlan,
+} from "@intake/shared";
 import type { PlanLink, PlanSkip } from "../db/planStore.js";
 
 /** A logged meal can cover a planned meal of the same type within this many minutes. */
@@ -15,31 +27,23 @@ export interface PlannedContext {
 }
 
 /**
- * Planned meals for a day that no logged meal covers.
+ * Which logged meal covers each planned meal of the day (planned index → meal id).
  *
  * A planned meal is covered by:
  * 1. an explicit link (created by "Mangiato come previsto") to a meal that still exists, or
  * 2. a logged meal of the same type within ±3 hours (e.g. a breakfast logged through Claude),
  *    each logged meal covering at most one planned meal, nearest first.
- * Uncovered meals the owner skipped are returned with status "skipped", so they can be restored.
  */
-export function plannedEntries(
-  stored: StoredPlan | null,
-  meals: Meal[],
-  links: PlanLink[],
-  context: PlannedContext,
-  skips: PlanSkip[] = [],
-): PlannedEntry[] {
-  if (!stored) return [];
-  const day = planDay(stored.plan, context.date);
+function coverage(stored: StoredPlan, meals: Meal[], links: PlanLink[], date: string): Map<number, string> {
+  const day = planDay(stored.plan, date);
   const times = mealTimes(day.meals);
   const mealIds = new Set(meals.map((meal) => meal.id));
 
-  const covered = new Set<number>();
+  const covered = new Map<number, string>();
   const usedMeals = new Set<string>();
   for (const link of links) {
-    if (link.planId === stored.id && mealIds.has(link.mealId)) {
-      covered.add(link.index);
+    if (link.planId === stored.id && mealIds.has(link.mealId) && !usedMeals.has(link.mealId)) {
+      covered.set(link.index, link.mealId);
       usedMeals.add(link.mealId);
     }
   }
@@ -58,17 +62,37 @@ export function plannedEntries(
   pairs.sort((a, b) => a.distance - b.distance);
   for (const pair of pairs) {
     if (covered.has(pair.index) || usedMeals.has(pair.mealId)) continue;
-    covered.add(pair.index);
+    covered.set(pair.index, pair.mealId);
     usedMeals.add(pair.mealId);
   }
+  return covered;
+}
+
+const isPassed = (context: PlannedContext, time: string) =>
+  context.date < context.today || (context.date === context.today && time <= context.now.slice(0, 5));
+
+/**
+ * Planned meals for a day that no logged meal covers (see coverage()).
+ * Uncovered meals the owner skipped are returned with status "skipped", so they can be restored.
+ */
+export function plannedEntries(
+  stored: StoredPlan | null,
+  meals: Meal[],
+  links: PlanLink[],
+  context: PlannedContext,
+  skips: PlanSkip[] = [],
+): PlannedEntry[] {
+  if (!stored) return [];
+  const day = planDay(stored.plan, context.date);
+  const times = mealTimes(day.meals);
+  const covered = coverage(stored, meals, links, context.date);
 
   const skipped = new Set(skips.filter((skip) => skip.planId === stored.id).map((skip) => skip.index));
-  const nowHm = context.now.slice(0, 5);
   const entries: PlannedEntry[] = [];
   day.meals.forEach((planned, index) => {
     if (covered.has(index)) return;
     const time = times[index]!;
-    const passed = context.date < context.today || (context.date === context.today && time <= nowHm);
+    const passed = isPassed(context, time);
     entries.push({
       planId: stored.id,
       index,
@@ -82,4 +106,63 @@ export function plannedEntries(
     });
   });
   return entries.sort((a, b) => a.time.localeCompare(b.time) || a.index - b.index);
+}
+
+/**
+ * Plan against what was logged, meal by meal: planned kcal and protein next to the logged meal
+ * covering each planned meal, plus the meals logged outside the plan. Null without a plan.
+ */
+export function planComparison(
+  stored: StoredPlan | null,
+  meals: Meal[],
+  links: PlanLink[],
+  context: PlannedContext,
+  skips: PlanSkip[] = [],
+): PlanComparison | null {
+  if (!stored) return null;
+  const day = planDay(stored.plan, context.date);
+  const times = mealTimes(day.meals);
+  const covered = coverage(stored, meals, links, context.date);
+  const skipped = new Set(skips.filter((skip) => skip.planId === stored.id).map((skip) => skip.index));
+  const byId = new Map(meals.map((meal) => [meal.id, meal]));
+
+  const compared: ComparedMeal[] = day.meals.map((planned, index) => {
+    const time = times[index]!;
+    const meal = covered.has(index) ? byId.get(covered.get(index)!) : undefined;
+    const macros = isFixedMeal(planned) ? planned.macros : undefined;
+    const status: ComparedMeal["status"] = !isFixedMeal(planned)
+      ? "free"
+      : meal
+        ? "eaten"
+        : skipped.has(index)
+          ? "skipped"
+          : isPassed(context, time)
+            ? "todo"
+            : "planned";
+    return {
+      title: planned.title,
+      time,
+      status,
+      planned: macros ? { kcal: macros.kcal, protein: macros.protein } : null,
+      logged: meal ? { kcal: meal.nutrients.kcal, protein: meal.nutrients.protein } : null,
+    };
+  });
+  compared.sort((a, b) => a.time.localeCompare(b.time));
+
+  const used = new Set(covered.values());
+  const extras = meals.filter((meal) => !used.has(meal.id));
+  const withMacros = compared.filter((m) => m.planned);
+  return {
+    meals: compared,
+    extras: {
+      count: extras.length,
+      kcal: extras.reduce((sum, m) => sum + m.nutrients.kcal, 0),
+      protein: extras.reduce((sum, m) => sum + m.nutrients.protein, 0),
+    },
+    plannedDay:
+      withMacros.length > 0
+        ? { kcal: withMacros.reduce((sum, m) => sum + m.planned!.kcal, 0), protein: withMacros.reduce((sum, m) => sum + m.planned!.protein, 0) }
+        : null,
+    hasFreeMeal: compared.some((m) => m.status === "free"),
+  };
 }
