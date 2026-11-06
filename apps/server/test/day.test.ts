@@ -147,3 +147,22 @@ describe("fixture file", () => {
     expect(() => JSON.parse(readFileSync(new URL("../src/parsers/__fixtures__/goal-progress.json", import.meta.url), "utf8"))).not.toThrow();
   });
 });
+
+describe("rate limit responses", () => {
+  it("maps the Nutrition rate limit to 503 with Retry-After", async () => {
+    const { RateLimitedError } = await import("../src/mcp/connection.js");
+    const app = await buildApp({
+      auth: authOptions(),
+      api: fakeApi({
+        clock: async () => {
+          throw new RateLimitedError(33);
+        },
+      }),
+    });
+    const { cookie } = await signIn(app);
+    const response = await app.inject({ method: "GET", url: "/api/days/today", headers: { cookie } });
+    expect(response.statusCode).toBe(503);
+    expect(response.headers["retry-after"]).toBe("33");
+    expect(response.json()).toEqual({ error: "nutrition_rate_limited", retryAfter: 33 });
+  });
+});

@@ -13,6 +13,28 @@ export class NotConnectedError extends Error {
   }
 }
 
+/**
+ * The Nutrition MCP server allows 60 requests per minute per account. Hitting the limit must not
+ * trigger a reconnect (that costs more requests and closes calls still in flight).
+ */
+export class RateLimitedError extends Error {
+  constructor(readonly retryAfterSeconds: number) {
+    super(`Nutrition rate limit exceeded; retry after ${retryAfterSeconds}s`);
+    this.name = "RateLimitedError";
+  }
+}
+
+const RATE_LIMITED = /rate_limited|rate limit exceeded/i;
+const RETRY_AFTER = /retry after (\d+)\s*s/i;
+
+/** The server answers an over-limit request with HTTP 429 and {"error":"rate_limited",…}. */
+export function rateLimitFrom(error: unknown): RateLimitedError | null {
+  if (error instanceof RateLimitedError) return error;
+  const message = error instanceof Error ? error.message : String(error);
+  if (!RATE_LIMITED.test(message)) return null;
+  return new RateLimitedError(Number(RETRY_AFTER.exec(message)?.[1] ?? 30));
+}
+
 export interface ToolResult {
   /** All text content parts joined by newlines. */
   text: string;
@@ -125,6 +147,8 @@ export class NutritionConnection implements NutritionConnectionPort {
       try {
         return await fn(client);
       } catch (error) {
+        const limited = rateLimitFrom(error);
+        if (limited) throw limited;
         if (error instanceof UnauthorizedError) {
           await this.reset();
           throw new NotConnectedError("Nutrition authorization expired; reconnect the account");
@@ -158,7 +182,7 @@ export class NutritionConnection implements NutritionConnectionPort {
       await client.connect(transport);
     } catch (error) {
       if (error instanceof UnauthorizedError) throw new NotConnectedError("Nutrition authorization expired; reconnect the account");
-      throw error;
+      throw rateLimitFrom(error) ?? error;
     }
     this.client = client;
     return client;

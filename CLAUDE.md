@@ -30,7 +30,8 @@ Intake is a self-hosted, responsive nutrition dashboard with a daily meal timeli
 
 ## Architecture notes
 
-- Nutrition data (meals, goals, water, weight) is read **live** from the Nutrition MCP server on every request. Do not cache it in the local database.
+- Nutrition data (meals, goals, water, weight) is read **live** from the Nutrition MCP server. Do not cache it in the local database.
+- The Nutrition MCP server allows **60 requests per minute** per account. `NutritionApi` keeps identical reads in memory for 30 seconds (concurrent identical calls share one request; any write clears the cache) and computes the clock locally from the profile timezone. Keep new screens within that budget, and never reconnect on a rate-limit error (`RateLimitedError`, returned to the web app as 503 with `retryAfter`).
 - SQLite uses the built-in `node:sqlite` module (no native dependencies). Migrations are an append-only list in `apps/server/src/db/database.ts`.
 - The local SQLite database (in `/data`) only stores what the MCP server does not have: meal plan versions, links between planned meals and logged meals, and the encrypted MCP refresh token.
 - MCP tool responses are often formatted text. Parsing lives in `apps/server/src/parsers/`, and every parser is covered by tests that use real responses saved in `__fixtures__/`. Prefer `structuredContent` when a tool provides it.

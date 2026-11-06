@@ -10,6 +10,9 @@ interface Props {
   date: string;
   meals: Meal[];
   planned: PlannedEntry[];
+  hasPlan: boolean;
+  /** Show the "Timeline" heading (off on the Timeline page, whose title already says it). */
+  heading?: boolean;
   /** Local time HH:MM:SS when the day is today; the "now" marker is shown only then. */
   now: string | null;
   onLogPlanned: (entry: PlannedEntry) => void;
@@ -111,7 +114,7 @@ function PlannedCard({ entry, onLog, logging, failed, onOther }: { entry: Planne
  * Vertical timeline of the day: logged meals, planned meals from the active plan and, for today,
  * the "now" marker. A continuous rod runs behind the time labels: solid until now, dashed after.
  */
-export function Timeline({ meals, planned, now, onLogPlanned, loggingPlanned, logFailed, onOther }: Props) {
+export function Timeline({ meals, planned, hasPlan, heading = true, now, onLogPlanned, loggingPlanned, logFailed, onOther }: Props) {
   const entries: Entry[] = [
     ...meals.map((meal): Entry => ({ kind: "meal", time: meal.time, meal })),
     ...planned.map((entry): Entry => ({ kind: "planned", time: entry.time, entry })),
@@ -131,10 +134,16 @@ export function Timeline({ meals, planned, now, onLogPlanned, loggingPlanned, lo
   return (
     <section className="timeline-section" aria-label={t.timeline.title}>
       <header className="section-head">
-        <h2>{t.timeline.title}</h2>
+        {heading && <h2>{t.timeline.title}</h2>}
         <span className="muted">{counts.filter(Boolean).join(" · ")}</span>
       </header>
       {meals.length === 0 && planned.length === 0 && <p className="muted timeline-empty">{t.timeline.empty}</p>}
+      {!hasPlan && (
+        <p className="timeline-hint">
+          {t.timeline.noPlan}{" "}
+          <Link href="/piano">{t.timeline.uploadPlan}</Link>
+        </p>
+      )}
       <ol className="timeline">
         {entries.map((entry, i) => {
           const rod = nowIndex === -1 || i < nowIndex ? "past" : "future";

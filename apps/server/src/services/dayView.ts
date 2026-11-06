@@ -25,9 +25,8 @@ export async function getDayView(api: DayApi, plans: DayPlans | null, requested:
   const [progress, parsed] = await Promise.all([api.goalProgress(date), api.mealsByDate(date)]);
   const meals = [...parsed.meals].sort((a, b) => a.time.localeCompare(b.time));
 
-  const planned = plans
-    ? plannedEntries(plans.activeOn(date), meals, plans.linksOn(date), { date, today: clock.localDate, now: clock.localTime })
-    : [];
+  const activePlan = plans ? plans.activeOn(date) : null;
+  const planned = plans ? plannedEntries(activePlan, meals, plans.linksOn(date), { date, today: clock.localDate, now: clock.localTime }) : [];
 
   return {
     date,
@@ -37,5 +36,6 @@ export async function getDayView(api: DayApi, plans: DayPlans | null, requested:
     totals: progress.totals,
     meals,
     planned,
+    hasPlan: activePlan !== null,
   };
 }

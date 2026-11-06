@@ -2,21 +2,21 @@ import "@fontsource-variable/manrope";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { useCallback, useEffect, useState } from "react";
 import { Route, Switch } from "wouter";
+import { retryDelay, shouldRetry } from "./api/client";
 import { useMe } from "./api/queries";
 import { AddSheet } from "./components/AddSheet";
 import { AppShell } from "./components/AppShell";
-import { TrainingIcon } from "./components/icons";
 import { t } from "./lib/strings";
-import { ComingSoonPage } from "./pages/ComingSoonPage";
 import { EditMealPage } from "./pages/EditMealPage";
 import { MealPage } from "./pages/MealPage";
 import { PlanPage } from "./pages/PlanPage";
 import { WeekPage } from "./pages/WeekPage";
 import { SignInPage } from "./pages/SignInPage";
+import { TimelinePage } from "./pages/TimelinePage";
 import { TodayPage } from "./pages/TodayPage";
 
 const queryClient = new QueryClient({
-  defaultOptions: { queries: { refetchOnWindowFocus: true, staleTime: 30_000 } },
+  defaultOptions: { queries: { refetchOnWindowFocus: true, staleTime: 30_000, retry: shouldRetry, retryDelay } },
 });
 
 /** One-off notice from a redirect (e.g. /?signin=denied), removed from the address bar after reading. */
@@ -60,8 +60,8 @@ function Root() {
         <Route path="/piano">
           <PlanPage />
         </Route>
-        <Route path="/allenamenti">
-          <ComingSoonPage title={t.training.title} heading={t.training.soon} body={t.training.body} Icon={TrainingIcon} />
+        <Route path="/timeline">
+          <TimelinePage user={me.data} onAdd={openAdd} />
         </Route>
         <Route>
           <TodayPage user={me.data} notice={notice} onAdd={openAdd} />

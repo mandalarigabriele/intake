@@ -7,8 +7,9 @@ import { mealTitle } from "../components/Timeline";
 import { formatGrams, formatKcal, formatPercent, formatWeekday } from "../lib/format";
 import { t } from "../lib/strings";
 
+/** Timeline of the meal's day (the meal cards live there). */
 export function dayHref(date: string, today: string | undefined): string {
-  return date === today ? "/" : `/?d=${date}`;
+  return date === today ? "/timeline" : `/timeline?d=${date}`;
 }
 
 function BackHeader({ href, label }: { href: string; label: string }) {

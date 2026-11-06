@@ -18,14 +18,15 @@ All UI copy is in Italian (the app language); code, comments and docs stay in En
 | `Modifica.dc.html` | Edit meal | Meal type, time, items (edit/remove/add), values; delete with confirmation sheet |
 | `Settimana.dc.html` | Week | Daily kcal bars vs 2,200 target line, weekly averages, small weight card |
 | `Piano.dc.html` | Meal plan | Day tabs (today preselected), meals of the selected day, "Libero" cards; `⋯` menu for upload + history |
-| `Allenamenti.dc.html` | Training | Empty "coming soon" state in v1 (Hevy integration is phase 2) |
+| `Allenamenti.dc.html` | Training | Phase 2 (Hevy); its tab is now used by Timeline |
 | `Desktop.dc.html` | Desktop / iPad | Fluid layout: sticky sidebar + two columns; collapses on narrow screens |
 
 ## Navigation
 
 - Mobile: bottom tab bar **always fixed on screen** (content scrolls above it):
-  `Oggi · Settimana · Piano · Allenamenti`.
-- The `+` is a **floating button on Today only**, above the tab bar, bottom-right. It opens the add sheet.
+  `Oggi · Settimana · Piano · Timeline`.
+- Update (owner decision, Nov 2026): the timeline moved from Oggi to its own **Timeline** section, in the place of Allenamenti (Hevy is phase 2). Oggi keeps the recap: calorie ring, macro bars, water.
+- The `+` is a **floating button on Oggi and Timeline**, above the tab bar, bottom-right. It opens the add sheet.
 - Meal detail, edit and the add sheet are pushed/modal screens, without the tab bar.
 - Desktop/iPad (≥ 800 px): left sidebar with the same 4 sections plus a "+ Aggiungi" button, sticky while the page scrolls.
 - Weight has no dedicated section: it is a card in **Settimana** (one weigh-in per week).

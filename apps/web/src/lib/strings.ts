@@ -12,7 +12,7 @@ export const t = {
     today: "Oggi",
     week: "Settimana",
     plan: "Piano",
-    training: "Allenamenti",
+    timeline: "Timeline",
     add: "Aggiungi",
     addButton: "+ Aggiungi",
     nutritionConnected: "Nutrition collegato",
@@ -60,6 +60,8 @@ export const t = {
 
   errors: {
     loadFailed: "Impossibile caricare i dati della giornata.",
+    rateLimited: (seconds: number) =>
+      `Nutrition ha ricevuto troppe richieste in poco tempo (massimo 60 al minuto). Riprova tra ${seconds} secondi.`,
     waterFailed: "Acqua non registrata. Riprova.",
   },
 
@@ -110,6 +112,8 @@ export const t = {
     now: "ADESSO",
     nowLabel: "Adesso",
     empty: "Nessun pasto registrato.",
+    noPlan: "Nessun piano attivo per questo giorno ·",
+    uploadPlan: "Carica il piano",
   },
 
   meal: {
@@ -182,12 +186,6 @@ export const t = {
     waterAdded: (amount: string) => `${amount} di acqua registrati.`,
   },
 
-  training: {
-    title: "Allenamenti",
-    soon: "In arrivo",
-    body: "Qui compariranno gli allenamenti della settimana da Hevy, accanto a quello che mangi.",
-  },
-
   plan: {
     title: "Piano",
     activeFrom: (date: string) => `Attivo dal ${date}`,
@@ -243,12 +241,6 @@ export const t = {
     logged: "Pesata registrata.",
     logFailed: "Pesata non registrata. Riprova.",
     openDay: (day: string) => `Apri ${day}`,
-  },
-
-  placeholder: {
-    soon: "In arrivo",
-    week: "Calorie della settimana, medie e peso arriveranno in un prossimo aggiornamento.",
-    plan: "Qui vedrai il piano alimentare caricato da Claude, giorno per giorno.",
   },
 
   mealTypes: {
