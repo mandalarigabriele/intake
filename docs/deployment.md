@@ -58,6 +58,44 @@ The script:
 
 Set `DEPLOY_BRANCH=<branch>` to deploy another branch, e.g. for a test.
 
+## Automatic deploy (GitHub Actions)
+
+Every merge to `main` deploys by itself:
+
+1. **CI** (`.github/workflows/ci.yml`, GitHub-hosted) runs typecheck, tests and build on every pull request and every push to `main`.
+2. **Deploy** (`.github/workflows/deploy.yml`) starts when CI succeeds on a push to `main` and runs on a **self-hosted runner inside the LXC container**. It calls `sudo -n /usr/bin/bash /opt/intake/deploy.sh`, so the deploy is exactly the manual one (backup, pull, build, restart, health check). It can also be started by hand from the Actions tab (*Run workflow*).
+
+The runner only makes outbound connections to GitHub: no port is opened and Cloudflare Tunnel is not involved. The repository is private, so no fork pull request can reach the runner.
+
+### Runner setup (once, on the container, as root)
+
+```sh
+# 1. A dedicated user without a password, allowed to run only deploy.sh as root
+useradd --create-home --shell /bin/bash github-runner
+echo 'github-runner ALL=(root) NOPASSWD: /usr/bin/bash /opt/intake/deploy.sh' > /etc/sudoers.d/intake-deploy
+chmod 440 /etc/sudoers.d/intake-deploy
+visudo -cf /etc/sudoers.d/intake-deploy        # expected: "parsed OK"
+
+# 2. Download the runner (take the current version and checksum from the GitHub page in step 3)
+su - github-runner
+mkdir actions-runner && cd actions-runner
+curl -fsSLo runner.tar.gz https://github.com/actions/runner/releases/download/v<VERSION>/actions-runner-linux-x64-<VERSION>.tar.gz
+tar xzf runner.tar.gz
+
+# 3. Register it: GitHub → repository → Settings → Actions → Runners → New self-hosted runner (Linux x64)
+#    shows a one-time token. Paste it only here, on the server.
+./config.sh --url https://github.com/<owner>/intake --labels intake --name intake-lxc --unattended --token <TOKEN>
+exit
+
+# 4. Install and start it as a service that runs as github-runner
+cd /home/github-runner/actions-runner
+./svc.sh install github-runner
+./svc.sh start
+./svc.sh status                                 # expected: "active (running)"
+```
+
+The runner appears as **Idle** under Settings → Actions → Runners. To remove it: `./svc.sh stop && ./svc.sh uninstall`, then `su - github-runner -c "cd actions-runner && ./config.sh remove --token <TOKEN>"`.
+
 ## Data and backups
 
 The `intake-data` Docker volume holds the SQLite database (meal plans and their history, plan↔meal links) and the encrypted Nutrition token. Nutrition data itself lives on the Nutrition MCP server.
