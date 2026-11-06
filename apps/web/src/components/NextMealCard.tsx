@@ -1,5 +1,5 @@
 import type { DayView, PlannedEntry } from "@intake/shared";
-import { useState } from "react";
+import { useId, useState } from "react";
 import { Link } from "wouter";
 import { useLogPlanned, useSkipPlanned } from "../api/queries";
 import { formatKcal } from "../lib/format";
@@ -31,11 +31,17 @@ interface Props {
   onAdd: () => void;
 }
 
-/** "Prossimo pasto" card on Oggi, with "Mangiato come previsto", "Altro…", "Salta" and "Giornata". */
+/**
+ * "Prossimo pasto" card on Oggi. Collapsed by default (title, time, kcal and a one-line summary);
+ * expanded it lists the foods with "Mangiato come previsto", "Altro…", "Salta", "Giornata" and the
+ * meal after it.
+ */
 export function NextMealCard({ view, onAdd }: Props) {
   const logPlanned = useLogPlanned("today");
   const skipPlanned = useSkipPlanned("today");
   const [justSkipped, setJustSkipped] = useState<PlannedEntry | null>(null);
+  const [expanded, setExpanded] = useState(false);
+  const detailsId = useId();
 
   if (!view.isToday || !view.hasPlan) return null;
   const [next, after] = nextMeals(view.planned);
@@ -62,50 +68,64 @@ export function NextMealCard({ view, onAdd }: Props) {
 
       {next ? (
         <>
-          <div className="next-meal-top">
-            <span className="next-meal-label">{t.nextMeal.label.toUpperCase()}</span>
-            <span className="muted">{etaLabel(next.time, now)}</span>
-          </div>
-          <div className="next-meal-title">
-            <h2>
-              {next.title} · {next.time}
-            </h2>
-            {next.macros && <span className="muted">~{formatKcal(next.macros.kcal)} kcal</span>}
-          </div>
-          <ul className="next-meal-lines">
-            {(next.lines.length > 0 ? next.lines : [next.foods]).map((line, i) => (
-              <li key={i}>{line}</li>
-            ))}
-          </ul>
           <button
             type="button"
-            className="button-primary next-meal-primary"
-            disabled={!next.macros || logPlanned.isPending}
-            onClick={() => logPlanned.mutate({ date: view.date, planId: next.planId, index: next.index })}
+            className="next-meal-toggle"
+            aria-expanded={expanded}
+            aria-controls={detailsId}
+            onClick={() => setExpanded((value) => !value)}
           >
-            {t.timeline.eatenAsPlanned}
+            <span className="next-meal-top">
+              <span className="next-meal-label">{t.nextMeal.label.toUpperCase()}</span>
+              <span className="muted">{etaLabel(next.time, now)}</span>
+            </span>
+            <span className="next-meal-title">
+              <span className="next-meal-name">
+                {next.title} · {next.time}
+              </span>
+              {next.macros && <span className="muted">~{formatKcal(next.macros.kcal)} kcal</span>}
+              <svg className="next-meal-chevron" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                <path d="M6 9l6 6 6-6" />
+              </svg>
+            </span>
+            {!expanded && next.foods && <span className="next-meal-summary">{next.foods}</span>}
           </button>
-          {!next.macros && <p className="planned-hint">{t.timeline.noMacros}</p>}
-          {logPlanned.isError && <p className="error-text">{t.timeline.logFailed}</p>}
-          <div className="next-meal-actions">
-            <button type="button" className="button-secondary-small" onClick={onAdd}>
-              {t.timeline.other}
-            </button>
+          <div id={detailsId} className="next-meal-details" hidden={!expanded}>
+            <ul className="next-meal-lines">
+              {(next.lines.length > 0 ? next.lines : [next.foods]).map((line, i) => (
+                <li key={i}>{line}</li>
+              ))}
+            </ul>
             <button
               type="button"
-              className="button-secondary-small"
-              onClick={() => {
-                skipPlanned.mutate({ date: view.date, planId: next.planId, index: next.index, skip: true });
-                setJustSkipped(next);
-              }}
+              className="button-primary next-meal-primary"
+              disabled={!next.macros || logPlanned.isPending}
+              onClick={() => logPlanned.mutate({ date: view.date, planId: next.planId, index: next.index })}
             >
-              {t.timeline.skip}
+              {t.timeline.eatenAsPlanned}
             </button>
-            <Link href="/timeline" className="button-secondary-small">
-              {t.nextMeal.day}
-            </Link>
+            {!next.macros && <p className="planned-hint">{t.timeline.noMacros}</p>}
+            {logPlanned.isError && <p className="error-text">{t.timeline.logFailed}</p>}
+            <div className="next-meal-actions">
+              <button type="button" className="button-secondary-small" onClick={onAdd}>
+                {t.timeline.other}
+              </button>
+              <button
+                type="button"
+                className="button-secondary-small"
+                onClick={() => {
+                  skipPlanned.mutate({ date: view.date, planId: next.planId, index: next.index, skip: true });
+                  setJustSkipped(next);
+                }}
+              >
+                {t.timeline.skip}
+              </button>
+              <Link href="/timeline" className="button-secondary-small">
+                {t.nextMeal.day}
+              </Link>
+            </div>
+            {after && <p className="next-meal-after">{t.nextMeal.then(after.title, after.time, after.foods)}</p>}
           </div>
-          {after && <p className="next-meal-after">{t.nextMeal.then(after.title, after.time, after.foods)}</p>}
         </>
       ) : (
         <p className="muted">{t.nextMeal.none}</p>

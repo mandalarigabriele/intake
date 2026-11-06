@@ -61,11 +61,15 @@ strong,
  */
 .shell {
   /*
-   * Pinned to the viewport instead of height: 100dvh: after rotating, iOS Safari keeps the
-   * portrait dvh until the next scroll, so the bottom of the layout (profile row, tab bar) was cut.
+   * Height measured from the visual viewport (lib/viewport.ts): after a rotation iOS Safari
+   * sizes both 100dvh and inset: 0 for a toolbar that is no longer shown.
    */
   position: fixed;
-  inset: 0;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 100dvh;
+  height: var(--app-height, 100dvh);
   display: flex;
   flex-direction: column;
   overflow: hidden;
@@ -2941,10 +2945,54 @@ a.bar-column:hover .bar:not([data-empty]) {
   gap: 8px;
 }
 
-.next-meal-title h2 {
+.next-meal-name {
+  flex: 1;
+  min-width: 0;
   font-size: 22px;
   font-weight: 800;
   letter-spacing: -0.01em;
+}
+
+/* Header of the card: toggles the details (collapsed by default) */
+.next-meal-toggle {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 100%;
+  padding: 0;
+  border: none;
+  background: none;
+  text-align: left;
+  cursor: pointer;
+}
+
+.next-meal-chevron {
+  flex: none;
+  align-self: center;
+  color: var(--color-text-muted);
+  transition: transform 0.15s;
+}
+
+.next-meal-toggle[aria-expanded="true"] .next-meal-chevron {
+  transform: rotate(180deg);
+}
+
+.next-meal-summary {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  font-size: 14px;
+  color: var(--color-text-muted);
+}
+
+.next-meal-details {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.next-meal-details[hidden] {
+  display: none;
 }
 
 .next-meal-title .muted {
