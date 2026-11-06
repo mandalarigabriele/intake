@@ -39,6 +39,18 @@ export function AppShell({ user, onAdd, children }: Props) {
     main.current?.scrollTo({ top: 0 });
   }, [location]);
 
+  // iOS Safari can leave the document scrolled by the toolbar height after a rotation, which
+  // shows an empty band above the layout; the document itself never needs to scroll.
+  useEffect(() => {
+    const reset = () => window.scrollTo(0, 0);
+    window.addEventListener("resize", reset);
+    window.addEventListener("orientationchange", reset);
+    return () => {
+      window.removeEventListener("resize", reset);
+      window.removeEventListener("orientationchange", reset);
+    };
+  }, []);
+
   return (
     <div className="shell" data-pushed={pushed || undefined}>
       <nav className="sidebar" aria-label={t.nav.label}>

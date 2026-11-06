@@ -4,6 +4,7 @@ import { formatKcal, formatShortDate } from "../lib/format";
 import { t } from "../lib/strings";
 import { CloseIcon } from "./icons";
 import { mealSummary, mealTitle } from "./Timeline";
+import { Scrim } from "./Scrim";
 
 /** Icons of the "Altro cibo" rows, from the design. */
 const ROW_ICONS = {
@@ -57,7 +58,7 @@ export function AddSheet({ onClose }: Props) {
   const planMeals = (today.data?.planned ?? []).filter((entry) => entry.status === "todo" || entry.status === "planned");
 
   return (
-    <div className="scrim" onClick={onClose}>
+    <Scrim onClose={onClose}>
       <div className="sheet" role="dialog" aria-modal="true" aria-label={t.addSheet.title} onClick={(event) => event.stopPropagation()}>
         <div className="sheet-grabber" aria-hidden="true" />
         <div className="sheet-head">
@@ -165,6 +166,6 @@ export function AddSheet({ onClose }: Props) {
         </div>
         <p className="sheet-note">{t.addSheet.claudeHint}</p>
       </div>
-    </div>
+    </Scrim>
   );
 }

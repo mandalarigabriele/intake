@@ -15,6 +15,7 @@ import { PlanUploadFailed, usePlans, useUploadPlan } from "../api/queries";
 import { CloseIcon, PlanIcon } from "../components/icons";
 import { formatKcal, formatMediumDate, formatShortDate } from "../lib/format";
 import { t } from "../lib/strings";
+import { Scrim } from "../components/Scrim";
 
 const roundTo = (value: number, step: number) => Math.round(value / step) * step;
 
@@ -228,7 +229,7 @@ export function PlanPage() {
       )}
 
       {historyOpen && data && (
-        <div className="scrim" onClick={() => setHistoryOpen(false)}>
+        <Scrim onClose={() => setHistoryOpen(false)}>
           <div className="sheet" role="dialog" aria-modal="true" aria-label={t.plan.history} onClick={(e) => e.stopPropagation()}>
             <div className="sheet-grabber" aria-hidden="true" />
             <div className="sheet-head">
@@ -251,7 +252,7 @@ export function PlanPage() {
               ))}
             </div>
           </div>
-        </div>
+        </Scrim>
       )}
     </div>
   );
