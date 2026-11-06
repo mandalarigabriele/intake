@@ -85,7 +85,7 @@ All of these map to existing Nutrition MCP tools:
 
 | Option | MCP tools |
 |---|---|
-| Water +250 / +500 ml | `log_water` |
+| Water +200 / +250 ml | `log_water` |
 | Today's plan meals not yet logged | `log_meal` with the plan's full nutrients, then link plan entry ↔ meal in SQLite |
 | Repeat a recent meal | `get_meals_by_date_range` → `log_meal` with the same items |
 | Saved meals | `get_saved_meals` → `log_saved_meal` |

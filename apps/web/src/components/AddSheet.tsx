@@ -28,7 +28,7 @@ interface Props {
   onClose: () => void;
 }
 
-const WATER_AMOUNTS = [250, 500];
+const WATER_AMOUNTS = [200, 250];
 
 /**
  * "Aggiungi" sheet opened by the + button: a bottom sheet on phones, a centered dialog on wider screens.
