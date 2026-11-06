@@ -1,4 +1,4 @@
-import type { PlannedEntry } from "./api.js";
+import type { PlanComparison, PlannedEntry } from "./api.js";
 
 /**
  * Nutrition data as Intake uses it, independent of how the Nutrition MCP server formats it.
@@ -109,6 +109,8 @@ export interface DayView {
   planned: PlannedEntry[];
   /** Whether a meal plan is in effect on this date. */
   hasPlan: boolean;
+  /** Plan against logged meals; null without a plan in effect. */
+  comparison: PlanComparison | null;
 }
 
 export interface AddWaterRequest {

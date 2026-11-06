@@ -8,7 +8,7 @@ import { parseGoalProgress } from "../src/parsers/goalProgress.js";
 import { parseMeals } from "../src/parsers/meals.js";
 import type { DayRoutesOptions } from "../src/routes/days.js";
 import { logPlannedMeal } from "../src/services/logPlanned.js";
-import { plannedEntries } from "../src/services/planMatching.js";
+import { planComparison, plannedEntries } from "../src/services/planMatching.js";
 import { authOptions, signIn } from "./helpers.js";
 import { fixture } from "./parsers/fixtures.js";
 
@@ -120,6 +120,57 @@ describe("plannedEntries (Thursday of the example plan)", () => {
 
   it("returns nothing without a plan", () => {
     expect(plannedEntries(null, [], [], context)).toEqual([]);
+  });
+});
+
+describe("planComparison (Thursday of the example plan)", () => {
+  const stored = { id: 1, validFrom: "2026-11-04", uploadedAt: "", plan: examplePlan };
+  const context = { date: "2026-11-05", today: "2026-11-05", now: "13:17:00" };
+
+  it("puts each planned meal next to the logged meal covering it, and counts meals outside the plan", () => {
+    const meals = [meal("b", "08:03", "breakfast"), meal("x", "10:00", "dinner")];
+    const result = planComparison(stored, meals, [], context, [{ planId: 1, index: 1 }])!;
+    expect(result.meals.map((m) => [m.title, m.status, m.planned?.kcal ?? null, m.logged?.kcal ?? null])).toEqual([
+      ["Colazione", "eaten", 460, 400],
+      ["Spuntino", "skipped", 150, null],
+      ["Pranzo", "todo", 650, null],
+      ["Spuntino", "planned", 210, null],
+      ["Cena", "planned", 600, null],
+    ]);
+    // A dinner at 10:00 is too far from the 20:00 dinner: logged outside the plan
+    expect(result.extras).toEqual({ count: 1, kcal: 400, protein: 20 });
+    expect(result.plannedDay).toEqual({ kcal: 2070, protein: 135 });
+    expect(result.hasFreeMeal).toBe(false);
+  });
+
+  it("marks free meals and returns null without a plan", () => {
+    const saturday = planComparison(stored, [], [], { date: "2026-11-07", today: "2026-11-07", now: "23:00" })!;
+    expect(saturday.meals.at(-1)).toMatchObject({ title: "Cena", status: "free", planned: null });
+    expect(saturday.hasFreeMeal).toBe(true);
+    expect(planComparison(null, [], [], context)).toBeNull();
+  });
+});
+
+describe("weekPlanComparison", () => {
+  it("compares completed days with the plan and lists the largest meal deviations", async () => {
+    const { weekPlanComparison } = await import("../src/routes/weeks.js");
+    const store = new PlanStore(openDatabase(":memory:"));
+    store.add(planOn("2026-11-02"));
+    const big = { ...meal("l", "13:10", "lunch", "2026-11-04"), nutrients: { ...meal("l", "13:10", "lunch").nutrients, kcal: 900 } };
+    const meals = [meal("b", "08:00", "breakfast", "2026-11-04"), big, meal("t", "08:10", "breakfast", "2026-11-05")];
+    const dates = ["2026-11-02", "2026-11-03", "2026-11-04", "2026-11-05", "2026-11-06", "2026-11-07", "2026-11-08"];
+    const result = weekPlanComparison(dates, { localDate: "2026-11-05", localTime: "09:00:00" }, store, meals)!;
+    // Only Wednesday is completed with meals; today (Thursday) counts for deviations only
+    expect(result.days.map((d) => [d.date, d.eaten])).toEqual([["2026-11-04", 1300]]);
+    expect(result.averageDiff).toBe(1300 - result.days[0]!.planned);
+    expect(result.deviations[0]).toMatchObject({ date: "2026-11-04", title: expect.stringMatching(/Pranzo/), logged: 900 });
+    expect(result.deviations.some((d) => d.date === "2026-11-05")).toBe(true);
+  });
+
+  it("returns null without a plan", async () => {
+    const { weekPlanComparison } = await import("../src/routes/weeks.js");
+    const store = new PlanStore(openDatabase(":memory:"));
+    expect(weekPlanComparison(["2026-11-02"], { localDate: "2026-11-05", localTime: "09:00" }, store, [])).toBeNull();
   });
 });
 
