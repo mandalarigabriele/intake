@@ -6,13 +6,35 @@
  * empty band below it (position: fixed). The visual viewport is measured instead, unscaled so a
  * pinch zoom does not shrink the layout, and measured again once the rotation has settled.
  */
+/** Installed home-screen app (no browser toolbar). */
+function isStandalone(): boolean {
+  return (navigator as Navigator & { standalone?: boolean }).standalone === true || window.matchMedia("(display-mode: standalone)").matches;
+}
+
+/**
+ * In the installed app iOS reports a height that is short by about a status bar after a rotation,
+ * and no event corrects it. The app then fills the whole screen, so the screen side for the current
+ * orientation is the real height. It is used only when the width shows the app is full screen
+ * (not iPad Split View) and the gap is that small, so other layouts keep the measured value.
+ */
+export function standaloneHeight(measured: number, width: number, screenWidth: number, screenHeight: number): number {
+  const long = Math.max(screenWidth, screenHeight);
+  const short = Math.min(screenWidth, screenHeight);
+  const landscape = width > measured;
+  const fullWidth = landscape ? long : short;
+  const fullHeight = landscape ? short : long;
+  const gap = fullHeight - measured;
+  return Math.abs(width - fullWidth) <= 2 && gap > 0 && gap <= 150 ? fullHeight : measured;
+}
+
 export function trackViewportHeight(): () => void {
   const root = document.documentElement;
   const timers: number[] = [];
 
   const measure = () => {
     const vv = window.visualViewport;
-    const height = vv ? vv.height * vv.scale : window.innerHeight;
+    let height = vv ? vv.height * vv.scale : window.innerHeight;
+    if (isStandalone()) height = standaloneHeight(height, window.innerWidth, window.screen.width, window.screen.height);
     root.style.setProperty("--app-height", `${Math.round(height)}px`);
     // The document never scrolls (only .shell-main does); undo any offset left by the rotation
     if (window.scrollY !== 0) window.scrollTo(0, 0);
