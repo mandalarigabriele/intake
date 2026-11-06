@@ -33,15 +33,8 @@ export const t = {
     theme: "Tema",
     themeOptions: { system: "Sistema", light: "Chiaro", dark: "Scuro" },
     reminders: "Promemoria",
-    diagnostics: "Diagnostica schermo",
   },
 
-  diagnostics: {
-    title: "Diagnostica schermo",
-    hint: "Lascia aperto questo pannello, ruota o piega e riapri il telefono, poi tocca Copia e incolla il testo a Claude.",
-    copy: "Copia",
-    copied: "Copiato",
-  },
 
   reminders: {
     title: "Promemoria",
