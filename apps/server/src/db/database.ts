@@ -37,6 +37,21 @@ const MIGRATIONS: string[] = [
      created_at TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%fZ', 'now')),
      PRIMARY KEY (date, plan_id, meal_index)
    )`,
+  // 4: reminders: Web Push subscriptions (one per device), settings, and sent reminders (no repeats)
+  `CREATE TABLE push_subscriptions (
+     endpoint TEXT PRIMARY KEY,
+     p256dh TEXT NOT NULL,
+     auth TEXT NOT NULL,
+     created_at TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%fZ', 'now'))
+   );
+   CREATE TABLE settings (
+     key TEXT PRIMARY KEY,
+     value TEXT NOT NULL
+   );
+   CREATE TABLE reminder_log (
+     key TEXT PRIMARY KEY,
+     sent_at TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%fZ', 'now'))
+   );`,
 ];
 
 /** Opens (and migrates) the SQLite database. Pass ":memory:" for tests. */

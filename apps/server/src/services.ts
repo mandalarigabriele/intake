@@ -4,6 +4,7 @@ import type { Config } from "./config.js";
 import { openDatabase } from "./db/database.js";
 import { SecretBox } from "./db/secretBox.js";
 import { PlanStore } from "./db/planStore.js";
+import { ReminderStore } from "./db/reminderStore.js";
 import { SecretStore } from "./db/secretStore.js";
 import { NutritionConnection } from "./mcp/connection.js";
 
@@ -11,6 +12,7 @@ export interface Services {
   db: DatabaseSync;
   secrets: SecretStore;
   plans: PlanStore;
+  reminders: ReminderStore;
   nutrition: NutritionConnection;
   close(): Promise<void>;
 }
@@ -29,6 +31,7 @@ export function createServices(config: Config): Services {
     db,
     secrets,
     plans: new PlanStore(db),
+    reminders: new ReminderStore(db),
     nutrition,
     async close() {
       await nutrition.close();
