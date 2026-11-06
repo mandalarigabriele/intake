@@ -38,7 +38,7 @@ Self-hosted nutrition dashboard with a daily meal timeline, macro tracking and m
 - Nutrition request budget: the Nutrition MCP server allows 60 requests per minute, so identical reads within 30 seconds share one request (in memory only, cleared by any write) and the clock is computed locally from the profile timezone. When the limit is hit the app says so and retries after the delay the server asks for.
 - UI built from the approved design in `docs/design/` (Manrope, design tokens), in Italian with Italian number and date formatting; responsive (iPhone, iPad, desktop); light and dark mode following the system, with a manual Sistema / Chiaro / Scuro choice saved per device.
 - Day API: `GET /api/days/:date` (or `today`, in the Nutrition profile's timezone) and `POST /api/water`.
-- Installable on iPhone via Safari "Add to Home Screen" (web app manifest and icons, safe-area aware, light and dark themes).
+- Installable on iPhone via Safari "Add to Home Screen" (web app manifest and icons, safe-area aware, light and dark themes). The installed app runs under the status bar ("black-translucent"); in the light theme a dark strip behind the status bar keeps its white text readable.
 
 ### Planned – phase 2
 
