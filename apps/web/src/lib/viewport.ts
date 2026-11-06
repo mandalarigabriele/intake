@@ -18,19 +18,35 @@ export function isStandalone(): boolean {
 }
 
 /**
- * In the installed app iOS reports a height that is short by about a status bar after a rotation,
- * and no event corrects it. The app then fills the whole screen, so the screen side for the current
- * orientation is the real height. It is used only when the width shows the app is full screen
- * (not iPad Split View) and the gap is that small, so other layouts keep the measured value.
+ * Installed app, landscape: right after a rotation iOS reports the real height (e.g. 867×669 on a
+ * foldable iPhone), then takes the status bar off the height again although it already took it off
+ * the width (867×587), leaving an empty band at the bottom. The largest plausible height seen for
+ * the current width is remembered (also across launches, per device) and used instead.
  */
-export function standaloneHeight(measured: number, width: number, screenWidth: number, screenHeight: number): number {
-  const long = Math.max(screenWidth, screenHeight);
-  const short = Math.min(screenWidth, screenHeight);
-  const landscape = width > measured;
-  const fullWidth = landscape ? long : short;
-  const fullHeight = landscape ? short : long;
-  const gap = fullHeight - measured;
-  return Math.abs(width - fullWidth) <= 2 && gap > 0 && gap <= 150 ? fullHeight : measured;
+const LANDSCAPE_KEY = "intake-landscape-heights";
+/** A remembered height is used only when the measured one is at most this much shorter. */
+const MAX_GAP = 150;
+
+let heightsCache: Record<string, number> | null = null;
+
+function rememberedHeights(): Record<string, number> {
+  if (heightsCache) return heightsCache;
+  try {
+    const value = JSON.parse(localStorage.getItem(LANDSCAPE_KEY) ?? "{}") as unknown;
+    heightsCache = value && typeof value === "object" ? (value as Record<string, number>) : {};
+  } catch {
+    heightsCache = {};
+  }
+  return heightsCache;
+}
+
+/** Updates the remembered heights with the candidates seen; returns the height to use. */
+export function landscapeHeight(width: number, measured: number, candidates: number[], remembered: Record<string, number>): number {
+  // In landscape the height is shorter than the width; anything else is a transient reading
+  const plausible = candidates.filter((h) => h > 0 && h < width && h - measured <= MAX_GAP);
+  const best = Math.max(remembered[width] ?? 0, ...plausible);
+  if (best > (remembered[width] ?? 0)) remembered[width] = best;
+  return best > measured && best - measured <= MAX_GAP ? best : measured;
 }
 
 /** Heights outside this range are transient values (app hidden, mid-fold) and are not applied. */
@@ -97,7 +113,19 @@ export function trackViewportHeight(): () => void {
   const measure = (event: string) => {
     const vv = window.visualViewport;
     let height = vv ? vv.height * vv.scale : window.innerHeight;
-    if (isStandalone()) height = standaloneHeight(height, window.innerWidth, window.screen.width, window.screen.height);
+    if (isStandalone() && window.innerWidth > window.innerHeight) {
+      const remembered = rememberedHeights();
+      const before = JSON.stringify(remembered);
+      const candidates = [window.innerHeight, vv ? vv.height : 0, probe.getBoundingClientRect().height];
+      height = landscapeHeight(window.innerWidth, height, candidates, remembered);
+      if (JSON.stringify(remembered) !== before) {
+        try {
+          localStorage.setItem(LANDSCAPE_KEY, JSON.stringify(remembered));
+        } catch {
+          // Storage unavailable: the height is still remembered for this rotation
+        }
+      }
+    }
     const valid = document.visibilityState === "visible" && height >= MIN_HEIGHT && height <= MAX_HEIGHT;
     if (valid) root.style.setProperty("--app-height", `${Math.round(height)}px`);
     else root.style.removeProperty("--app-height");
