@@ -27,7 +27,7 @@ Self-hosted nutrition dashboard with a daily meal timeline, macro tracking and m
 - "Mangiato come previsto" logs the planned meal with its full nutrients at its planned time (idempotent); it needs per-meal macros in the plan file.
 - Meal detail: kcal and share of the daily goal, macro split bar with % of goals, foods with quantities, fiber, sugar (added sugar), caffeine, saturated fat and sodium when measured; "Salva come preferito" saves it as a Nutrition saved meal.
 - Edit meal: type, time, foods (rename, change quantity with nutrients scaled in proportion, remove, add with values), or totals for meals without foods; delete with confirmation (also removes it from Nutrition). On iPad and desktop, edit and delete icons in the timeline.
-- "Aggiungi" sheet: water (+200 ml and +250 ml), today's plan meals, "Ripeti un pasto recente" (distinct meals of the last two weeks, logged again now); saved meals, food search and barcode are shown as coming in phase 2.
+- "Aggiungi" sheet: water (+200 ml and +250 ml), today's plan meals, "Ripeti un pasto recente" (distinct meals of the last two weeks, logged again now), "Chiedi a Claude" (opens Claude to log a photo or a free description); saved meals are shown as coming soon.
 - Settimana: daily calories as bars against the goal line (tap a day to open it), previous/next week, average kcal and protein over the completed logged days (today is left out until it is over), a "Costanza" card (logging streak, days on the protein and water targets with the best day when missed, meals eaten as planned and skipped), weight card with the latest weigh-in, change since the previous one, target, and a field to log the weekly weigh-in.
 - Week strip (Monday to Sunday) on Oggi to switch day; the selected day is kept in the URL.
 - Meal timeline with logged meals (foods with quantities, kcal, macro chips) and a "now" marker for today; without a plan in effect it says so and links to Piano.
@@ -38,7 +38,7 @@ Self-hosted nutrition dashboard with a daily meal timeline, macro tracking and m
 
 ### Planned – phase 2
 
-- Saved meals, food search with quantity and barcode scan in the "Aggiungi" sheet.
+- Saved meals in the "Aggiungi" sheet.
 - Allenamenti with workouts from Hevy.
 - Automated deploy via GitHub Actions.
 

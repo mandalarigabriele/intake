@@ -14,7 +14,7 @@ All UI copy is in Italian (the app language); code, comments and docs stay in En
 | `Collega.dc.html` | Connect Nutrition (one-time) | Google ✓ and Nutrition "to connect", 3-step explainer |
 | `Main.dc.html` | Today (summary) | Week strip, **Next meal** card, calorie ring, macro bars, water, **daily insight** |
 | `Timeline.dc.html` | Timeline | The day's meals on a continuous vertical rod; day arrows; skip / undo |
-| `Aggiungi.dc.html` | Add sheet (opened by `+`) | Water shortcuts, today's plan meals, repeat / saved / search / barcode |
+| `Aggiungi.dc.html` | Add sheet (opened by `+`) | Water shortcuts, today's plan meals, repeat / saved / "Chiedi a Claude" |
 | `Pasto.dc.html` | Meal detail | kcal, macro split bar, items with quantities, fiber/sugar/caffeine |
 | `Modifica.dc.html` | Edit meal | Meal type, time, items (edit/remove/add), values; delete with confirmation sheet |
 | `Settimana.dc.html` | Week | Daily kcal bars vs 2,200 target line, weekly averages, **Consistency** card, weight card |
@@ -89,12 +89,11 @@ All of these map to existing Nutrition MCP tools:
 | Today's plan meals not yet logged | `log_meal` with the plan's full nutrients, then link plan entry ↔ meal in SQLite |
 | Repeat a recent meal | `get_meals_by_date_range` → `log_meal` with the same items |
 | Saved meals | `get_saved_meals` → `log_saved_meal` |
-| Search food + quantity | `search_foods`, `get_food_macros` → `log_meal` |
-| Barcode scan | camera scan in the browser (JS library such as ZXing; Safari has no `BarcodeDetector`) → `lookup_barcode` → `log_meal` |
+| Chiedi a Claude | link to `https://claude.ai/new?q=…` (opens the Claude app when installed); photos and free descriptions are logged by Claude |
 
 Not in the app: photo recognition and free-text descriptions ("I had a margherita pizza").
 They need an LLM; the user keeps doing those through Claude, which writes to the same Nutrition account.
-Suggested order: water + plan meals + repeat recent in v1; saved meals, search and barcode in phase 2.
+Suggested order: water + plan meals + repeat recent in v1; saved meals in phase 2. Food search (USDA, English names only) and barcode scanning were dropped in favor of "Chiedi a Claude".
 
 ## Design tokens
 
