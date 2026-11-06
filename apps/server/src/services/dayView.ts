@@ -1,7 +1,7 @@
 import type { DayView } from "@intake/shared";
 import type { PlanStore } from "../db/planStore.js";
 import type { NutritionApi } from "../mcp/nutritionApi.js";
-import { plannedEntries } from "./planMatching.js";
+import { planComparison, plannedEntries } from "./planMatching.js";
 
 const DATE = /^\d{4}-\d{2}-\d{2}$/;
 
@@ -26,9 +26,11 @@ export async function getDayView(api: DayApi, plans: DayPlans | null, requested:
   const meals = [...parsed.meals].sort((a, b) => a.time.localeCompare(b.time));
 
   const activePlan = plans ? plans.activeOn(date) : null;
-  const planned = plans
-    ? plannedEntries(activePlan, meals, plans.linksOn(date), { date, today: clock.localDate, now: clock.localTime }, plans.skipsOn(date))
-    : [];
+  const context = { date, today: clock.localDate, now: clock.localTime };
+  const links = plans ? plans.linksOn(date) : [];
+  const skips = plans ? plans.skipsOn(date) : [];
+  const planned = plans ? plannedEntries(activePlan, meals, links, context, skips) : [];
+  const comparison = plans ? planComparison(activePlan, meals, links, context, skips) : null;
 
   return {
     date,
@@ -39,5 +41,6 @@ export async function getDayView(api: DayApi, plans: DayPlans | null, requested:
     meals,
     planned,
     hasPlan: activePlan !== null,
+    comparison,
   };
 }

@@ -1,14 +1,16 @@
-import type { TargetDays, WeekConsistency, WeekView } from "@intake/shared";
+import type { Meal, MealDeviation, TargetDays, WeekConsistency, WeekPlanComparison, WeekView } from "@intake/shared";
 import type { PlanStore } from "../db/planStore.js";
 import type { NutritionSummary } from "../parsers/summary.js";
 import type { FastifyPluginAsync, preHandlerHookHandler } from "fastify";
 import { z } from "zod";
 import type { NutritionApi } from "../mcp/nutritionApi.js";
 import { isValidDate } from "../services/dayView.js";
+import { planComparison } from "../services/planMatching.js";
 
 export interface WeekRoutesOptions {
-  api: Pick<NutritionApi, "clock" | "summary" | "weightTrends" | "logWeight">;
-  plans?: Pick<PlanStore, "linkCountBetween" | "skipCountBetween">;
+  /** mealsByRange is needed for "Piano e realtà"; without it the week has no plan comparison. */
+  api: Pick<NutritionApi, "clock" | "summary" | "weightTrends" | "logWeight"> & Partial<Pick<NutritionApi, "mealsByRange">>;
+  plans?: Pick<PlanStore, "linkCountBetween" | "skipCountBetween" | "activeOn" | "linksOn" | "skipsOn">;
   requireOwner: preHandlerHookHandler;
 }
 
@@ -39,6 +41,44 @@ export function loggingStreak(days: SummaryDay[], today: string): string[] {
   return streak;
 }
 
+/** Plan against logged meals for the days of a week up to today. */
+export function weekPlanComparison(
+  dates: string[],
+  clock: { localDate: string; localTime: string },
+  plans: NonNullable<WeekRoutesOptions["plans"]>,
+  meals: Meal[],
+): WeekPlanComparison | null {
+  const days: WeekPlanComparison["days"] = [];
+  const deviations: MealDeviation[] = [];
+  let anyPlan = false;
+  for (const date of dates) {
+    if (date > clock.localDate) break;
+    const dayMeals = meals.filter((meal) => meal.date === date);
+    const comparison = planComparison(plans.activeOn(date), dayMeals, plans.linksOn(date), { date, today: clock.localDate, now: clock.localTime }, plans.skipsOn(date));
+    if (!comparison?.plannedDay) continue;
+    anyPlan = true;
+    for (const meal of comparison.meals) {
+      if (meal.status === "eaten" && meal.planned && meal.logged) {
+        deviations.push({ date, title: meal.title, time: meal.time, planned: meal.planned.kcal, logged: meal.logged.kcal });
+      }
+    }
+    if (date < clock.localDate && dayMeals.length > 0) {
+      const eaten = dayMeals.reduce((sum, meal) => sum + meal.nutrients.kcal, 0);
+      days.push({ date, planned: comparison.plannedDay.kcal, eaten, hasFreeMeal: comparison.hasFreeMeal });
+    }
+  }
+  if (!anyPlan) return null;
+  const full = days.filter((d) => !d.hasFreeMeal);
+  return {
+    days,
+    averageDiff: full.length > 0 ? full.reduce((sum, d) => sum + d.eaten - d.planned, 0) / full.length : null,
+    deviations: deviations
+      .filter((d) => Math.abs(d.logged - d.planned) >= 1)
+      .sort((a, b) => Math.abs(b.logged - b.planned) - Math.abs(a.logged - a.planned))
+      .slice(0, 3),
+  };
+}
+
 const WEIGHT_WINDOW_DAYS = 90;
 
 function shiftDate(value: string, days: number): string {
@@ -63,7 +103,8 @@ export const weekRoutes: FastifyPluginAsync<WeekRoutesOptions> = async (app, { a
   app.addHook("preHandler", requireOwner);
 
   app.get<{ Params: { date: string } }>("/weeks/:date", async (request, reply): Promise<WeekView | void> => {
-    const today = (await api.clock()).localDate;
+    const clock = await api.clock();
+    const today = clock.localDate;
     const requested = request.params.date === "current" ? today : request.params.date;
     if (!isValidDate(requested)) return reply.code(400).send({ error: "Date must be YYYY-MM-DD or 'current'" });
 
@@ -75,9 +116,11 @@ export const weekRoutes: FastifyPluginAsync<WeekRoutesOptions> = async (app, { a
 
     // One summary request covers the week and the streak lookback before it
     const lookbackStart = shiftDate(start, -STREAK_LOOKBACK_DAYS);
-    const [summary, weight] = await Promise.all([
+    const withPlan = plans && api.mealsByRange && start <= today;
+    const [summary, weight, weekMeals] = await Promise.all([
       start <= today ? api.summary(lookbackStart, summaryEnd) : Promise.resolve<NutritionSummary>({ goals: { kcal: null, protein: null, waterMl: null }, days: [] }),
       api.weightTrends(WEIGHT_WINDOW_DAYS, weightEnd),
+      withPlan ? api.mealsByRange!(start, summaryEnd) : Promise.resolve(null),
     ]);
 
     const byDate = new Map(summary.days.map((d) => [d.date, d]));
@@ -108,7 +151,9 @@ export const weekRoutes: FastifyPluginAsync<WeekRoutesOptions> = async (app, { a
       skipped: plans ? plans.skipCountBetween(start, end) : 0,
     };
 
-    return { start, end, today, goals: { kcal: summary.goals.kcal, protein: summary.goals.protein }, days, averages, consistency, weight };
+    const plan = plans && weekMeals ? weekPlanComparison(days.map((d) => d.date), clock, plans, weekMeals.meals) : null;
+
+    return { start, end, today, goals: { kcal: summary.goals.kcal, protein: summary.goals.protein }, days, averages, consistency, plan, weight };
   });
 
   app.post("/weight", async (request, reply) => {
