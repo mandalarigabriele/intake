@@ -13,8 +13,12 @@ import {
 } from "@intake/shared";
 import type { PlanLink, PlanSkip } from "../db/planStore.js";
 
-/** A logged meal can cover a planned meal of the same type within this many minutes. */
-const MATCH_WINDOW_MINUTES = 180;
+/** A logged meal can cover a planned meal of the same type up to this many minutes after it… */
+const MATCH_AFTER_MINUTES = 180;
+/** …and only this many minutes before it (a 14:35 coffee does not cover the 16:00 snack). */
+const MATCH_BEFORE_MINUTES = 60;
+/** When the plan has macros, the logged meal needs at least this share of the planned kcal. */
+const MIN_KCAL_SHARE = 0.4;
 
 const minutes = (time: string) => Number(time.slice(0, 2)) * 60 + Number(time.slice(3, 5));
 
@@ -31,8 +35,9 @@ export interface PlannedContext {
  *
  * A planned meal is covered by:
  * 1. an explicit link (created by "Mangiato come previsto") to a meal that still exists, or
- * 2. a logged meal of the same type within ±3 hours (e.g. a breakfast logged through Claude),
- *    each logged meal covering at most one planned meal, nearest first.
+ * 2. a logged meal of the same type from 1 hour before to 3 hours after the planned time (e.g. a
+ *    breakfast logged through Claude) with at least 40% of the planned kcal when the plan has
+ *    macros, each logged meal covering at most one planned meal, nearest first.
  */
 function coverage(stored: StoredPlan, meals: Meal[], links: PlanLink[], date: string): Map<number, string> {
   const day = planDay(stored.plan, date);
@@ -53,10 +58,13 @@ function coverage(stored: StoredPlan, meals: Meal[], links: PlanLink[], date: st
   day.meals.forEach((planned, index) => {
     if (covered.has(index)) return;
     const type = mealTypeOf(planned);
+    const plannedKcal = isFixedMeal(planned) ? planned.macros?.kcal : undefined;
     for (const meal of meals) {
       if (usedMeals.has(meal.id) || meal.type !== type) continue;
-      const distance = Math.abs(minutes(meal.time) - minutes(times[index]!));
-      if (distance <= MATCH_WINDOW_MINUTES) pairs.push({ index, mealId: meal.id, distance });
+      const offset = minutes(meal.time) - minutes(times[index]!);
+      if (offset < -MATCH_BEFORE_MINUTES || offset > MATCH_AFTER_MINUTES) continue;
+      if (plannedKcal && meal.nutrients.kcal < plannedKcal * MIN_KCAL_SHARE) continue;
+      pairs.push({ index, mealId: meal.id, distance: Math.abs(offset) });
     }
   });
   pairs.sort((a, b) => a.distance - b.distance);

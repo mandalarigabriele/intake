@@ -98,6 +98,19 @@ describe("plannedEntries (Thursday of the example plan)", () => {
     expect(entries.some((e) => e.title === "Colazione")).toBe(true);
   });
 
+  it("does not cover a planned meal with a meal logged more than an hour before it, or with a small one", () => {
+    // A coffee logged as a snack at 14:35 is not the 16:00 snack (85 minutes early, and 5 kcal)
+    const coffee = { ...meal("c", "14:35", "snack"), nutrients: { ...meal("c", "14:35", "snack").nutrients, kcal: 5 } };
+    expect(plannedEntries(stored, [coffee], [], context).some((e) => e.time === "16:00")).toBe(true);
+    // Early by 85 minutes, even with enough kcal
+    expect(plannedEntries(stored, [meal("e", "14:35", "snack")], [], context).some((e) => e.time === "16:00")).toBe(true);
+    // Small meal at the right time: too few kcal for the 210 kcal snack
+    const small = { ...meal("s", "16:05", "snack"), nutrients: { ...meal("s", "16:05", "snack").nutrients, kcal: 40 } };
+    expect(plannedEntries(stored, [small], [], context).some((e) => e.time === "16:00")).toBe(true);
+    // Up to 3 hours late still covers it
+    expect(plannedEntries(stored, [meal("l", "18:30", "snack")], [], context).some((e) => e.time === "16:00")).toBe(false);
+  });
+
   it("lets each logged meal cover only one planned meal, nearest first", () => {
     const entries = plannedEntries(stored, [meal("s", "15:30", "snack")], [], context);
     expect(entries.filter((e) => e.type === "snack").map((e) => e.time)).toEqual(["11:00"]);
