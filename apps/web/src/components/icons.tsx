@@ -43,9 +43,12 @@ export const PlanIcon = (p: IconProps) => (
   </Icon>
 );
 
-export const TrainingIcon = (p: IconProps) => (
+export const TimelineIcon = (p: IconProps) => (
   <Icon {...p}>
-    <path d="M6 7v10M18 7v10M3 10v4M21 10v4M6 12h12" />
+    <path d="M6 4v16M10 7h10M10 12h10M10 17h6" />
+    <circle cx="6" cy="7" r="1.5" />
+    <circle cx="6" cy="12" r="1.5" />
+    <circle cx="6" cy="17" r="1.5" />
   </Icon>
 );
 

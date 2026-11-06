@@ -1,8 +1,8 @@
-import type { ReactNode } from "react";
+import { useEffect, useRef, type ReactNode } from "react";
 import { Link, useLocation } from "wouter";
 import { useNutritionStatus, type User } from "../api/queries";
 import { t } from "../lib/strings";
-import { PlanIcon, TodayIcon, TrainingIcon, WeekIcon } from "./icons";
+import { PlanIcon, TimelineIcon, TodayIcon, WeekIcon } from "./icons";
 import { Logo } from "./Logo";
 import { ProfileMenu } from "./ProfileMenu";
 
@@ -10,7 +10,7 @@ export const SECTIONS = [
   { path: "/", label: t.nav.today, Icon: TodayIcon },
   { path: "/settimana", label: t.nav.week, Icon: WeekIcon },
   { path: "/piano", label: t.nav.plan, Icon: PlanIcon },
-  { path: "/allenamenti", label: t.nav.training, Icon: TrainingIcon },
+  { path: "/timeline", label: t.nav.timeline, Icon: TimelineIcon },
 ] as const;
 
 interface Props {
@@ -29,6 +29,12 @@ export function AppShell({ user, onAdd, children }: Props) {
 
   // Meal detail and edit are pushed screens without the bottom tab bar (docs/design)
   const pushed = location.startsWith("/pasto/");
+  const main = useRef<HTMLElement>(null);
+
+  // The content area is the scroll container: start each screen at the top
+  useEffect(() => {
+    main.current?.scrollTo({ top: 0 });
+  }, [location]);
 
   return (
     <div className="shell" data-pushed={pushed || undefined}>
@@ -38,7 +44,7 @@ export function AppShell({ user, onAdd, children }: Props) {
           <span>{t.appName}</span>
         </div>
         {SECTIONS.map(({ path, label }) => (
-          <Link key={path} href={path} className="sidebar-link" aria-current={location === path || (path === "/" && pushed) ? "page" : undefined}>
+          <Link key={path} href={path} className="sidebar-link" aria-current={location === path || (path === "/timeline" && pushed) ? "page" : undefined}>
             {label}
           </Link>
         ))}
@@ -50,7 +56,9 @@ export function AppShell({ user, onAdd, children }: Props) {
         <ProfileMenu user={user} variant="row" />
       </nav>
 
-      <main className="shell-main">{children}</main>
+      <main className="shell-main" ref={main}>
+        {children}
+      </main>
 
       <nav className="tabbar" aria-label={t.nav.label}>
         {SECTIONS.map(({ path, label, Icon }) => (

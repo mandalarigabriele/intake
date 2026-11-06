@@ -5,7 +5,7 @@ import Fastify, { type FastifyInstance } from "fastify";
 import type { GoogleSignInPort } from "./auth/google.js";
 import { createRequireOwner } from "./auth/requireOwner.js";
 import { SessionCookies } from "./auth/session.js";
-import { NotConnectedError, type NutritionConnectionPort } from "./mcp/connection.js";
+import { NotConnectedError, RateLimitedError, type NutritionConnectionPort } from "./mcp/connection.js";
 import { ToolError } from "./mcp/nutritionApi.js";
 import { ParseError } from "./parsers/common.js";
 import type { PlanStore } from "./db/planStore.js";
@@ -50,6 +50,13 @@ export async function buildApp(options: AppOptions = {}): Promise<FastifyInstanc
   app.setErrorHandler((error, request, reply) => {
     if (error instanceof NotConnectedError) {
       return reply.code(409).send({ error: "nutrition_not_connected", message: error.message });
+    }
+    if (error instanceof RateLimitedError) {
+      request.log.warn({ retryAfter: error.retryAfterSeconds }, "Nutrition rate limit reached");
+      return reply
+        .code(503)
+        .header("retry-after", String(error.retryAfterSeconds))
+        .send({ error: "nutrition_rate_limited", retryAfter: error.retryAfterSeconds });
     }
     if (error instanceof ToolError || error instanceof ParseError) {
       request.log.error({ err: error }, "Nutrition MCP request failed");

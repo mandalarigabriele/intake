@@ -57,7 +57,6 @@ export function useDay(date: string) {
     refetchInterval: 5 * 60 * 1000,
     // Keep showing the previous day while the next one loads
     placeholderData: keepPreviousData,
-    retry: (count, error) => !(error instanceof ApiError && error.status < 500) && count < 2,
   });
 }
 
