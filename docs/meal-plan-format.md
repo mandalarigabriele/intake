@@ -11,11 +11,11 @@ Examples: [`examples/claude-fitness-plan.example.json`](../examples/claude-fitne
 
 ## Claude Fitness format
 
-The fields Intake reads; anything else (`targets`, `goal`, `shopping_list`…) is ignored.
+The fields Intake reads; anything else (`targets`, `goal`, `macros_info`, `shopping_list`, `day_macros`, `alternative_macros`…) is ignored.
 
 | Field | Notes |
 |---|---|
-| `schema_version` | `1` |
+| `schema_version` | `1` or `2` (version 2 adds `grams` on items and per-meal `macros`, `null` on free meals) |
 | `updated` | `YYYY-MM-DD`; the plan becomes active from this date unless `valid_from` is given |
 | `valid_from` | Optional `YYYY-MM-DD`, overrides `updated` as the first active day |
 | `meal_slots[]` | `id`, `label`, `time` (`HH:MM`). Order defines the order of the day. `Spuntino 11` is shown as "Spuntino" at 11:00 |
@@ -25,9 +25,9 @@ The fields Intake reads; anything else (`targets`, `goal`, `shopping_list`…) i
 | `days[].expected_protein_g` | Shown on the day tab ("135 g") and as the day note |
 | `days[].tags` | `sweet_snack` shows "dolce" on the day tab |
 | `days[].free_meals` | Free slots of that day |
-| `days[].meals.<slot id>` | `description`, `items[]` (`food`, `quantity`, `unit`, `note`), optional `alternative[]`, `free`, `sweet`, `family_friendly`, `macros` |
+| `days[].meals.<slot id>` | `description`, `items[]` (`food`, `quantity`, `unit`, `note`, `grams`), optional `alternative[]`, `free`, `sweet`, `family_friendly`, `macros` |
 
-A meal with `free: true`, listed in a free-meals field, or with no items is shown as **Libero**. The meal type (breakfast, lunch, dinner, snack) comes from the slot id or label.
+A meal with `free: true`, listed in a free-meals field, or with no items is shown as **Libero**. The meal type (breakfast, lunch, dinner, snack) comes from the slot id or label. When an item's unit is not a weight or volume (`pz`, `fette`…), its `grams` are shown next to it: "Banana 1 pz (118 g)".
 
 ### Per-meal `macros` (needed for "Mangiato come previsto")
 

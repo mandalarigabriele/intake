@@ -105,6 +105,40 @@ describe("Claude Fitness import", () => {
     });
   });
 
+  it("accepts schema_version 2 (grams, macros null on free meals, day and alternative macros)", async () => {
+    const { importPlan } = await import("../src/claudeFitness.js");
+    const v2 = structuredClone(cf);
+    v2.schema_version = 2;
+    v2.macros_info = { basis: "stima dalle quantità del piano" };
+    v2.days[0].day_macros = { kcal: 2205, protein_g: 148.8 };
+    v2.days[0].meals.breakfast.items = [
+      { food: "Banana", quantity: 1, unit: "pz", grams: 118 },
+      { food: "Pane integrale", quantity: 2, unit: "fette", grams: 80, note: "1 fetta = 40 g" },
+      { food: "Yogurt greco 0%", quantity: 150, unit: "g", grams: 150 },
+    ];
+    v2.days[0].meals.breakfast.macros = {
+      kcal: 407, protein_g: 23.8, carbs_g: 68.5, fat_g: 5.4, fiber_g: 6.3, sugar_g: 35.4, added_sugar_g: 2.4,
+      saturated_fat_g: 2.1, sodium_mg: 147, caffeine_mg: 65,
+    };
+    v2.days[5].meals.dinner = { description: "Cena libera, senza vincoli", items: [], free: true, macros: null };
+    v2.days[5].meals.lunch.alternative_macros = { kcal: 677, protein_g: 45.2 };
+    const result = importPlan(v2);
+    if (!result.success) throw new Error(JSON.stringify(result.issues));
+    const breakfast = result.plan.days.monday.meals[0]!;
+    expect("foods" in breakfast && breakfast.foods).toEqual([
+      { name: "Banana", quantity: 1, unit: "pz", note: "118 g" },
+      { name: "Pane integrale", quantity: 2, unit: "fette", note: "80 g · 1 fetta = 40 g" },
+      { name: "Yogurt greco 0%", quantity: 150, unit: "g" },
+    ]);
+    expect("macros" in breakfast && breakfast.macros).toMatchObject({ kcal: 407, sodiumMg: 147, caffeineMg: 65 });
+    expect(result.plan.days.saturday.meals[4]).toMatchObject({ title: "Cena", free: true });
+  });
+
+  it("rejects an unknown schema_version", async () => {
+    const { importPlan } = await import("../src/claudeFitness.js");
+    expect(importPlan({ ...structuredClone(cf), schema_version: 3 }).success).toBe(false);
+  });
+
   it("reports missing days and invalid fields", async () => {
     const { importPlan } = await import("../src/claudeFitness.js");
     const broken = structuredClone(cf);
