@@ -3468,3 +3468,63 @@ button.next-meal-primary {
   border-radius: 3px;
   background: var(--color-accent);
 }
+
+/*
+ * Layout height modes chosen in "Diagnostica schermo" (lib/viewport.ts): the shell becomes a
+ * normal block of 100dvh or 100lvh, sized by CSS alone as in other installed web apps.
+ */
+:root[data-height-mode] .shell {
+  position: relative;
+}
+
+:root[data-height-mode="dvh"] .shell {
+  height: 100dvh;
+}
+
+:root[data-height-mode="lvh"] .shell {
+  height: 100lvh;
+}
+
+/* ================= Diagnostica schermo (temporary) ================= */
+
+.diag-panel {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: calc(16px + env(safe-area-inset-top)) calc(16px + env(safe-area-inset-right)) calc(16px + env(safe-area-inset-bottom))
+    calc(16px + env(safe-area-inset-left));
+  background: var(--color-bg);
+}
+
+.diag-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.diag-head h2 {
+  font-size: 20px;
+  font-weight: 800;
+}
+
+.diag-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.diag-log {
+  flex: 1;
+  min-height: 0;
+  width: 100%;
+  padding: 10px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+  color: var(--color-text);
+  font: 11px/1.45 ui-monospace, Menlo, monospace;
+  white-space: pre;
+  resize: none;
+}

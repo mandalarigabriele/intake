@@ -33,6 +33,16 @@ export const t = {
     theme: "Tema",
     themeOptions: { system: "Sistema", light: "Chiaro", dark: "Scuro" },
     reminders: "Promemoria",
+    diagnostics: "Diagnostica schermo",
+  },
+
+  diagnostics: {
+    title: "Diagnostica schermo",
+    mode: "ALTEZZA DEL LAYOUT",
+    modes: { auto: "Auto", dvh: "dvh", lvh: "lvh" },
+    hint: "Scegli una modalità, chiudi il pannello, ruota il telefono o cambia app e torna qui: tocca Copia e incolla il testo a Claude.",
+    copy: "Copia",
+    copied: "Copiato",
   },
 
 
