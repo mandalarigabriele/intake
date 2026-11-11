@@ -3,12 +3,20 @@ name: Deploy
 # Runs on the self-hosted runner inside the Intake LXC container (label "intake"), only after CI
 # passed on a push to main. The runner user may run exactly /opt/intake/deploy.sh as root through
 # a sudoers rule; see docs/deployment.md, "Automatic deploy".
+# After a successful deploy, the release job tags the deployed commit (v0.1.0, v0.1.1, …) and
+# publishes a GitHub release with notes generated from the merged pull requests.
 on:
   workflow_run:
     workflows: [CI]
     types: [completed]
     branches: [main]
   workflow_dispatch:
+    inputs:
+      bump:
+        description: Version part to increase for the release created after this deploy
+        type: choice
+        options: [patch, minor, major]
+        default: patch
 
 permissions:
   contents: read
@@ -22,6 +30,60 @@ jobs:
     if: github.event_name == 'workflow_dispatch' || (github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.event == 'push')
     runs-on: [self-hosted, intake]
     timeout-minutes: 20
+    outputs:
+      sha: ${{ steps.deployed.outputs.sha }}
     steps:
       - name: Deploy with deploy.sh
         run: sudo -n /usr/bin/bash /opt/intake/deploy.sh
+
+      # deploy.sh deploys whatever origin/main is when it runs: read the commit it checked out,
+      # falling back to the commit that triggered the run.
+      - name: Record deployed commit
+        id: deployed
+        env:
+          FALLBACK_SHA: ${{ github.event.workflow_run.head_sha || github.sha }}
+        run: |
+          sha="$(git -c safe.directory=/opt/intake -C /opt/intake rev-parse HEAD 2>/dev/null || true)"
+          echo "sha=${sha:-$FALLBACK_SHA}" >> "$GITHUB_OUTPUT"
+
+  release:
+    needs: deploy
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Tag and publish release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          SHA: ${{ needs.deploy.outputs.sha }}
+          BUMP: ${{ inputs.bump || 'patch' }}
+        run: |
+          set -euo pipefail
+          if [ -n "$(git tag --points-at "$SHA" -l 'v[0-9]*')" ]; then
+            echo "Commit $SHA is already released as $(git tag --points-at "$SHA" -l 'v[0-9]*' | head -1): nothing to do."
+            exit 0
+          fi
+          latest="$(git tag -l 'v[0-9]*' --sort=-v:refname | head -1)"
+          if [ -z "$latest" ]; then
+            next="v0.1.0"
+          else
+            IFS=. read -r major minor patch <<< "${latest#v}"
+            case "$BUMP" in
+              major) next="v$((major + 1)).0.0" ;;
+              minor) next="v${major}.$((minor + 1)).0" ;;
+              *)     next="v${major}.${minor}.$((patch + 1))" ;;
+            esac
+          fi
+          # Merge commits: use the pull request title (first body line) instead of "Merge pull request #N…"
+          summary="$(git log -1 --format=%s "$SHA")"
+          case "$summary" in
+            "Merge pull request"*) summary="$(git log -1 --format=%b "$SHA" | sed '/^$/d' | head -1)" ;;
+          esac
+          title="$next${summary:+ — $summary}"
+          echo "Releasing $SHA as $next"
+          gh release create "$next" --target "$SHA" --title "$title" --generate-notes
