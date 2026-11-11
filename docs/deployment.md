@@ -65,6 +65,7 @@ Every merge to `main` deploys by itself:
 
 1. **CI** (`.github/workflows/ci.yml`, GitHub-hosted) runs typecheck, tests and build on every pull request and every push to `main`.
 2. **Deploy** (`.github/workflows/deploy.yml`) starts when CI succeeds on a push to `main` and runs on a **self-hosted runner inside the LXC container**. It calls `sudo -n /usr/bin/bash /opt/intake/deploy.sh`, so the deploy is exactly the manual one (backup, pull, build, restart, health check). It can also be started by hand from the Actions tab (*Run workflow*).
+3. **Release** (job `release` in the same workflow, GitHub-hosted) runs after a successful deploy: it tags the deployed commit with the next version and publishes a GitHub release whose notes list the merged pull requests. Versions start at `v0.1.0` and every deploy increases the patch number (`v0.1.1`, `v0.1.2`, …). For a bigger step, start the Deploy workflow by hand and choose `minor` or `major`. A deploy of a commit that is already tagged creates no new release.
 
 The runner only makes outbound connections to GitHub: no port is opened and Cloudflare Tunnel is not involved. The repository is private, so no fork pull request can reach the runner.
 
