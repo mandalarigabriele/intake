@@ -4,7 +4,7 @@
 Browser (desktop, iPad, iPhone PWA)
         │  HTTPS, session cookie
         ▼
-Cloudflare Tunnel → Nginx Proxy Manager → intake container (Fastify, port 3000)
+Cloudflare Tunnel ──────────────────────→ intake container (Fastify, port 3000, on dockerdmz)
                                               │
                                               ├── serves the built web app (apps/web/dist)
                                               ├── REST API under /api

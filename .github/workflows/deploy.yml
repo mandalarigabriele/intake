@@ -1,6 +1,6 @@
 name: Deploy
 
-# Runs on the self-hosted runner inside the Intake LXC container (label "intake"), only after CI
+# Runs on the self-hosted runner on the shared Docker host dockerdmz (label "intake"), only after CI
 # passed on a push to main. The runner user may run exactly /opt/intake/deploy.sh as root through
 # a sudoers rule; see docs/deployment.md, "Automatic deploy".
 # After a successful deploy, the release job tags the deployed commit (v0.1.0, v0.1.1, …) and
