@@ -156,3 +156,18 @@ Losing the volume only means connecting Nutrition again and re-uploading the cur
 ## Health check
 
 `GET /api/health` returns `{"status":"ok"}`. Docker compose uses it as the container health check, and `deploy.sh` waits for it after every update.
+
+## Apple Health automatic upload
+
+Health Auto Export on the iPhone posts to `<PUBLIC_BASE_URL>/api/health/ingest`, outside Google sign-in, with the token shown in
+Profilo › Apple Salute › "Sincronizzazione automatica" (see [apple-health.md](apple-health.md#ingest-automatic-upload)).
+Nothing is needed on the server: the token is generated in the app and stored encrypted in the database.
+
+If the public hostname is protected by **Cloudflare Access**, the iPhone cannot pass the Access login, so add a bypass for that path only:
+
+1. Zero Trust → Access → Applications → Add an application → Self-hosted.
+2. Application domain: the public hostname, path `api/health/ingest`.
+3. Policy: action **Bypass**, include **Everyone**.
+
+Access matches the most specific path first, so the rest of the app keeps its current protection; the endpoint itself refuses any
+request without the token.

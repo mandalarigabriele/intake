@@ -3,6 +3,7 @@ import { buildApp } from "./app.js";
 import { GoogleSignIn } from "./auth/google.js";
 import { loadConfig } from "./config.js";
 import { HevyApi } from "./hevy/hevyApi.js";
+import { HealthIngestToken } from "./services/healthSync.js";
 import { NutritionApi } from "./mcp/nutritionApi.js";
 import { createServices } from "./services.js";
 import { ReminderScheduler } from "./services/reminderScheduler.js";
@@ -24,6 +25,7 @@ const scheduler = new ReminderScheduler({
   log: { warn: (details, message) => app.log.warn(details, message), info: (details, message) => app.log.info(details, message) },
 });
 
+const healthToken = new HealthIngestToken(services.secrets);
 const app = await buildApp({
   webDistDir: config.WEB_DIST_DIR ?? resolve(import.meta.dirname, "../../web/dist"),
   logger: true,
@@ -46,7 +48,8 @@ const app = await buildApp({
   plans: services.plans,
   push: { store: services.reminders, scheduler, publicKey: vapid.publicKey },
   workouts: { hevy: config.HEVY_API_KEY ? new HevyApi(config.HEVY_API_KEY) : null, health: services.health, api },
-  appleHealth: { store: services.health, api },
+  appleHealth: { store: services.health, api, sync: { token: healthToken, endpoint: `${config.PUBLIC_BASE_URL}/api/health/ingest` } },
+  healthIngest: { store: services.health, token: healthToken },
 });
 
 app.addHook("onClose", async () => {
