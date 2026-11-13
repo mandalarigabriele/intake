@@ -70,6 +70,10 @@
   --color-sleep-chip-text: light-dark(#24305c, #c3cdf2);
   --color-workout-border: light-dark(#c9daec, #2c4258);
   --color-heart: light-dark(#b4412a, #e0714f);
+  /* Andamento › Allenamenti: routine letters, next routine border, load lines */
+  --color-training: light-dark(#1f5a90, #7fb3e3);
+  --color-on-training: light-dark(#ffffff, #0f1a24);
+  --color-training-soft: light-dark(#e4eef7, #1c2b3a);
   /* Oggi: Sforzo / Recupero / Sonno rings and their "Medio" state pill */
   --color-effort: light-dark(#d9682a, #ec8c55);
   --color-effort-track: light-dark(#f6e3d6, #3a281c);

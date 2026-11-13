@@ -12,6 +12,7 @@ const SIDEBAR = [
   { path: "/", label: t.nav.today },
   { path: "/andamento", label: t.nav.nutrition },
   { path: "/andamento/salute", label: t.nav.health },
+  { path: "/andamento/allenamenti", label: t.nav.training },
   { path: "/piano", label: t.nav.plan },
   { path: "/timeline", label: t.nav.timeline },
 ] as const;

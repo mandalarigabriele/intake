@@ -1,4 +1,4 @@
-import { hevyWorkoutPageSchema, type HevyWorkout, type HevyWorkoutPage } from "../parsers/hevy.js";
+import { hevyRoutinePageSchema, hevyWorkoutPageSchema, type HevyRoutine, type HevyWorkout, type HevyWorkoutPage } from "../parsers/hevy.js";
 
 export class HevyError extends Error {
   constructor(
@@ -54,6 +54,39 @@ export class HevyApi {
     const parsed = hevyWorkoutPageSchema.safeParse(await response.json().catch(() => null));
     if (!parsed.success) throw new HevyError("Unexpected Hevy response");
     return parsed.data;
+  }
+
+  private routinesCache: { at: number; value: Promise<HevyRoutine[]> } | null = null;
+
+  /** All routines (a few pages at most), cached like the workout pages. */
+  routines(): Promise<HevyRoutine[]> {
+    if (this.routinesCache && this.now() - this.routinesCache.at < CACHE_MS) return this.routinesCache.value;
+    const value = this.fetchRoutines();
+    this.routinesCache = { at: this.now(), value };
+    value.catch(() => (this.routinesCache = null));
+    return value;
+  }
+
+  private async fetchRoutines(): Promise<HevyRoutine[]> {
+    const routines: HevyRoutine[] = [];
+    for (let page = 1; page <= MAX_PAGES; page++) {
+      let response: Response;
+      try {
+        response = await this.fetchImpl(`${BASE_URL}/v1/routines?page=${page}&pageSize=${PAGE_SIZE}`, {
+          headers: { "api-key": this.apiKey, accept: "application/json" },
+          signal: AbortSignal.timeout(10_000),
+        });
+      } catch (error) {
+        throw new HevyError(`Hevy request failed: ${(error as Error).message}`);
+      }
+      if (response.status === 404) break;
+      if (!response.ok) throw new HevyError(`Hevy answered ${response.status}`, response.status);
+      const parsed = hevyRoutinePageSchema.safeParse(await response.json().catch(() => null));
+      if (!parsed.success) throw new HevyError("Unexpected Hevy response");
+      routines.push(...parsed.data.routines);
+      if (page >= parsed.data.page_count) break;
+    }
+    return routines;
   }
 
   /** Workouts that started at or after `since` (an ISO instant), newest first. */

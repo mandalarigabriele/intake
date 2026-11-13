@@ -22,6 +22,7 @@ import type {
   UpdateMealRequest,
   WeekView,
   ProfileView,
+  TrainingView,
   WorkoutsResponse,
 } from "@intake/shared";
 import { keepPreviousData, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
@@ -315,6 +316,15 @@ export function useTestPush() {
 }
 
 /** Workouts between two local dates: Hevy (configured: false without a Hevy API key) and Apple Health. */
+/** Andamento › Allenamenti: next routine, week, load progress and recent workouts, live from Hevy. */
+export function useTraining() {
+  return useQuery({
+    queryKey: ["training"],
+    queryFn: () => apiFetch<TrainingView>("/api/training"),
+    staleTime: 5 * 60_000,
+  });
+}
+
 export function useWorkouts(from: string | undefined, to: string | undefined) {
   return useQuery({
     queryKey: ["workouts", from, to],

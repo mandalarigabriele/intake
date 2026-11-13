@@ -18,6 +18,8 @@ All UI copy is in Italian (the app language); code, comments and docs stay in En
 | `TimelineMer11.dc.html` | Timeline (past day) | Example with a Hevy workout enriched with heart rate from Health, expanded |
 | `AndamentoSalute.dc.html` | Andamento › Salute (iPhone) | Tabs Sonno / Attività / Cuore, period 7 / 30 / 90 days, real data, interactive in Play |
 | `SaluteDesktop.dc.html` | Salute (desktop / iPad) | Same data and period selector; the three tabs side by side as columns |
+| `AndamentoAllenamenti.dc.html` | Andamento › Allenamenti (iPhone) | Next routine (Hevy rotation A → B → C) with targets and progression hints, this week strip, load progress charts, recent workouts |
+| `AllenamentiDesktop.dc.html` | Allenamenti (desktop / iPad) | Same content in a gap-free two-column flow (CSS `columns: 2 380px`, cards `break-inside: avoid`): next routine, week, history, one card per lift; one column on iPad portrait |
 | `Profilo.dc.html` | Profile | Weight (log + chart from the 2nd weigh-in), daily goals (read-only, from Nutrition) and step goal, connections, theme, sign out. The app also keeps "Promemoria" and "Scollega Nutrition" here (not drawn) |
 | `Salute.dc.html` | Profile › Apple Salute | Data status, active-energy warning, file import, auto-sync (phase 2). The step goal moved to Profilo |
 | `SaluteImport.dc.html` | Import preview | Preview, duplicates resolved, ignored data, result; states via the `stato` tweak |
@@ -33,9 +35,9 @@ All UI copy is in Italian (the app language); code, comments and docs stay in En
 
 ## Navigation update (13 Nov)
 
-- iPhone tab bar: **Oggi · Andamento · [+] · Piano · Timeline**. "Andamento" opens with a segmented control **Alimentazione | Salute**
-  (Alimentazione = former Week, nutrition only; Salute = sleep, activity, heart).
-- Desktop / iPad sidebar: **Oggi · Alimentazione · Salute · Piano · Timeline**.
+- iPhone tab bar: **Oggi · Andamento · [+] · Piano · Timeline**. "Andamento" opens with a segmented control **Alimentazione | Salute | Allenamenti**
+  (Alimentazione = former Week, nutrition only; Salute = sleep, activity, heart; Allenamenti = Hevy routines and loads).
+- Desktop / iPad sidebar: **Oggi · Alimentazione · Salute · Allenamenti · Piano · Timeline**.
 - The avatar opens **Profilo** (weight, goals incl. step goal, connections incl. Apple Salute, reminders, theme, "Scollega Nutrition", sign out).
   Weight is no longer on the Week page.
 - Supersedes older mentions of "Settimana" as a tab, the weight card in Week, and the step goal in the Apple Salute screen.
@@ -47,10 +49,10 @@ All UI copy is in Italian (the app language); code, comments and docs stay in En
   There is no floating button.
 - Meal detail, edit and the add sheet are pushed/modal screens, without the tab bar.
 - The avatar in Today opens **Profilo**, where "Apple Salute" lives.
-- Desktop/iPad (≥ 800 px): left sidebar with `Oggi · Alimentazione · Salute · Piano · Timeline` plus a "+ Aggiungi" button, sticky while the page scrolls.
+- Desktop/iPad (≥ 800 px): left sidebar with `Oggi · Alimentazione · Salute · Allenamenti · Piano · Timeline` plus a "+ Aggiungi" button, sticky while the page scrolls.
 - Weight has no dedicated section: it is a card in **Profilo** (one weigh-in per week).
 - Shopping list is **not** in the app: the user keeps it in Apple Reminders ("Spesa"). A later iOS Shortcut may pull the list from the active plan.
-- No training section in v1.
+- Training: see "Allenamenti (Hevy)".
 
 ## Today (summary)
 
@@ -176,6 +178,22 @@ The first release builds the grid only; editing comes later.
 - Tapping a ring opens an inline panel "come si calcola" with the inputs used (and "non disponibile" for missing ones, e.g. HRV).
 - **Values in the mockup are placeholders** (tweaks "Anelli"); the scoring rules are in [`docs/apple-health.md`](../apple-health.md) § Daily scores. Dark-mode tracks: `#3A281C`, `#1E3326`, `#2A2547`.
 - Needs an "insufficient data" state per ring.
+
+## Allenamenti (Hevy) — added 13 Nov
+
+- iPhone: third option in the Andamento segmented control: **Alimentazione | Salute | Allenamenti**. Desktop / iPad sidebar gains **Allenamenti**.
+- **Next routine**: computed from the rotation A → B → C (next after the last Hevy workout). Shows routine title, exercise count,
+  typical duration, each exercise with the target from the Hevy routine (weights × rep range), and hints:
+  "prova +2,5 kg" when the last session closed the top of the rep range (e.g. bench 53,5 kg × 8-9-10), "superserie" tags. Button "Apri in Hevy".
+  Reminder line from the meal plan: on full-body days add bread, pasta or potatoes at dinner.
+- **This week**: 7-day strip with the routine letter on training days, "3 su 3", time in the gym, exercise count, other activity (Health).
+- **Load progress**: one small line chart per key lift (best working set per session, warm-ups excluded), label of the last set,
+  delta pill ("▲ +15 kg da settembre") or "pronta a salire". Cables 2:1 are logged at half stack, as in Hevy.
+- **Recent workouts**: last 4 Hevy sessions with time, duration, exercise count and HR from Health when available.
+- Data: Hevy API (routines and about four months of workouts; exercise titles matched by template id, since routines
+  return English template names and workouts the app's language). Read live, no local storage.
+- In the app: "Apri in Hevy" and the meal-plan reminder line are not shown yet (no stable Hevy deep link; the plan has
+  no structured "full-body day" flag).
 
 ## Add sheet (`+`) — what is really possible
 
