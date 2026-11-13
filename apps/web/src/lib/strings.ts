@@ -22,6 +22,7 @@ export const t = {
     add: "Aggiungi",
     addButton: "+ Aggiungi",
     nutritionConnected: "Nutrition collegato",
+    allConnected: "Nutrition e Salute collegati",
   },
 
   signIn: {
@@ -400,6 +401,9 @@ export const t = {
     proteinChart: (goal: string | null) => (goal ? `Proteine al giorno rispetto all’obiettivo di ${goal} g` : "Proteine al giorno"),
     proteinPoint: (day: string, grams: string) => `${day}: ${grams} g`,
     proteinHit: (days: string[]) => `Obiettivo raggiunto ${days.join(", ")}`,
+    dayWithGrams: (day: string, grams: string) => `${day} (${grams} g)`,
+    closeTo: (day: string, grams: string) => `${day} a ${grams} g`,
+    thisWeek: "Questa settimana",
     proteinNoHit: "Obiettivo non ancora raggiunto",
     consistency: "Costanza",
     allLogged: "tutti i giorni da lunedì",

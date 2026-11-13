@@ -1,6 +1,6 @@
 import { useEffect, useRef, type ReactNode } from "react";
 import { Link, useLocation } from "wouter";
-import { useNutritionStatus, type User } from "../api/queries";
+import { useHealthStatus, useNutritionStatus, type User } from "../api/queries";
 import { t } from "../lib/strings";
 import { trackViewportHeight } from "../lib/viewport";
 import { PlanIcon, PlusIcon, TimelineIcon, TodayIcon, WeekIcon } from "./icons";
@@ -45,6 +45,8 @@ interface Props {
 export function AppShell({ user, onAdd, children }: Props) {
   const [location] = useLocation();
   const status = useNutritionStatus(true);
+  // SQLite only: tells whether Apple Health data was ever imported, for the sidebar status line
+  const health = useHealthStatus();
 
   // Meal detail, edit, Profilo and Apple Salute are pushed screens without the bottom tab bar (docs/design)
   const pushed = location.startsWith("/pasto/") || location.startsWith("/profilo");
@@ -75,7 +77,7 @@ export function AppShell({ user, onAdd, children }: Props) {
           {t.nav.addButton}
         </button>
         <div className="sidebar-spacer" />
-        {status.data?.connected && <span className="sidebar-status">{t.nav.nutritionConnected}</span>}
+        {status.data?.connected && <span className="sidebar-status">{health.data?.lastImport ? t.nav.allConnected : t.nav.nutritionConnected}</span>}
         <ProfileLink user={user} variant="row" />
       </nav>
 
