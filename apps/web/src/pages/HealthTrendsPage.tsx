@@ -391,19 +391,29 @@ export function HealthTrendsPage() {
 
       {data && hasData && (
         <>
-          <div className="segmented trend-tabs" role="tablist" aria-label={t.trends.tabs}>
-            {TABS.map((key) => (
-              <button key={key} type="button" role="tab" aria-selected={tab === key} className="segmented-option" onClick={() => setTab(key)}>
-                {t.trends[key]}
-              </button>
-            ))}
-          </div>
-          <div className="period-pills" role="group" aria-label={t.trends.period}>
-            {PERIODS.map((p) => (
-              <button key={p} type="button" className="period-pill" aria-pressed={period === p} onClick={() => setPeriod(p)}>
-                {t.trends.periods[p]}
-              </button>
-            ))}
+          <div className="trend-controls">
+            <div className="trend-tabs" role="tablist" aria-label={t.trends.tabs}>
+              {TABS.map((key) => (
+                <button key={key} type="button" role="tab" aria-selected={tab === key} className="trend-tab" onClick={() => setTab(key)}>
+                  {t.trends[key]}
+                </button>
+              ))}
+            </div>
+            <div className="segmented period-switch" role="radiogroup" aria-label={t.trends.period}>
+              {PERIODS.map((p) => (
+                <button
+                  key={p}
+                  type="button"
+                  role="radio"
+                  aria-checked={period === p}
+                  aria-label={t.trends.periods[p]}
+                  className="segmented-option"
+                  onClick={() => setPeriod(p)}
+                >
+                  {t.trends.periodsShort[p]}
+                </button>
+              ))}
+            </div>
           </div>
           <div className="trends-columns" aria-busy={trends.isFetching}>
             <div className="trend-column-group" data-active={tab === "sleep" || undefined} role="tabpanel" aria-label={t.trends.sleep}>

@@ -574,6 +574,7 @@ export const t = {
     tabs: "Sezioni della salute",
     period: "Periodo",
     periods: { 7: "7 giorni", 30: "30 giorni", 90: "90 giorni" } as Record<7 | 30 | 90, string>,
+    periodsShort: { 7: "7 g", 30: "30 g", 90: "90 g" } as Record<7 | 30 | 90, string>,
     loadFailed: "Dati di Salute non disponibili. Riprova tra poco.",
     empty: "Nessun dato da Apple Salute. Importa un export da Profilo › Apple Salute.",
     emptyLink: "Vai ad Apple Salute",
