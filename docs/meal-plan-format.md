@@ -1,6 +1,6 @@
 # Meal plan file format
 
-Meal plans are generated in the Claude Fitness project and uploaded on the **Piano** page (`⋯` → *Carica nuovo piano*). A plan becomes active from its valid-from date; previous versions are kept as history (*Storico versioni*).
+Meal plans are generated in the Claude Fitness project and uploaded on the **Plan** page (Piano; `⋯` → upload a new plan). A plan becomes active from its valid-from date; previous versions are kept as history (*Storico versioni*).
 
 Intake accepts two formats and detects which one a file uses:
 
@@ -29,9 +29,9 @@ The fields Intake reads; anything else (`targets`, `goal`, `macros_info`, `shopp
 
 A meal with `free: true`, listed in a free-meals field, or with no items is shown as **Libero**. The meal type (breakfast, lunch, dinner, snack) comes from the slot id or label. When an item's unit is not a weight or volume (`pz`, `fette`…), its `grams` are shown next to it: "Banana 1 pz (118 g)".
 
-### Per-meal `macros` (needed for "Mangiato come previsto")
+### Per-meal `macros` (needed for "Eaten as planned")
 
-"Mangiato come previsto" logs the planned meal to Nutrition with its nutrients. Without them the meal would be stored with no calories or macros, and that day would drop out of the averages. So **the button is disabled for meals without `macros`**, and the timeline suggests logging them through *Altro…* or Claude.
+"Eaten as planned" (Mangiato come previsto) logs the planned meal to Nutrition with its nutrients. Without them the meal would be stored with no calories or macros, and that day would drop out of the averages. So **the button is disabled for meals without `macros`**, and the timeline suggests logging them through *Altro…* or Claude.
 
 Add a `macros` object to every non-free meal:
 
@@ -67,5 +67,5 @@ Add a `macros` object to every non-free meal:
 ## Timeline behavior
 
 - Meals without a time use default slots: breakfast 08:00, lunch 13:00, dinner 20:00, snacks 11:00 before lunch and 16:00 after.
-- A planned meal is hidden once covered: by "Mangiato come previsto", or by a logged meal of the same type (e.g. logged through Claude) from 1 hour before to 3 hours after the planned time with, when the plan has macros, at least 40% of the planned kcal. Each logged meal covers at most one planned meal, the nearest in time.
-- Uncovered planned meals are "Da registrare" once their time has passed (or on past days), "Dal piano" before that, and "Libero" for free slots. "Salta" marks one as "Saltato" for that day (stored locally, restorable with "Annulla").
+- A planned meal is hidden once covered: by "Eaten as planned", or by a logged meal of the same type (e.g. logged through Claude) from 1 hour before to 3 hours after the planned time with, when the plan has macros, at least 40% of the planned kcal. Each logged meal covers at most one planned meal, the nearest in time.
+- Uncovered planned meals are "to log" once their time has passed (or on past days), "from the plan" before that, and "free" for free slots. "Skip" marks one as skipped for that day (stored locally, restorable with "Undo").

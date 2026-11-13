@@ -160,7 +160,7 @@ Losing the volume only means connecting Nutrition again and re-uploading the cur
 ## Apple Health automatic upload
 
 Health Auto Export on the iPhone posts to `<PUBLIC_BASE_URL>/api/health/ingest`, outside Google sign-in, with the token shown in
-Profilo › Apple Salute › "Sincronizzazione automatica" (see [apple-health.md](apple-health.md#ingest-automatic-upload)).
+Profile › Apple Health › automatic sync ("Sincronizzazione automatica") (see [apple-health.md](apple-health.md#ingest-automatic-upload)).
 Nothing is needed on the server: the token is generated in the app and stored encrypted in the database.
 
 If the public hostname is protected by **Cloudflare Access**, the iPhone cannot pass the Access login, so add a bypass for that path only:

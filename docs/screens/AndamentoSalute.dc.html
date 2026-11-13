@@ -1,0 +1,220 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<title>Andamento – salute</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+a{color:#17201B;text-decoration:none}a:hover{color:#2F6B47}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; box-sizing: border-box; background: #F4F5F1; font-family: 'Manrope', system-ui, sans-serif; color: #17201B; display: flex; flex-direction: column; overflow: hidden">
+<header style="padding: 52px 16px 8px; display: flex; flex-direction: column; gap: 10px">
+<div style="display: flex; justify-content: space-between; align-items: flex-end; padding: 0 4px"><h1 style="margin: 0; font-size: 30px; font-weight: 800; letter-spacing: -0.02em">Andamento</h1><span style="font-size: 12px; font-weight: 600; color: #56605A">{{rangeNote}}</span></div>
+<div role="group" aria-label="Cosa vuoi vedere" style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 4px; padding: 4px; background: #E6E9E3; border-radius: 14px"><a href="Settimana.dc.html" style="height: 40px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 700; color: #56605A">Alimentazione</a><a href="AndamentoSalute.dc.html" aria-current="page" style="height: 40px; border-radius: 10px; background: #FFFFFF; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 800; color: #17201B">Salute</a><a href="AndamentoAllenamenti.dc.html" style="height: 40px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 700; color: #56605A">Allenamenti</a></div>
+</header>
+<div style="flex: 1; min-height: 0; overflow-y: auto; overflow-x: hidden; padding: 4px 16px 20px; display: flex; flex-direction: column; gap: 12px">
+<div style="display: flex; justify-content: space-between; align-items: center; gap: 8px; border-bottom: 1px solid #DDE1DA"><div role="tablist" aria-label="Sezioni della salute" style="display: flex; gap: 18px; min-width: 0"><sc-for list="{{tabs}}" as="t" hint-placeholder-count="3"><button role="tab" aria-selected="{{t.sel}}" onClick="{{t.pick}}" style="height: 40px; padding: 0; border: none; border-bottom: 3px solid {{t.line}}; background: none; color: {{t.fg}}; font-family: inherit; font-size: 15px; font-weight: {{t.weight}}">{{t.label}}</button></sc-for></div><div role="group" aria-label="Periodo" style="display: flex; gap: 2px; padding: 3px; background: #E6E9E3; border-radius: 10px; flex: none"><sc-for list="{{periods}}" as="p" hint-placeholder-count="3"><button onClick="{{p.pick}}" aria-pressed="{{p.sel}}" aria-label="{{p.label}}" style="height: 30px; min-width: 38px; padding: 0 6px; border-radius: 8px; border: none; background: {{p.smBg}}; color: {{p.smFg}}; font-family: inherit; font-size: 12px; font-weight: 800">{{p.short}}</button></sc-for></div></div>
+<sc-if value="{{isSonno}}" hint-placeholder-val="{{true}}">
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(100px, 1fr)); gap: 8px"><div style="background: #FFFFFF; border-radius: 18px; padding: 12px 14px; display: flex; flex-direction: column; gap: 1px; min-width: 0"><span style="font-size: 11px; font-weight: 700; color: #56605A">Sonno medio</span><span style="font-size: 19px; font-weight: 800; white-space: nowrap">{{s.avg}}</span><span style="font-size: 11px; color: {{s.avgNoteColor}}">{{s.avgNote}}</span></div><div style="background: #FFFFFF; border-radius: 18px; padding: 12px 14px; display: flex; flex-direction: column; gap: 1px; min-width: 0"><span style="font-size: 11px; font-weight: 700; color: #56605A">Ti addormenti</span><span style="font-size: 19px; font-weight: 800; white-space: nowrap">{{s.start}}</span><span style="font-size: 11px; color: {{s.startNoteColor}}">{{s.startNote}}</span></div><div style="background: #FFFFFF; border-radius: 18px; padding: 12px 14px; display: flex; flex-direction: column; gap: 1px; min-width: 0"><span style="font-size: 11px; font-weight: 700; color: #56605A">Ti svegli</span><span style="font-size: 19px; font-weight: 800; white-space: nowrap">{{s.end}}</span><span style="font-size: 11px; color: {{s.endNoteColor}}">{{s.endNote}}</span></div></div>
+<section aria-label="Orari di sonno" style="background: #FFFFFF; border-radius: 24px; padding: 18px 18px; display: flex; flex-direction: column; gap: 12px; min-width: 0">
+<div style="display: flex; justify-content: space-between; align-items: baseline; gap: 8px"><span style="font-size: 15px; font-weight: 800">Orari di sonno</span><span style="font-size: 11px; font-weight: 700; padding: 3px 8px; border-radius: 999px; background: #ECEEEA; color: #3C453F">Fitbit</span></div>
+<div style="display: flex; gap: 6px">
+<div style="width: 34px; flex: none; position: relative; height: 150px">
+<sc-for list="{{s.ticks}}" as="t" hint-placeholder-count="4"><span style="position: absolute; right: 2px; top: {{t.top}}; transform: translateY(-50%); font-size: 9px; color: #56605A">{{t.label}}</span></sc-for>
+</div>
+<div style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 4px">
+<div role="img" aria-label="{{s.aria}}" style="position: relative; height: 150px; display: flex; gap: {{gapPx}}; background: repeating-linear-gradient(to bottom, #F4F5F1 0, #F4F5F1 1px, transparent 1px, transparent 37.5px)">
+<sc-for list="{{s.cols}}" as="c" hint-placeholder-count="7"><div style="flex: 1 1 0; min-width: 0; position: relative"><div title="{{c.title}}" style="position: absolute; left: 0; right: 0; top: {{c.top}}; height: {{c.h}}; border-radius: {{radius}}; background: {{c.color}}"></div></div></sc-for>
+</div>
+<div style="display: flex; gap: {{gapPx}}"><sc-for list="{{s.cols}}" as="c" hint-placeholder-count="7"><div style="flex: 1 1 0; min-width: 0; position: relative; height: 14px"><span style="position: absolute; left: 50%; transform: translateX(-50%); font-size: 10px; font-weight: 700; color: #56605A; white-space: nowrap">{{c.label}}</span></div></sc-for></div>
+</div>
+</div>
+<div style="display: flex; flex-wrap: wrap; gap: 4px 14px; font-size: 12px; color: #56605A"><span><span style="display: inline-block; width: 9px; height: 9px; border-radius: 2px; background: #3A4D8F; margin-right: 4px"></span>dall'addormentamento al risveglio</span><span><span style="display: inline-block; width: 9px; height: 9px; border-radius: 2px; background: #E0A63E; margin-right: 4px"></span>notte più corta · {{s.shortest}}</span></div>
+</section>
+<section aria-label="Fasi del sonno" style="background: #FFFFFF; border-radius: 24px; padding: 18px 18px; display: flex; flex-direction: column; gap: 12px; min-width: 0">
+<span style="font-size: 15px; font-weight: 800">Fasi in media</span>
+<div role="img" aria-label="{{s.phAria}}" style="display: flex; height: 14px; border-radius: 7px; overflow: hidden; gap: 2px"><sc-for list="{{s.phases}}" as="p" hint-placeholder-count="4"><div style="width: {{p.w}}; background: {{p.color}}"></div></sc-for></div>
+<div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px 12px"><sc-for list="{{s.phases}}" as="p" hint-placeholder-count="4"><div style="display: flex; align-items: center; gap: 6px; font-size: 13px; color: #3C453F"><span style="width: 9px; height: 9px; border-radius: 2px; flex: none; background: {{p.color}}"></span>{{p.label}} <b>{{p.min}}</b> <span style="color: #56605A">{{p.pct}}</span></div></sc-for></div>
+<div style="display: flex; flex-direction: column; border-top: 1px solid #ECEEEA">
+<sc-for list="{{s.facts}}" as="f" hint-placeholder-count="3"><div style="display: flex; justify-content: space-between; gap: 8px; min-height: 40px; align-items: center; border-bottom: 1px solid #ECEEEA; font-size: 13px"><span style="color: #3C453F">{{f.k}}</span><b>{{f.v}}</b></div></sc-for>
+</div>
+</section>
+</sc-if>
+<sc-if value="{{isAtt}}" hint-placeholder-val="{{false}}">
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(100px, 1fr)); gap: 8px"><div style="background: #FFFFFF; border-radius: 18px; padding: 12px 14px; display: flex; flex-direction: column; gap: 1px; min-width: 0"><span style="font-size: 11px; font-weight: 700; color: #56605A">Passi medi</span><span style="font-size: 19px; font-weight: 800; white-space: nowrap">{{a.avg}}</span><span style="font-size: 11px; color: {{a.avgNoteColor}}">{{a.avgNote}}</span></div><div style="background: #FFFFFF; border-radius: 18px; padding: 12px 14px; display: flex; flex-direction: column; gap: 1px; min-width: 0"><span style="font-size: 11px; font-weight: 700; color: #56605A">Giorni ≥ 8.000</span><span style="font-size: 19px; font-weight: 800; white-space: nowrap">{{a.over}}</span><span style="font-size: 11px; color: {{a.overNoteColor}}">{{a.overNote}}</span></div><div style="background: #FFFFFF; border-radius: 18px; padding: 12px 14px; display: flex; flex-direction: column; gap: 1px; min-width: 0"><span style="font-size: 11px; font-weight: 700; color: #56605A">Allenamenti</span><span style="font-size: 19px; font-weight: 800; white-space: nowrap">{{a.count}}</span><span style="font-size: 11px; color: {{a.countNoteColor}}">{{a.countNote}}</span></div></div>
+<section aria-label="Passi al giorno" style="background: #FFFFFF; border-radius: 24px; padding: 18px 18px; display: flex; flex-direction: column; gap: 12px; min-width: 0">
+<div style="display: flex; justify-content: space-between; align-items: baseline; gap: 8px"><span style="font-size: 15px; font-weight: 800">Passi al giorno</span><span style="font-size: 11px; font-weight: 700; padding: 3px 8px; border-radius: 999px; background: #ECEEEA; color: #3C453F">Fitbit</span></div>
+<div style="position: relative">
+<div style="position: absolute; left: 0; right: 0; top: {{a.goalTop}}; border-top: 1.5px dashed #9AA39C"></div>
+<span style="position: absolute; right: 0; top: {{a.goalTop}}; transform: translateY(-120%); font-size: 10px; font-weight: 700; color: #56605A; background: #FFFFFF; padding: 0 3px">obiettivo 8.000</span>
+<div role="img" aria-label="{{a.aria}}" style="height: 120px; display: flex; align-items: flex-end; gap: {{gapPx}}">
+<sc-for list="{{a.cols}}" as="c" hint-placeholder-count="7"><div title="{{c.title}}" style="flex: 1 1 0; min-width: 0; height: {{c.h}}; border-radius: {{radius}}; background: {{c.color}}"></div></sc-for>
+</div>
+</div>
+<div style="display: flex; gap: {{gapPx}}"><sc-for list="{{a.cols}}" as="c" hint-placeholder-count="7"><div style="flex: 1 1 0; min-width: 0; position: relative; height: 14px"><span style="position: absolute; left: 50%; transform: translateX(-50%); font-size: 10px; font-weight: 700; color: #56605A; white-space: nowrap">{{c.label}}</span></div></sc-for></div>
+<span style="font-size: 12px; color: #56605A">{{a.best}} · oggi in chiaro perché la giornata non è finita</span>
+</section>
+<section aria-label="Allenamenti per tipo" style="background: #FFFFFF; border-radius: 24px; padding: 18px 18px; display: flex; flex-direction: column; gap: 12px; min-width: 0">
+<div style="display: flex; justify-content: space-between; align-items: baseline"><span style="font-size: 15px; font-weight: 800">Allenamenti per tipo</span><span style="font-size: 12px; color: #56605A">{{a.totMin}}</span></div>
+<sc-if value="{{a.noWork}}" hint-placeholder-val="{{false}}"><span style="font-size: 13px; color: #56605A">Nessun allenamento nel periodo.</span></sc-if>
+<sc-for list="{{a.types}}" as="t" hint-placeholder-count="4"><div style="display: flex; flex-direction: column; gap: 4px"><div style="display: flex; justify-content: space-between; font-size: 13px"><span style="font-weight: 700">{{t.name}}</span><span style="color: #56605A">{{t.meta}}</span></div><div style="height: 8px; border-radius: 4px; background: #E8EBE5; overflow: hidden"><div style="height: 8px; border-radius: 4px; width: {{t.w}}; background: #1F5A90"></div></div></div></sc-for>
+</section>
+<section aria-label="Ultimi allenamenti" style="background: #FFFFFF; border-radius: 24px; padding: 18px 18px; display: flex; flex-direction: column; gap: 12px; min-width: 0; gap: 0">
+<span style="font-size: 15px; font-weight: 800; padding-bottom: 6px">Ultimi allenamenti</span>
+<sc-for list="{{a.recent}}" as="w" hint-placeholder-count="4"><div style="display: flex; gap: 10px; align-items: center; min-height: 54px; border-top: 1px solid #ECEEEA"><div style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px"><span style="font-size: 14px; font-weight: 700">{{w.title}}</span><span style="font-size: 12px; color: #56605A">{{w.meta}}</span></div><span style="font-size: 11px; font-weight: 700; padding: 3px 8px; border-radius: 999px; background: #ECEEEA; color: #3C453F; white-space: nowrap">{{w.src}}</span></div></sc-for>
+</section>
+</sc-if>
+<sc-if value="{{isCuore}}" hint-placeholder-val="{{false}}">
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(100px, 1fr)); gap: 8px"><div style="background: #FFFFFF; border-radius: 18px; padding: 12px 14px; display: flex; flex-direction: column; gap: 1px; min-width: 0"><span style="font-size: 11px; font-weight: 700; color: #56605A">FC a riposo</span><span style="font-size: 19px; font-weight: 800; white-space: nowrap">{{h.avg}}</span><span style="font-size: 11px; color: {{h.avgNoteColor}}">{{h.avgNote}}</span></div><div style="background: #FFFFFF; border-radius: 18px; padding: 12px 14px; display: flex; flex-direction: column; gap: 1px; min-width: 0"><span style="font-size: 11px; font-weight: 700; color: #56605A">Minima</span><span style="font-size: 19px; font-weight: 800; white-space: nowrap">{{h.min}}</span><span style="font-size: 11px; color: {{h.minNoteColor}}">{{h.minNote}}</span></div><div style="background: #FFFFFF; border-radius: 18px; padding: 12px 14px; display: flex; flex-direction: column; gap: 1px; min-width: 0"><span style="font-size: 11px; font-weight: 700; color: #56605A">Rispetto a prima</span><span style="font-size: 19px; font-weight: 800; white-space: nowrap">{{h.delta}}</span><span style="font-size: 11px; color: {{h.deltaNoteColor}}">{{h.deltaNote}}</span></div></div>
+<section aria-label="FC a riposo nel tempo" style="background: #FFFFFF; border-radius: 24px; padding: 18px 18px; display: flex; flex-direction: column; gap: 12px; min-width: 0">
+<div style="display: flex; justify-content: space-between; align-items: baseline; gap: 8px"><span style="font-size: 15px; font-weight: 800">FC a riposo nel tempo</span><span style="font-size: 11px; font-weight: 700; padding: 3px 8px; border-radius: 999px; background: #ECEEEA; color: #3C453F">Fitbit</span></div>
+<svg viewBox="0 0 320 130" width="100%" role="img" aria-label="{{h.aria}}" style="display: block">
+<line x1="30" x2="316" y1="{{h.g1}}" y2="{{h.g1}}" stroke="#E8EBE5" stroke-width="1"></line><text x="26" y="{{h.g1t}}" font-size="10" text-anchor="end" fill="#56605A" font-family="Manrope, system-ui, sans-serif">{{h.g1l}}</text>
+<line x1="30" x2="316" y1="{{h.g2}}" y2="{{h.g2}}" stroke="#E8EBE5" stroke-width="1"></line><text x="26" y="{{h.g2t}}" font-size="10" text-anchor="end" fill="#56605A" font-family="Manrope, system-ui, sans-serif">{{h.g2l}}</text>
+<line x1="30" x2="316" y1="{{h.avgY}}" y2="{{h.avgY}}" stroke="#17201B" stroke-width="1" stroke-dasharray="3 3"></line>
+<polyline points="{{h.pts}}" fill="none" stroke="#B4412A" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"></polyline>
+<circle cx="{{h.lastX}}" cy="{{h.lastY}}" r="4" fill="#B4412A" stroke="#FFFFFF" stroke-width="2"></circle>
+<text x="316" y="{{h.avgTY}}" font-size="10" font-weight="800" text-anchor="end" fill="#17201B" font-family="Manrope, system-ui, sans-serif">media {{h.avgN}}</text>
+<text x="30" y="126" font-size="10" fill="#56605A" font-family="Manrope, system-ui, sans-serif">{{h.from}}</text><text x="316" y="126" font-size="10" text-anchor="end" fill="#56605A" font-family="Manrope, system-ui, sans-serif">oggi</text>
+</svg>
+<span style="font-size: 12px; color: #56605A">Più è bassa, meglio recuperi. Va letta come tendenza, non giorno per giorno.</span>
+</section>
+<section aria-label="FC media negli allenamenti" style="background: #FFFFFF; border-radius: 24px; padding: 18px 18px; display: flex; flex-direction: column; gap: 12px; min-width: 0; gap: 0">
+<span style="font-size: 15px; font-weight: 800; padding-bottom: 6px">FC media negli allenamenti</span>
+<sc-if value="{{a.noWork}}" hint-placeholder-val="{{false}}"><span style="font-size: 13px; color: #56605A; padding: 8px 0">Nessun allenamento nel periodo.</span></sc-if>
+<sc-for list="{{h.byType}}" as="t" hint-placeholder-count="3"><div style="display: flex; justify-content: space-between; align-items: center; min-height: 44px; border-top: 1px solid #ECEEEA; font-size: 13px"><span style="font-weight: 700">{{t.name}}</span><span style="color: #56605A">{{t.meta}}</span></div></sc-for>
+</section>
+</sc-if>
+</div>
+<div style="flex: none; padding: 10px 8px 26px; background: #FFFFFF; border-top: 1px solid #E2E5DF; display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); align-items: center">
+<a href="Main.dc.html" aria-label="Oggi" style="height: 48px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px; color: #56605A"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="8"></circle><path d="M12 8v4l3 2"></path></svg><span style="font-size: 11px; font-weight: 700">Oggi</span></a>
+<a href="Settimana.dc.html" aria-label="Andamento" aria-current="page" style="height: 48px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px; color: #2F6B47"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 20V10M12 20V4M19 20v-7"></path></svg><span style="font-size: 11px; font-weight: 800">Andamento</span></a>
+<a href="Aggiungi.dc.html" aria-label="Aggiungi" style="width: 52px; height: 52px; justify-self: center; border-radius: 26px; background: #17201B; color: #FFFFFF; display: flex; align-items: center; justify-content: center"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"></path></svg></a>
+<a href="Piano.dc.html" aria-label="Piano" style="height: 48px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px; color: #56605A"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="4" width="14" height="17" rx="2"></rect><path d="M9 9h6M9 13h6M9 17h3"></path></svg><span style="font-size: 11px; font-weight: 700">Piano</span></a>
+<a href="Timeline.dc.html" aria-label="Timeline" style="height: 48px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px; color: #56605A"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 3v18"></path><circle cx="7" cy="7" r="2"></circle><circle cx="7" cy="17" r="2"></circle><path d="M12 7h8M12 17h8"></path></svg><span style="font-size: 11px; font-weight: 700">Timeline</span></a>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  constructor(props) { super(props); this.state = { per: 7, tab: 'sonno' }; }
+  renderVals() {
+    const D = {"days":[["2026-09-08",4589,null,null,null],["2026-09-09",null,null,null,[-10,468,467,108,81,278,11]],["2026-09-10",null,null,null,[46,427,372,78,82,212,9]],["2026-09-11",null,null,null,[28,437,400,112,85,202,8]],["2026-09-12",null,null,null,null],["2026-09-13",null,null,null,null],["2026-09-14",353,null,null,null],["2026-09-15",6860,null,null,[-17,465,478,71,97,310,4]],["2026-09-16",5450,4.1,null,null],["2026-09-17",7830,5.9,57,[-15,430,427,104,86,237,18]],["2026-09-18",11070,8.2,59,[-15,427,440,75,75,290,2]],["2026-09-19",10641,7.9,58,[-41,439,455,78,86,290,25]],["2026-09-20",65,0.0,59,[11,204,180,74,10,96,13]],["2026-09-21",null,null,null,null],["2026-09-22",null,null,null,null],["2026-09-23",null,null,null,null],["2026-09-24",8892,6.9,60,[22,453,427,87,95,245,4]],["2026-09-25",10867,8.2,61,[61,425,356,92,30,234,8]],["2026-09-26",10113,7.5,60,[71,490,406,86,90,230,13]],["2026-09-27",8760,6.6,58,[51,556,448,96,96,256,57]],["2026-09-28",11101,8.4,58,[40,431,386,82,66,238,5]],["2026-09-29",5479,4.1,59,[40,438,395,74,118,203,3]],["2026-09-30",10700,8.0,58,[-31,443,470,106,149,215,4]],["2026-10-01",9157,7.0,57,[-31,448,475,115,102,258,4]],["2026-10-02",9354,6.9,57,[-25,452,463,101,104,258,14]],["2026-10-03",4112,3.1,57,[-11,514,492,79,127,286,33]],["2026-10-04",5787,4.3,59,[-49,501,536,72,101,363,14]],["2026-10-05",9569,7.4,57,[-85,446,525,75,118,332,6]],["2026-10-06",4402,3.3,58,[19,459,334,42,40,252,106]],["2026-10-07",3190,2.4,58,[30,455,417,93,106,218,8]],["2026-10-08",6047,4.6,60,[103,458,347,81,72,194,8]],["2026-10-09",6581,4.9,60,[-28,461,489,96,131,262,0]],["2026-10-10",9269,6.9,62,[-64,414,443,85,81,277,35]],["2026-10-11",10127,7.6,64,[-24,482,503,77,99,327,3]],["2026-10-12",3732,2.8,63,[-25,453,475,90,112,273,3]],["2026-10-13",10005,7.5,62,[-70,450,516,116,129,271,4]],["2026-10-14",9890,7.4,61,[33,445,271,73,32,166,15]],["2026-10-15",7106,5.3,61,null],["2026-10-16",6874,5.2,61,[-38,365,395,75,85,235,8]],["2026-10-17",4384,3.3,62,[-115,454,560,114,131,315,9]],["2026-10-18",4811,3.6,62,[-65,469,528,88,117,323,6]],["2026-10-19",3885,2.9,61,[35,495,448,91,92,265,12]],["2026-10-20",3986,3.0,61,[124,455,325,85,54,186,6]],["2026-10-21",3305,2.5,61,[25,483,439,84,85,270,19]],["2026-10-22",2259,1.7,61,[-10,435,428,69,120,239,17]],["2026-10-23",6848,4.1,61,null],["2026-10-24",5913,3.9,62,[49,452,400,68,92,240,3]],["2026-10-25",4719,2.7,63,[-40,450,423,63,110,250,127]],["2026-10-26",4128,2.5,63,[28,459,426,92,66,268,5]],["2026-10-27",13674,9.6,62,[45,425,373,85,57,231,7]],["2026-10-28",6056,4.0,64,[6,424,394,83,83,228,24]],["2026-10-29",6036,4.7,63,[-11,449,455,103,90,262,5]],["2026-10-30",4096,3.1,64,[-27,451,429,76,73,280,49]],["2026-10-31",8791,6.5,64,[-70,495,522,131,91,300,43]],["2026-11-01",6443,4.9,66,[-22,413,427,74,101,252,8]],["2026-11-02",19455,15.0,64,[32,451,412,91,85,236,7]],["2026-11-03",5871,4.4,65,[14,453,433,67,89,277,6]],["2026-11-04",6568,2.9,63,[-43,398,429,86,138,205,12]],["2026-11-05",7018,5.3,63,[27,446,417,78,66,273,2]],["2026-11-06",6667,5.0,65,[10,455,442,57,121,264,3]],["2026-11-07",6519,4.8,62,[26,460,429,84,110,235,5]],["2026-11-08",3078,2.3,61,[0,530,517,94,131,292,13]],["2026-11-09",4584,3.4,60,[-21,451,466,78,101,287,6]],["2026-11-10",8182,6.1,58,[-20,329,341,87,69,185,8]],["2026-11-11",4345,3.3,59,[-8,455,413,69,95,249,50]],["2026-11-12",4736,3.6,58,[61,456,384,67,117,200,11]],["2026-11-13",1879,1.4,58,[10,455,435,128,79,228,10]]],"workouts":[["2026-09-08","13:39","Ciclismo",29,"Fitbit",null,220,null,0],["2026-09-09","13:20","Forza",48,"Fitbit",null,294,null,0],["2026-09-17","17:09","Ciclismo",20,"Fitbit",116,146,null,0],["2026-09-18","08:25","Camminata",19,"Fitbit",99,144,1.5,0],["2026-09-18","09:17","Camminata",21,"Fitbit",93,150,1.5,0],["2026-09-18","13:06","Calcio",28,"Fitbit",103,181,0.8,0],["2026-09-19","09:59","Forza",61,"Fitbit",108,373,null,0],["2026-09-24","20:54","Calcio",72,"Fitbit",162,678,5.4,0],["2026-09-26","16:44","Calcio",29,"Fitbit",106,195,1.0,0],["2026-09-28","18:59","Calcio",67,"Fitbit",158,661,4.4,0],["2026-09-30","13:04","Ciclismo",30,"Fitbit",118,194,null,0],["2026-09-30","18:33","Camminata",30,"Fitbit",95,227,2.1,0],["2026-09-30","19:22","Camminata",29,"Fitbit",97,211,2.0,0],["2026-10-01","20:09","Calcio",40,"Fitbit",158,414,2.9,0],["2026-10-02","16:55","Calcio",40,"Fitbit",113,275,1.5,0],["2026-10-05","19:04","Calcio",64,"Fitbit",160,653,3.7,0],["2026-10-08","12:44","Ciclismo",29,"Fitbit",120,203,null,0],["2026-10-11","16:57","Camminata",24,"Fitbit",92,154,1.3,0],["2026-10-12","10:18","Ciclismo",43,"Fitbit",119,306,null,0],["2026-10-12","11:16","Ciclismo",43,"Fitbit",119,256,null,0],["2026-10-12","13:50","Forza",24,"Fitbit",110,56,null,0],["2026-10-12","19:12","Ciclismo",11,"Fitbit",117,61,null,0],["2026-10-18","10:39","Ciclismo",24,"Fitbit",117,155,null,0],["2026-10-19","18:17","Ciclismo",11,"Fitbit",125,88,null,0],["2026-10-21","19:26","Ciclismo",11,"Fitbit",131,103,null,0],["2026-10-24","11:36","Forza",79,"Hevy",97,176,null,1],["2026-10-25","10:02","Cyclette",28,"Fitbit",117,177,11.5,1],["2026-10-25","16:18","Racchetta",39,"Fitbit",120,263,null,0],["2026-10-25","17:22","Racchetta",31,"Fitbit",129,199,null,0],["2026-10-26","08:22","Camminata",20,"Fitbit",95,102,0.8,0],["2026-10-26","16:42","Forza",58,"Fitbit",104,240,null,1],["2026-10-27","18:03","Calcio",25,"Fitbit",106,155,0.9,0],["2026-10-27","21:23","Calcio",73,"Fitbit",166,585,5.5,0],["2026-10-28","18:10","Calcio",37,"Fitbit",109,203,0.9,0],["2026-10-28","19:04","Ciclismo",21,"Fitbit",123,158,3.7,0],["2026-10-29","13:07","Forza",59,"Fitbit",90,39,null,2],["2026-10-30","17:22","Ciclismo",16,"Fitbit",113,31,0.5,0],["2026-10-31","11:30","Forza",54,"Hevy",104,null,null,0],["2026-11-01","18:26","Cyclette",31,"MERACH",122,280,13.2,0],["2026-11-04","13:23","Forza",66,"Hevy",96,null,null,0],["2026-11-05","16:29","Forza",49,"Hevy",99,null,null,0],["2026-11-06","08:38","Forza",57,"Hevy",112,null,null,0],["2026-11-08","10:39","Cyclette",16,"MERACH",118,163,7.2,0],["2026-11-09","13:32","Forza",51,"Hevy",123,null,null,0],["2026-11-10","14:50","Cyclette",27,"MERACH",135,253,11.7,0],["2026-11-11","08:37","Forza",50,"Hevy",108,null,null,0]],"today":"2026-11-13"};
+    const per = this.state.per, tab = this.state.tab, today = D.today;
+    const all = D.days, days = all.slice(-per), prev = all.slice(-2 * per, -per);
+    const it = (n) => Math.round(n).toLocaleString('it-IT');
+    const hm = (m) => Math.floor(m / 60) + ' h ' + String(Math.round(m % 60)).padStart(2, '0');
+    const clock = (m) => { const v = ((Math.round(m) % 1440) + 1440) % 1440; return String(Math.floor(v / 60)).padStart(2, '0') + ':' + String(v % 60).padStart(2, '0'); };
+    const MESI = ['gen', 'feb', 'mar', 'apr', 'mag', 'giu', 'lug', 'ago', 'set', 'ott', 'nov', 'dic'];
+    const GG = ['D', 'L', 'M', 'M', 'G', 'V', 'S'];
+    const GGL = ['dom', 'lun', 'mar', 'mer', 'gio', 'ven', 'sab'];
+    const dObj = (s) => new Date(s + 'T12:00:00');
+    const dd = (s) => { const x = dObj(s); return x.getDate() + ' ' + MESI[x.getMonth()]; };
+    const label = (s) => { const x = dObj(s); if (per === 7) return GG[x.getDay()]; return x.getDay() === 1 ? String(x.getDate()) + '/' + String(x.getMonth() + 1) : ''; };
+    const avg = (a) => a.reduce((s, v) => s + v, 0) / (a.length || 1);
+    const muted = '#56605A', good = '#2F6B47';
+
+    // ---------- sleep
+    const t0 = -120, t1 = 570, H = 150;
+    const nights = days.filter((d) => d[4]);
+    const tots = nights.map((d) => d[4][2]);
+    const minT = Math.min.apply(null, tots), maxT = Math.max.apply(null, tots);
+    const shortN = nights.find((d) => d[4][2] === minT), longN = nights.find((d) => d[4][2] === maxT);
+    const ph = [['Profondo', 3, '#3A4D8F'], ['REM', 4, '#7B68C8'], ['Core', 5, '#9DB4E0'], ['Sveglio', 6, '#E0A63E']];
+    const phAvg = ph.map((p) => avg(nights.map((d) => d[4][p[1]])));
+    const phTot = phAvg.reduce((s, v) => s + v, 0);
+    const s = {
+      avg: hm(avg(tots)), avgNote: nights.length + ' notti', avgNoteColor: muted,
+      start: clock(avg(nights.map((d) => d[4][0]))), startNote: 'orario medio', startNoteColor: muted,
+      end: clock(avg(nights.map((d) => d[4][1]))), endNote: 'orario medio', endNoteColor: muted,
+      shortest: dd(shortN[0]) + ' · ' + hm(minT),
+      aria: 'Orari di sonno per notte negli ultimi ' + per + ' giorni',
+      ticks: [['23:00', -60], ['02:00', 120], ['05:00', 300], ['08:00', 480]].map((t) => ({ label: t[0], top: ((t[1] - t0) / (t1 - t0) * H).toFixed(1) + 'px' })),
+      cols: days.map((d) => {
+        const n = d[4];
+        if (!n) return { label: label(d[0]), top: '0px', h: '0px', color: 'transparent', title: dd(d[0]) + ': nessun dato' };
+        return { label: label(d[0]), top: ((n[0] - t0) / (t1 - t0) * H).toFixed(1) + 'px', h: ((n[1] - n[0]) / (t1 - t0) * H).toFixed(1) + 'px', color: n[2] === minT ? '#E0A63E' : '#3A4D8F', title: GGL[dObj(d[0]).getDay()] + ' ' + dd(d[0]) + ': ' + clock(n[0]) + ' → ' + clock(n[1]) + ' · ' + hm(n[2]) };
+      }),
+      phases: ph.map((p, i) => ({ label: p[0], color: p[2], w: (phAvg[i] / phTot * 100).toFixed(1) + '%', min: i === 3 ? Math.round(phAvg[i]) + ' min' : hm(phAvg[i]), pct: Math.round(phAvg[i] / phTot * 100) + '%' })),
+      phAria: 'Fasi medie: ' + ph.map((p, i) => p[0] + ' ' + Math.round(phAvg[i] / phTot * 100) + '%').join(', '),
+      facts: [
+        { k: 'Notti sotto le 7 ore', v: tots.filter((v) => v < 420).length + ' su ' + tots.length },
+        { k: 'Addormentamento dopo mezzanotte', v: nights.filter((d) => d[4][0] >= 0).length + ' su ' + nights.length },
+        { k: 'Notte più lunga', v: dd(longN[0]) + ' · ' + hm(maxT) }
+      ]
+    };
+
+    // ---------- activity
+    const stepDays = days.filter((d) => d[1] !== null && d[0] !== today);
+    const stepVals = stepDays.map((d) => d[1]);
+    const maxS = Math.max(9000, Math.max.apply(null, days.map((d) => d[1] || 0)));
+    const best = stepDays.reduce((b, d) => (d[1] > b[1] ? d : b), stepDays[0]);
+    const ws = D.workouts.filter((w) => w[0] >= days[0][0]);
+    const totMin = ws.reduce((t, w) => t + w[3], 0);
+    const byType = {};
+    ws.forEach((w) => { const k = w[2]; byType[k] = byType[k] || { n: 0, min: 0, hr: [] }; byType[k].n++; byType[k].min += w[3]; if (w[5]) byType[k].hr.push(w[5]); });
+    const types = Object.keys(byType).sort((a, b) => byType[b].min - byType[a].min);
+    const maxMin = types.length ? byType[types[0]].min : 1;
+    const a = {
+      avg: it(avg(stepVals)), avgNote: stepVals.length + ' giorni completi', avgNoteColor: muted,
+      over: String(stepVals.filter((v) => v >= 8000).length), overNote: 'su ' + stepVals.length + ' giorni', overNoteColor: muted,
+      count: String(ws.length), countNote: hm(totMin) + ' in totale', countNoteColor: muted,
+      goalTop: ((1 - 8000 / maxS) * 120).toFixed(1) + 'px',
+      aria: 'Passi al giorno negli ultimi ' + per + ' giorni',
+      cols: days.map((d) => ({ label: label(d[0]), h: d[1] === null ? '2px' : Math.max(2, d[1] / maxS * 120).toFixed(1) + 'px', color: d[1] === null ? '#E8EBE5' : (d[0] === today ? '#B7CDB9' : '#4E8A63'), title: dd(d[0]) + ': ' + (d[1] === null ? 'nessun dato' : it(d[1]) + ' passi' + (d[0] === today ? ' (in corso)' : '')) })),
+      best: best ? 'Giorno migliore: ' + GGL[dObj(best[0]).getDay()] + ' ' + dd(best[0]) + ' · ' + it(best[1]) : '',
+      totMin: ws.length + ' sessioni · ' + hm(totMin),
+      noWork: ws.length === 0,
+      types: types.map((k) => ({ name: k, meta: byType[k].n + (byType[k].n === 1 ? ' sessione' : ' sessioni') + ' · ' + hm(byType[k].min), w: (byType[k].min / maxMin * 100).toFixed(1) + '%' })),
+      recent: ws.slice(-4).reverse().map((w) => ({ title: w[2], meta: GGL[dObj(w[0]).getDay()] + ' ' + dd(w[0]) + ' · ' + w[1] + ' · ' + w[3] + ' min' + (w[7] ? ' · ' + String(w[7]).replace('.', ',') + ' km' : '') + (w[6] ? ' · ' + w[6] + ' kcal' : '') + (w[5] ? ' · FC ' + w[5] : ''), src: w[4] }))
+    };
+
+    // ---------- heart
+    const rd = days.filter((d) => d[3] !== null);
+    const rv = rd.map((d) => d[3]);
+    const pv = prev.filter((d) => d[3] !== null).map((d) => d[3]);
+    const lo = Math.min.apply(null, rv) - 2, hi = Math.max.apply(null, rv) + 2;
+    const X = (i) => 30 + (days.length === 1 ? 0 : i / (days.length - 1) * 286);
+    const Y = (v) => 8 + (1 - (v - lo) / (hi - lo)) * 100;
+    const pts = [];
+    days.forEach((d, i) => { if (d[3] !== null) pts.push(X(i).toFixed(1) + ',' + Y(d[3]).toFixed(1)); });
+    const lastI = days.length - 1 - days.slice().reverse().findIndex((d) => d[3] !== null);
+    const av = avg(rv), dlt = pv.length ? av - avg(pv) : null;
+    const g1 = Math.ceil(lo + (hi - lo) * 0.75), g2 = Math.floor(lo + (hi - lo) * 0.25);
+    const minD = rd.find((d) => d[3] === Math.min.apply(null, rv));
+    const h = {
+      avg: Math.round(av) + ' bpm', avgNote: 'media ' + rd.length + ' giorni', avgNoteColor: muted,
+      min: Math.min.apply(null, rv) + ' bpm', minNote: dd(minD[0]), minNoteColor: muted,
+      delta: dlt === null ? '—' : (dlt <= 0 ? '▼ ' : '▲ ') + Math.abs(dlt).toFixed(1).replace('.', ',') + ' bpm',
+      deltaNote: dlt === null ? 'periodo precedente non disponibile' : 'sui ' + per + ' giorni prima', deltaNoteColor: dlt !== null && dlt <= 0 ? good : muted,
+      pts: pts.join(' '), lastX: X(lastI).toFixed(1), lastY: Y(days[lastI][3]).toFixed(1),
+      avgY: Y(av).toFixed(1), avgTY: (Y(av) - 4).toFixed(1), avgN: Math.round(av),
+      g1: Y(g1).toFixed(1), g1t: (Y(g1) + 3).toFixed(1), g1l: g1, g2: Y(g2).toFixed(1), g2t: (Y(g2) + 3).toFixed(1), g2l: g2,
+      from: dd(days[0][0]),
+      aria: 'FC a riposo dal ' + dd(days[0][0]) + ' a oggi, media ' + Math.round(av) + ' bpm',
+      byType: types.filter((k) => byType[k].hr.length).map((k) => ({ name: k, meta: Math.round(avg(byType[k].hr)) + ' bpm · ' + byType[k].hr.length + (byType[k].hr.length === 1 ? ' sessione' : ' sessioni') }))
+    };
+
+    const P = [[7, '7 giorni'], [30, '30 giorni'], [90, '90 giorni']];
+    const TB = [['sonno', 'Sonno'], ['attivita', 'Attività'], ['cuore', 'Cuore']];
+    return {
+      s: s, a: a, h: h,
+      gapPx: per === 7 ? '8px' : (per === 30 ? '3px' : '1px'),
+      radius: per === 90 ? '1px' : '4px',
+      rangeNote: per === 90 ? 'dati disponibili dall’8 settembre' : '',
+      periods: P.map((p) => ({ label: p[1], short: p[0] + ' g', smBg: per === p[0] ? '#FFFFFF' : 'transparent', smFg: per === p[0] ? '#17201B' : '#56605A', sel: per === p[0], bg: per === p[0] ? '#17201B' : '#FFFFFF', fg: per === p[0] ? '#FFFFFF' : '#17201B', border: per === p[0] ? '#17201B' : '#DDE1DA', pick: () => this.setState({ per: p[0] }) })),
+      tabs: TB.map((t) => ({ label: t[1], sel: tab === t[0], line: tab === t[0] ? '#2F6B47' : 'transparent', bg: tab === t[0] ? '#FFFFFF' : 'transparent', fg: tab === t[0] ? '#17201B' : '#56605A', weight: tab === t[0] ? '800' : '700', pick: () => this.setState({ tab: t[0] }) })),
+      isSonno: tab === 'sonno', isAtt: tab === 'attivita', isCuore: tab === 'cuore'
+    };
+  }
+}
+</script>
+</body>
+</html>
