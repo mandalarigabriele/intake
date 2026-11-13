@@ -4,6 +4,8 @@ import { t } from "../lib/strings";
 interface Props {
   eaten: number;
   goal: number | null;
+  /** "Andamento della giornata" under the ring, when there are meals or a plan. */
+  children?: React.ReactNode;
 }
 
 // Geometry from the design mockup: 132 px box, radius 56, 12 px stroke
@@ -13,7 +15,7 @@ const RADIUS = 56;
 const CIRCUMFERENCE = 2 * Math.PI * RADIUS;
 
 /** Calorie meter: a ring with eaten / goal, the remaining amount as the hero number. */
-export function CalorieCard({ eaten, goal }: Props) {
+export function CalorieCard({ eaten, goal, children }: Props) {
   const hasGoal = goal !== null && goal > 0;
   const ratio = hasGoal ? eaten / goal : 0;
   const over = hasGoal && eaten > goal;
@@ -63,6 +65,7 @@ export function CalorieCard({ eaten, goal }: Props) {
           </div>
         )}
       </dl>
+      {children}
     </section>
   );
 }
