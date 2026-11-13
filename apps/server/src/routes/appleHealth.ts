@@ -1,0 +1,59 @@
+import type { HealthImportResult, HealthSettings, HealthStatus } from "@intake/shared";
+import type { FastifyPluginAsync, preHandlerHookHandler } from "fastify";
+import { z } from "zod";
+import type { HealthStore } from "../db/healthStore.js";
+import type { NutritionApi } from "../mcp/nutritionApi.js";
+import { ParseError } from "../parsers/common.js";
+import { parseHealthExport } from "../parsers/healthAutoExport.js";
+import { healthStatus, importPreview, isEmptyExport } from "../services/healthImport.js";
+
+export interface AppleHealthRoutesOptions {
+  store: HealthStore;
+  /** "Today" in the Nutrition profile timezone, for the coverage and the stale state. */
+  api: Pick<NutritionApi, "clock">;
+  requireOwner: preHandlerHookHandler;
+}
+
+/** Health Auto Export files can be large: a few months of daily data with workouts. */
+export const HEALTH_IMPORT_MAX_BYTES = 50 * 1024 * 1024;
+
+const settingsSchema = z.object({ stepGoal: z.number().int().min(2000).max(30000) });
+
+/** Apple Health import and status under /api/health (docs/apple-health.md). */
+export const appleHealthRoutes: FastifyPluginAsync<AppleHealthRoutesOptions> = async (app, { store, api, requireOwner }) => {
+  app.addHook("preHandler", requireOwner);
+
+  app.get("/health/status", async (): Promise<HealthStatus> => {
+    const today = (await api.clock()).localDate;
+    return healthStatus(store, today);
+  });
+
+  // ?commit=true writes the data; without it the same request only returns the preview
+  app.post<{ Querystring: { commit?: string } }>(
+    "/health/import",
+    { bodyLimit: HEALTH_IMPORT_MAX_BYTES },
+    async (request, reply): Promise<HealthImportResult | void> => {
+      let parsed;
+      try {
+        parsed = parseHealthExport(request.body);
+      } catch (error) {
+        if (error instanceof ParseError) return reply.code(400).send({ error: "not_health_export" });
+        throw error;
+      }
+      const data = parsed.value;
+      if (parsed.warnings.length) request.log.warn({ warnings: parsed.warnings }, "Health Auto Export import warnings");
+      if (isEmptyExport(data)) return reply.code(422).send({ error: "no_data" });
+
+      const commit = request.query.commit === "true";
+      const counts = commit ? store.save(data, "file") : store.counts(data);
+      return { preview: importPreview(data, counts) };
+    },
+  );
+
+  app.put("/health/settings", async (request, reply): Promise<HealthSettings | void> => {
+    const result = settingsSchema.safeParse(request.body);
+    if (!result.success) return reply.code(400).send({ error: "stepGoal must be an integer between 2000 and 30000" });
+    store.setSettings(result.data);
+    return result.data;
+  });
+};

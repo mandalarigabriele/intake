@@ -31,8 +31,8 @@ export function AppShell({ user, onAdd, children }: Props) {
   const [location] = useLocation();
   const status = useNutritionStatus(true);
 
-  // Meal detail and edit are pushed screens without the bottom tab bar (docs/design)
-  const pushed = location.startsWith("/pasto/");
+  // Meal detail, edit and Apple Salute are pushed screens without the bottom tab bar (docs/design)
+  const pushed = location.startsWith("/pasto/") || location === "/salute";
   const main = useRef<HTMLElement>(null);
 
   // The content area is the scroll container: start each screen at the top
@@ -51,7 +51,7 @@ export function AppShell({ user, onAdd, children }: Props) {
           <span>{t.appName}</span>
         </div>
         {SECTIONS.map(({ path, label }) => (
-          <Link key={path} href={path} className="sidebar-link" aria-current={location === path || (path === "/timeline" && pushed) ? "page" : undefined}>
+          <Link key={path} href={path} className="sidebar-link" aria-current={location === path || (path === "/timeline" && location.startsWith("/pasto/")) ? "page" : undefined}>
             {label}
           </Link>
         ))}

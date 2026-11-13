@@ -73,3 +73,35 @@ export function formatWeekday(date: string): string {
 export function formatTime(time: string): string {
   return time.slice(0, 5);
 }
+
+const dayMonth = new Intl.DateTimeFormat(LOCALE, { day: "2-digit", month: "2-digit", timeZone: "UTC" });
+
+/** "2026-10-25" -> "25/10" */
+export function formatDayMonth(date: string): string {
+  return dayMonth.format(parseDate(date));
+}
+
+const dayLongMonth = new Intl.DateTimeFormat(LOCALE, { day: "numeric", month: "long", timeZone: "UTC" });
+
+/** "2026-09-08" -> "8 settembre" */
+export function formatDayLongMonth(date: string): string {
+  return dayLongMonth.format(parseDate(date));
+}
+
+const megabytes = new Intl.NumberFormat(LOCALE, { maximumFractionDigits: 1 });
+
+/** 1_520_000 bytes -> "1,5 MB" (below 0,1 MB: "0,1 MB") */
+export function formatMegabytes(bytes: number): string {
+  return `${megabytes.format(Math.max(0.1, bytes / 1_000_000))} MB`;
+}
+
+/** Local HH:MM of an instant in the browser's timezone. */
+export function formatClock(iso: string): string {
+  return new Intl.DateTimeFormat(LOCALE, { hour: "2-digit", minute: "2-digit", hourCycle: "h23" }).format(new Date(iso));
+}
+
+/** Local YYYY-MM-DD of an instant in the browser's timezone. */
+export function localIsoDate(iso: string): string {
+  const d = new Date(iso);
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+}

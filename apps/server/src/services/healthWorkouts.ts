@@ -64,6 +64,10 @@ export interface MergedWorkout {
   /** True when the group contains a workout written by Hevy: the Hevy API workout wins and takes only heart rate and kcal. */
   fromHevy: boolean;
   sources: WorkoutSourceUse[];
+  /** Source label that gave the heart rate (null when no record has it). */
+  heartRateFrom: string | null;
+  /** The raw records merged into this session, earliest first. */
+  records: Array<{ id: string; source: string; label: string; start: string; end: string }>;
 }
 
 const startMs = (w: HealthWorkout) => Date.parse(w.start);
@@ -150,6 +154,10 @@ function mergeGroup(group: HealthWorkout[]): MergedWorkout {
     heartRate: curvePart?.heartRate ?? [],
     fromHevy: bySource.has("Hevy"),
     sources: byType.map((p) => ({ label: p.label, used: usedLabels.has(p.label) })),
+    heartRateFrom: hrPart?.label ?? null,
+    records: [...group]
+      .sort((a, b) => startMs(a) - startMs(b))
+      .map((r) => ({ id: r.id, source: sourceLabel(r.source), label: workoutType(r.name).label, start: r.start, end: r.end })),
   };
 }
 

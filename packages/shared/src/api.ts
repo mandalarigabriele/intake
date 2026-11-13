@@ -256,3 +256,82 @@ export interface WorkoutsResponse {
   configured: boolean;
   workouts: Workout[];
 }
+
+// ---------------------------------------------------------------------------
+// Apple Health (Health Auto Export) — see docs/apple-health.md
+
+/** Metrics shown in the import preview. */
+export type HealthPreviewMetric = "steps" | "distanceKm" | "sleep" | "restingHr" | "activeKcal" | "restingKcal";
+
+/** Groups of exported data that Intake does not import, for the "Ignorati" list. */
+export type HealthIgnoredGroup = "nutrition" | "weight" | "private" | "detail" | "vitals" | "vo2max" | "gait" | "other";
+
+/** A group of records of the same session merged into one workout. Times are local HH:MM. */
+export interface HealthDuplicate {
+  date: string;
+  /** Label of the merged session (Forza, Cyclette, ...). */
+  label: string;
+  start: string;
+  end: string;
+  records: Array<{ source: string; label: string; start: string; end: string }>;
+  /** Source whose record gave the title. */
+  kept: string;
+  /** Source that gave the heart rate, when it differs from `kept`. */
+  heartRateFrom: string | null;
+  /** True when pieces of the same source were joined. */
+  joined: boolean;
+  /** True when the records had different names (e.g. Cyclette and Ciclismo). */
+  renamed: boolean;
+  discarded: number;
+}
+
+export interface HealthImportPreview {
+  firstDate: string | null;
+  lastDate: string | null;
+  days: number;
+  newDays: number;
+  updatedDays: number;
+  metrics: Array<{
+    metric: HealthPreviewMetric;
+    days: number;
+    /** Irregular data: null when regular; `since` is the last regular day when known. */
+    irregular: { since: string | null } | null;
+  }>;
+  workouts: {
+    found: number;
+    discarded: number;
+    sessions: number;
+    byFamily: Array<{ family: string; count: number }>;
+    duplicates: HealthDuplicate[];
+  };
+  ignored: HealthIgnoredGroup[];
+}
+
+export interface HealthImportResult {
+  preview: HealthImportPreview;
+}
+
+/** Error codes of POST /api/health/import. */
+export type HealthImportErrorCode = "not_health_export" | "no_data";
+
+export type HealthCoverageMetric = "steps" | "sleep" | "restingHr" | "activeKcal" | "workouts";
+
+export interface HealthStatus {
+  today: string;
+  lastImport: { receivedAt: string; kind: "file" | "sync" } | null;
+  firstDate: string | null;
+  lastDate: string | null;
+  days: number;
+  workouts: number;
+  /** One character per day from `from` to `to`: "p" present, "i" present but irregular, "m" missing. */
+  coverage: { from: string; to: string; rows: Array<{ metric: HealthCoverageMetric; cells: string }> } | null;
+  /** Source labels seen in the data (Fitbit, MERACH, ...). */
+  sources: string[];
+  /** Active energy stopped arriving regularly while other data keeps coming. */
+  activeEnergyWarning: { since: string | null; presentDays: number; totalDays: number } | null;
+  settings: HealthSettings;
+}
+
+export interface HealthSettings {
+  stepGoal: number;
+}
