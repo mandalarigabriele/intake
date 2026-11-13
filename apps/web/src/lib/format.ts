@@ -105,3 +105,31 @@ export function localIsoDate(iso: string): string {
   const d = new Date(iso);
   return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
 }
+
+/** 435 -> "7 h 15 min"; 10 -> "10 min" */
+export function formatDuration(minutes: number): string {
+  const h = Math.floor(minutes / 60);
+  const m = Math.round(minutes % 60);
+  if (h === 0) return `${m} min`;
+  return `${h} h ${String(m).padStart(2, "0")} min`;
+}
+
+/** 128 -> "2 h 08"; 10 -> "10 min" (compact, for phases and chart tooltips) */
+export function formatDurationShort(minutes: number): string {
+  const h = Math.floor(minutes / 60);
+  const m = Math.round(minutes % 60);
+  if (h === 0) return `${m} min`;
+  return `${h} h ${String(m).padStart(2, "0")}`;
+}
+
+const weekdayShort = new Intl.DateTimeFormat(LOCALE, { weekday: "short", timeZone: "UTC" });
+
+/** "2026-11-07" -> "Sab 7" */
+export function formatWeekdayDay(date: string): string {
+  return `${capitalize(weekdayShort.format(parseDate(date)).replace(".", ""))} ${Number(date.slice(8, 10))}`;
+}
+
+/** 1.4 -> "1,4" (one decimal, Italian) */
+export function formatOneDecimal(value: number): string {
+  return oneDecimal.format(value);
+}

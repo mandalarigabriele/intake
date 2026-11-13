@@ -335,3 +335,39 @@ export interface HealthStatus {
 export interface HealthSettings {
   stepGoal: number;
 }
+
+/** One night for the Today card and the Timeline sleep chip. Times are local HH:MM. */
+export interface HealthNight {
+  date: string;
+  bedtime: string;
+  wake: string;
+  asleepMinutes: number;
+  deepMinutes: number;
+  remMinutes: number;
+  coreMinutes: number;
+  awakeMinutes: number;
+}
+
+/** Apple Health values of one day ("Attività e riposo"). Series end on `date`, oldest first; null = no data. */
+export interface HealthDay {
+  date: string;
+  today: string;
+  /** False when nothing was ever imported: the card is hidden. */
+  connected: boolean;
+  steps: number | null;
+  distanceKm: number | null;
+  /** Average of the 7 days before `date` that have steps. */
+  stepsAverage: number | null;
+  stepsSeries: Array<{ date: string; value: number | null }>;
+  sleep: HealthNight | null;
+  sleepSeries: Array<{ date: string; minutes: number | null }>;
+  restingHr: number | null;
+  /** Average of the 7 days before the last 7 (the week before). */
+  restingHrLastWeek: number | null;
+  restingHrSeries: Array<{ date: string; value: number | null }>;
+  /** Label of the app that wrote the night (or most data), e.g. "Fitbit". */
+  source: string | null;
+  lastImportAt: string | null;
+  /** Latest day with any Health data. */
+  lastDataDate: string | null;
+}

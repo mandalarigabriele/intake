@@ -1,5 +1,6 @@
 import type { DayView } from "@intake/shared";
 import { useAddWater, type User } from "../api/queries";
+import { ActivityCard } from "../components/ActivityCard";
 import { CalorieCard } from "../components/CalorieCard";
 import { DayScreen } from "../components/DayScreen";
 import { InsightCard } from "../components/InsightCard";
@@ -17,7 +18,7 @@ interface Props {
 }
 
 /**
- * Oggi (summary): Next meal, calories, macros, water and the daily insight. On wide screens the
+ * Oggi (summary): Next meal, calories, macros, water, activity & rest and the daily insight. On wide screens the
  * left column holds calories, macros and water, the right one Next meal and the insight.
  */
 export function TodayPage({ user, notice, onAdd }: Props) {
@@ -60,6 +61,7 @@ function Summary({ view, selected, onAdd }: { view: DayView; selected: string; o
       <div className="today-side">
         <NextMealCard view={view} onAdd={onAdd} />
         <DayPlanCard view={view} />
+        <ActivityCard date={view.date} />
         {view.isToday && <InsightCard />}
       </div>
     </div>

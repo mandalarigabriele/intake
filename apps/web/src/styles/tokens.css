@@ -57,6 +57,15 @@
   --color-skipped-bg: light-dark(#eceeea, #2b2e2a);
   /* Charts: irregular data, shortest night (amber, always with a text label) */
   --color-chart-amber: light-dark(#e0a63e, #e0a63e);
+  /* Activity & rest: steps line, sleep phases, resting heart rate */
+  --color-steps: light-dark(#4e8a63, #5fb083);
+  --color-sleep: light-dark(#3a4d8f, #8fa3e8);
+  --color-sleep-soft: light-dark(#e6e9f5, #222a40);
+  --color-sleep-deep: light-dark(#3a4d8f, #8fa3e8);
+  --color-sleep-rem: light-dark(#7b68c8, #b3a4ec);
+  --color-sleep-core: light-dark(#9db4e0, #4f669e);
+  --color-heart: light-dark(#b4412a, #e0714f);
+  --color-heart-soft: light-dark(#f8e7e1, #3a221c);
   --color-now: light-dark(#c2492e, #e0714f);
   --color-on-now: light-dark(#ffffff, #0f1a13);
   --color-now-text: light-dark(#a53a22, #f08f6e);

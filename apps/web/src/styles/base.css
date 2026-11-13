@@ -4079,3 +4079,271 @@ button.next-meal-primary {
 .health-confirm:disabled {
   opacity: 0.6;
 }
+
+/* ================= Activity & rest (Oggi) ================= */
+
+.activity-card {
+  padding: 18px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.activity-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+}
+
+.activity-label {
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  color: var(--color-text-muted);
+}
+
+.activity-empty {
+  padding: 14px;
+  border-radius: var(--radius-lg);
+  background: var(--color-bg);
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--color-text-2);
+}
+
+.activity-row {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+}
+
+.activity-row + .activity-row {
+  border-top: 1px solid var(--color-divider);
+  padding-top: 14px;
+}
+
+.activity-icon {
+  width: 36px;
+  height: 36px;
+  flex: none;
+  border-radius: var(--radius-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.activity-icon[data-kind="steps"] {
+  background: var(--color-accent-soft);
+  color: var(--color-accent);
+}
+
+.activity-icon[data-kind="sleep"] {
+  background: var(--color-sleep-soft);
+  color: var(--color-sleep);
+}
+
+.activity-icon[data-kind="heart"] {
+  background: var(--color-heart-soft);
+  color: var(--color-heart);
+}
+
+.activity-text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.activity-value {
+  font-size: 18px;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+}
+
+.activity-unit {
+  white-space: nowrap;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--color-text-muted);
+}
+
+/* On phones the unit drops to its own line under the value, without the leading separator */
+@media (max-width: 480px) {
+  .activity-row .activity-value > .activity-unit {
+    display: block;
+  }
+  .activity-sep {
+    display: none;
+  }
+}
+
+.activity-note {
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--color-text-muted);
+}
+
+.activity-times {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--color-text-muted);
+  font-variant-numeric: tabular-nums;
+}
+
+.activity-delta {
+  font-weight: 800;
+  color: var(--color-text-2);
+}
+
+.activity-delta[data-sign="down"] {
+  color: var(--color-accent);
+}
+
+.activity-chart {
+  margin-left: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 2px;
+  flex: none;
+}
+
+.activity-chart > span {
+  font-size: 10px;
+  color: var(--color-text-muted);
+}
+
+.spark {
+  display: block;
+  flex: none;
+  overflow: visible;
+}
+
+.spark polyline {
+  fill: none;
+  stroke-width: 2;
+  stroke-linejoin: round;
+  stroke-linecap: round;
+}
+
+.spark-steps polyline {
+  stroke: var(--color-steps);
+}
+
+.spark-heart polyline {
+  stroke: var(--color-heart);
+}
+
+.spark-hit {
+  fill: transparent;
+}
+
+.spark-dot {
+  stroke-width: 2;
+}
+
+.spark-steps .spark-dot {
+  stroke: var(--color-steps);
+  fill: var(--color-steps);
+}
+
+.spark-heart .spark-dot {
+  stroke: var(--color-heart);
+  fill: var(--color-heart);
+}
+
+.spark .spark-dot[data-partial] {
+  fill: var(--color-surface);
+}
+
+.sleep-bars rect {
+  fill: var(--color-sleep);
+  fill-opacity: 0.55;
+}
+
+.sleep-bars rect[data-shortest] {
+  fill: var(--color-chart-amber);
+}
+
+.sleep-bars rect[data-selected] {
+  fill-opacity: 1;
+}
+
+.activity-sleep {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  flex: 1;
+  min-width: 0;
+}
+
+.activity-sleep-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 8px;
+}
+
+.sleep-phases {
+  display: flex;
+  height: 12px;
+  border-radius: 6px;
+  overflow: hidden;
+  gap: 2px;
+}
+
+.sleep-phases > div {
+  height: 12px;
+}
+
+.activity-card [data-phase="deep"] {
+  background: var(--color-sleep-deep);
+}
+
+.activity-card [data-phase="rem"] {
+  background: var(--color-sleep-rem);
+}
+
+.activity-card [data-phase="core"] {
+  background: var(--color-sleep-core);
+}
+
+.activity-card [data-phase="awake"] {
+  background: var(--color-chart-amber);
+}
+
+.sleep-legend {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 4px 12px;
+  font-size: 12px;
+  color: var(--color-text-2);
+}
+
+.sleep-legend > span {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.sleep-legend strong {
+  font-weight: 800;
+}
+
+.sleep-swatch {
+  width: 8px;
+  height: 8px;
+  border-radius: 2px;
+  flex: none;
+}
+
+.activity-updated {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--color-text-muted);
+}
+
+.activity-updated[data-stale] {
+  color: var(--color-todo-text);
+}
