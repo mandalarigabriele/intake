@@ -5030,7 +5030,7 @@ div.connection-row {
 
 .trends-switch {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 4px;
   padding: 4px;
   border-radius: 14px;
@@ -6000,4 +6000,285 @@ div.connection-row {
   margin: 0 6px;
   font-size: 11px;
   color: var(--color-text-muted);
+}
+
+/* ================= Andamento › Allenamenti ================= */
+
+.training-flow {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.training-card {
+  padding: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  min-width: 0;
+}
+
+.training-next {
+  border: 1.5px solid var(--color-training);
+}
+
+.training-next-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.training-eyebrow {
+  font-size: 11px;
+  font-weight: 800;
+  color: var(--color-training);
+  letter-spacing: 0.06em;
+}
+
+.training-next-title {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.training-next-title h2 {
+  font-size: 21px;
+  font-weight: 800;
+  letter-spacing: -0.01em;
+}
+
+.training-next-title .muted {
+  font-size: 13px;
+}
+
+.training-list {
+  display: flex;
+  flex-direction: column;
+}
+
+.training-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  min-height: 44px;
+  padding: 4px 0;
+  border-top: 1px solid var(--color-divider);
+}
+
+.training-row-text {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  min-width: 0;
+}
+
+.training-row-text strong {
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.training-row-text .muted {
+  font-size: 12px;
+}
+
+.training-pill {
+  flex: none;
+  font-size: 11px;
+  font-weight: 800;
+  white-space: nowrap;
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: var(--color-skipped-bg);
+  color: var(--color-text-2);
+}
+
+.training-pill[data-kind="try"],
+.training-pill[data-kind="ready"] {
+  background: var(--color-todo-bg);
+  color: var(--color-todo-text);
+  box-shadow: inset 0 0 0 1px var(--color-todo-border);
+}
+
+.training-pill[data-kind="done"],
+.training-pill[data-kind="up"] {
+  background: var(--color-accent-soft);
+  color: var(--color-accent-strong);
+}
+
+.training-days {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: 6px;
+}
+
+.training-day {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--color-text-muted);
+}
+
+.training-day-tile {
+  width: 100%;
+  max-width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  background: var(--color-surface-2);
+  color: var(--color-text-muted);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  font-weight: 800;
+}
+
+.training-day-tile[data-active] {
+  background: var(--color-training);
+  color: var(--color-on-training);
+}
+
+.training-day-tile[data-other] {
+  box-shadow: inset 0 0 0 2px var(--color-training-soft);
+  background: var(--color-surface-2);
+}
+
+.training-stats {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.training-stats div {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  min-width: 0;
+}
+
+.training-stats strong {
+  font-size: 18px;
+  font-weight: 800;
+}
+
+.training-stats .muted {
+  font-size: 11px;
+}
+
+.lift {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+}
+
+.training-progress .lift {
+  padding-top: 12px;
+  border-top: 1px solid var(--color-divider);
+}
+
+.lift-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.lift-text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.lift-text strong {
+  font-size: 14px;
+  font-weight: 800;
+}
+
+.lift-text .muted {
+  font-size: 12px;
+}
+
+.lift-chart {
+  display: block;
+  width: 100%;
+  height: auto;
+  font-family: inherit;
+}
+
+.lift-grid {
+  stroke: var(--color-track);
+  stroke-width: 1;
+}
+
+.lift-axis {
+  font-size: 9px;
+  fill: var(--color-text-muted);
+}
+
+.lift-line {
+  fill: none;
+  stroke: var(--color-training);
+  stroke-width: 2;
+  stroke-linejoin: round;
+  stroke-linecap: round;
+}
+
+.lift-dot {
+  fill: var(--color-training);
+  stroke: var(--color-surface);
+  stroke-width: 1;
+}
+
+.training-note {
+  font-size: 12px;
+}
+
+.training-recent-row {
+  justify-content: flex-start;
+}
+
+.training-letter {
+  width: 34px;
+  height: 34px;
+  flex: none;
+  border-radius: 10px;
+  background: var(--color-training-soft);
+  color: var(--color-training);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  font-weight: 800;
+}
+
+/* Phones: one progress card with every lift; the per-lift cards are for desktop */
+.lift-card {
+  display: none;
+}
+
+/* Desktop and iPad: a gap-free two-column flow, one card per lift (AllenamentiDesktop) */
+@media (min-width: 800px) {
+  .training-flow {
+    display: block;
+    columns: 2 380px;
+    column-gap: 16px;
+  }
+
+  .training-flow > .card {
+    break-inside: avoid;
+    margin-bottom: 16px;
+  }
+
+  .training-progress {
+    display: none;
+  }
+
+  .lift-card {
+    display: flex;
+  }
 }

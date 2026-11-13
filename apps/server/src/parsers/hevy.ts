@@ -14,12 +14,15 @@ const setSchema = z.looseObject({
 
 const exerciseSchema = z.looseObject({
   title: z.string(),
+  exercise_template_id: z.string().nullable().optional(),
+  superset_id: z.number().nullable().optional(),
   sets: z.array(setSchema).default([]),
 });
 
 export const hevyWorkoutSchema = z.looseObject({
   id: z.string(),
   title: z.string().default(""),
+  routine_id: z.string().nullable().optional(),
   start_time: z.string(),
   end_time: z.string(),
   exercises: z.array(exerciseSchema).default([]),
@@ -31,6 +34,42 @@ export const hevyWorkoutPageSchema = z.looseObject({
   workouts: z.array(hevyWorkoutSchema),
 });
 
+/**
+ * GET /v1/routines: the owner's routines (templates). Exercise titles come in English from the template,
+ * unlike workouts, whose titles are in the language of the app; match them by exercise_template_id.
+ */
+const routineSetSchema = z.looseObject({
+  type: z.string().default("normal"),
+  weight_kg: z.number().nullable().optional(),
+  reps: z.number().nullable().optional(),
+  rep_range: z.looseObject({ start: z.number().nullable().optional(), end: z.number().nullable().optional() }).nullable().optional(),
+  duration_seconds: z.number().nullable().optional(),
+});
+
+export const hevyRoutineSchema = z.looseObject({
+  id: z.string(),
+  title: z.string().default(""),
+  folder_id: z.number().nullable().optional(),
+  updated_at: z.string().optional(),
+  exercises: z.array(
+    z.looseObject({
+      index: z.number().optional(),
+      title: z.string(),
+      exercise_template_id: z.string().nullable().optional(),
+      superset_id: z.number().nullable().optional(),
+      sets: z.array(routineSetSchema).default([]),
+    }),
+  ).default([]),
+});
+
+export const hevyRoutinePageSchema = z.looseObject({
+  page: z.number(),
+  page_count: z.number(),
+  routines: z.array(hevyRoutineSchema),
+});
+
+export type HevyRoutine = z.infer<typeof hevyRoutineSchema>;
+export type HevyRoutinePage = z.infer<typeof hevyRoutinePageSchema>;
 export type HevyWorkout = z.infer<typeof hevyWorkoutSchema>;
 export type HevyWorkoutPage = z.infer<typeof hevyWorkoutPageSchema>;
 

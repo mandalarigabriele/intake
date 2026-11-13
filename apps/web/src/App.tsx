@@ -17,6 +17,7 @@ import { WeekPage } from "./pages/WeekPage";
 import { SignInPage } from "./pages/SignInPage";
 import { TimelinePage } from "./pages/TimelinePage";
 import { TodayPage } from "./pages/TodayPage";
+import { TrainingPage } from "./pages/TrainingPage";
 
 const queryClient = new QueryClient({
   defaultOptions: { queries: { refetchOnWindowFocus: true, staleTime: 30_000, retry: shouldRetry, retryDelay } },
@@ -55,6 +56,9 @@ function Root() {
   return (
     <AppShell user={me.data} onAdd={openAdd}>
       <Switch>
+        <Route path="/andamento/allenamenti">
+          <TrainingPage />
+        </Route>
         <Route path="/andamento/salute">
           <HealthTrendsPage />
         </Route>

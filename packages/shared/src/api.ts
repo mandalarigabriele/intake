@@ -536,3 +536,64 @@ export interface DailyScores {
   /** Source labels behind the numbers (Fitbit, Apple Watch, Hevy, ...). */
   sources: string[];
 }
+
+/** One exercise of the next routine, with the target from the Hevy routine and an optional suggestion. */
+export interface TrainingTargetExercise {
+  templateId: string | null;
+  /** Title as logged last time (the app's language), else the routine's (English) title. */
+  title: string;
+  /** Title from the Hevy routine template, used when no workout has the exercise yet. */
+  templateTitle: string;
+  /** Working sets only (warm-ups excluded). */
+  sets: number;
+  /** Weight of each working set; empty for bodyweight exercises. */
+  weights: number[];
+  repRange: { start: number; end: number } | null;
+  superset: boolean;
+  /** "prova X kg": every working set at the top weight reached the top of the rep range last time. */
+  suggestKg: number | null;
+}
+
+export interface TrainingLift {
+  templateId: string;
+  title: string;
+  /** Routine letters (or titles) the lift belongs to. */
+  routines: string[];
+  /** Best working set per session (heaviest, then most reps), oldest first. */
+  points: Array<{ date: string; weightKg: number; reps: number | null }>;
+  change:
+    | { kind: "ready"; suggestKg: number }
+    | { kind: "last"; kg: number }
+    | { kind: "since"; kg: number; since: string }
+    | { kind: "flat" };
+}
+
+/** Andamento › Allenamenti (docs/design § Allenamenti): read live from Hevy, enriched with Apple Health. */
+export interface TrainingView {
+  configured: boolean;
+  today: string;
+  /** Hevy did not answer; the view is empty but the rest of the app keeps working. */
+  hevyUnavailable?: boolean;
+  next: {
+    routineId: string;
+    title: string;
+    letter: string;
+    after: { title: string; date: string } | null;
+    exerciseCount: number;
+    typicalMinutes: number | null;
+    exercises: TrainingTargetExercise[];
+  } | null;
+  week: {
+    start: string;
+    days: Array<{ date: string; letter: string | null; title: string | null; minutes: number | null; other: string | null }>;
+    /** Distinct rotation routines done this week, out of the rotation length. */
+    done: number;
+    total: number;
+    minutes: number;
+    exercises: number;
+    /** Apple Health sessions of the week that are not Hevy workouts (e.g. indoor cycling). */
+    other: Array<{ type: string; date: string; source: string }>;
+  };
+  lifts: TrainingLift[];
+  recent: Array<{ id: string; letter: string | null; title: string; date: string; start: string; minutes: number; exercises: number; hrAvg: number | null }>;
+}

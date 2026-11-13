@@ -26,6 +26,8 @@ const scheduler = new ReminderScheduler({
 });
 
 const healthToken = new HealthIngestToken(services.secrets);
+// One Hevy client, so the workouts and training views share its 5-minute page cache
+const hevy = config.HEVY_API_KEY ? new HevyApi(config.HEVY_API_KEY) : null;
 const app = await buildApp({
   webDistDir: config.WEB_DIST_DIR ?? resolve(import.meta.dirname, "../../web/dist"),
   logger: true,
@@ -48,7 +50,8 @@ const app = await buildApp({
   insightHealth: services.health,
   plans: services.plans,
   push: { store: services.reminders, scheduler, publicKey: vapid.publicKey },
-  workouts: { hevy: config.HEVY_API_KEY ? new HevyApi(config.HEVY_API_KEY) : null, health: services.health, api },
+  workouts: { hevy, health: services.health, api },
+  training: { hevy, health: services.health, api },
   appleHealth: { store: services.health, api, sync: { token: healthToken, endpoint: `${config.PUBLIC_BASE_URL}/api/health/ingest` } },
   healthIngest: { store: services.health, token: healthToken },
 });

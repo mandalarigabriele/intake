@@ -15,6 +15,7 @@ import { insightRoutes, type InsightRoutesOptions } from "./routes/insight.js";
 import { planRoutes } from "./routes/plans.js";
 import { pushRoutes, type PushRoutesOptions } from "./routes/push.js";
 import { workoutRoutes, type WorkoutRoutesOptions } from "./routes/workouts.js";
+import { trainingRoutes, type TrainingRoutesOptions } from "./routes/training.js";
 import { HevyError } from "./hevy/hevyApi.js";
 import { weekRoutes, type WeekRoutesOptions } from "./routes/weeks.js";
 import { profileRoutes, type ProfileRoutesOptions } from "./routes/profile.js";
@@ -59,6 +60,8 @@ export interface AppOptions {
   push?: Omit<PushRoutesOptions, "requireOwner">;
   /** Hevy workouts; registered together with `auth`. */
   workouts?: Omit<WorkoutRoutesOptions, "requireOwner">;
+  /** Andamento › Allenamenti (Hevy routines and history); registered together with `auth`. */
+  training?: Omit<TrainingRoutesOptions, "requireOwner">;
   /** Apple Health import and status; registered together with `auth`. */
   appleHealth?: Omit<AppleHealthRoutesOptions, "requireOwner">;
   /** Automatic uploads from Health Auto Export; token-protected, outside Google sign-in. */
@@ -115,6 +118,9 @@ export async function buildApp(options: AppOptions = {}): Promise<FastifyInstanc
     }
     if (options.workouts) {
       await app.register(workoutRoutes, { prefix: "/api", ...options.workouts, requireOwner });
+    }
+    if (options.training) {
+      await app.register(trainingRoutes, { prefix: "/api", ...options.training, requireOwner });
     }
     if (options.appleHealth) {
       await app.register(appleHealthRoutes, { prefix: "/api", ...options.appleHealth, requireOwner });
