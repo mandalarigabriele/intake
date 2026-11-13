@@ -5,6 +5,7 @@ import { HealthStore } from "../src/db/healthStore.js";
 import { irregularity } from "../src/services/healthImport.js";
 import { authOptions, signIn } from "./helpers.js";
 import { fixture } from "./parsers/fixtures.js";
+import { trendNight } from "../src/services/healthTrends.js";
 
 const exportJson = JSON.parse(fixture("health-auto-export.json"));
 
@@ -30,6 +31,16 @@ describe("irregularity", () => {
   it("flags data that was never regular, without a date", () => {
     const reference = days("2026-10-01", "2026-11-13");
     expect(irregularity(["2026-10-24", "2026-10-26"], reference)).toEqual({ since: null, presentDays: 0, totalDays: 14 });
+  });
+});
+
+describe("trendNight", () => {
+  const night = (start: string, end: string) =>
+    trendNight({ date: "2026-11-13", start, end, asleepMinutes: 420, deepMinutes: 60, remMinutes: 90, coreMinutes: 250, awakeMinutes: 20, inBedMinutes: 440, source: "Fitbit" });
+
+  it("counts minutes from midnight of the wake-up day, negative for the evening before", () => {
+    expect(night("2026-11-12T23:50:00+01:00", "2026-11-13T07:20:00+01:00")).toMatchObject({ start: -10, end: 440 });
+    expect(night("2026-11-13T00:10:00+01:00", "2026-11-13T07:40:00+01:00")).toMatchObject({ start: 10, end: 460 });
   });
 });
 
@@ -154,6 +165,32 @@ describe("Apple Health routes", () => {
     const empty = (await app.inject({ method: "GET", url: "/api/health/days/2026-10-31", headers })).json();
     expect(empty).toMatchObject({ connected: true, steps: null, sleep: null, restingHr: null, stepsAverage: 6375 });
     expect((await app.inject({ method: "GET", url: "/api/health/days/31-10-2026", headers })).statusCode).toBe(400);
+  });
+
+  it("returns 7, 30 or 90 days of trends for Andamento › Salute", async () => {
+    const { app, headers } = await setup();
+    const empty = (await app.inject({ method: "GET", url: "/api/health/trends", headers })).json();
+    expect(empty).toMatchObject({ period: 7, from: "2026-10-25", sleep: null, steps: null, heart: null, firstDataDate: null });
+    expect(empty.days).toHaveLength(7);
+
+    await app.inject({ method: "POST", url: "/api/health/import?commit=true", headers, payload: exportJson });
+    const week = (await app.inject({ method: "GET", url: "/api/health/trends?days=7", headers })).json();
+    expect(week.days.map((d: { steps: number | null }) => d.steps)).toEqual([4719, 4128, 13674, 6056, 6036, 4096, null]);
+    // Finished days only (today, 31 Oct, has no data anyway); 13,674 is the only day at the 8,000 goal
+    expect(week.steps).toEqual({ days: 6, average: 6452, atGoal: 1, best: { date: "2026-10-27", steps: 13674 } });
+    // 30 Oct: 23:33 → 07:31 is -27 → 451 minutes from midnight of the wake-up day
+    expect(week.days[5].sleep).toEqual({ start: -27, end: 451, asleep: 429, deep: 76, rem: 73, core: 280, awake: 49 });
+    expect(week.sleep).toMatchObject({ nights: expect.any(Number), under7h: expect.any(Number), afterMidnight: expect.any(Number) });
+    expect(week.sleep.averageStart).toBeGreaterThan(-120);
+    expect(week.sleep.averageStart).toBeLessThan(120);
+    expect(week.heart.previousAverage).not.toBeNull();
+    expect(week.source).toBe("Fitbit");
+    expect(week.firstDataDate).toMatch(/^2026-/);
+
+    const quarter = (await app.inject({ method: "GET", url: "/api/health/trends?days=90", headers })).json();
+    expect(quarter.days).toHaveLength(90);
+    expect(quarter.days.at(-1).date).toBe("2026-10-31");
+    expect((await app.inject({ method: "GET", url: "/api/health/trends?days=14", headers })).statusCode).toBe(400);
   });
 
   it("returns an empty status before any import", async () => {

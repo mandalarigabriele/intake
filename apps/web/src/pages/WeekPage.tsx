@@ -3,6 +3,7 @@ import { useState } from "react";
 import { Link } from "wouter";
 import { useWeek, useWorkouts } from "../api/queries";
 import { WeekPlanCard } from "../components/PlanCompare";
+import { TrendsSwitch, TrendsTitle } from "../components/TrendsSwitch";
 import { familyIcon } from "../components/WorkoutCard";
 import { addDays } from "../lib/dates";
 import { formatGrams, formatKcal, formatShortDate, formatWater, formatWeekday, formatWeekdayDay } from "../lib/format";
@@ -329,7 +330,7 @@ export function WeekPage() {
       <header className="section-header">
         <div className="page-heading">
           <p className="page-date">{data ? weekRange(data.start, data.end) : " "}</p>
-          <h1 className="page-title">{t.week.title}</h1>
+          <TrendsTitle page={t.week.title} />
         </div>
         <div className="week-nav">
           <button type="button" className="icon-button" aria-label={t.week.previous} disabled={!data} onClick={() => data && setAnchor(addDays(data.start, -7))}>
@@ -344,6 +345,7 @@ export function WeekPage() {
           </button>
         </div>
       </header>
+      <TrendsSwitch current="nutrition" />
 
       {week.isPending && <div className="card skeleton" style={{ height: 260 }} />}
 

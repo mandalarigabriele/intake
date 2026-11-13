@@ -9,6 +9,7 @@ import { AppShell } from "./components/AppShell";
 import { t } from "./lib/strings";
 import { EditMealPage } from "./pages/EditMealPage";
 import { HealthPage } from "./pages/HealthPage";
+import { HealthTrendsPage } from "./pages/HealthTrendsPage";
 import { MealPage } from "./pages/MealPage";
 import { PlanPage } from "./pages/PlanPage";
 import { ProfilePage } from "./pages/ProfilePage";
@@ -54,6 +55,9 @@ function Root() {
   return (
     <AppShell user={me.data} onAdd={openAdd}>
       <Switch>
+        <Route path="/andamento/salute">
+          <HealthTrendsPage />
+        </Route>
         <Route path="/andamento">
           <WeekPage />
         </Route>

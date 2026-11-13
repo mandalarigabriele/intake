@@ -432,3 +432,51 @@ export interface HealthDay {
   /** Latest day with any Health data. */
   lastDataDate: string | null;
 }
+
+/** One night on the Andamento › Salute sleep chart: minutes from midnight of the wake-up day (negative = the evening before). */
+export interface HealthTrendNight {
+  start: number;
+  end: number;
+  asleep: number;
+  deep: number;
+  rem: number;
+  core: number;
+  awake: number;
+}
+
+export interface HealthTrendDay {
+  date: string;
+  steps: number | null;
+  distanceKm: number | null;
+  restingHr: number | null;
+  sleep: HealthTrendNight | null;
+}
+
+/** Andamento › Salute (docs/apple-health.md): the last 7, 30 or 90 days of Apple Health data, from SQLite only. */
+export interface HealthTrends {
+  today: string;
+  from: string;
+  period: 7 | 30 | 90;
+  /** First day with any Health data, for "dati disponibili dall'8 settembre". */
+  firstDataDate: string | null;
+  stepGoal: number;
+  /** Source label of the latest night (Fitbit, ...), shown as a pill. */
+  source: string | null;
+  /** Oldest first, one entry per day of the period, today included. */
+  days: HealthTrendDay[];
+  sleep: {
+    nights: number;
+    averageAsleep: number;
+    /** Mean sleep start and wake time in minutes from midnight, averaged across midnight. */
+    averageStart: number;
+    averageEnd: number;
+    shortest: { date: string; minutes: number };
+    longest: { date: string; minutes: number };
+    phases: { deep: number; rem: number; core: number; awake: number };
+    under7h: number;
+    afterMidnight: number;
+  } | null;
+  /** Finished days only: today is drawn light and left out. */
+  steps: { days: number; average: number; atGoal: number; best: { date: string; steps: number } } | null;
+  heart: { days: number; average: number; min: { date: string; value: number }; previousAverage: number | null } | null;
+}

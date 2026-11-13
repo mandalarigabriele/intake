@@ -20,7 +20,7 @@ export interface WorkoutRoutesOptions {
 }
 
 /** Longest range one request may ask for. */
-const MAX_DAYS = 62;
+const MAX_DAYS = 92;
 
 const dayDiff = (from: string, to: string) => (Date.parse(`${to}T00:00:00Z`) - Date.parse(`${from}T00:00:00Z`)) / 86_400_000;
 
@@ -34,7 +34,7 @@ export const workoutRoutes: FastifyPluginAsync<WorkoutRoutesOptions> = async (ap
   app.get<{ Querystring: { from?: string; to?: string } }>("/workouts", async (request, reply): Promise<WorkoutsResponse | void> => {
     const { from, to } = request.query;
     if (!from || !to || !isValidDate(from) || !isValidDate(to) || to < from || dayDiff(from, to) > MAX_DAYS) {
-      return reply.code(400).send({ error: "from and to must be YYYY-MM-DD, at most 62 days apart" });
+      return reply.code(400).send({ error: "from and to must be YYYY-MM-DD, at most 92 days apart" });
     }
 
     const { timezone } = await api.clock();
