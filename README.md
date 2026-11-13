@@ -47,7 +47,10 @@ Self-hosted nutrition dashboard with a daily meal timeline, macro tracking and m
 ### Planned – phase 2
 
 - Saved meals in the "Aggiungi" sheet.
-- Apple Health in Week (steps, sleep, resting heart rate, deduplicated workouts), then automatic sync from Health Auto Export.
+- New navigation from the 13 Nov design: Andamento tab with Alimentazione | Salute (sidebar: Alimentazione, Salute), and a Profilo screen from the avatar (weight, goals and step goal, connections, reminders, theme, "Scollega Nutrition", sign out).
+- Andamento › Alimentazione: nutrition only, with workout marks, kcal share and protein per day; desktop KPI row and card grid ("Personalizza" later).
+- Andamento › Salute: Sonno, Attività and Cuore over 7 / 30 / 90 days from the Apple Health data.
+- Automatic sync from Health Auto Export.
 
 ## Tech stack
 

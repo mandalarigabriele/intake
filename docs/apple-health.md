@@ -4,19 +4,19 @@ Intake reads Apple Health data exported by the iOS app **Health Auto Export** (H
 Apple Health has no web API, so the phone pushes data to Intake: first as a one-time
 file import (history), later through HAE's "REST API" automation (phase 2).
 The UI is specified in [`design/DESIGN.md`](design/DESIGN.md) § Apple Health and the
-mockups `Main`, `Timeline*`, `Settimana`, `Salute` and `SaluteImport`.
+mockups `Main`, `Timeline*`, `AndamentoSalute`, `SaluteDesktop`, `Profilo`, `Salute` and `SaluteImport`.
 
 ## What is imported
 
 | Data | HAE name | Use |
 |---|---|---|
-| Steps | `step_count` | Today, Week, insights |
+| Steps | `step_count` | Today, Andamento › Salute, insights |
 | Walking + running distance | `walking_running_distance` | Today (km next to steps) |
-| Sleep | `sleep_analysis` | Today, Timeline chip, Week, insights |
-| Resting heart rate | `resting_heart_rate` | Today, Week |
+| Sleep | `sleep_analysis` | Today, Timeline chip, Andamento › Salute, insights |
+| Resting heart rate | `resting_heart_rate` | Today, Andamento › Salute |
 | Active energy | `active_energy` | Stored; shown only when continuous (see "Balance") |
 | Resting energy | `basal_energy_burned` | Stored; shown only when continuous |
-| Workouts | `workouts` | Timeline, Week (deduplicated, see below) |
+| Workouts | `workouts` | Timeline, Andamento › Salute, workout marks in Andamento › Alimentazione (deduplicated, see below) |
 
 Everything else is ignored, in particular:
 
@@ -75,6 +75,26 @@ Real cases from the 8 Sep – 13 Nov 2026 export, covered by tests:
 | 25 Oct | MERACH Cyclette 10:02–10:29 · Fitbit Ciclismo 10:04–10:30 | One Cyclette session, 10:02–10:30 |
 | 26 Oct | Fitbit Forza 16:44–17:40 · Bevel Forza 16:42–17:39 | One Forza session, Fitbit heart rate and kcal |
 | 29 Oct | Fitbit Forza 13:07–13:26 · Fitbit Forza 13:32–14:06 · Bevel Forza 13:08–13:58 | One Forza session, 13:07–14:06 |
+
+## Andamento › Salute
+
+Mockups `AndamentoSalute` (iPhone: tabs) and `SaluteDesktop` (desktop / iPad: three columns). Read from SQLite only, so it costs no Nutrition calls.
+
+- Period **7 / 30 / 90 days** ending today; 90 covers the whole history imported so far.
+- **Sonno**: average sleep, mean bedtime and wake time (averaged across midnight, so 23:50 and 00:10 give 00:00), floating bars from
+  bedtime to wake per night with the shortest night labelled, average phases (minutes and share), nights under 7 hours,
+  bedtimes after midnight, longest night.
+- **Attività**: average steps over finished days only (today is drawn light and left out), days at or above the step goal,
+  daily bars with the dashed goal line and the best day, workouts by type (sessions and time), latest workouts with their source.
+- **Cuore**: average and minimum resting heart rate, difference from the previous period of the same length, line over time with
+  the average, average workout heart rate by type.
+- Today's "Attività e riposo" card links here ("Vedi andamento →").
+
+## Profilo
+
+The avatar opens Profilo (mockup `Profilo`): weight (moved from Week), daily goals from Nutrition (read-only) plus the **step goal**
+(moved from the Apple Salute screen, still saved with `PUT /api/health/settings`), connections (Google, Nutrition, Apple Salute with
+its warning, Hevy), reminders, theme, "Scollega Nutrition" and sign out.
 
 ## Balance
 
