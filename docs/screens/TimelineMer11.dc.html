@@ -1,0 +1,181 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<title>Timeline – mercoledì 11</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+a{color:#17201B;text-decoration:none}a:hover{color:#2F6B47}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; box-sizing: border-box; background: #F4F5F1; font-family: 'Manrope', system-ui, sans-serif; color: #17201B; display: flex; flex-direction: column; overflow: hidden; position: relative">
+
+<header style="padding: 52px 20px 10px; display: flex; justify-content: space-between; align-items: flex-end">
+<div style="display: flex; flex-direction: column; gap: 2px"><span style="font-size: 13px; font-weight: 600; color: #56605A">{{subtitle}}</span><h1 style="margin: 0; font-size: 30px; font-weight: 800; letter-spacing: -0.02em">Timeline</h1></div>
+<div style="display: flex; gap: 6px">
+<button aria-label="Giorno precedente" style="width: 44px; height: 44px; border-radius: 22px; border: none; background: #FFFFFF; display: flex; align-items: center; justify-content: center; color: #17201B"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 6l-6 6 6 6"></path></svg></button>
+<button aria-label="Giorno successivo" style="width: 44px; height: 44px; border-radius: 22px; border: none; background: #FFFFFF; display: flex; align-items: center; justify-content: center; color: {{nextColor}}"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"></path></svg></button>
+</div>
+</header>
+
+<div style="flex: 1; min-height: 0; overflow-y: auto; overflow-x: hidden; padding: 8px 16px 0">
+<div style="display: flex; justify-content: flex-end; padding: 0 4px 10px"><span style="font-size: 12px; font-weight: 600; color: #56605A">{{counts}}</span></div>
+
+<sc-for list="{{items}}" as="it" hint-placeholder-count="6">
+<div style="position: relative; display: flex; gap: 10px">
+<div style="position: absolute; left: 25px; top: {{it.rodTop}}; bottom: {{it.rodBottom}}; border-left: 2px {{it.rod}}"></div>
+
+<sc-if value="{{it.isNow}}" hint-placeholder-val="{{false}}">
+<div style="width: 52px; flex: none; display: flex; justify-content: center; padding: 6px 0 18px; position: relative"><span style="font-size: 11px; font-weight: 800; color: #FFFFFF; background: #C2492E; padding: 3px 6px; border-radius: 6px; font-variant-numeric: tabular-nums">{{it.time}}</span></div>
+<div style="flex: 1; display: flex; align-items: center; gap: 8px; padding: 6px 0 18px"><div style="flex: 1; height: 2px; background: #C2492E"></div><span style="font-size: 11px; font-weight: 800; color: #A53A22; letter-spacing: 0.06em">ADESSO</span></div>
+</sc-if>
+
+<sc-if value="{{it.isSleep}}" hint-placeholder-val="{{false}}">
+<div style="width: 52px; flex: none; display: flex; justify-content: center; padding-top: 8px; position: relative"><span style="width: 28px; height: 28px; border-radius: 14px; background: #3A4D8F; display: flex; align-items: center; justify-content: center"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z"></path></svg></span></div>
+<div style="flex: 1; min-width: 0; margin-bottom: 14px; display: flex; flex-direction: column; gap: 8px">
+<button onClick="{{it.toggle}}" aria-expanded="{{it.open}}" style="align-self: flex-start; min-height: 44px; padding: 0 14px; border-radius: 999px; border: 1px solid #D5DAEC; background: #EEF0F8; font-family: inherit; display: flex; align-items: center; gap: 8px; color: #24305C; text-align: left"><span style="font-size: 13px; font-weight: 800">Sonno</span><span style="font-size: 13px; font-weight: 600; font-variant-numeric: tabular-nums">{{it.range}} · {{it.total}}</span></button>
+<sc-if value="{{it.open}}" hint-placeholder-val="{{false}}">
+<div style="padding: 12px 14px; border-radius: 16px; background: #FFFFFF; display: flex; flex-direction: column; gap: 8px">
+<div role="img" aria-label="{{it.aria}}" style="display: flex; height: 10px; border-radius: 5px; overflow: hidden; gap: 2px"><sc-for list="{{it.phases}}" as="ph" hint-placeholder-count="4"><div style="height: 10px; width: {{ph.w}}; background: {{ph.color}}"></div></sc-for></div>
+<div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 4px 12px"><sc-for list="{{it.phases}}" as="ph" hint-placeholder-count="4"><div style="display: flex; align-items: center; gap: 6px"><span style="width: 8px; height: 8px; border-radius: 2px; flex: none; background: {{ph.color}}"></span><span style="font-size: 12px; color: #3C453F">{{ph.label}} <span style="font-weight: 800">{{ph.min}}</span></span></div></sc-for></div>
+</div>
+</sc-if>
+</div>
+</sc-if>
+
+<sc-if value="{{it.isEntry}}" hint-placeholder-val="{{true}}">
+<div style="width: 52px; flex: none; display: flex; justify-content: center; padding-top: 12px; position: relative"><span style="height: 22px; padding: 0 5px; border-radius: 6px; background: #F4F5F1; font-size: 13px; font-weight: {{it.timeWeight}}; color: {{it.timeColor}}; font-variant-numeric: tabular-nums; line-height: 22px">{{it.time}}</span></div>
+
+<sc-if value="{{it.logged}}" hint-placeholder-val="{{true}}">
+<a href="Pasto.dc.html" style="flex: 1; min-width: 0; margin-bottom: 12px; padding: 14px 16px; background: #FFFFFF; border-radius: 20px; display: flex; flex-direction: column; gap: 8px; color: #17201B">
+<div style="display: flex; justify-content: space-between; align-items: center; gap: 8px"><span style="display: flex; align-items: center; gap: 8px; font-size: 15px; font-weight: 800"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#56605A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 3v8M5 3v5a2 2 0 0 0 4 0V3M7 11v10M17 3c-1.7 0-3 2.2-3 5s1.3 4 3 4v9"></path></svg>{{it.title}}</span><span style="font-size: 15px; font-weight: 800; font-variant-numeric: tabular-nums; white-space: nowrap">{{it.kcal}}</span></div>
+<span style="font-size: 13px; line-height: 1.45; color: #3C453F">{{it.food}}</span>
+<div style="display: flex; gap: 6px; flex-wrap: wrap">
+<span style="font-size: 12px; font-weight: 700; padding: 3px 9px; border-radius: 999px; background: #E3EEF0; color: #1B5A62">P {{it.p}} g</span>
+<span style="font-size: 12px; font-weight: 700; padding: 3px 9px; border-radius: 999px; background: #F6ECD8; color: #7A5410">C {{it.c}} g</span>
+<span style="font-size: 12px; font-weight: 700; padding: 3px 9px; border-radius: 999px; background: #EFE6F2; color: #66407A">G {{it.f}} g</span>
+</div>
+</a>
+</sc-if>
+
+<sc-if value="{{it.workout}}" hint-placeholder-val="{{false}}">
+<div style="flex: 1; min-width: 0; margin-bottom: 12px; padding: 14px 16px; background: #FFFFFF; border-radius: 20px; border-left: 0; box-shadow: inset 0 0 0 1.5px #C9DAEC; display: flex; flex-direction: column; gap: 10px">
+<button onClick="{{it.toggle}}" aria-expanded="{{it.open}}" style="border: none; background: none; padding: 0; font-family: inherit; text-align: left; display: flex; gap: 12px; align-items: flex-start; color: #17201B">
+<span style="width: 40px; height: 40px; flex: none; border-radius: 12px; background: #E4EEF7; display: flex; align-items: center; justify-content: center"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#1F5A90" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="{{it.icon}}"></path></svg></span>
+<span style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 3px">
+<span style="display: flex; justify-content: space-between; gap: 8px; align-items: baseline"><span style="font-size: 15px; font-weight: 800; line-height: 1.3">{{it.title}}</span><span style="font-size: 14px; font-weight: 800; white-space: nowrap">{{it.kcal}}</span></span>
+<span style="font-size: 13px; color: #3C453F; font-variant-numeric: tabular-nums">{{it.range}}</span>
+</span>
+</button>
+<div style="display: flex; gap: 6px; flex-wrap: wrap; align-items: center">
+<sc-for list="{{it.chips}}" as="ch" hint-placeholder-count="2"><span style="font-size: 12px; font-weight: 700; padding: 3px 9px; border-radius: 999px; background: #F4F5F1; color: #3C453F">{{ch.t}}</span></sc-for>
+<span style="font-size: 11px; font-weight: 700; padding: 3px 8px; border-radius: 999px; background: #ECEEEA; color: #3C453F">{{it.source}}</span>
+</div>
+<sc-if value="{{it.open}}" hint-placeholder-val="{{false}}">
+<div style="border-top: 1px solid #ECEEEA; padding-top: 10px; display: flex; flex-direction: column; gap: 10px">
+<div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px">
+<sc-for list="{{it.stats}}" as="st" hint-placeholder-count="4"><div style="padding: 8px 10px; border-radius: 12px; background: #F4F5F1; display: flex; flex-direction: column"><span style="font-size: 11px; font-weight: 700; color: #56605A">{{st.k}}</span><span style="font-size: 15px; font-weight: 800; font-variant-numeric: tabular-nums">{{st.v}}</span></div></sc-for>
+</div>
+<sc-if value="{{it.hasHr}}" hint-placeholder-val="{{false}}">
+<div style="display: flex; flex-direction: column; gap: 4px"><span style="font-size: 11px; font-weight: 700; color: #56605A">Frequenza cardiaca durante l’allenamento</span>
+<svg viewBox="0 0 290 104" width="100%" role="img" aria-label="{{it.hr.aria}}" style="display: block">
+<line x1="26" x2="282" y1="{{it.hr.g100}}" y2="{{it.hr.g100}}" stroke="#E8EBE5" stroke-width="1"></line><text x="22" y="{{it.hr.g100t}}" font-size="9" text-anchor="end" fill="#56605A" font-family="Manrope, system-ui, sans-serif">100</text>
+<line x1="26" x2="282" y1="{{it.hr.g140}}" y2="{{it.hr.g140}}" stroke="#E8EBE5" stroke-width="1"></line><text x="22" y="{{it.hr.g140t}}" font-size="9" text-anchor="end" fill="#56605A" font-family="Manrope, system-ui, sans-serif">140</text>
+<path d="{{it.hr.area}}" fill="#B4412A" fill-opacity="0.12"></path>
+<polyline points="{{it.hr.line}}" fill="none" stroke="#B4412A" stroke-width="2" stroke-linejoin="round"></polyline>
+<line x1="26" x2="282" y1="{{it.hr.avgY}}" y2="{{it.hr.avgY}}" stroke="#17201B" stroke-width="1" stroke-dasharray="3 3"></line>
+<text x="282" y="{{it.hr.avgTY}}" font-size="10" font-weight="800" text-anchor="end" fill="#17201B" font-family="Manrope, system-ui, sans-serif">media {{it.hr.avg}}</text>
+<circle cx="{{it.hr.maxX}}" cy="{{it.hr.maxY}}" r="4" fill="#B4412A" stroke="#FFFFFF" stroke-width="2"><title>Massimo {{it.hr.max}} bpm</title></circle>
+<text x="26" y="100" font-size="9" fill="#56605A" font-family="Manrope, system-ui, sans-serif">0 min</text><text x="282" y="100" font-size="9" text-anchor="end" fill="#56605A" font-family="Manrope, system-ui, sans-serif">{{it.hr.dur}}</text>
+</svg></div>
+</sc-if>
+<sc-if value="{{it.hasExercises}}" hint-placeholder-val="{{false}}">
+<div style="display: flex; flex-direction: column; gap: 4px"><sc-for list="{{it.exercises}}" as="ex" hint-placeholder-count="3"><div style="display: flex; justify-content: space-between; gap: 8px; font-size: 13px"><span style="color: #3C453F; min-width: 0">{{ex.n}}</span><span style="font-weight: 700; color: #56605A; white-space: nowrap">{{ex.s}}</span></div></sc-for></div>
+</sc-if>
+<span style="font-size: 12px; line-height: 1.5; color: #56605A">{{it.sources}}</span>
+</div>
+</sc-if>
+</div>
+</sc-if>
+
+<sc-if value="{{it.planned}}" hint-placeholder-val="{{false}}">
+<div style="flex: 1; min-width: 0; margin-bottom: 12px; padding: 14px 16px; border: 1.5px dashed #C3C9C0; border-radius: 20px; display: flex; flex-direction: column; gap: 6px">
+<div style="display: flex; justify-content: space-between; align-items: center"><span style="font-size: 15px; font-weight: 700; color: #3C453F">{{it.title}}</span><span style="font-size: 11px; font-weight: 700; color: #56605A; letter-spacing: 0.04em">DAL PIANO</span></div>
+<span style="font-size: 13px; line-height: 1.45; color: #56605A">{{it.food}}</span>
+<button onClick="{{it.skip}}" style="align-self: flex-start; height: 34px; padding: 0 12px; margin-top: 2px; border-radius: 10px; border: 1px solid #DDE1DA; background: #FFFFFF; font-family: inherit; font-size: 13px; font-weight: 700; color: #3C453F">Salta</button>
+</div>
+</sc-if>
+
+<sc-if value="{{it.skipped}}" hint-placeholder-val="{{false}}">
+<div style="flex: 1; min-width: 0; margin-bottom: 12px; padding: 12px 16px; border-radius: 20px; background: #ECEEEA; display: flex; justify-content: space-between; align-items: center; gap: 8px">
+<div style="display: flex; flex-direction: column; gap: 2px; min-width: 0"><span style="font-size: 15px; font-weight: 700; color: #56605A; text-decoration: line-through">{{it.title}}</span><span style="font-size: 11px; font-weight: 800; color: #56605A; letter-spacing: 0.04em">SALTATO</span></div>
+<button onClick="{{it.undo}}" style="height: 34px; padding: 0 12px; border: none; border-radius: 10px; background: #FFFFFF; font-family: inherit; font-size: 13px; font-weight: 800; color: #17201B">Annulla</button>
+</div>
+</sc-if>
+</sc-if>
+</div>
+</sc-for>
+
+<div style="height: 24px"></div>
+</div>
+
+<div style="flex: none; padding: 10px 8px 26px; background: #FFFFFF; border-top: 1px solid #E2E5DF; display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); align-items: center">
+<a href="Main.dc.html" aria-label="Oggi" style="height: 48px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px; color: #56605A"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="8"></circle><path d="M12 8v4l3 2"></path></svg><span style="font-size: 11px; font-weight: 700">Oggi</span></a>
+<a href="Settimana.dc.html" aria-label="Andamento" style="height: 48px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px; color: #56605A"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 20V10M12 20V4M19 20v-7"></path></svg><span style="font-size: 11px; font-weight: 700">Andamento</span></a>
+<a href="Aggiungi.dc.html" aria-label="Aggiungi" style="width: 52px; height: 52px; justify-self: center; border-radius: 26px; background: #17201B; color: #FFFFFF; display: flex; align-items: center; justify-content: center"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"></path></svg></a>
+<a href="Piano.dc.html" aria-label="Piano" style="height: 48px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px; color: #56605A"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="4" width="14" height="17" rx="2"></rect><path d="M9 9h6M9 13h6M9 17h3"></path></svg><span style="font-size: 11px; font-weight: 700">Piano</span></a>
+<a href="Timeline.dc.html" aria-label="Timeline" aria-current="page" style="height: 48px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px; color: #2F6B47"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 3v18"></path><circle cx="7" cy="7" r="2"></circle><circle cx="7" cy="17" r="2"></circle><path d="M12 7h8M12 17h8"></path></svg><span style="font-size: 11px; font-weight: 800">Timeline</span></a>
+</div>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  constructor(props) { super(props); this.state = { skipped: {}, open: {"2": true} }; }
+  renderVals() {
+    const DAY = {"subtitle": "Mercoledì 11 novembre · 2.049 kcal", "counts": "6 pasti · 1 allenamento · sonno", "isToday": false, "items": [{"kind": "sleep", "time": "07:35", "range": "23:52–07:35", "total": "6 h 53 min", "phases": [["Profondo", 69, "1 h 09", "#3A4D8F"], ["REM", 95, "1 h 35", "#7B68C8"], ["Core", 249, "4 h 09", "#9DB4E0"], ["Sveglio", 50, "50 min", "#E0A63E"]], "aria": "Fasi del sonno: profondo 1 h 09, rem 1 h 35, core 4 h 09, sveglio 50 min"}, {"kind": "logged", "time": "08:02", "title": "Colazione", "kcal": "385 kcal", "food": "2 uova strapazzate · caffellatte · 1 fetta di pane integrale", "p": "23,3", "c": "27", "f": "20,1"}, {"kind": "workout", "time": "08:37", "title": "Full Body B — Catena posteriore + Schiena", "icon": "M6 7v10M18 7v10M3 10v4M21 10v4M6 12h12", "kcal": "", "range": "08:37–09:27 · 50 min · Forza", "chips": ["8 esercizi", "FC media 108 · max 145"], "source": "Hevy", "stats": [["Durata", "50 min"], ["Serie", "21"], ["FC media", "108 bpm"], ["FC massima", "145 bpm"]], "exercises": [["Hip Thrust (manubrio)", "4 serie"], ["Panca inclinata (manubrio)", "3 serie"], ["Rematore al cavo da seduto", "3 serie"], ["Goblet squat", "2 serie"], ["Lento avanti (manubrio)", "3 serie"], ["Curl bicipiti (manubrio)", "2 serie"], ["Alzate laterali (manubrio)", "2 serie"], ["Calf raise in piedi (manubrio)", "2 serie"]], "sources": "Esercizi e durata da Hevy · FC da Salute · calorie non disponibili", "hr": {"line": "31.2,78.4 36.4,68.0 41.7,57.7 46.9,59.1 52.1,66.0 57.3,62.5 62.6,72.2 67.8,62.5 73.0,52.1 78.2,50.8 83.5,51.5 88.7,52.8 93.9,62.5 99.1,54.2 104.4,57.0 109.6,68.0 114.8,71.5 120.0,55.6 125.3,45.2 130.5,50.1 135.7,47.3 140.9,59.7 146.2,58.4 151.4,50.8 156.6,54.2 161.8,50.8 167.1,49.4 172.3,45.9 177.5,51.5 182.7,36.3 188.0,48.7 193.2,41.8 198.4,54.2 203.6,52.8 208.9,50.1 214.1,56.3 219.3,40.4 224.5,37.6 229.8,49.4 235.0,48.7 240.2,47.3 245.4,48.7 250.7,47.3 255.9,39.0 261.1,38.3 266.3,43.2 271.6,58.4 276.8,46.6 282.0,37.6", "area": "M31.2,86.0 L31.2,78.4 L36.4,68.0 L41.7,57.7 L46.9,59.1 L52.1,66.0 L57.3,62.5 L62.6,72.2 L67.8,62.5 L73.0,52.1 L78.2,50.8 L83.5,51.5 L88.7,52.8 L93.9,62.5 L99.1,54.2 L104.4,57.0 L109.6,68.0 L114.8,71.5 L120.0,55.6 L125.3,45.2 L130.5,50.1 L135.7,47.3 L140.9,59.7 L146.2,58.4 L151.4,50.8 L156.6,54.2 L161.8,50.8 L167.1,49.4 L172.3,45.9 L177.5,51.5 L182.7,36.3 L188.0,48.7 L193.2,41.8 L198.4,54.2 L203.6,52.8 L208.9,50.1 L214.1,56.3 L219.3,40.4 L224.5,37.6 L229.8,49.4 L235.0,48.7 L240.2,47.3 L245.4,48.7 L250.7,47.3 L255.9,39.0 L261.1,38.3 L266.3,43.2 L271.6,58.4 L276.8,46.6 L282.0,37.6 L282.0,86.0 Z", "avgY": "52.8", "avgTY": "48.8", "avg": 108, "maxX": "182.7", "maxY": "36.3", "max": 132, "g100": "58.4", "g140": "30.7", "g100t": "61.4", "g140t": "33.7", "dur": "49 min", "aria": "Frequenza cardiaca durante l’allenamento: media 108, massima 145 bpm"}}, {"kind": "logged", "time": "11:00", "title": "Spuntino", "kcal": "194 kcal", "food": "1 frutto · mandorle 20 g", "p": "4,7", "c": "20,6", "f": "10,7"}, {"kind": "logged", "time": "14:08", "title": "Pranzo", "kcal": "612 kcal", "food": "Pasta 100 g con zucchine, fagioli e pomodoro", "p": "23,9", "c": "97,5", "f": "12,8"}, {"kind": "logged", "time": "16:00", "title": "Merenda", "kcal": "171 kcal", "food": "Yogurt greco 150 g con avena e cioccolato", "p": "15,9", "c": "17,3", "f": "3,8"}, {"kind": "logged", "time": "20:19", "title": "Cena", "kcal": "685 kcal", "food": "Salmone al forno 180 g · peperoni · pane integrale · salsa allo yogurt", "p": "51,2", "c": "42,9", "f": "34,4"}]};
+    const sk = this.state.skipped, op = this.state.open;
+    const set = (key, i, v) => { const n = Object.assign({}, this.state[key]); n[i] = v; const s = {}; s[key] = n; this.setState(s); };
+    const solid = 'solid #2F6B47', dashed = 'dashed #B9C0B6';
+    const raw = DAY.items;
+    const nowIdx = raw.findIndex((r) => r.kind === 'now');
+    const items = raw.map((r, i) => {
+      const tot = (r.phases || []).reduce((s, p) => s + p[1], 0);
+      return Object.assign({}, r, {
+        isNow: r.kind === 'now',
+        isSleep: r.kind === 'sleep',
+        isEntry: r.kind !== 'now' && r.kind !== 'sleep',
+        logged: r.kind === 'logged',
+        workout: r.kind === 'workout',
+        planned: r.kind === 'planned' && !sk[i],
+        skipped: r.kind === 'planned' && !!sk[i],
+        open: !!op[i],
+        toggle: () => set('open', i, !op[i]),
+        skip: () => set('skipped', i, true),
+        undo: () => set('skipped', i, false),
+        phases: (r.phases || []).map((p) => ({ label: p[0], min: p[2], color: p[3], w: (p[1] / tot * 100).toFixed(1) + '%' })),
+        chips: (r.chips || []).map((t) => ({ t: t })),
+        stats: (r.stats || []).map((s) => ({ k: s[0], v: s[1] })),
+        exercises: (r.exercises || []).map((e) => ({ n: e[0], s: e[1] })),
+        hasExercises: !!(r.exercises && r.exercises.length),
+        hasHr: !!r.hr,
+        hr: r.hr || {},
+        timeWeight: r.kind === 'planned' ? '700' : '800',
+        timeColor: r.kind === 'planned' ? '#56605A' : '#17201B',
+        rod: (nowIdx < 0 || i < nowIdx) ? solid : dashed,
+        rodTop: i === 0 ? '22px' : '0px',
+        rodBottom: i === raw.length - 1 ? 'calc(100% - 34px)' : '0px'
+      });
+    });
+    return { items: items, subtitle: DAY.subtitle, counts: DAY.counts, nextColor: DAY.isToday ? '#8A928C' : '#17201B' };
+  }
+}
+</script>
+</body>
+</html>

@@ -10,15 +10,15 @@ mockups `Main`, `Timeline*`, `AndamentoSalute`, `SaluteDesktop`, `Profilo`, `Sal
 
 | Data | HAE name | Use |
 |---|---|---|
-| Steps | `step_count` | Today, Andamento › Salute, insights |
+| Steps | `step_count` | Today, Trends › Health, insights |
 | Walking + running distance | `walking_running_distance` | Today (km next to steps) |
-| HRV (Apple Watch) | `heart_rate_variability` (ms) | Recupero score (daily average) |
-| Respiratory rate | `respiratory_rate` | Recupero score (daily average) |
-| Sleep | `sleep_analysis` | Today, Timeline chip, Andamento › Salute, insights |
-| Resting heart rate | `resting_heart_rate` | Today, Andamento › Salute |
+| HRV (Apple Watch) | `heart_rate_variability` (ms) | Recovery score (daily average) |
+| Respiratory rate | `respiratory_rate` | Recovery score (daily average) |
+| Sleep | `sleep_analysis` | Today, Timeline chip, Trends › Health, insights |
+| Resting heart rate | `resting_heart_rate` | Today, Trends › Health |
 | Active energy | `active_energy` | Stored; shown only when continuous (see "Balance") |
 | Resting energy | `basal_energy_burned` | Stored; shown only when continuous |
-| Workouts | `workouts` | Timeline, Andamento › Salute, workout marks in Andamento › Alimentazione (deduplicated, see below) |
+| Workouts | `workouts` | Timeline, Trends › Health, workout marks in Trends › Nutrition (deduplicated, see below) |
 
 Everything else is ignored, in particular:
 
@@ -78,79 +78,79 @@ Real cases from the 8 Sep – 13 Nov 2026 export, covered by tests:
 | 26 Oct | Fitbit Forza 16:44–17:40 · Bevel Forza 16:42–17:39 | One Forza session, Fitbit heart rate and kcal |
 | 29 Oct | Fitbit Forza 13:07–13:26 · Fitbit Forza 13:32–14:06 · Bevel Forza 13:08–13:58 | One Forza session, 13:07–14:06 |
 
-## Andamento › Salute
+## Trends › Health
 
 Mockups `AndamentoSalute` (iPhone: tabs) and `SaluteDesktop` (desktop / iPad: three columns). Read from SQLite only, so it costs no Nutrition calls.
 
 - Period **7 / 30 / 90 days** ending today; 90 covers the whole history imported so far.
-- **Sonno**: average sleep, mean bedtime and wake time (averaged across midnight, so 23:50 and 00:10 give 00:00), floating bars from
+- **Sleep**: average sleep, mean bedtime and wake time (averaged across midnight, so 23:50 and 00:10 give 00:00), floating bars from
   bedtime to wake per night with the shortest night labelled, average phases (minutes and share), nights under 7 hours,
   bedtimes after midnight, longest night.
-- **Attività**: average steps over finished days only (today is drawn light and left out), days at or above the step goal,
+- **Activity**: average steps over finished days only (today is drawn light and left out), days at or above the step goal,
   daily bars with the dashed goal line and the best day, workouts by type (sessions and time), latest workouts with their source.
-- **Cuore**: average and minimum resting heart rate, difference from the previous period of the same length, line over time with
+- **Heart**: average and minimum resting heart rate, difference from the previous period of the same length, line over time with
   the average, average workout heart rate by type.
-- Today's "Attività e riposo" card links here ("Vedi andamento →").
+- Today's Activity & rest card links here ("See trends →").
 - API: `GET /api/health/trends?days=7|30|90` returns one entry per day (steps, distance, resting HR, the night as minutes from
   midnight of the wake-up day, negative for the evening before) and the period statistics. Workouts come from `GET /api/workouts`
   for the same range (at most 92 days), so Hevy sessions are included.
 
-## Profilo
+## Profile
 
-The avatar opens Profilo (mockup `Profilo`): weight (moved from Week), daily goals from Nutrition (read-only) plus the **step goal**
-(moved from the Apple Salute screen, still saved with `PUT /api/health/settings`), connections (Google, Nutrition, Apple Salute with
+The avatar opens the Profile screen (mockup `Profilo`): weight (moved from Week), daily goals from Nutrition (read-only) plus the **step goal**
+(moved from the Apple Health screen, still saved with `PUT /api/health/settings`), connections (Google, Nutrition, Apple Health with
 its warning, Hevy), reminders, theme, "Scollega Nutrition" and sign out.
 
 ## Balance
 
 The "Bilancio" row in Today is designed but switched off. It needs both active and resting energy to arrive continuously;
 in the first export resting energy covers 2 days and active energy stops on 25 Oct (Fitbit stopped writing it to Health).
-No BMR formulas are used to fill the gap. The Apple Salute screen warns when active energy is missing for more than 3 days while other data keeps arriving.
+No BMR formulas are used to fill the gap. The Apple Health screen warns when active energy is missing for more than 3 days while other data keeps arriving.
 
 ## Daily scores
 
-The three rings at the top of Oggi (`GET /api/health/scores/:date`, SQLite only). All three are percentages with a text state.
+The three rings at the top of Today (Effort, Recovery, Sleep; Sforzo / Recupero / Sonno in the app) (`GET /api/health/scores/:date`, SQLite only). All three are percentages with a text state.
 Data written by an Apple Watch wins when present (HRV, all-day active energy); otherwise the scores are estimated from what
 Fitbit and the other apps write.
 
-- **Sforzo** (0–100%, Leggero < 34 · Moderato 34–66 · Intenso ≥ 67). Load = workouts + movement, then `100 × (1 − e^(−load / 60))`.
+- **Effort** (0–100%, light < 34 · moderate 34–66 · intense ≥ 67). Load = workouts + movement, then `100 × (1 − e^(−load / 60))`.
   - Workout load: Banister TRIMP, `minutes × r × 0.64 × e^(1.92 r)`, with `r` = heart-rate reserve
     (`(average HR − resting HR) / (max HR − resting HR)`). Max HR = the highest workout max of the last 90 days, at least 185;
     resting HR = that day's, or 60. Without heart rate `r` is 0.5 (0.4 for strength).
   - Movement: the larger of `steps / 1000 × 1.5` and `(active energy − workout kcal) / 10`.
-- **Sonno** (0–100% of need, Basso < 70 · Medio 70–84 · Alto ≥ 85). Need = 8 h, plus up to 30 min when the previous day's Sforzo
+- **Sleep** (0–100% of need, low < 70 · medium 70–84 · high ≥ 85). Need = 8 h, plus up to 30 min when the previous day's Effort
   was above 50%. Minus one point for every 10 minutes beyond 45 away from the usual sleep start (mean of the previous 7 nights,
   at least 3 needed), at most 10.
-- **Recupero** (0–100%, Basso < 34 · Medio 34–66 · Alto ≥ 67). Each input is compared with its personal baseline (mean of the
+- **Recovery** (0–100%, low < 34 · medium 34–66 · high ≥ 67). Each input is compared with its personal baseline (mean of the
   previous 30 days, at least 5 days): equal to the baseline scores 65.
-  - With HRV: HRV 50% (+10% over baseline → +20 points), resting HR 20%, Sonno 30%.
-  - Without HRV: resting HR 45% (−1% → +3 points), respiratory rate 20% (−1% → +3 points), Sonno 35%.
-  - Missing inputs are left out and the weights rescaled; without enough resting-HR or HRV history it shows "in calibrazione".
-- Tapping a ring opens "come si calcola" with the day's inputs (HRV "non disponibile" until a watch writes it).
+  - With HRV: HRV 50% (+10% over baseline → +20 points), resting HR 20%, Sleep 30%.
+  - Without HRV: resting HR 45% (−1% → +3 points), respiratory rate 20% (−1% → +3 points), Sleep 35%.
+  - Missing inputs are left out and the weights rescaled; without enough resting-HR or HRV history it shows "calibrating".
+- Tapping a ring opens "come si calcola" with the day's inputs (HRV "not available" until a watch writes it).
 
 ## Insights
 
-A Health-based insight ("Dai tuoi dati") is shown only if each compared group has at least 5 days and the difference is meaningful (at least 10%).
+A Health-based daily insight is shown only if each compared group has at least 5 days and the difference is meaningful (at least 10%).
 
 - Window: the last 28 days, completed logged days only (today is left out); the Nutrition daily totals come from the same
   `get_nutrition_summary` request the card already makes (its range grows from 7 to 28 days, still one request).
 - Sleep: kcal eaten on the day after a night under 7 hours (the night belongs to its wake-up day) against the other days.
 - Steps: kcal eaten on days at or above the step goal against the other days.
-- The card shows "Ultimi 28 giorni · N giorni registrati" under a Health sentence.
+- The card shows "last 28 days · N days logged" under a Health sentence.
 
 ## File import
 
-- Profile › Apple Salute › "Carica file di Health Auto Export (.json)" (export with JSON format and daily aggregation).
+- Profile › Apple Health › Health Auto Export file upload (export with JSON format and daily aggregation).
 - `POST /api/health/import` (owner only, body up to 50 MB) returns a preview without writing; `POST /api/health/import?commit=true` imports.
   Errors: `400 not_health_export`, `422 no_data`, `413` for files over the limit.
 - The preview lists the recognized metrics (active and resting energy are flagged when irregular), workouts by family with the
   duplicate groups resolved, and the ignored groups. New and updated days are counted against what is already stored.
-- `GET /api/health/status` feeds the Apple Salute screen: last import, period, days, merged workouts, coverage per metric and day
+- `GET /api/health/status` feeds the Apple Health screen: last import, period, days, merged workouts, coverage per metric and day
   for the last 90 days at most, sources, and the active energy warning. `PUT /api/health/settings` saves the step goal (2,000–30,000, default 8,000).
 
 ## Today API
 
-- `GET /api/health/days/:date` (`today` is resolved in the Nutrition profile timezone) feeds the "Attività e riposo" card: steps,
+- `GET /api/health/days/:date` (`today` is resolved in the Nutrition profile timezone) feeds the Activity & rest card: steps,
   distance, the average of the previous 7 days with data, 7-day steps series, the night that ended that morning with its phases,
   7-night sleep series, resting heart rate with the average of the week before (days −13 to −7) and an 8-day series, the sleep
   source label, last import time and last data date (for the stale state). `connected` is false until the first import, and the card stays hidden.
@@ -167,9 +167,9 @@ A Health-based insight ("Dai tuoi dati") is shown only if each compared group ha
 
 ## Ingest (automatic upload)
 
-- Profilo › Apple Salute › "Sincronizzazione automatica": the switch creates a token and turns the upload on; "Rigenera" replaces
+- Profile › Apple Health › automatic sync ("Sincronizzazione automatica"): the switch creates a token and turns the upload on; "Regenerate" replaces
   the token (the old one stops working at once); turning the switch off deletes it. The screen shows the endpoint URL, the token
-  (masked, "Copia" copies it), the last upload received and the steps for Health Auto Export.
+  (masked, "Copy" copies it), the last upload received and the steps for Health Auto Export.
 - `POST /api/health/ingest` is outside Google sign-in and needs `Authorization: Bearer <token>` (the bare token is accepted too),
   compared in constant time. The token is stored encrypted in the secrets table (`health_ingest_token`), never in the repository.
 - The body is the same Health Auto Export JSON as the file import and is saved the same way (upserts, the current day is overwritten,
