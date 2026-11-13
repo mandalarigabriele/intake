@@ -2,6 +2,7 @@ import type {
   AddWaterRequest,
   DayView,
   FavoriteMealRequest,
+  HealthDay,
   HealthImportResult,
   HealthSettings,
   HealthStatus,
@@ -350,5 +351,14 @@ export function useSetHealthSettings() {
     onError: (_error, _settings, context) => {
       if (context?.previous) queryClient.setQueryData(healthStatusKey, context.previous);
     },
+  });
+}
+
+/** Apple Health values of one day for the "Attività e riposo" card. */
+export function useHealthDay(date: string) {
+  return useQuery({
+    queryKey: ["health", "day", date],
+    queryFn: () => apiFetch<HealthDay>(`/api/health/days/${date}`),
+    placeholderData: keepPreviousData,
   });
 }

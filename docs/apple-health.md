@@ -96,6 +96,13 @@ A Health-based insight ("Dai tuoi dati") is shown only if each compared group ha
 - `GET /api/health/status` feeds the Apple Salute screen: last import, period, days, merged workouts, coverage per metric and day
   for the last 90 days at most, sources, and the active energy warning. `PUT /api/health/settings` saves the step goal (2,000–30,000, default 8,000).
 
+## Today API
+
+- `GET /api/health/days/:date` (`today` is resolved in the Nutrition profile timezone) feeds the "Attività e riposo" card: steps,
+  distance, the average of the previous 7 days with data, 7-day steps series, the night that ended that morning with its phases,
+  7-night sleep series, resting heart rate with the average of the week before (days −13 to −7) and an 8-day series, the sleep
+  source label, last import time and last data date (for the stale state). `connected` is false until the first import, and the card stays hidden.
+
 ## Ingest (phase 2)
 
 - `POST` endpoint protected by a token generated in the app (copy / regenerate in the Apple Salute screen), outside Google sign-in.

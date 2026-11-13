@@ -126,6 +126,36 @@ describe("Apple Health routes", () => {
     ]);
   });
 
+  it("returns one day for the Today card: values, 7-day series and averages", async () => {
+    const { app, headers } = await setup();
+    const before = (await app.inject({ method: "GET", url: "/api/health/days/today", headers })).json();
+    expect(before).toMatchObject({ date: "2026-10-31", connected: false, steps: null, sleep: null });
+
+    await app.inject({ method: "POST", url: "/api/health/import?commit=true", headers, payload: exportJson });
+    const day = (await app.inject({ method: "GET", url: "/api/health/days/2026-10-30", headers })).json();
+    expect(day).toMatchObject({
+      date: "2026-10-30",
+      today: "2026-10-31",
+      connected: true,
+      steps: 4096,
+      distanceKm: 3.067,
+      stepsAverage: 6768,
+      sleep: { bedtime: "23:33", wake: "07:31", asleepMinutes: 429, deepMinutes: 76, remMinutes: 73, coreMinutes: 280, awakeMinutes: 49 },
+      restingHr: 64,
+      restingHrLastWeek: 61,
+      source: "Fitbit",
+      lastDataDate: "2026-10-30",
+    });
+    expect(day.stepsSeries.map((p: { value: number | null }) => p.value)).toEqual([5913, 4719, 4128, 13674, 6056, 6036, 4096]);
+    expect(day.sleepSeries).toHaveLength(7);
+    expect(day.restingHrSeries).toHaveLength(8);
+
+    // A day without Health data
+    const empty = (await app.inject({ method: "GET", url: "/api/health/days/2026-10-31", headers })).json();
+    expect(empty).toMatchObject({ connected: true, steps: null, sleep: null, restingHr: null, stepsAverage: 6375 });
+    expect((await app.inject({ method: "GET", url: "/api/health/days/31-10-2026", headers })).statusCode).toBe(400);
+  });
+
   it("returns an empty status before any import", async () => {
     const { app, headers } = await setup();
     const status = (await app.inject({ method: "GET", url: "/api/health/status", headers })).json();

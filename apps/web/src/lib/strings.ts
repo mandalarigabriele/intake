@@ -457,6 +457,38 @@ export const t = {
     } as Record<string, [string, string]>,
   },
 
+  activity: {
+    label: "ATTIVITÀ E RIPOSO",
+    aria: "Attività e riposo",
+    noData: "Nessun dato da Salute per questo giorno",
+    steps: (n: string) => `${n} passi`,
+    soFar: (km: string | null) => (km ? `finora · ${km} km` : "finora"),
+    km: (km: string) => `${km} km`,
+    averageLater: (avg: string) => `Media 7 gg: ${avg} · il confronto compare a fine giornata`,
+    versusAverage: (sign: "up" | "down" | "same", pct: string, avg: string) =>
+      sign === "same" ? `in linea con la media 7 gg (${avg})` : `${sign === "up" ? "▲ +" : "▼ −"}${pct}% sulla media 7 gg (${avg})`,
+    last7Days: "ultimi 7 giorni",
+    last8Days: "ultimi 8 giorni",
+    stepsChart: (values: string) => `Ultimi 7 giorni: ${values} passi`,
+    stepsPoint: (day: string, value: string, partial: boolean) => `${day}${partial ? " (in corso)" : ""}: ${value} passi`,
+    sleepChart: "Ultime 7 notti",
+    sleepCaption: "7 notti · arancio = più corta",
+    sleepPoint: (day: string, value: string, shortest: boolean) => `${day}: ${value}${shortest ? " · più corta" : ""}`,
+    phasesLabel: (deep: string, rem: string, core: string, awake: string) => `Fasi del sonno: profondo ${deep}, REM ${rem}, core ${core}, sveglio ${awake}`,
+    phases: { deep: "Profondo", rem: "REM", core: "Core", awake: "Sveglio" },
+    restingHr: "FC a riposo",
+    bpm: (n: string) => `${n} bpm`,
+    hrVersus: (sign: "up" | "down" | "same", delta: string, lastWeek: string) =>
+      sign === "same" ? `uguale alla settimana scorsa (${lastWeek})` : `${sign === "up" ? "▲" : "▼"} ${delta} bpm`,
+    hrVersusTail: (lastWeek: string) => ` sulla settimana scorsa (${lastWeek})`,
+    hrChart: (values: string) => `Ultimi 8 giorni: ${values} bpm`,
+    hrPoint: (day: string, value: string) => `${day}: ${value} bpm`,
+    today: "Oggi",
+    updatedToday: (time: string) => `Aggiornato oggi alle ${time}`,
+    updatedOn: (date: string, time: string) => `Aggiornato il ${date} alle ${time}`,
+    stale: (days: number) => (days === 1 ? "Ultimo aggiornamento ieri" : `Ultimo aggiornamento ${days} giorni fa`),
+  },
+
   mealTypes: {
     breakfast: "Colazione",
     lunch: "Pranzo",
