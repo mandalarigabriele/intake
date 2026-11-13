@@ -44,6 +44,7 @@ Self-hosted nutrition dashboard with a daily meal timeline, macro tracking and m
 ### Planned – phase 2
 
 - Saved meals in the "Aggiungi" sheet.
+- Apple Health through Health Auto Export: file import of the history, then automatic sync; steps, sleep, resting heart rate and deduplicated workouts in Today, Timeline and Week. See [docs/apple-health.md](docs/apple-health.md).
 
 ## Tech stack
 
@@ -60,7 +61,7 @@ apps/server       Fastify server: API, auth, MCP client, serves the web app
 apps/web          React + Vite frontend (PWA)
 schemas/          generated JSON Schema of the meal plan file
 examples/         example meal plan
-docs/             architecture, deployment, meal plan format
+docs/             architecture, deployment, meal plan format, Apple Health
 ```
 
 ## Development

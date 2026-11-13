@@ -33,7 +33,7 @@ input{font-family:inherit}
 </div>
 
 <div style="padding: 4px 16px; background: #FFFFFF; border-radius: 20px">
-<label style="display: flex; justify-content: space-between; align-items: center; height: 48px; font-size: 15px; font-weight: 700">Orario<input value="08:00" aria-label="Orario" style="width: 70px; border: none; text-align: right; font-size: 15px; font-weight: 800; color: #17201B; background: transparent"></label>
+<label style="display: flex; justify-content: space-between; align-items: center; height: 48px; font-size: 15px; font-weight: 700">Orario<input value="08:05" aria-label="Orario" style="width: 70px; border: none; text-align: right; font-size: 15px; font-weight: 800; color: #17201B; background: transparent"></label>
 </div>
 
 <span style="font-size: 12px; font-weight: 800; color: #56605A; letter-spacing: 0.05em; padding: 4px 4px 0">ALIMENTI</span>
@@ -85,16 +85,15 @@ class Component extends DCLogic {
       cancelDelete: () => this.setState({ confirm: false }),
       items: [
         { name: 'Caffellatte', qty: '200 ml' },
-        { name: 'Uova strapazzate', qty: '2' },
-        { name: 'Olio EVO', qty: '5 g' },
-        { name: 'Pane integrale', qty: '80 g' },
-        { name: 'Mela', qty: '1' }
+        { name: 'Yogurt greco 0%', qty: '150 g' },
+        { name: "Fiocchi d'avena", qty: '40 g' },
+        { name: 'Banana', qty: '1' }
       ],
       vals: [
-        { label: 'kcal', value: '574' },
-        { label: 'Prot. g', value: '29,9' },
-        { label: 'Carb. g', value: '67,6' },
-        { label: 'Grassi g', value: '21,5' }
+        { label: 'kcal', value: '419' },
+        { label: 'Prot. g', value: '26,7' },
+        { label: 'Carb. g', value: '65,2' },
+        { label: 'Grassi g', value: '6,6' }
       ]
     };
   }

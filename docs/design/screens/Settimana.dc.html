@@ -18,7 +18,7 @@ input{font-family:inherit}
 <div style="width: 390px; height: 844px; box-sizing: border-box; background: #F4F5F1; font-family: 'Manrope', system-ui, sans-serif; color: #17201B; display: flex; flex-direction: column; overflow: hidden">
 
 <header style="padding: 52px 20px 8px; display: flex; justify-content: space-between; align-items: flex-end">
-<div style="display: flex; flex-direction: column; gap: 2px"><span style="font-size: 13px; font-weight: 600; color: #56605A">2 – 8 novembre</span><h1 style="margin: 0; font-size: 30px; font-weight: 800; letter-spacing: -0.02em">Settimana</h1></div>
+<div style="display: flex; flex-direction: column; gap: 2px"><span style="font-size: 13px; font-weight: 600; color: #56605A">9 – 15 novembre</span><h1 style="margin: 0; font-size: 30px; font-weight: 800; letter-spacing: -0.02em">Settimana</h1></div>
 <div style="display: flex; gap: 6px">
 <button aria-label="Settimana precedente" style="width: 44px; height: 44px; border-radius: 22px; border: none; background: #FFFFFF; display: flex; align-items: center; justify-content: center; color: #17201B"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 6l-6 6 6 6"></path></svg></button>
 <button aria-label="Settimana successiva" style="width: 44px; height: 44px; border-radius: 22px; border: none; background: #FFFFFF; display: flex; align-items: center; justify-content: center; color: #8A928C"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"></path></svg></button>
@@ -30,23 +30,26 @@ input{font-family:inherit}
 <section aria-label="Calorie per giorno" style="padding: 18px 16px; background: #FFFFFF; border-radius: 24px; display: flex; flex-direction: column; gap: 12px; overflow: hidden; flex: none">
 <div style="display: flex; justify-content: space-between; align-items: baseline"><span style="font-size: 15px; font-weight: 800">Calorie</span><span style="font-size: 12px; font-weight: 600; color: #56605A">linea = 2.200 kcal</span></div>
 <div style="position: relative; display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 6px">
-<div style="position: absolute; left: 0; right: 0; top: {{lineTop}}; border-top: 1.5px dashed #9AA39C"></div>
-<sc-for list="{{days}}" as="d" hint-placeholder-count="7">
-<div style="min-width: 0; display: flex; flex-direction: column; align-items: center; gap: 6px">
-<div style="width: 100%; height: 130px; display: flex; align-items: flex-end"><div style="width: 100%; border-radius: 6px 6px 2px 2px; height: {{d.h}}; background: {{d.color}}"></div></div>
+<div style="position: absolute; left: 0; right: 0; top: {{kcalLine}}; border-top: 1.5px dashed #9AA39C"></div>
+<sc-for list="{{kcal}}" as="d" hint-placeholder-count="7">
+<div style="min-width: 0; display: flex; flex-direction: column; align-items: center; gap: 5px">
+<div style="width: 100%; height: 120px; display: flex; align-items: flex-end"><div style="width: 100%; border-radius: 6px 6px 2px 2px; height: {{d.h}}; background: {{d.color}}"></div></div>
 <span style="font-size: 12px; font-weight: 700; color: #56605A">{{d.l}}</span>
-<span style="height: 14px; font-size: 10px; font-weight: 800; color: #3C453F; font-variant-numeric: tabular-nums">{{d.kcal}}</span>
+<span style="height: 14px; font-size: 10px; font-weight: 800; color: #3C453F; font-variant-numeric: tabular-nums">{{d.v}}</span>
+<span style="height: 18px; display: flex; align-items: center; justify-content: center"><sc-if value="{{d.lift}}" hint-placeholder-val="{{false}}"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#1F5A90" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" role="img" aria-label="Forza"><path d="M6 7v10M18 7v10M3 10v4M21 10v4M6 12h12"></path></svg></sc-if><sc-if value="{{d.bike}}" hint-placeholder-val="{{false}}"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#1F5A90" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" role="img" aria-label="Cyclette"><path d="M5 18a3 3 0 1 0 0-6 3 3 0 0 0 0 6zM19 18a3 3 0 1 0 0-6 3 3 0 0 0 0 6zM5 15l4-7h5l3 7M9 8l3 7h2M13 5h2"></path></svg></sc-if></span>
 </div>
 </sc-for>
 </div>
-<span style="font-size: 12px; line-height: 1.5; color: #56605A">Venerdì è in corso. Lunedì e martedì non hanno pasti registrati.</span>
+<div style="display: flex; flex-wrap: wrap; gap: 4px 14px; font-size: 12px; color: #56605A"><span>Venerdì è in corso</span><span style="display: flex; align-items: center; gap: 4px"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#1F5A90" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M6 7v10M18 7v10M3 10v4M21 10v4M6 12h12"></path></svg>Forza</span><span style="display: flex; align-items: center; gap: 4px"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#1F5A90" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 18a3 3 0 1 0 0-6 3 3 0 0 0 0 6zM19 18a3 3 0 1 0 0-6 3 3 0 0 0 0 6zM5 15l4-7h5l3 7"></path></svg>Cyclette</span></div>
 </section>
 
 <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; flex: none">
-<div style="padding: 14px 16px; background: #FFFFFF; border-radius: 18px; display: flex; flex-direction: column; gap: 2px"><span style="font-size: 12px; font-weight: 700; color: #56605A">Media kcal</span><span style="font-size: 20px; font-weight: 800">1.623</span><span style="font-size: 11px; font-weight: 600; color: #56605A">giorni completi registrati</span></div>
-<div style="padding: 14px 16px; background: #FFFFFF; border-radius: 18px; display: flex; flex-direction: column; gap: 2px"><span style="font-size: 12px; font-weight: 700; color: #56605A">Media proteine</span><span style="font-size: 20px; font-weight: 800">85,9 g</span><span style="font-size: 11px; font-weight: 600; color: #56605A">obiettivo 135 g</span></div>
+<div style="padding: 14px 16px; background: #FFFFFF; border-radius: 18px; display: flex; flex-direction: column; gap: 2px"><span style="font-size: 12px; font-weight: 700; color: #56605A">Media kcal</span><span style="font-size: 20px; font-weight: 800">2.134</span><span style="font-size: 11px; font-weight: 600; color: #56605A">lun–gio · 4 giorni completi</span></div>
+<div style="padding: 14px 16px; background: #FFFFFF; border-radius: 18px; display: flex; flex-direction: column; gap: 2px"><span style="font-size: 12px; font-weight: 700; color: #56605A">Media proteine</span><span style="font-size: 20px; font-weight: 800">129,3 g</span><span style="font-size: 11px; font-weight: 600; color: #56605A">obiettivo 135 g</span></div>
 </div>
 
+<section aria-label="Ripartizione delle calorie" style="padding: 14px 16px; background: #FFFFFF; border-radius: 18px; display: flex; flex-direction: column; gap: 8px; flex: none"><div style="display: flex; justify-content: space-between; align-items: baseline"><span style="font-size: 12px; font-weight: 700; color: #56605A">Da dove vengono le calorie</span><span style="font-size: 11px; color: #56605A">media lun–gio</span></div><div role="img" aria-label="Proteine 25%, carboidrati 47%, grassi 28%" style="display: flex; height: 14px; border-radius: 7px; overflow: hidden; gap: 2px"><div style="width: 25%; background: #0A8FA6"></div><div style="width: 47%; background: #C98A1B"></div><div style="width: 28%; background: #8A5A9E"></div></div><div style="display: flex; justify-content: space-between; font-size: 12px; color: #3C453F"><span><span style="display: inline-block; width: 8px; height: 8px; border-radius: 2px; background: #0A8FA6; margin-right: 4px"></span>Proteine <b>25%</b></span><span><span style="display: inline-block; width: 8px; height: 8px; border-radius: 2px; background: #C98A1B; margin-right: 4px"></span>Carboidrati <b>47%</b></span><span><span style="display: inline-block; width: 8px; height: 8px; border-radius: 2px; background: #8A5A9E; margin-right: 4px"></span>Grassi <b>28%</b></span></div></section>
+<section aria-label="Proteine per giorno" style="padding: 18px 16px; background: #FFFFFF; border-radius: 24px; display: flex; flex-direction: column; gap: 10px; flex: none"><div style="display: flex; justify-content: space-between; align-items: baseline"><span style="font-size: 15px; font-weight: 800">Proteine</span><span style="font-size: 12px; font-weight: 600; color: #56605A">g al giorno · linea = obiettivo</span></div><svg viewBox="0 0 326 150" width="100%" role="img" aria-label="Proteine al giorno rispetto all’obiettivo di 135 g" style="display: block"><line x1="4" x2="322" y1="35.0" y2="35.0" stroke="#9AA39C" stroke-width="1.5" stroke-dasharray="4 3"></line><text x="322" y="31.0" font-size="10" font-weight="700" text-anchor="end" fill="#56605A" font-family="Manrope, system-ui, sans-serif">135 g</text><text x="26.7" y="130" font-size="11" font-weight="700" text-anchor="middle" fill="#56605A" font-family="Manrope, system-ui, sans-serif">L</text><rect x="10.4" y="37.9" width="32.7" height="78.1" rx="4" fill="#0A8FA6" fill-opacity="1"><title>130,1 g</title></rect><text x="26.7" y="144" font-size="10" font-weight="800" text-anchor="middle" fill="#17201B" font-family="Manrope, system-ui, sans-serif">130</text><text x="72.1" y="130" font-size="11" font-weight="700" text-anchor="middle" fill="#56605A" font-family="Manrope, system-ui, sans-serif">M</text><rect x="55.8" y="47.6" width="32.7" height="68.4" rx="4" fill="#0A8FA6" fill-opacity="1"><title>114,0 g</title></rect><text x="72.1" y="144" font-size="10" font-weight="800" text-anchor="middle" fill="#17201B" font-family="Manrope, system-ui, sans-serif">114</text><text x="117.6" y="130" font-size="11" font-weight="700" text-anchor="middle" fill="#56605A" font-family="Manrope, system-ui, sans-serif">M</text><rect x="101.2" y="44.5" width="32.7" height="71.5" rx="4" fill="#0A8FA6" fill-opacity="1"><title>119,1 g</title></rect><text x="117.6" y="144" font-size="10" font-weight="800" text-anchor="middle" fill="#17201B" font-family="Manrope, system-ui, sans-serif">119</text><text x="163.0" y="130" font-size="11" font-weight="700" text-anchor="middle" fill="#56605A" font-family="Manrope, system-ui, sans-serif">G</text><rect x="146.6" y="23.7" width="32.7" height="92.3" rx="4" fill="#0A8FA6" fill-opacity="1"><title>153,8 g</title></rect><text x="163.0" y="144" font-size="10" font-weight="800" text-anchor="middle" fill="#17201B" font-family="Manrope, system-ui, sans-serif">154</text><text x="208.4" y="130" font-size="11" font-weight="700" text-anchor="middle" fill="#56605A" font-family="Manrope, system-ui, sans-serif">V</text><rect x="192.1" y="97.3" width="32.7" height="18.7" rx="4" fill="#0A8FA6" fill-opacity="0.45"><title>31,2 g</title></rect><text x="208.4" y="144" font-size="10" font-weight="800" text-anchor="middle" fill="#17201B" font-family="Manrope, system-ui, sans-serif">31</text><text x="253.9" y="130" font-size="11" font-weight="700" text-anchor="middle" fill="#56605A" font-family="Manrope, system-ui, sans-serif">S</text><rect x="237.5" y="113.0" width="32.7" height="3" rx="1.5" fill="#E8EBE5"></rect><text x="299.3" y="130" font-size="11" font-weight="700" text-anchor="middle" fill="#56605A" font-family="Manrope, system-ui, sans-serif">D</text><rect x="282.9" y="113.0" width="32.7" height="3" rx="1.5" fill="#E8EBE5"></rect></svg><span style="font-size: 12px; color: #56605A">Obiettivo raggiunto giovedì · venerdì in corso</span></section>
 <section aria-label="Costanza" style="padding: 6px 20px; background: #FFFFFF; border-radius: 24px; display: flex; flex-direction: column; flex: none">
 <div style="padding: 12px 0 6px"><span style="font-size: 15px; font-weight: 800">Costanza</span></div>
 <sc-for list="{{habits}}" as="h" hint-placeholder-count="4">
@@ -55,6 +58,63 @@ input{font-family:inherit}
 <span style="font-size: 17px; font-weight: 800; color: {{h.color}}; white-space: nowrap; font-variant-numeric: tabular-nums">{{h.value}}</span>
 </div>
 </sc-for>
+</section>
+
+<section aria-label="Allenamenti" style="padding: 6px 20px 8px; background: #FFFFFF; border-radius: 24px; display: flex; flex-direction: column; flex: none">
+<div style="padding: 12px 0 8px; display: flex; flex-direction: column; gap: 6px">
+<span style="font-size: 15px; font-weight: 800">Allenamenti</span>
+<div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px">
+<div style="display: flex; flex-direction: column"><span style="font-size: 18px; font-weight: 800">3</span><span style="font-size: 11px; font-weight: 600; color: #56605A">sessioni</span></div>
+<div style="display: flex; flex-direction: column"><span style="font-size: 18px; font-weight: 800">2 h 08</span><span style="font-size: 11px; font-weight: 600; color: #56605A">tempo totale</span></div>
+<div style="display: flex; flex-direction: column"><span style="font-size: 18px; font-weight: 800">253 kcal</span><span style="font-size: 11px; font-weight: 600; color: #56605A">su 1 sessione con dato</span></div>
+</div>
+</div>
+<sc-for list="{{workouts}}" as="w" hint-placeholder-count="3">
+<div style="display: flex; gap: 12px; align-items: center; min-height: 58px; border-top: 1px solid #ECEEEA">
+<span style="width: 36px; height: 36px; flex: none; border-radius: 12px; background: #E4EEF7; display: flex; align-items: center; justify-content: center"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1F5A90" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="{{w.icon}}"></path></svg></span>
+<div style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px">
+<span style="font-size: 14px; font-weight: 700; line-height: 1.3">{{w.title}}</span>
+<span style="font-size: 12px; color: #56605A">{{w.meta}}</span>
+</div>
+<span style="font-size: 11px; font-weight: 700; padding: 3px 8px; border-radius: 999px; background: #ECEEEA; color: #3C453F; white-space: nowrap">{{w.source}}</span>
+</div>
+</sc-for>
+</section>
+
+<section aria-label="Passi" style="padding: 18px 16px; background: #FFFFFF; border-radius: 24px; display: flex; flex-direction: column; gap: 12px; overflow: hidden; flex: none">
+<div style="display: flex; justify-content: space-between; align-items: baseline"><span style="font-size: 15px; font-weight: 800">Passi</span><span style="font-size: 11px; font-weight: 700; padding: 3px 8px; border-radius: 999px; background: #ECEEEA; color: #3C453F">Fitbit</span></div>
+<div style="position: relative; display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 6px">
+<div style="position: absolute; left: 0; right: 0; top: {{stepsLine}}; border-top: 1.5px dashed #9AA39C"></div>
+<span style="position: absolute; right: 0; top: 0; transform: translateY(-100%); font-size: 10px; font-weight: 700; color: #56605A; background: #FFFFFF; padding: 0 2px">obiettivo 8.000</span>
+<sc-for list="{{steps}}" as="d" hint-placeholder-count="7">
+<div style="min-width: 0; display: flex; flex-direction: column; align-items: center; gap: 5px">
+<div style="width: 100%; height: 100px; display: flex; align-items: flex-end"><div style="width: 100%; border-radius: 6px 6px 2px 2px; height: {{d.h}}; background: {{d.color}}"></div></div>
+<span style="font-size: 12px; font-weight: 700; color: #56605A">{{d.l}}</span>
+<span style="height: 14px; font-size: 10px; font-weight: 800; color: #3C453F; font-variant-numeric: tabular-nums">{{d.v}}</span>
+</div>
+</sc-for>
+</div>
+<div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px">
+<div style="display: flex; flex-direction: column"><span style="font-size: 18px; font-weight: 800">5.462</span><span style="font-size: 11px; font-weight: 600; color: #56605A">media lun–gio</span></div>
+<div style="display: flex; flex-direction: column"><span style="font-size: 18px; font-weight: 800">8.182</span><span style="font-size: 11px; font-weight: 600; color: #56605A">giorno migliore · martedì</span></div>
+</div>
+</section>
+
+<section aria-label="Sonno" style="padding: 18px 16px; background: #FFFFFF; border-radius: 24px; display: flex; flex-direction: column; gap: 12px; overflow: hidden; flex: none">
+<div style="display: flex; justify-content: space-between; align-items: baseline"><span style="font-size: 15px; font-weight: 800">Sonno</span><span style="font-size: 11px; font-weight: 700; padding: 3px 8px; border-radius: 999px; background: #ECEEEA; color: #3C453F">Fitbit</span></div>
+<svg viewBox="0 0 326 170" width="100%" role="img" aria-label="Orari di sonno per notte, dall’addormentamento al risveglio" style="display: block"><line x1="34" x2="322" y1="17.8" y2="17.8" stroke="#E8EBE5" stroke-width="1"></line><text x="29" y="20.8" font-size="9" text-anchor="end" fill="#56605A" font-family="Manrope, system-ui, sans-serif">23:00</text><line x1="34" x2="322" y1="41.5" y2="41.5" stroke="#E8EBE5" stroke-width="1"></line><text x="29" y="44.5" font-size="9" text-anchor="end" fill="#56605A" font-family="Manrope, system-ui, sans-serif">01:00</text><line x1="34" x2="322" y1="65.1" y2="65.1" stroke="#E8EBE5" stroke-width="1"></line><text x="29" y="68.1" font-size="9" text-anchor="end" fill="#56605A" font-family="Manrope, system-ui, sans-serif">03:00</text><line x1="34" x2="322" y1="88.7" y2="88.7" stroke="#E8EBE5" stroke-width="1"></line><text x="29" y="91.7" font-size="9" text-anchor="end" fill="#56605A" font-family="Manrope, system-ui, sans-serif">05:00</text><line x1="34" x2="322" y1="112.4" y2="112.4" stroke="#E8EBE5" stroke-width="1"></line><text x="29" y="115.4" font-size="9" text-anchor="end" fill="#56605A" font-family="Manrope, system-ui, sans-serif">07:00</text><text x="54.6" y="150" font-size="11" font-weight="700" text-anchor="middle" fill="#56605A" font-family="Manrope, system-ui, sans-serif">L</text><rect x="42.2" y="25.5" width="24.7" height="93.0" rx="4" fill="#3A4D8F"><title>23:39 → 07:31 · 7 h 46</title></rect><text x="54.6" y="164" font-size="10" font-weight="800" text-anchor="middle" fill="#17201B" font-family="Manrope, system-ui, sans-serif">7:46</text><text x="95.7" y="150" font-size="11" font-weight="700" text-anchor="middle" fill="#56605A" font-family="Manrope, system-ui, sans-serif">M</text><rect x="83.4" y="25.7" width="24.7" height="68.7" rx="4" fill="#E0A63E"><title>23:40 → 05:29 · 5 h 41</title></rect><text x="95.7" y="164" font-size="10" font-weight="800" text-anchor="middle" fill="#17201B" font-family="Manrope, system-ui, sans-serif">5:41</text><text x="136.9" y="150" font-size="11" font-weight="700" text-anchor="middle" fill="#56605A" font-family="Manrope, system-ui, sans-serif">M</text><rect x="124.5" y="28.1" width="24.7" height="91.2" rx="4" fill="#3A4D8F"><title>23:52 → 07:35 · 6 h 53</title></rect><text x="136.9" y="164" font-size="10" font-weight="800" text-anchor="middle" fill="#17201B" font-family="Manrope, system-ui, sans-serif">6:53</text><text x="178.0" y="150" font-size="11" font-weight="700" text-anchor="middle" fill="#56605A" font-family="Manrope, system-ui, sans-serif">G</text><rect x="165.7" y="41.7" width="24.7" height="77.8" rx="4" fill="#3A4D8F"><title>01:01 → 07:36 · 6 h 24</title></rect><text x="178.0" y="164" font-size="10" font-weight="800" text-anchor="middle" fill="#17201B" font-family="Manrope, system-ui, sans-serif">6:24</text><text x="219.1" y="150" font-size="11" font-weight="700" text-anchor="middle" fill="#56605A" font-family="Manrope, system-ui, sans-serif">V</text><rect x="206.8" y="31.6" width="24.7" height="87.7" rx="4" fill="#3A4D8F"><title>00:10 → 07:35 · 7 h 15</title></rect><text x="219.1" y="164" font-size="10" font-weight="800" text-anchor="middle" fill="#17201B" font-family="Manrope, system-ui, sans-serif">7:15</text><text x="260.3" y="150" font-size="11" font-weight="700" text-anchor="middle" fill="#56605A" font-family="Manrope, system-ui, sans-serif">S</text><text x="301.4" y="150" font-size="11" font-weight="700" text-anchor="middle" fill="#56605A" font-family="Manrope, system-ui, sans-serif">D</text></svg>
+<span style="align-self: flex-start; font-size: 12px; font-weight: 800; color: #8F4310; background: #FFF7F0; border: 1px solid #EDC3A3; padding: 3px 9px; border-radius: 999px">martedì · più corta · 5 h 41 min</span>
+<div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px">
+<div style="display: flex; flex-direction: column"><span style="font-size: 18px; font-weight: 800">6 h 48</span><span style="font-size: 11px; font-weight: 600; color: #56605A">media a notte</span></div>
+<div style="display: flex; flex-direction: column"><span style="font-size: 18px; font-weight: 800">00:04</span><span style="font-size: 11px; font-weight: 600; color: #56605A">addormentamento</span></div>
+<div style="display: flex; flex-direction: column"><span style="font-size: 18px; font-weight: 800">07:09</span><span style="font-size: 11px; font-weight: 600; color: #56605A">risveglio</span></div>
+</div>
+</section>
+
+<section aria-label="FC a riposo" style="padding: 16px 20px; background: #FFFFFF; border-radius: 24px; display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 12px; flex: none">
+<div style="display: flex; flex-direction: column; gap: 2px"><span style="font-size: 15px; font-weight: 800">FC a riposo</span><span style="font-size: 12px; color: #56605A"><span style="font-weight: 800; color: #2F6B47">▼ 5 bpm</span> sulla settimana scorsa (63)</span></div>
+<span style="font-size: 24px; font-weight: 800; white-space: nowrap">59 <span style="font-size: 13px; font-weight: 700; color: #56605A">bpm</span></span>
+<div style="flex-basis: 100%"><svg viewBox="0 0 318 70" width="100%" role="img" aria-label="FC a riposo dal 10 ottobre al 13 novembre, da 62 a 58 bpm" style="display: block"><polyline points="4.0,26.3 13.1,18.9 22.2,22.6 31.4,26.3 40.5,30.0 49.6,30.0 58.7,30.0 67.8,26.3 76.9,26.3 86.1,30.0 95.2,30.0 104.3,30.0 113.4,30.0 122.5,30.0 131.6,26.3 140.8,22.6 149.9,22.6 159.0,26.3 168.1,18.9 177.2,22.6 186.4,18.9 195.5,18.9 204.6,11.4 213.7,18.9 222.8,15.1 231.9,22.6 241.1,22.6 250.2,15.1 259.3,26.3 268.4,30.0 277.5,33.7 286.6,41.1 295.8,37.4 304.9,41.1 314.0,41.1" fill="none" stroke="#B4412A" stroke-width="2" stroke-linejoin="round"></polyline><circle cx="4.0" cy="26.3" r="5" fill="transparent"><title>10/10: 62 bpm</title></circle><circle cx="13.1" cy="18.9" r="5" fill="transparent"><title>11/10: 64 bpm</title></circle><circle cx="22.2" cy="22.6" r="5" fill="transparent"><title>12/10: 63 bpm</title></circle><circle cx="31.4" cy="26.3" r="5" fill="transparent"><title>13/10: 62 bpm</title></circle><circle cx="40.5" cy="30.0" r="5" fill="transparent"><title>14/10: 61 bpm</title></circle><circle cx="49.6" cy="30.0" r="5" fill="transparent"><title>15/10: 61 bpm</title></circle><circle cx="58.7" cy="30.0" r="5" fill="transparent"><title>16/10: 61 bpm</title></circle><circle cx="67.8" cy="26.3" r="5" fill="transparent"><title>17/10: 62 bpm</title></circle><circle cx="76.9" cy="26.3" r="5" fill="transparent"><title>18/10: 62 bpm</title></circle><circle cx="86.1" cy="30.0" r="5" fill="transparent"><title>19/10: 61 bpm</title></circle><circle cx="95.2" cy="30.0" r="5" fill="transparent"><title>20/10: 61 bpm</title></circle><circle cx="104.3" cy="30.0" r="5" fill="transparent"><title>21/10: 61 bpm</title></circle><circle cx="113.4" cy="30.0" r="5" fill="transparent"><title>22/10: 61 bpm</title></circle><circle cx="122.5" cy="30.0" r="5" fill="transparent"><title>23/10: 61 bpm</title></circle><circle cx="131.6" cy="26.3" r="5" fill="transparent"><title>24/10: 62 bpm</title></circle><circle cx="140.8" cy="22.6" r="5" fill="transparent"><title>25/10: 63 bpm</title></circle><circle cx="149.9" cy="22.6" r="5" fill="transparent"><title>26/10: 63 bpm</title></circle><circle cx="159.0" cy="26.3" r="5" fill="transparent"><title>27/10: 62 bpm</title></circle><circle cx="168.1" cy="18.9" r="5" fill="transparent"><title>28/10: 64 bpm</title></circle><circle cx="177.2" cy="22.6" r="5" fill="transparent"><title>29/10: 63 bpm</title></circle><circle cx="186.4" cy="18.9" r="5" fill="transparent"><title>30/10: 64 bpm</title></circle><circle cx="195.5" cy="18.9" r="5" fill="transparent"><title>31/10: 64 bpm</title></circle><circle cx="204.6" cy="11.4" r="5" fill="transparent"><title>01/11: 66 bpm</title></circle><circle cx="213.7" cy="18.9" r="5" fill="transparent"><title>02/11: 64 bpm</title></circle><circle cx="222.8" cy="15.1" r="5" fill="transparent"><title>03/11: 65 bpm</title></circle><circle cx="231.9" cy="22.6" r="5" fill="transparent"><title>04/11: 63 bpm</title></circle><circle cx="241.1" cy="22.6" r="5" fill="transparent"><title>05/11: 63 bpm</title></circle><circle cx="250.2" cy="15.1" r="5" fill="transparent"><title>06/11: 65 bpm</title></circle><circle cx="259.3" cy="26.3" r="5" fill="transparent"><title>07/11: 62 bpm</title></circle><circle cx="268.4" cy="30.0" r="5" fill="transparent"><title>08/11: 61 bpm</title></circle><circle cx="277.5" cy="33.7" r="5" fill="transparent"><title>09/11: 60 bpm</title></circle><circle cx="286.6" cy="41.1" r="5" fill="transparent"><title>10/11: 58 bpm</title></circle><circle cx="295.8" cy="37.4" r="5" fill="transparent"><title>11/11: 59 bpm</title></circle><circle cx="304.9" cy="41.1" r="5" fill="transparent"><title>12/11: 58 bpm</title></circle><circle cx="314.0" cy="41.1" r="5" fill="transparent"><title>13/11: 58 bpm</title></circle><circle cx="314.0" cy="41.1" r="4" fill="#B4412A" stroke="#FFFFFF" stroke-width="2"></circle><text x="4" y="68" font-size="10" fill="#56605A" font-family="Manrope, system-ui, sans-serif">10 ott</text><text x="314" y="68" font-size="10" text-anchor="end" fill="#56605A" font-family="Manrope, system-ui, sans-serif">oggi</text></svg></div>
 </section>
 
 <section aria-label="Peso" style="padding: 16px 20px; background: #FFFFFF; border-radius: 24px; display: flex; flex-direction: column; gap: 10px; flex: none">
@@ -81,27 +141,38 @@ input{font-family:inherit}
 <script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
 class Component extends DCLogic {
   renderVals() {
-    const data = [null, null, 790, 2455, 574, null, null];
-    const today = 4;
     const labels = ['L','M','M','G','V','S','D'];
-    const scale = 2600, goal = 2200, h = 130;
-    const days = labels.map((l, i) => {
+    const today = 4;
+    const it = (n) => n.toLocaleString('it-IT');
+    const bars = (data, scale, h, fmt, colorFn) => labels.map((l, i) => {
       const v = data[i];
-      return {
-        l: l,
-        kcal: v === null ? '' : v.toLocaleString('it-IT'),
-        h: v === null ? '4px' : Math.max(4, Math.round(v / scale * h)) + 'px',
-        color: v === null ? '#E8EBE5' : (i === today ? '#8DB89D' : '#2F6B47')
-      };
+      return { l: l, v: v === null ? '' : fmt(v), h: v === null ? '4px' : Math.max(4, Math.round(v / scale * h)) + 'px', color: v === null ? '#E8EBE5' : colorFn(i, v) };
     });
+    const kcalData = [2055, 2389, 2049, 2043, 567, null, null];
+    const train = ['lift', 'bike', 'lift', '', '', '', ''];
+    const kcal = bars(kcalData, 2600, 120, it, (i) => (i === today ? '#8DB89D' : '#2F6B47')).map((d, i) => Object.assign(d, { lift: train[i] === 'lift', bike: train[i] === 'bike' }));
+    const steps = bars([4584, 8182, 4345, 4736, 1879, null, null], 9000, 100, it, (i) => (i === today ? '#B7CDB9' : '#4E8A63'));
+    const sleepMin = [466, 341, 413, 384, 435, null, null];
+    const hm = (m) => Math.floor(m / 60) + ':' + String(m % 60).padStart(2, '0');
+    const sleep = bars(sleepMin, 540, 100, hm, (i, v) => (v === 341 ? '#E0A63E' : '#3A4D8F'));
+    const LIFT = 'M6 7v10M18 7v10M3 10v4M21 10v4M6 12h12';
+    const BIKE = 'M5 18a3 3 0 1 0 0-6 3 3 0 0 0 0 6zM19 18a3 3 0 1 0 0-6 3 3 0 0 0 0 6zM5 15l4-7h5l3 7M9 8l3 7h2M13 5h2';
     return {
-      days: days,
-      lineTop: Math.round(h * (1 - goal / scale)) + 'px',
+      kcal: kcal,
+      kcalLine: Math.round(120 * (1 - 2200 / 2600)) + 'px',
+      steps: steps,
+      stepsLine: Math.round(100 * (1 - 8000 / 9000)) + 'px',
+      sleep: sleep,
       habits: [
-        { label: 'Giorni registrati di fila', note: 'mercoledì, giovedì, venerdì', value: '3', color: '#2F6B47' },
-        { label: 'Proteine a target', note: 'giovedì 122 g, quasi', value: '0/2', color: '#17201B' },
-        { label: 'Acqua a target', note: 'giovedì 1,75 L su 2,5', value: '0/2', color: '#17201B' },
-        { label: 'Pasti come da piano', note: 'registrati con un tocco · 0 saltati', value: '1', color: '#17201B' }
+        { label: 'Giorni registrati', note: 'tutti i giorni da lunedì', value: '5/5', color: '#2F6B47' },
+        { label: 'Proteine a target', note: 'giovedì 154 g · lunedì 130 g, quasi', value: '1/4', color: '#17201B' },
+        { label: 'Fibre a target', note: 'martedì 29 g, per poco', value: '3/4', color: '#17201B' },
+        { label: 'Acqua a target', note: 'martedì 2,15 L su 2,5', value: '0/4', color: '#17201B' }
+      ],
+      workouts: [
+        { icon: LIFT, title: 'Full Body A — Squat + Panca', meta: 'Lun 9 · Forza · 51 min · FC media 123', source: 'Hevy' },
+        { icon: BIKE, title: 'Cyclette', meta: 'Mar 10 · 27 min · 11,7 km · 253 kcal · FC media 135', source: 'MERACH' },
+        { icon: LIFT, title: 'Full Body B — Catena posteriore + Schiena', meta: 'Mer 11 · Forza · 50 min · FC media 108', source: 'Hevy' }
       ]
     };
   }
