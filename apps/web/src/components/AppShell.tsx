@@ -7,10 +7,11 @@ import { PlanIcon, PlusIcon, TimelineIcon, TodayIcon, WeekIcon } from "./icons";
 import { Logo } from "./Logo";
 import { ProfileLink } from "./ProfileLink";
 
-/** Sidebar from 800 px up (docs/design § Navigation). Salute joins after Alimentazione with Andamento › Salute. */
+/** Sidebar from 800 px up (docs/design § Navigation): Andamento's two pages are listed on their own. */
 const SIDEBAR = [
   { path: "/", label: t.nav.today },
   { path: "/andamento", label: t.nav.nutrition },
+  { path: "/andamento/salute", label: t.nav.health },
   { path: "/piano", label: t.nav.plan },
   { path: "/timeline", label: t.nav.timeline },
 ] as const;
@@ -66,7 +67,7 @@ export function AppShell({ user, onAdd, children }: Props) {
           <span>{t.appName}</span>
         </div>
         {SIDEBAR.map(({ path, label }) => (
-          <Link key={path} href={path} className="sidebar-link" aria-current={section === path ? "page" : undefined}>
+          <Link key={path} href={path} className="sidebar-link" aria-current={(path.startsWith("/andamento") ? location === path : section === path) ? "page" : undefined}>
             {label}
           </Link>
         ))}

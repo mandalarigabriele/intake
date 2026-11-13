@@ -6,6 +6,7 @@ import type {
   HealthImportResult,
   HealthSettings,
   HealthStatus,
+  HealthTrends,
   InsightResponse,
   LogWeightRequest,
   Meal,
@@ -363,6 +364,15 @@ export function useSetHealthSettings() {
     onError: (_error, _settings, context) => {
       if (context?.previous) queryClient.setQueryData(healthStatusKey, context.previous);
     },
+  });
+}
+
+/** Andamento › Salute: the last 7, 30 or 90 days of Apple Health data (SQLite only, no Nutrition calls). */
+export function useHealthTrends(period: 7 | 30 | 90) {
+  return useQuery({
+    queryKey: ["health", "trends", period],
+    queryFn: () => apiFetch<HealthTrends>(`/api/health/trends?days=${period}`),
+    placeholderData: keepPreviousData,
   });
 }
 

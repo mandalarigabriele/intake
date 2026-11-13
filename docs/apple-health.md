@@ -89,6 +89,9 @@ Mockups `AndamentoSalute` (iPhone: tabs) and `SaluteDesktop` (desktop / iPad: th
 - **Cuore**: average and minimum resting heart rate, difference from the previous period of the same length, line over time with
   the average, average workout heart rate by type.
 - Today's "Attività e riposo" card links here ("Vedi andamento →").
+- API: `GET /api/health/trends?days=7|30|90` returns one entry per day (steps, distance, resting HR, the night as minutes from
+  midnight of the wake-up day, negative for the evening before) and the period statistics. Workouts come from `GET /api/workouts`
+  for the same range (at most 92 days), so Hevy sessions are included.
 
 ## Profilo
 

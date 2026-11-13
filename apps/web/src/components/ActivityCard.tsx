@@ -1,4 +1,5 @@
 import type { HealthDay } from "@intake/shared";
+import { Link } from "wouter";
 import { useHealthDay } from "../api/queries";
 import { formatClock, formatDuration, formatDurationShort, formatKcal, formatOneDecimal, formatShortDate, formatWeekdayDay, localIsoDate } from "../lib/format";
 import { t } from "../lib/strings";
@@ -225,11 +226,20 @@ export function ActivityCard({ date }: { date: string }) {
           {day.restingHr !== null && <HeartRow day={day} />}
         </>
       )}
-      {updated && (
-        <span className="activity-updated" data-stale={updated.stale || undefined}>
-          {updated.text}
-        </span>
-      )}
+      <div className="activity-foot">
+        {updated ? (
+          <span className="activity-updated" data-stale={updated.stale || undefined}>
+            {updated.text}
+          </span>
+        ) : (
+          <span />
+        )}
+        {hasData && (
+          <Link href="/andamento/salute" className="activity-more">
+            {t.activity.seeTrends}
+          </Link>
+        )}
+      </div>
     </section>
   );
 }

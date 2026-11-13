@@ -1,4 +1,4 @@
-import type { HealthDay, HealthImportResult, HealthSettings, HealthStatus } from "@intake/shared";
+import type { HealthDay, HealthImportResult, HealthSettings, HealthStatus, HealthTrends } from "@intake/shared";
 import type { FastifyPluginAsync, preHandlerHookHandler } from "fastify";
 import { z } from "zod";
 import type { HealthStore } from "../db/healthStore.js";
@@ -7,6 +7,7 @@ import { ParseError } from "../parsers/common.js";
 import { parseHealthExport } from "../parsers/healthAutoExport.js";
 import { healthDay } from "../services/healthDay.js";
 import { healthStatus, importPreview, isEmptyExport } from "../services/healthImport.js";
+import { healthTrends, TREND_PERIODS } from "../services/healthTrends.js";
 import { isValidDate } from "../services/dayView.js";
 
 export interface AppleHealthRoutesOptions {
@@ -36,6 +37,14 @@ export const appleHealthRoutes: FastifyPluginAsync<AppleHealthRoutesOptions> = a
     const date = request.params.date === "today" ? today : request.params.date;
     if (!isValidDate(date)) return reply.code(400).send({ error: "date must be YYYY-MM-DD or today" });
     return healthDay(store, date, today);
+  });
+
+  // Andamento › Salute: the last 7, 30 or 90 days ending today
+  app.get<{ Querystring: { days?: string } }>("/health/trends", async (request, reply): Promise<HealthTrends | void> => {
+    const period = Number(request.query.days ?? 7);
+    if (!TREND_PERIODS.includes(period as 7)) return reply.code(400).send({ error: "days must be 7, 30 or 90" });
+    const today = (await api.clock()).localDate;
+    return healthTrends(store, today, period as 7 | 30 | 90);
   });
 
   // ?commit=true writes the data; without it the same request only returns the preview
