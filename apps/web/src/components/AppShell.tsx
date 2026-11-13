@@ -5,17 +5,31 @@ import { t } from "../lib/strings";
 import { trackViewportHeight } from "../lib/viewport";
 import { PlanIcon, PlusIcon, TimelineIcon, TodayIcon, WeekIcon } from "./icons";
 import { Logo } from "./Logo";
-import { ProfileMenu } from "./ProfileMenu";
+import { ProfileLink } from "./ProfileLink";
 
-export const SECTIONS = [
+/** Sidebar from 800 px up (docs/design § Navigation). Salute joins after Alimentazione with Andamento › Salute. */
+const SIDEBAR = [
+  { path: "/", label: t.nav.today },
+  { path: "/andamento", label: t.nav.nutrition },
+  { path: "/piano", label: t.nav.plan },
+  { path: "/timeline", label: t.nav.timeline },
+] as const;
+
+/** Tab bar on phones: the round "+" sits in the middle slot. */
+const TABS = [
   { path: "/", label: t.nav.today, Icon: TodayIcon },
-  { path: "/settimana", label: t.nav.week, Icon: WeekIcon },
+  { path: "/andamento", label: t.nav.trends, Icon: WeekIcon },
+  "+",
   { path: "/piano", label: t.nav.plan, Icon: PlanIcon },
   { path: "/timeline", label: t.nav.timeline, Icon: TimelineIcon },
 ] as const;
 
-/** Tab bar order on phones: the round "+" sits in the middle slot (docs/design/DESIGN.md). */
-const TAB_ORDER = ["/", "/settimana", "+", "/piano", "/timeline"] as const;
+/** The section a location belongs to: meal screens sit under Timeline, Andamento covers its sub-pages. */
+function sectionOf(location: string): string {
+  if (location.startsWith("/pasto/")) return "/timeline";
+  if (location.startsWith("/andamento")) return "/andamento";
+  return location;
+}
 
 interface Props {
   user: User;
@@ -31,8 +45,9 @@ export function AppShell({ user, onAdd, children }: Props) {
   const [location] = useLocation();
   const status = useNutritionStatus(true);
 
-  // Meal detail, edit and Apple Salute are pushed screens without the bottom tab bar (docs/design)
-  const pushed = location.startsWith("/pasto/") || location === "/salute";
+  // Meal detail, edit, Profilo and Apple Salute are pushed screens without the bottom tab bar (docs/design)
+  const pushed = location.startsWith("/pasto/") || location.startsWith("/profilo");
+  const section = sectionOf(location);
   const main = useRef<HTMLElement>(null);
 
   // The content area is the scroll container: start each screen at the top
@@ -50,8 +65,8 @@ export function AppShell({ user, onAdd, children }: Props) {
           <Logo size={30} />
           <span>{t.appName}</span>
         </div>
-        {SECTIONS.map(({ path, label }) => (
-          <Link key={path} href={path} className="sidebar-link" aria-current={location === path || (path === "/timeline" && location.startsWith("/pasto/")) ? "page" : undefined}>
+        {SIDEBAR.map(({ path, label }) => (
+          <Link key={path} href={path} className="sidebar-link" aria-current={section === path ? "page" : undefined}>
             {label}
           </Link>
         ))}
@@ -60,7 +75,7 @@ export function AppShell({ user, onAdd, children }: Props) {
         </button>
         <div className="sidebar-spacer" />
         {status.data?.connected && <span className="sidebar-status">{t.nav.nutritionConnected}</span>}
-        <ProfileMenu user={user} variant="row" />
+        <ProfileLink user={user} variant="row" />
       </nav>
 
       <main className="shell-main" ref={main}>
@@ -68,7 +83,7 @@ export function AppShell({ user, onAdd, children }: Props) {
       </main>
 
       <nav className="tabbar" aria-label={t.nav.label}>
-        {TAB_ORDER.map((slot) => {
+        {TABS.map((slot) => {
           if (slot === "+") {
             return (
               <button key="add" type="button" className="tab-add" aria-label={t.nav.add} onClick={onAdd}>
@@ -76,9 +91,9 @@ export function AppShell({ user, onAdd, children }: Props) {
               </button>
             );
           }
-          const { path, label, Icon } = SECTIONS.find((section) => section.path === slot)!;
+          const { path, label, Icon } = slot;
           return (
-            <Link key={path} href={path} className="tab" aria-current={location === path ? "page" : undefined}>
+            <Link key={path} href={path} className="tab" aria-current={section === path ? "page" : undefined}>
               <Icon />
               <span>{label}</span>
             </Link>

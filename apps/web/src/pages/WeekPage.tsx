@@ -1,7 +1,7 @@
 import type { WeekView } from "@intake/shared";
 import { useState } from "react";
 import { Link } from "wouter";
-import { useLogWeight, useWeek, useWorkouts } from "../api/queries";
+import { useWeek, useWorkouts } from "../api/queries";
 import { addDays } from "../lib/dates";
 import { formatGrams, formatKcal, formatShortDate, formatWater, formatWeekday } from "../lib/format";
 import { t } from "../lib/strings";
@@ -114,59 +114,6 @@ function ConsistencyCard({ week }: { week: WeekView }) {
   );
 }
 
-function WeightCard({ week }: { week: WeekView }) {
-  const log = useLogWeight();
-  const [value, setValue] = useState("");
-  const entries = week.weight.entries;
-  const latest = entries.at(-1);
-  const previous = entries.at(-2);
-  const delta = latest && previous ? latest.weight - previous.weight : null;
-  const parsed = Number(value.replace(",", "."));
-  const valid = value.trim() !== "" && Number.isFinite(parsed) && parsed >= 20 && parsed <= 400;
-
-  return (
-    <section className="card weight-card" aria-label={t.week.weight}>
-      <div className="week-chart-head">
-        <h2>{t.week.weight}</h2>
-        <span className="muted">{t.week.weightCadence}</span>
-      </div>
-      {latest ? (
-        <div className="weight-latest">
-          <strong className="stat-value">
-            {formatGrams(latest.weight)} <span>{week.weight.unit}</span>
-          </strong>
-          <span className="muted">
-            {delta !== null
-              ? t.week.change(`${delta > 0 ? "+" : delta < 0 ? "−" : "±"}${formatGrams(Math.abs(delta))}`, formatShortDate(previous!.date))
-              : `${t.week.weighedOn(formatShortDate(latest.date))} · ${t.week.oneWeight}`}
-            {week.weight.target !== null && ` · ${t.week.target(formatGrams(week.weight.target))}`}
-          </span>
-        </div>
-      ) : (
-        <p className="sheet-note">{t.week.noWeight}</p>
-      )}
-      <form
-        className="weight-form"
-        onSubmit={(e) => {
-          e.preventDefault();
-          if (valid) log.mutate(Math.round(parsed * 10) / 10, { onSuccess: () => setValue("") });
-        }}
-      >
-        <label className="weight-input">
-          <span className="visually-hidden">{t.week.weightLabel}</span>
-          <input value={value} onChange={(e) => setValue(e.target.value)} inputMode="decimal" placeholder={t.week.weightPlaceholder} aria-label={t.week.weightLabel} />
-          <span className="muted">kg</span>
-        </label>
-        <button type="submit" className="button" disabled={!valid || log.isPending}>
-          {t.week.log}
-        </button>
-      </form>
-      {log.isSuccess && <p className="notice" data-kind="ok">{t.week.logged}</p>}
-      {log.isError && <p className="error-text">{t.week.logFailed}</p>}
-    </section>
-  );
-}
-
 export function WeekPage() {
   const [anchor, setAnchor] = useState<string>("current");
   const week = useWeek(anchor);
@@ -219,7 +166,6 @@ export function WeekPage() {
             {(workouts.isError || (workouts.data && (workouts.data.configured || workouts.data.workouts.length > 0))) && (
               <WeekWorkoutsCard workouts={workouts.data?.workouts ?? []} failed={workouts.isError} partial={workouts.data?.hevyUnavailable === true} />
             )}
-            <WeightCard week={data} />
           </div>
         </div>
       )}

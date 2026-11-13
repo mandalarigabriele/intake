@@ -41,6 +41,7 @@ const app = await buildApp({
   api,
   mealsApi: api,
   weekApi: api,
+  profile: { api, hevyConfigured: Boolean(config.HEVY_API_KEY) },
   insightApi: api,
   plans: services.plans,
   push: { store: services.reminders, scheduler, publicKey: vapid.publicKey },

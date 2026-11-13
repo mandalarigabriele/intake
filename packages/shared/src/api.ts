@@ -159,12 +159,27 @@ export interface WeekView {
   consistency: WeekConsistency;
   /** null when no plan with macros was in effect during the week. */
   plan: WeekPlanComparison | null;
+}
+
+/** Profilo (docs/design Profilo): weigh-ins and daily goals from Nutrition, plus which integrations are set up. */
+export interface ProfileView {
+  today: string;
   weight: {
     unit: string;
     target: number | null;
-    /** Daily weigh-ins over the last 90 days up to the end of the week, oldest first. */
+    /** Daily weigh-ins over the last 90 days, oldest first. */
     entries: WeightEntry[];
   };
+  goals: {
+    kcal: number | null;
+    protein: number | null;
+    carbs: number | null;
+    fat: number | null;
+    fiber: number | null;
+    waterMl: number | null;
+  };
+  /** HEVY_API_KEY is set on the server. */
+  hevyConfigured: boolean;
 }
 
 export interface LogWeightRequest {

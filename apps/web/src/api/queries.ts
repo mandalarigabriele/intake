@@ -18,6 +18,7 @@ import type {
   StoredPlan,
   UpdateMealRequest,
   WeekView,
+  ProfileView,
   WorkoutsResponse,
 } from "@intake/shared";
 import { keepPreviousData, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
@@ -230,7 +231,15 @@ export function useLogWeight() {
   return useMutation({
     mutationFn: (weightKg: number) =>
       apiFetch("/api/weight", { method: "POST", json: { weightKg, idempotencyKey: newIdempotencyKey() } satisfies LogWeightRequest }),
-    onSettled: () => queryClient.invalidateQueries({ queryKey: ["week"] }),
+    onSettled: () => queryClient.invalidateQueries({ queryKey: ["profile"] }),
+  });
+}
+
+/** Profilo: weigh-ins, daily goals and whether Hevy is set up (two Nutrition reads). */
+export function useProfile() {
+  return useQuery({
+    queryKey: ["profile"],
+    queryFn: () => apiFetch<ProfileView>("/api/profile"),
   });
 }
 
