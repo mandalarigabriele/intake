@@ -52,6 +52,50 @@ const MIGRATIONS: string[] = [
      key TEXT PRIMARY KEY,
      sent_at TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%fZ', 'now'))
    );`,
+  // 5: Apple Health (Health Auto Export): daily values, nights, raw workouts (merged on read), imports
+  `CREATE TABLE health_daily (
+     date TEXT NOT NULL,
+     metric TEXT NOT NULL,
+     value REAL NOT NULL,
+     updated_at TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%fZ', 'now')),
+     PRIMARY KEY (date, metric)
+   );
+   CREATE TABLE health_sleep (
+     date TEXT PRIMARY KEY,
+     start TEXT NOT NULL,
+     end TEXT NOT NULL,
+     asleep_minutes INTEGER NOT NULL,
+     deep_minutes INTEGER NOT NULL,
+     rem_minutes INTEGER NOT NULL,
+     core_minutes INTEGER NOT NULL,
+     awake_minutes INTEGER NOT NULL,
+     in_bed_minutes INTEGER NOT NULL,
+     source TEXT NOT NULL,
+     updated_at TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%fZ', 'now'))
+   );
+   CREATE TABLE health_workouts (
+     id TEXT PRIMARY KEY,
+     source TEXT NOT NULL,
+     name TEXT NOT NULL,
+     date TEXT NOT NULL,
+     start TEXT NOT NULL,
+     end TEXT NOT NULL,
+     kcal REAL,
+     distance_km REAL,
+     hr_avg INTEGER,
+     hr_max INTEGER,
+     heart_rate TEXT NOT NULL DEFAULT '[]',
+     updated_at TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%fZ', 'now'))
+   );
+   CREATE INDEX health_workouts_date ON health_workouts (date);
+   CREATE TABLE health_imports (
+     id INTEGER PRIMARY KEY AUTOINCREMENT,
+     kind TEXT NOT NULL,
+     received_at TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%fZ', 'now')),
+     first_date TEXT,
+     last_date TEXT,
+     summary TEXT NOT NULL
+   );`,
 ];
 
 /** Opens (and migrates) the SQLite database. Pass ":memory:" for tests. */

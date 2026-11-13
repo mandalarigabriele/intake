@@ -1,0 +1,6960 @@
+{
+  "data": {
+    "metrics": [
+      {
+        "name": "sleep_analysis",
+        "units": "hr",
+        "data": [
+          {
+            "inBedStart": "2026-10-24 00:49:00 +0200",
+            "awake": 0.05,
+            "sleepStart": "2026-10-24 00:49:00 +0200",
+            "totalSleep": 6.666666666666666,
+            "source": "Google Health",
+            "sleepEnd": "2026-10-24 07:32:00 +0200",
+            "rem": 1.5333333333333332,
+            "deep": 1.1333333333333333,
+            "date": "2026-10-24 00:00:00 +0200",
+            "inBedEnd": "2026-10-24 07:32:00 +0200",
+            "inBed": 6.716666666666667,
+            "core": 4,
+            "asleep": 0
+          },
+          {
+            "inBedStart": "2026-10-24 23:20:00 +0200",
+            "awake": 2.1166666666666667,
+            "sleepStart": "2026-10-24 23:20:00 +0200",
+            "source": "Google Health",
+            "totalSleep": 7.05,
+            "date": "2026-10-25 00:00:00 +0200",
+            "rem": 1.8333333333333333,
+            "sleepEnd": "2026-10-25 07:30:00 +0100",
+            "deep": 1.05,
+            "inBedEnd": "2026-10-25 07:30:00 +0100",
+            "inBed": 9.166666666666666,
+            "core": 4.166666666666667,
+            "asleep": 0
+          },
+          {
+            "inBedStart": "2026-10-26 00:28:00 +0100",
+            "awake": 0.08333333333333333,
+            "totalSleep": 7.1,
+            "sleepStart": "2026-10-26 00:28:00 +0100",
+            "source": "Google Health",
+            "sleepEnd": "2026-10-26 07:39:00 +0100",
+            "rem": 1.1,
+            "deep": 1.5333333333333334,
+            "date": "2026-10-26 00:00:00 +0100",
+            "inBedEnd": "2026-10-26 07:39:00 +0100",
+            "inBed": 7.183333333333334,
+            "core": 4.466666666666667,
+            "asleep": 0
+          },
+          {
+            "inBedStart": "2026-10-27 00:45:00 +0100",
+            "awake": 0.11666666666666667,
+            "sleepStart": "2026-10-27 00:45:00 +0100",
+            "source": "Google Health",
+            "totalSleep": 6.216666666666667,
+            "sleepEnd": "2026-10-27 07:05:00 +0100",
+            "date": "2026-10-27 00:00:00 +0100",
+            "deep": 1.4166666666666667,
+            "rem": 0.95,
+            "inBedEnd": "2026-10-27 07:05:00 +0100",
+            "inBed": 6.333333333333333,
+            "core": 3.85,
+            "asleep": 0
+          },
+          {
+            "inBedStart": "2026-10-28 00:06:00 +0100",
+            "awake": 0.4,
+            "source": "Google Health",
+            "sleepStart": "2026-10-28 00:06:00 +0100",
+            "totalSleep": 6.566666666666666,
+            "sleepEnd": "2026-10-28 07:04:00 +0100",
+            "rem": 1.3833333333333333,
+            "deep": 1.3833333333333333,
+            "date": "2026-10-28 00:00:00 +0100",
+            "inBedEnd": "2026-10-28 07:04:00 +0100",
+            "inBed": 6.966666666666667,
+            "core": 3.8000000000000003,
+            "asleep": 0
+          },
+          {
+            "inBedStart": "2026-10-28 23:49:00 +0100",
+            "awake": 0.08333333333333333,
+            "source": "Google Health",
+            "totalSleep": 7.583333333333333,
+            "sleepStart": "2026-10-28 23:49:00 +0100",
+            "date": "2026-10-29 00:00:00 +0100",
+            "sleepEnd": "2026-10-29 07:29:00 +0100",
+            "rem": 1.5,
+            "deep": 1.7166666666666668,
+            "inBedEnd": "2026-10-29 07:29:00 +0100",
+            "inBed": 7.666666666666667,
+            "core": 4.366666666666666,
+            "asleep": 0
+          },
+          {
+            "inBedStart": "2026-10-29 23:33:00 +0100",
+            "awake": 0.8166666666666668,
+            "totalSleep": 7.1499999999999995,
+            "sleepStart": "2026-10-29 23:33:00 +0100",
+            "source": "Google Health",
+            "date": "2026-10-30 00:00:00 +0100",
+            "sleepEnd": "2026-10-30 07:31:00 +0100",
+            "deep": 1.2666666666666666,
+            "rem": 1.2166666666666668,
+            "inBedEnd": "2026-10-30 07:31:00 +0100",
+            "inBed": 7.966666666666667,
+            "core": 4.666666666666666,
+            "asleep": 0
+          }
+        ]
+      },
+      {
+        "name": "step_count",
+        "units": "count",
+        "data": [
+          {
+            "date": "2026-10-23 00:00:00 +0200",
+            "qty": 6848,
+            "source": ""
+          },
+          {
+            "date": "2026-10-24 00:00:00 +0200",
+            "qty": 5912.932305604897,
+            "source": ""
+          },
+          {
+            "date": "2026-10-25 00:00:00 +0200",
+            "qty": 4719.412430622118,
+            "source": ""
+          },
+          {
+            "date": "2026-10-26 00:00:00 +0100",
+            "qty": 4128,
+            "source": ""
+          },
+          {
+            "qty": 13674,
+            "date": "2026-10-27 00:00:00 +0100",
+            "source": ""
+          },
+          {
+            "date": "2026-10-28 00:00:00 +0100",
+            "qty": 6056,
+            "source": ""
+          },
+          {
+            "qty": 6036,
+            "date": "2026-10-29 00:00:00 +0100",
+            "source": ""
+          },
+          {
+            "date": "2026-10-30 00:00:00 +0100",
+            "qty": 4096,
+            "source": ""
+          }
+        ]
+      },
+      {
+        "name": "walking_running_distance",
+        "units": "km",
+        "data": [
+          {
+            "qty": 4.14422938938918,
+            "date": "2026-10-23 00:00:00 +0200",
+            "source": ""
+          },
+          {
+            "date": "2026-10-24 00:00:00 +0200",
+            "qty": 3.9490624344298793,
+            "source": ""
+          },
+          {
+            "qty": 2.7009699999999754,
+            "date": "2026-10-25 00:00:00 +0200",
+            "source": ""
+          },
+          {
+            "qty": 2.528036716277969,
+            "date": "2026-10-26 00:00:00 +0100",
+            "source": ""
+          },
+          {
+            "qty": 9.64799,
+            "date": "2026-10-27 00:00:00 +0100",
+            "source": ""
+          },
+          {
+            "qty": 3.9653000000000005,
+            "date": "2026-10-28 00:00:00 +0100",
+            "source": ""
+          },
+          {
+            "date": "2026-10-29 00:00:00 +0100",
+            "qty": 4.683600000000001,
+            "source": ""
+          },
+          {
+            "date": "2026-10-30 00:00:00 +0100",
+            "qty": 3.067199999999999,
+            "source": ""
+          }
+        ]
+      },
+      {
+        "name": "dietary_energy",
+        "units": "kJ",
+        "data": [
+          {
+            "date": "2026-10-26 00:00:00 +0100",
+            "qty": 8282.023514021454,
+            "source": ""
+          },
+          {
+            "qty": 7781.97070593018,
+            "date": "2026-10-27 00:00:00 +0100",
+            "source": ""
+          },
+          {
+            "date": "2026-10-28 00:00:00 +0100",
+            "qty": 8639.788574327078,
+            "source": ""
+          },
+          {
+            "qty": 8688.642917004127,
+            "date": "2026-10-29 00:00:00 +0100",
+            "source": ""
+          },
+          {
+            "date": "2026-10-30 00:00:00 +0100",
+            "qty": 9099.267119945724,
+            "source": ""
+          }
+        ]
+      },
+      {
+        "name": "active_energy",
+        "units": "kJ",
+        "data": [
+          {
+            "qty": 1889.6358819600064,
+            "date": "2026-10-23 00:00:00 +0200",
+            "source": ""
+          },
+          {
+            "date": "2026-10-24 00:00:00 +0200",
+            "qty": 1063.3273247200011,
+            "source": ""
+          },
+          {
+            "qty": 2950.4577228800013,
+            "date": "2026-10-25 00:00:00 +0200",
+            "source": ""
+          }
+        ]
+      },
+      {
+        "name": "basal_energy_burned",
+        "units": "kJ",
+        "data": [
+          {
+            "date": "2026-10-24 00:00:00 +0200",
+            "qty": 547.6144719999924,
+            "source": ""
+          },
+          {
+            "qty": 1184.502952000004,
+            "date": "2026-10-26 00:00:00 +0100",
+            "source": ""
+          }
+        ]
+      },
+      {
+        "name": "resting_heart_rate",
+        "units": "count/min",
+        "data": [
+          {
+            "qty": 61,
+            "date": "2026-10-23 00:00:00 +0200",
+            "source": "Google Health"
+          },
+          {
+            "qty": 62,
+            "date": "2026-10-24 00:00:00 +0200",
+            "source": "Google Health"
+          },
+          {
+            "qty": 63,
+            "date": "2026-10-25 00:00:00 +0200",
+            "source": "Google Health"
+          },
+          {
+            "date": "2026-10-26 00:00:00 +0100",
+            "qty": 63,
+            "source": "Google Health"
+          },
+          {
+            "qty": 62,
+            "date": "2026-10-27 00:00:00 +0100",
+            "source": "Google Health"
+          },
+          {
+            "date": "2026-10-28 00:00:00 +0100",
+            "qty": 64,
+            "source": "Google Health"
+          },
+          {
+            "date": "2026-10-29 00:00:00 +0100",
+            "qty": 63,
+            "source": "Google Health"
+          },
+          {
+            "date": "2026-10-30 00:00:00 +0100",
+            "qty": 64,
+            "source": "Google Health"
+          }
+        ]
+      },
+      {
+        "name": "heart_rate",
+        "units": "count/min",
+        "data": [
+          {
+            "Max": 126,
+            "Avg": 72.93163697124902,
+            "Min": 50,
+            "date": "2026-10-23 00:00:00 +0200"
+          },
+          {
+            "Max": 141,
+            "Avg": 73.38857707099046,
+            "Min": 47,
+            "date": "2026-10-24 00:00:00 +0200"
+          },
+          {
+            "Max": 165,
+            "Avg": 74.97740315210525,
+            "Min": 48,
+            "date": "2026-10-25 00:00:00 +0200"
+          },
+          {
+            "Max": 142,
+            "Avg": 69.1578006471084,
+            "Min": 48,
+            "date": "2026-10-26 00:00:00 +0100"
+          },
+          {
+            "Max": 200,
+            "Avg": 74.54969430549245,
+            "Min": 49,
+            "date": "2026-10-27 00:00:00 +0100"
+          },
+          {
+            "Max": 136,
+            "Avg": 74.68388458831784,
+            "Min": 50,
+            "date": "2026-10-28 00:00:00 +0100"
+          },
+          {
+            "Max": 141,
+            "Avg": 71.36413014178665,
+            "Min": 49,
+            "date": "2026-10-29 00:00:00 +0100"
+          },
+          {
+            "Max": 140,
+            "Avg": 73.8243012727988,
+            "Min": 51,
+            "date": "2026-10-30 00:00:00 +0100"
+          }
+        ]
+      },
+      {
+        "name": "weight_body_mass",
+        "units": "kg",
+        "data": [
+          {
+            "qty": 75,
+            "date": "2026-10-29 00:00:00 +0100",
+            "source": "Salute"
+          }
+        ]
+      },
+      {
+        "name": "protein",
+        "units": "g",
+        "data": [
+          {
+            "qty": 87.55376474302882,
+            "date": "2026-10-26 00:00:00 +0100",
+            "source": ""
+          },
+          {
+            "qty": 78.73996148617525,
+            "date": "2026-10-27 00:00:00 +0100",
+            "source": ""
+          },
+          {
+            "qty": 90.39372345455,
+            "date": "2026-10-28 00:00:00 +0100",
+            "source": ""
+          },
+          {
+            "date": "2026-10-29 00:00:00 +0100",
+            "qty": 99.40706479289999,
+            "source": ""
+          },
+          {
+            "date": "2026-10-30 00:00:00 +0100",
+            "qty": 137.1518238949,
+            "source": ""
+          }
+        ]
+      }
+    ],
+    "workouts": [
+      {
+        "speed": {
+          "units": "km/hr",
+          "qty": 1.7935464962333225
+        },
+        "id": "00000000-0000-4000-8000-000000000001",
+        "name": "Ciclismo",
+        "start": "2026-10-30 17:22:26 +0100",
+        "avgHeartRate": {
+          "units": "bpm",
+          "qty": 113.38235294117646
+        },
+        "heartRateData": [
+          {
+            "Max": 71,
+            "units": "bpm",
+            "Avg": 71,
+            "Min": 71,
+            "date": "2026-10-30 17:22:00 +0100"
+          },
+          {
+            "Max": 95,
+            "units": "bpm",
+            "Avg": 83,
+            "Min": 71,
+            "date": "2026-10-30 17:23:00 +0100"
+          },
+          {
+            "Max": 118,
+            "units": "bpm",
+            "Avg": 104,
+            "Min": 90,
+            "date": "2026-10-30 17:24:00 +0100"
+          },
+          {
+            "Max": 121,
+            "units": "bpm",
+            "Avg": 113,
+            "Min": 105,
+            "date": "2026-10-30 17:25:00 +0100"
+          },
+          {
+            "Max": 123,
+            "units": "bpm",
+            "Avg": 121,
+            "Min": 119,
+            "date": "2026-10-30 17:26:00 +0100"
+          },
+          {
+            "Max": 118,
+            "units": "bpm",
+            "Avg": 113.5,
+            "Min": 109,
+            "date": "2026-10-30 17:27:00 +0100"
+          },
+          {
+            "Max": 120,
+            "units": "bpm",
+            "Avg": 114.5,
+            "Min": 109,
+            "date": "2026-10-30 17:28:00 +0100"
+          },
+          {
+            "Max": 118,
+            "units": "bpm",
+            "Avg": 114.5,
+            "Min": 111,
+            "date": "2026-10-30 17:29:00 +0100"
+          },
+          {
+            "Max": 116,
+            "units": "bpm",
+            "Avg": 114.5,
+            "Min": 113,
+            "date": "2026-10-30 17:30:00 +0100"
+          },
+          {
+            "Max": 116,
+            "units": "bpm",
+            "Avg": 113,
+            "Min": 110,
+            "date": "2026-10-30 17:31:00 +0100"
+          },
+          {
+            "Max": 117,
+            "units": "bpm",
+            "Avg": 112,
+            "Min": 107,
+            "date": "2026-10-30 17:32:00 +0100"
+          },
+          {
+            "Max": 123,
+            "units": "bpm",
+            "Avg": 119,
+            "Min": 115,
+            "date": "2026-10-30 17:33:00 +0100"
+          },
+          {
+            "Max": 123,
+            "units": "bpm",
+            "Avg": 120.5,
+            "Min": 118,
+            "date": "2026-10-30 17:34:00 +0100"
+          },
+          {
+            "Max": 127,
+            "units": "bpm",
+            "Avg": 124,
+            "Min": 121,
+            "date": "2026-10-30 17:35:00 +0100"
+          },
+          {
+            "Max": 140,
+            "units": "bpm",
+            "Avg": 130,
+            "Min": 120,
+            "date": "2026-10-30 17:36:00 +0100"
+          },
+          {
+            "Max": 138,
+            "units": "bpm",
+            "Avg": 131,
+            "Min": 124,
+            "date": "2026-10-30 17:37:00 +0100"
+          },
+          {
+            "Max": 129,
+            "units": "bpm",
+            "Avg": 129,
+            "Min": 129,
+            "date": "2026-10-30 17:38:00 +0100"
+          }
+        ],
+        "metadata": {},
+        "activeEnergyBurned": {
+          "qty": 129.704,
+          "units": "kJ"
+        },
+        "source": {
+          "name": "Google Health",
+          "identifier": "com.fitbit.FitbitMobile"
+        },
+        "maxHeartRate": {
+          "qty": 140,
+          "units": "bpm"
+        },
+        "activities": [
+          {
+            "id": "00000000-0000-4000-8000-000000000001",
+            "start": "2026-10-30 17:22:26 +0100",
+            "boundaryOrigin": "recordedActivity",
+            "index": 1,
+            "activeDuration": 948.6010000705719,
+            "configuration": {
+              "locationType": "outdoor",
+              "swimmingLocationType": "unknown"
+            },
+            "elapsedDuration": 952.4677360057831,
+            "activityType": "cycling",
+            "metrics": {
+              "heartRateMaximum": {
+                "sampleCount": 32,
+                "units": "bpm",
+                "qty": 140,
+                "origin": "sampleSummary"
+              },
+              "distance": {
+                "origin": "activityStatistics",
+                "qty": 472.6,
+                "units": "m"
+              },
+              "speed": {
+                "units": "m/s",
+                "qty": 0.49820736006481187,
+                "origin": "activeTimeCalculation"
+              },
+              "heartRateAverage": {
+                "units": "bpm",
+                "sampleCount": 32,
+                "qty": 114.21875,
+                "origin": "sampleSummary"
+              },
+              "paceMile": {
+                "units": "s/mi",
+                "origin": "activeTimeCalculation",
+                "qty": 3230.269419927157
+              },
+              "activeEnergy": {
+                "units": "kcal",
+                "qty": 31,
+                "origin": "activityStatistics"
+              },
+              "paceKilometre": {
+                "qty": 2007.1963607079388,
+                "units": "s/km",
+                "origin": "activeTimeCalculation"
+              },
+              "heartRateMinimum": {
+                "sampleCount": 32,
+                "units": "bpm",
+                "qty": 71,
+                "origin": "sampleSummary"
+              }
+            },
+            "activityTypeCode": 13,
+            "end": "2026-10-30 17:38:18 +0100",
+            "duration": 948.6010000705719,
+            "boundaryKind": "interval"
+          }
+        ],
+        "duration": 948.6010000705719,
+        "distance": {
+          "qty": 0.4726,
+          "units": "km"
+        },
+        "end": "2026-10-30 17:38:18 +0100",
+        "heartRate": {
+          "avg": {
+            "qty": 113.38235294117646,
+            "units": "bpm"
+          },
+          "max": {
+            "units": "bpm",
+            "qty": 140
+          },
+          "min": {
+            "qty": 71,
+            "units": "bpm"
+          }
+        }
+      },
+      {
+        "id": "00000000-0000-4000-8000-000000000002",
+        "start": "2026-10-29 13:32:40 +0100",
+        "heartRate": {
+          "min": {
+            "qty": 93,
+            "units": "bpm"
+          },
+          "avg": {
+            "units": "bpm",
+            "qty": 115.16176470588235
+          },
+          "max": {
+            "qty": 141,
+            "units": "bpm"
+          }
+        },
+        "avgHeartRate": {
+          "qty": 115.16176470588235,
+          "units": "bpm"
+        },
+        "heartRateData": [
+          {
+            "Max": 131,
+            "units": "bpm",
+            "Avg": 122.5,
+            "Min": 114,
+            "date": "2026-10-29 13:33:00 +0100"
+          },
+          {
+            "Max": 140,
+            "units": "bpm",
+            "Avg": 127.5,
+            "Min": 115,
+            "date": "2026-10-29 13:34:00 +0100"
+          },
+          {
+            "Max": 120,
+            "units": "bpm",
+            "Avg": 116.5,
+            "Min": 113,
+            "date": "2026-10-29 13:35:00 +0100"
+          },
+          {
+            "Max": 120,
+            "units": "bpm",
+            "Avg": 115,
+            "Min": 110,
+            "date": "2026-10-29 13:36:00 +0100"
+          },
+          {
+            "Max": 120,
+            "units": "bpm",
+            "Avg": 114.5,
+            "Min": 109,
+            "date": "2026-10-29 13:37:00 +0100"
+          },
+          {
+            "Max": 111,
+            "units": "bpm",
+            "Avg": 107,
+            "Min": 103,
+            "date": "2026-10-29 13:38:00 +0100"
+          },
+          {
+            "Max": 133,
+            "units": "bpm",
+            "Avg": 120,
+            "Min": 107,
+            "date": "2026-10-29 13:39:00 +0100"
+          },
+          {
+            "Max": 141,
+            "units": "bpm",
+            "Avg": 137.5,
+            "Min": 134,
+            "date": "2026-10-29 13:40:00 +0100"
+          },
+          {
+            "Max": 140,
+            "units": "bpm",
+            "Avg": 137.5,
+            "Min": 135,
+            "date": "2026-10-29 13:41:00 +0100"
+          },
+          {
+            "Max": 133,
+            "units": "bpm",
+            "Avg": 119.5,
+            "Min": 106,
+            "date": "2026-10-29 13:42:00 +0100"
+          },
+          {
+            "Max": 122,
+            "units": "bpm",
+            "Avg": 114,
+            "Min": 106,
+            "date": "2026-10-29 13:43:00 +0100"
+          },
+          {
+            "Max": 124,
+            "units": "bpm",
+            "Avg": 121.5,
+            "Min": 119,
+            "date": "2026-10-29 13:44:00 +0100"
+          },
+          {
+            "Max": 125,
+            "units": "bpm",
+            "Avg": 121.5,
+            "Min": 118,
+            "date": "2026-10-29 13:45:00 +0100"
+          },
+          {
+            "Max": 137,
+            "units": "bpm",
+            "Avg": 130.5,
+            "Min": 124,
+            "date": "2026-10-29 13:46:00 +0100"
+          },
+          {
+            "Max": 129,
+            "units": "bpm",
+            "Avg": 126.5,
+            "Min": 124,
+            "date": "2026-10-29 13:47:00 +0100"
+          },
+          {
+            "Max": 125,
+            "units": "bpm",
+            "Avg": 117.5,
+            "Min": 110,
+            "date": "2026-10-29 13:48:00 +0100"
+          },
+          {
+            "Max": 132,
+            "units": "bpm",
+            "Avg": 122.5,
+            "Min": 113,
+            "date": "2026-10-29 13:49:00 +0100"
+          },
+          {
+            "Max": 131,
+            "units": "bpm",
+            "Avg": 117,
+            "Min": 103,
+            "date": "2026-10-29 13:50:00 +0100"
+          },
+          {
+            "Max": 107,
+            "units": "bpm",
+            "Avg": 102.5,
+            "Min": 98,
+            "date": "2026-10-29 13:51:00 +0100"
+          },
+          {
+            "Max": 105,
+            "units": "bpm",
+            "Avg": 101,
+            "Min": 97,
+            "date": "2026-10-29 13:52:00 +0100"
+          },
+          {
+            "Max": 120,
+            "units": "bpm",
+            "Avg": 108,
+            "Min": 96,
+            "date": "2026-10-29 13:53:00 +0100"
+          },
+          {
+            "Max": 109,
+            "units": "bpm",
+            "Avg": 103.5,
+            "Min": 98,
+            "date": "2026-10-29 13:54:00 +0100"
+          },
+          {
+            "Max": 97,
+            "units": "bpm",
+            "Avg": 95.5,
+            "Min": 94,
+            "date": "2026-10-29 13:55:00 +0100"
+          },
+          {
+            "Max": 103,
+            "units": "bpm",
+            "Avg": 98,
+            "Min": 93,
+            "date": "2026-10-29 13:56:00 +0100"
+          },
+          {
+            "Max": 119,
+            "units": "bpm",
+            "Avg": 113,
+            "Min": 107,
+            "date": "2026-10-29 13:57:00 +0100"
+          },
+          {
+            "Max": 117,
+            "units": "bpm",
+            "Avg": 113.5,
+            "Min": 110,
+            "date": "2026-10-29 13:58:00 +0100"
+          },
+          {
+            "Max": 127,
+            "units": "bpm",
+            "Avg": 120.5,
+            "Min": 114,
+            "date": "2026-10-29 13:59:00 +0100"
+          },
+          {
+            "Max": 124,
+            "units": "bpm",
+            "Avg": 115,
+            "Min": 106,
+            "date": "2026-10-29 14:00:00 +0100"
+          },
+          {
+            "Max": 115,
+            "units": "bpm",
+            "Avg": 111,
+            "Min": 107,
+            "date": "2026-10-29 14:01:00 +0100"
+          },
+          {
+            "Max": 114,
+            "units": "bpm",
+            "Avg": 110.5,
+            "Min": 107,
+            "date": "2026-10-29 14:02:00 +0100"
+          },
+          {
+            "Max": 117,
+            "units": "bpm",
+            "Avg": 112.5,
+            "Min": 108,
+            "date": "2026-10-29 14:03:00 +0100"
+          },
+          {
+            "Max": 113,
+            "units": "bpm",
+            "Avg": 110,
+            "Min": 107,
+            "date": "2026-10-29 14:04:00 +0100"
+          },
+          {
+            "Max": 114,
+            "units": "bpm",
+            "Avg": 109.5,
+            "Min": 105,
+            "date": "2026-10-29 14:05:00 +0100"
+          },
+          {
+            "Max": 103,
+            "units": "bpm",
+            "Avg": 103,
+            "Min": 103,
+            "date": "2026-10-29 14:06:00 +0100"
+          }
+        ],
+        "metadata": {},
+        "source": {
+          "name": "Google Health",
+          "identifier": "com.fitbit.FitbitMobile"
+        },
+        "maxHeartRate": {
+          "qty": 141,
+          "units": "bpm"
+        },
+        "activities": [
+          {
+            "id": "00000000-0000-4000-8000-000000000002",
+            "index": 1,
+            "start": "2026-10-29 13:32:40 +0100",
+            "boundaryOrigin": "recordedActivity",
+            "activeDuration": 2030,
+            "activityType": "traditional_strength_training",
+            "elapsedDuration": 2030,
+            "configuration": {
+              "locationType": "outdoor",
+              "swimmingLocationType": "unknown"
+            },
+            "activityTypeCode": 50,
+            "metrics": {
+              "heartRateMinimum": {
+                "units": "bpm",
+                "sampleCount": 67,
+                "qty": 93,
+                "origin": "sampleSummary"
+              },
+              "activeEnergy": {
+                "units": "kcal",
+                "qty": 87,
+                "origin": "activityStatistics"
+              },
+              "heartRateAverage": {
+                "sampleCount": 67,
+                "units": "bpm",
+                "qty": 115.34328358208955,
+                "origin": "sampleSummary"
+              },
+              "heartRateMaximum": {
+                "sampleCount": 67,
+                "units": "bpm",
+                "qty": 141,
+                "origin": "sampleSummary"
+              }
+            },
+            "duration": 2030,
+            "end": "2026-10-29 14:06:30 +0100",
+            "boundaryKind": "interval"
+          }
+        ],
+        "stepCadence": {
+          "qty": 5.29064039408867,
+          "units": "count/min"
+        },
+        "end": "2026-10-29 14:06:30 +0100",
+        "duration": 2030,
+        "name": "Allenamento di Forza Tradizionale",
+        "activeEnergyBurned": {
+          "qty": 364.008,
+          "units": "kJ"
+        }
+      },
+      {
+        "id": "00000000-0000-4000-8000-000000000003",
+        "start": "2026-10-29 13:08:53 +0100",
+        "avgHeartRate": {
+          "qty": 107,
+          "units": "bpm"
+        },
+        "heartRateData": [
+          {
+            "Max": 69,
+            "units": "bpm",
+            "Avg": 69,
+            "Min": 69,
+            "date": "2026-10-29 13:08:00 +0100"
+          },
+          {
+            "Max": 88,
+            "units": "bpm",
+            "Avg": 79.5,
+            "Min": 71,
+            "date": "2026-10-29 13:09:00 +0100"
+          },
+          {
+            "Max": 95,
+            "units": "bpm",
+            "Avg": 91,
+            "Min": 87,
+            "date": "2026-10-29 13:10:00 +0100"
+          },
+          {
+            "Max": 100,
+            "units": "bpm",
+            "Avg": 97,
+            "Min": 94,
+            "date": "2026-10-29 13:11:00 +0100"
+          },
+          {
+            "Max": 96,
+            "units": "bpm",
+            "Avg": 94,
+            "Min": 92,
+            "date": "2026-10-29 13:12:00 +0100"
+          },
+          {
+            "Max": 96,
+            "units": "bpm",
+            "Avg": 88,
+            "Min": 80,
+            "date": "2026-10-29 13:13:00 +0100"
+          },
+          {
+            "Max": 95,
+            "units": "bpm",
+            "Avg": 88,
+            "Min": 81,
+            "date": "2026-10-29 13:14:00 +0100"
+          },
+          {
+            "Max": 101,
+            "units": "bpm",
+            "Avg": 92.5,
+            "Min": 84,
+            "date": "2026-10-29 13:15:00 +0100"
+          },
+          {
+            "Max": 86,
+            "units": "bpm",
+            "Avg": 83.5,
+            "Min": 81,
+            "date": "2026-10-29 13:16:00 +0100"
+          },
+          {
+            "Max": 102,
+            "units": "bpm",
+            "Avg": 93.5,
+            "Min": 85,
+            "date": "2026-10-29 13:17:00 +0100"
+          },
+          {
+            "Max": 85,
+            "units": "bpm",
+            "Avg": 83.5,
+            "Min": 82,
+            "date": "2026-10-29 13:18:00 +0100"
+          },
+          {
+            "Max": 107,
+            "units": "bpm",
+            "Avg": 96,
+            "Min": 85,
+            "date": "2026-10-29 13:19:00 +0100"
+          },
+          {
+            "Max": 110,
+            "units": "bpm",
+            "Avg": 96.5,
+            "Min": 83,
+            "date": "2026-10-29 13:20:00 +0100"
+          },
+          {
+            "Max": 96,
+            "units": "bpm",
+            "Avg": 89.5,
+            "Min": 83,
+            "date": "2026-10-29 13:21:00 +0100"
+          },
+          {
+            "Max": 103,
+            "units": "bpm",
+            "Avg": 100,
+            "Min": 97,
+            "date": "2026-10-29 13:22:00 +0100"
+          },
+          {
+            "Max": 100,
+            "units": "bpm",
+            "Avg": 96,
+            "Min": 92,
+            "date": "2026-10-29 13:23:00 +0100"
+          },
+          {
+            "Max": 98,
+            "units": "bpm",
+            "Avg": 96,
+            "Min": 94,
+            "date": "2026-10-29 13:24:00 +0100"
+          },
+          {
+            "Max": 134,
+            "units": "bpm",
+            "Avg": 113.5,
+            "Min": 93,
+            "date": "2026-10-29 13:25:00 +0100"
+          },
+          {
+            "Max": 134,
+            "units": "bpm",
+            "Avg": 126.5,
+            "Min": 119,
+            "date": "2026-10-29 13:26:00 +0100"
+          },
+          {
+            "Max": 113,
+            "units": "bpm",
+            "Avg": 106.5,
+            "Min": 100,
+            "date": "2026-10-29 13:27:00 +0100"
+          },
+          {
+            "Max": 111,
+            "units": "bpm",
+            "Avg": 106.5,
+            "Min": 102,
+            "date": "2026-10-29 13:28:00 +0100"
+          },
+          {
+            "Max": 121,
+            "units": "bpm",
+            "Avg": 115.5,
+            "Min": 110,
+            "date": "2026-10-29 13:29:00 +0100"
+          },
+          {
+            "Max": 118,
+            "units": "bpm",
+            "Avg": 106,
+            "Min": 94,
+            "date": "2026-10-29 13:30:00 +0100"
+          },
+          {
+            "Max": 124,
+            "units": "bpm",
+            "Avg": 113,
+            "Min": 102,
+            "date": "2026-10-29 13:31:00 +0100"
+          },
+          {
+            "Max": 120,
+            "units": "bpm",
+            "Avg": 116,
+            "Min": 112,
+            "date": "2026-10-29 13:32:00 +0100"
+          },
+          {
+            "Max": 131,
+            "units": "bpm",
+            "Avg": 122.5,
+            "Min": 114,
+            "date": "2026-10-29 13:33:00 +0100"
+          },
+          {
+            "Max": 140,
+            "units": "bpm",
+            "Avg": 127.5,
+            "Min": 115,
+            "date": "2026-10-29 13:34:00 +0100"
+          },
+          {
+            "Max": 120,
+            "units": "bpm",
+            "Avg": 116.5,
+            "Min": 113,
+            "date": "2026-10-29 13:35:00 +0100"
+          },
+          {
+            "Max": 120,
+            "units": "bpm",
+            "Avg": 115,
+            "Min": 110,
+            "date": "2026-10-29 13:36:00 +0100"
+          },
+          {
+            "Max": 120,
+            "units": "bpm",
+            "Avg": 114.5,
+            "Min": 109,
+            "date": "2026-10-29 13:37:00 +0100"
+          },
+          {
+            "Max": 111,
+            "units": "bpm",
+            "Avg": 107,
+            "Min": 103,
+            "date": "2026-10-29 13:38:00 +0100"
+          },
+          {
+            "Max": 133,
+            "units": "bpm",
+            "Avg": 120,
+            "Min": 107,
+            "date": "2026-10-29 13:39:00 +0100"
+          },
+          {
+            "Max": 141,
+            "units": "bpm",
+            "Avg": 137.5,
+            "Min": 134,
+            "date": "2026-10-29 13:40:00 +0100"
+          },
+          {
+            "Max": 140,
+            "units": "bpm",
+            "Avg": 137.5,
+            "Min": 135,
+            "date": "2026-10-29 13:41:00 +0100"
+          },
+          {
+            "Max": 133,
+            "units": "bpm",
+            "Avg": 119.5,
+            "Min": 106,
+            "date": "2026-10-29 13:42:00 +0100"
+          },
+          {
+            "Max": 122,
+            "units": "bpm",
+            "Avg": 114,
+            "Min": 106,
+            "date": "2026-10-29 13:43:00 +0100"
+          },
+          {
+            "Max": 124,
+            "units": "bpm",
+            "Avg": 121.5,
+            "Min": 119,
+            "date": "2026-10-29 13:44:00 +0100"
+          },
+          {
+            "Max": 125,
+            "units": "bpm",
+            "Avg": 121.5,
+            "Min": 118,
+            "date": "2026-10-29 13:45:00 +0100"
+          },
+          {
+            "Max": 137,
+            "units": "bpm",
+            "Avg": 130.5,
+            "Min": 124,
+            "date": "2026-10-29 13:46:00 +0100"
+          },
+          {
+            "Max": 129,
+            "units": "bpm",
+            "Avg": 126.5,
+            "Min": 124,
+            "date": "2026-10-29 13:47:00 +0100"
+          },
+          {
+            "Max": 125,
+            "units": "bpm",
+            "Avg": 117.5,
+            "Min": 110,
+            "date": "2026-10-29 13:48:00 +0100"
+          },
+          {
+            "Max": 132,
+            "units": "bpm",
+            "Avg": 122.5,
+            "Min": 113,
+            "date": "2026-10-29 13:49:00 +0100"
+          },
+          {
+            "Max": 131,
+            "units": "bpm",
+            "Avg": 117,
+            "Min": 103,
+            "date": "2026-10-29 13:50:00 +0100"
+          },
+          {
+            "Max": 107,
+            "units": "bpm",
+            "Avg": 102.5,
+            "Min": 98,
+            "date": "2026-10-29 13:51:00 +0100"
+          },
+          {
+            "Max": 105,
+            "units": "bpm",
+            "Avg": 101,
+            "Min": 97,
+            "date": "2026-10-29 13:52:00 +0100"
+          },
+          {
+            "Max": 120,
+            "units": "bpm",
+            "Avg": 108,
+            "Min": 96,
+            "date": "2026-10-29 13:53:00 +0100"
+          },
+          {
+            "Max": 109,
+            "units": "bpm",
+            "Avg": 103.5,
+            "Min": 98,
+            "date": "2026-10-29 13:54:00 +0100"
+          },
+          {
+            "Max": 97,
+            "units": "bpm",
+            "Avg": 95.5,
+            "Min": 94,
+            "date": "2026-10-29 13:55:00 +0100"
+          },
+          {
+            "Max": 103,
+            "units": "bpm",
+            "Avg": 98,
+            "Min": 93,
+            "date": "2026-10-29 13:56:00 +0100"
+          },
+          {
+            "Max": 119,
+            "units": "bpm",
+            "Avg": 113,
+            "Min": 107,
+            "date": "2026-10-29 13:57:00 +0100"
+          },
+          {
+            "Max": 110,
+            "units": "bpm",
+            "Avg": 110,
+            "Min": 110,
+            "date": "2026-10-29 13:58:00 +0100"
+          }
+        ],
+        "metadata": {},
+        "stepCadence": {
+          "units": "count/min",
+          "qty": 3.7164660194578527
+        },
+        "maxHeartRate": {
+          "qty": 141,
+          "units": "bpm"
+        },
+        "source": {
+          "name": "Bevel",
+          "identifier": "com.supersethealth.superset"
+        },
+        "location": "Interno",
+        "activities": [
+          {
+            "id": "00000000-0000-4000-8000-000000000003",
+            "start": "2026-10-29 13:08:53 +0100",
+            "boundaryOrigin": "recordedActivity",
+            "index": 1,
+            "activeDuration": 2986.7083250284195,
+            "configuration": {
+              "locationType": "indoor",
+              "swimmingLocationType": "unknown"
+            },
+            "elapsedDuration": 2986.7083250284195,
+            "activityType": "traditional_strength_training",
+            "metrics": {
+              "heartRateAverage": {
+                "sampleCount": 100,
+                "units": "bpm",
+                "qty": 107.35,
+                "origin": "sampleSummary"
+              },
+              "heartRateMinimum": {
+                "sampleCount": 100,
+                "units": "bpm",
+                "qty": 69,
+                "origin": "sampleSummary"
+              },
+              "heartRateMaximum": {
+                "sampleCount": 100,
+                "units": "bpm",
+                "qty": 141,
+                "origin": "sampleSummary"
+              }
+            },
+            "activityTypeCode": 50,
+            "end": "2026-10-29 13:58:40 +0100",
+            "duration": 2986.7083250284195,
+            "boundaryKind": "interval"
+          }
+        ],
+        "isIndoor": true,
+        "effortScore": {
+          "qty": 4,
+          "units": "appleEffortScore"
+        },
+        "duration": 2986.7083250284195,
+        "end": "2026-10-29 13:58:40 +0100",
+        "heartRate": {
+          "max": {
+            "qty": 141,
+            "units": "bpm"
+          },
+          "avg": {
+            "qty": 107,
+            "units": "bpm"
+          },
+          "min": {
+            "qty": 69,
+            "units": "bpm"
+          }
+        },
+        "name": "Allenamento di Forza Tradizionale"
+      },
+      {
+        "id": "00000000-0000-4000-8000-000000000004",
+        "start": "2026-10-29 13:07:18 +0100",
+        "heartRate": {
+          "avg": {
+            "qty": 90.15789473684211,
+            "units": "bpm"
+          },
+          "min": {
+            "qty": 63,
+            "units": "bpm"
+          },
+          "max": {
+            "units": "bpm",
+            "qty": 134
+          }
+        },
+        "avgHeartRate": {
+          "qty": 90.15789473684211,
+          "units": "bpm"
+        },
+        "heartRateData": [
+          {
+            "Max": 69,
+            "units": "bpm",
+            "Avg": 69,
+            "Min": 69,
+            "date": "2026-10-29 13:07:00 +0100"
+          },
+          {
+            "Max": 69,
+            "units": "bpm",
+            "Avg": 66,
+            "Min": 63,
+            "date": "2026-10-29 13:08:00 +0100"
+          },
+          {
+            "Max": 88,
+            "units": "bpm",
+            "Avg": 79.5,
+            "Min": 71,
+            "date": "2026-10-29 13:09:00 +0100"
+          },
+          {
+            "Max": 95,
+            "units": "bpm",
+            "Avg": 91,
+            "Min": 87,
+            "date": "2026-10-29 13:10:00 +0100"
+          },
+          {
+            "Max": 100,
+            "units": "bpm",
+            "Avg": 97,
+            "Min": 94,
+            "date": "2026-10-29 13:11:00 +0100"
+          },
+          {
+            "Max": 96,
+            "units": "bpm",
+            "Avg": 94,
+            "Min": 92,
+            "date": "2026-10-29 13:12:00 +0100"
+          },
+          {
+            "Max": 96,
+            "units": "bpm",
+            "Avg": 88,
+            "Min": 80,
+            "date": "2026-10-29 13:13:00 +0100"
+          },
+          {
+            "Max": 95,
+            "units": "bpm",
+            "Avg": 88,
+            "Min": 81,
+            "date": "2026-10-29 13:14:00 +0100"
+          },
+          {
+            "Max": 101,
+            "units": "bpm",
+            "Avg": 92.5,
+            "Min": 84,
+            "date": "2026-10-29 13:15:00 +0100"
+          },
+          {
+            "Max": 86,
+            "units": "bpm",
+            "Avg": 83.5,
+            "Min": 81,
+            "date": "2026-10-29 13:16:00 +0100"
+          },
+          {
+            "Max": 102,
+            "units": "bpm",
+            "Avg": 93.5,
+            "Min": 85,
+            "date": "2026-10-29 13:17:00 +0100"
+          },
+          {
+            "Max": 85,
+            "units": "bpm",
+            "Avg": 83.5,
+            "Min": 82,
+            "date": "2026-10-29 13:18:00 +0100"
+          },
+          {
+            "Max": 107,
+            "units": "bpm",
+            "Avg": 96,
+            "Min": 85,
+            "date": "2026-10-29 13:19:00 +0100"
+          },
+          {
+            "Max": 110,
+            "units": "bpm",
+            "Avg": 96.5,
+            "Min": 83,
+            "date": "2026-10-29 13:20:00 +0100"
+          },
+          {
+            "Max": 96,
+            "units": "bpm",
+            "Avg": 89.5,
+            "Min": 83,
+            "date": "2026-10-29 13:21:00 +0100"
+          },
+          {
+            "Max": 103,
+            "units": "bpm",
+            "Avg": 100,
+            "Min": 97,
+            "date": "2026-10-29 13:22:00 +0100"
+          },
+          {
+            "Max": 100,
+            "units": "bpm",
+            "Avg": 96,
+            "Min": 92,
+            "date": "2026-10-29 13:23:00 +0100"
+          },
+          {
+            "Max": 98,
+            "units": "bpm",
+            "Avg": 96,
+            "Min": 94,
+            "date": "2026-10-29 13:24:00 +0100"
+          },
+          {
+            "Max": 134,
+            "units": "bpm",
+            "Avg": 113.5,
+            "Min": 93,
+            "date": "2026-10-29 13:25:00 +0100"
+          }
+        ],
+        "metadata": {},
+        "source": {
+          "name": "Google Health",
+          "identifier": "com.fitbit.FitbitMobile"
+        },
+        "maxHeartRate": {
+          "qty": 134,
+          "units": "bpm"
+        },
+        "activities": [
+          {
+            "id": "00000000-0000-4000-8000-000000000004",
+            "index": 1,
+            "start": "2026-10-29 13:07:18 +0100",
+            "boundaryOrigin": "recordedActivity",
+            "activeDuration": 1124,
+            "activityType": "traditional_strength_training",
+            "elapsedDuration": 1124,
+            "configuration": {
+              "swimmingLocationType": "unknown",
+              "locationType": "outdoor"
+            },
+            "activityTypeCode": 50,
+            "metrics": {
+              "heartRateMinimum": {
+                "units": "bpm",
+                "sampleCount": 37,
+                "qty": 63,
+                "origin": "sampleSummary"
+              },
+              "activeEnergy": {
+                "qty": 39,
+                "units": "kcal",
+                "origin": "activityStatistics"
+              },
+              "heartRateAverage": {
+                "sampleCount": 37,
+                "units": "bpm",
+                "qty": 90.72972972972973,
+                "origin": "sampleSummary"
+              },
+              "heartRateMaximum": {
+                "units": "bpm",
+                "sampleCount": 37,
+                "qty": 134,
+                "origin": "sampleSummary"
+              }
+            },
+            "duration": 1124,
+            "end": "2026-10-29 13:26:02 +0100",
+            "boundaryKind": "interval"
+          }
+        ],
+        "stepCadence": {
+          "qty": 7.0462633451957295,
+          "units": "count/min"
+        },
+        "end": "2026-10-29 13:26:02 +0100",
+        "duration": 1124,
+        "name": "Allenamento di Forza Tradizionale",
+        "activeEnergyBurned": {
+          "qty": 163.176,
+          "units": "kJ"
+        }
+      },
+      {
+        "activeEnergyBurned": {
+          "qty": 661.072,
+          "units": "kJ"
+        },
+        "source": {
+          "name": "Google Health",
+          "identifier": "com.fitbit.FitbitMobile"
+        },
+        "heartRate": {
+          "min": {
+            "units": "bpm",
+            "qty": 84
+          },
+          "max": {
+            "qty": 136,
+            "units": "bpm"
+          },
+          "avg": {
+            "units": "bpm",
+            "qty": 123.42857142857143
+          }
+        },
+        "metadata": {},
+        "duration": 1243,
+        "avgHeartRate": {
+          "qty": 123.42857142857143,
+          "units": "bpm"
+        },
+        "speed": {
+          "qty": 10.780583748994369,
+          "units": "km/hr"
+        },
+        "activities": [
+          {
+            "id": "00000000-0000-4000-8000-000000000005",
+            "start": "2026-10-28 19:04:47 +0100",
+            "boundaryOrigin": "recordedActivity",
+            "index": 1,
+            "activeDuration": 1243,
+            "configuration": {
+              "swimmingLocationType": "unknown",
+              "locationType": "outdoor"
+            },
+            "elapsedDuration": 1246,
+            "activityType": "cycling",
+            "metrics": {
+              "heartRateMaximum": {
+                "units": "bpm",
+                "sampleCount": 41,
+                "qty": 136,
+                "origin": "sampleSummary"
+              },
+              "distance": {
+                "units": "m",
+                "origin": "activityStatistics",
+                "qty": 3722.2960000000003
+              },
+              "speed": {
+                "origin": "activeTimeCalculation",
+                "qty": 2.9946065969428806,
+                "units": "m/s"
+              },
+              "heartRateAverage": {
+                "sampleCount": 41,
+                "units": "bpm",
+                "qty": 123.17073170731707,
+                "origin": "sampleSummary"
+              },
+              "paceMile": {
+                "qty": 537.4141637312025,
+                "origin": "activeTimeCalculation",
+                "units": "s/mi"
+              },
+              "activeEnergy": {
+                "units": "kcal",
+                "qty": 158,
+                "origin": "activityStatistics"
+              },
+              "paceKilometre": {
+                "units": "s/km",
+                "qty": 333.93367964288706,
+                "origin": "activeTimeCalculation"
+              },
+              "heartRateMinimum": {
+                "units": "bpm",
+                "sampleCount": 41,
+                "qty": 84,
+                "origin": "sampleSummary"
+              }
+            },
+            "activityTypeCode": 13,
+            "end": "2026-10-28 19:25:33 +0100",
+            "duration": 1243,
+            "boundaryKind": "interval"
+          }
+        ],
+        "name": "Ciclismo",
+        "heartRateData": [
+          {
+            "Max": 106,
+            "units": "bpm",
+            "Avg": 95,
+            "Min": 84,
+            "date": "2026-10-28 19:05:00 +0100"
+          },
+          {
+            "Max": 118,
+            "units": "bpm",
+            "Avg": 107,
+            "Min": 96,
+            "date": "2026-10-28 19:06:00 +0100"
+          },
+          {
+            "Max": 117,
+            "units": "bpm",
+            "Avg": 114,
+            "Min": 111,
+            "date": "2026-10-28 19:07:00 +0100"
+          },
+          {
+            "Max": 120,
+            "units": "bpm",
+            "Avg": 115,
+            "Min": 110,
+            "date": "2026-10-28 19:08:00 +0100"
+          },
+          {
+            "Max": 120,
+            "units": "bpm",
+            "Avg": 116.5,
+            "Min": 113,
+            "date": "2026-10-28 19:09:00 +0100"
+          },
+          {
+            "Max": 130,
+            "units": "bpm",
+            "Avg": 124,
+            "Min": 118,
+            "date": "2026-10-28 19:10:00 +0100"
+          },
+          {
+            "Max": 124,
+            "units": "bpm",
+            "Avg": 121.5,
+            "Min": 119,
+            "date": "2026-10-28 19:11:00 +0100"
+          },
+          {
+            "Max": 123,
+            "units": "bpm",
+            "Avg": 120.5,
+            "Min": 118,
+            "date": "2026-10-28 19:12:00 +0100"
+          },
+          {
+            "Max": 131,
+            "units": "bpm",
+            "Avg": 127,
+            "Min": 123,
+            "date": "2026-10-28 19:13:00 +0100"
+          },
+          {
+            "Max": 134,
+            "units": "bpm",
+            "Avg": 127.5,
+            "Min": 121,
+            "date": "2026-10-28 19:14:00 +0100"
+          },
+          {
+            "Max": 123,
+            "units": "bpm",
+            "Avg": 117.5,
+            "Min": 112,
+            "date": "2026-10-28 19:15:00 +0100"
+          },
+          {
+            "Max": 130,
+            "units": "bpm",
+            "Avg": 126.5,
+            "Min": 123,
+            "date": "2026-10-28 19:16:00 +0100"
+          },
+          {
+            "Max": 133,
+            "units": "bpm",
+            "Avg": 130.5,
+            "Min": 128,
+            "date": "2026-10-28 19:17:00 +0100"
+          },
+          {
+            "Max": 133,
+            "units": "bpm",
+            "Avg": 130,
+            "Min": 127,
+            "date": "2026-10-28 19:18:00 +0100"
+          },
+          {
+            "Max": 132,
+            "units": "bpm",
+            "Avg": 129.5,
+            "Min": 127,
+            "date": "2026-10-28 19:19:00 +0100"
+          },
+          {
+            "Max": 132,
+            "units": "bpm",
+            "Avg": 129.5,
+            "Min": 127,
+            "date": "2026-10-28 19:20:00 +0100"
+          },
+          {
+            "Max": 133,
+            "units": "bpm",
+            "Avg": 131.5,
+            "Min": 130,
+            "date": "2026-10-28 19:21:00 +0100"
+          },
+          {
+            "Max": 133,
+            "units": "bpm",
+            "Avg": 131,
+            "Min": 129,
+            "date": "2026-10-28 19:22:00 +0100"
+          },
+          {
+            "Max": 135,
+            "units": "bpm",
+            "Avg": 130,
+            "Min": 125,
+            "date": "2026-10-28 19:23:00 +0100"
+          },
+          {
+            "Max": 136,
+            "units": "bpm",
+            "Avg": 134,
+            "Min": 132,
+            "date": "2026-10-28 19:24:00 +0100"
+          },
+          {
+            "Max": 134,
+            "units": "bpm",
+            "Avg": 134,
+            "Min": 134,
+            "date": "2026-10-28 19:25:00 +0100"
+          }
+        ],
+        "id": "00000000-0000-4000-8000-000000000005",
+        "maxHeartRate": {
+          "qty": 136,
+          "units": "bpm"
+        },
+        "stepCadence": {
+          "qty": 0.1930812550281577,
+          "units": "count/min"
+        },
+        "distance": {
+          "qty": 3.7222960000000005,
+          "units": "km"
+        },
+        "end": "2026-10-28 19:25:33 +0100",
+        "start": "2026-10-28 19:04:47 +0100",
+        "route": [
+          {
+            "timestamp": "2026-10-28 19:04:47 +0100",
+            "latitude": 0,
+            "longitude": 0,
+            "altitude": 0,
+            "horizontalAccuracy": 1
+          }
+        ]
+      },
+      {
+        "id": "00000000-0000-4000-8000-000000000006",
+        "start": "2026-10-28 18:10:27 +0100",
+        "distance": {
+          "qty": 0.9077000000000001,
+          "units": "km"
+        },
+        "speed": {
+          "qty": 1.45232,
+          "units": "km/hr"
+        },
+        "avgHeartRate": {
+          "qty": 108.96052631578948,
+          "units": "bpm"
+        },
+        "heartRate": {
+          "max": {
+            "qty": 127,
+            "units": "bpm"
+          },
+          "min": {
+            "qty": 81,
+            "units": "bpm"
+          },
+          "avg": {
+            "units": "bpm",
+            "qty": 108.96052631578948
+          }
+        },
+        "metadata": {},
+        "heartRateData": [
+          {
+            "Max": 93,
+            "units": "bpm",
+            "Avg": 93,
+            "Min": 93,
+            "date": "2026-10-28 18:10:00 +0100"
+          },
+          {
+            "Max": 87,
+            "units": "bpm",
+            "Avg": 84,
+            "Min": 81,
+            "date": "2026-10-28 18:11:00 +0100"
+          },
+          {
+            "Max": 93,
+            "units": "bpm",
+            "Avg": 88.5,
+            "Min": 84,
+            "date": "2026-10-28 18:12:00 +0100"
+          },
+          {
+            "Max": 102,
+            "units": "bpm",
+            "Avg": 97,
+            "Min": 92,
+            "date": "2026-10-28 18:13:00 +0100"
+          },
+          {
+            "Max": 111,
+            "units": "bpm",
+            "Avg": 101.5,
+            "Min": 92,
+            "date": "2026-10-28 18:14:00 +0100"
+          },
+          {
+            "Max": 122,
+            "units": "bpm",
+            "Avg": 116.5,
+            "Min": 111,
+            "date": "2026-10-28 18:15:00 +0100"
+          },
+          {
+            "Max": 127,
+            "units": "bpm",
+            "Avg": 120.5,
+            "Min": 114,
+            "date": "2026-10-28 18:16:00 +0100"
+          },
+          {
+            "Max": 121,
+            "units": "bpm",
+            "Avg": 115.5,
+            "Min": 110,
+            "date": "2026-10-28 18:17:00 +0100"
+          },
+          {
+            "Max": 120,
+            "units": "bpm",
+            "Avg": 115.5,
+            "Min": 111,
+            "date": "2026-10-28 18:18:00 +0100"
+          },
+          {
+            "Max": 112,
+            "units": "bpm",
+            "Avg": 110,
+            "Min": 108,
+            "date": "2026-10-28 18:19:00 +0100"
+          },
+          {
+            "Max": 114,
+            "units": "bpm",
+            "Avg": 111,
+            "Min": 108,
+            "date": "2026-10-28 18:20:00 +0100"
+          },
+          {
+            "Max": 118,
+            "units": "bpm",
+            "Avg": 114,
+            "Min": 110,
+            "date": "2026-10-28 18:21:00 +0100"
+          },
+          {
+            "Max": 110,
+            "units": "bpm",
+            "Avg": 107,
+            "Min": 104,
+            "date": "2026-10-28 18:22:00 +0100"
+          },
+          {
+            "Max": 114,
+            "units": "bpm",
+            "Avg": 111.5,
+            "Min": 109,
+            "date": "2026-10-28 18:23:00 +0100"
+          },
+          {
+            "Max": 122,
+            "units": "bpm",
+            "Avg": 117.5,
+            "Min": 113,
+            "date": "2026-10-28 18:24:00 +0100"
+          },
+          {
+            "Max": 113,
+            "units": "bpm",
+            "Avg": 111.5,
+            "Min": 110,
+            "date": "2026-10-28 18:25:00 +0100"
+          },
+          {
+            "Max": 115,
+            "units": "bpm",
+            "Avg": 112.5,
+            "Min": 110,
+            "date": "2026-10-28 18:26:00 +0100"
+          },
+          {
+            "Max": 114,
+            "units": "bpm",
+            "Avg": 110,
+            "Min": 106,
+            "date": "2026-10-28 18:27:00 +0100"
+          },
+          {
+            "Max": 124,
+            "units": "bpm",
+            "Avg": 117,
+            "Min": 110,
+            "date": "2026-10-28 18:28:00 +0100"
+          },
+          {
+            "Max": 115,
+            "units": "bpm",
+            "Avg": 112,
+            "Min": 109,
+            "date": "2026-10-28 18:29:00 +0100"
+          },
+          {
+            "Max": 124,
+            "units": "bpm",
+            "Avg": 119,
+            "Min": 114,
+            "date": "2026-10-28 18:30:00 +0100"
+          },
+          {
+            "Max": 121,
+            "units": "bpm",
+            "Avg": 114.5,
+            "Min": 108,
+            "date": "2026-10-28 18:31:00 +0100"
+          },
+          {
+            "Max": 115,
+            "units": "bpm",
+            "Avg": 112,
+            "Min": 109,
+            "date": "2026-10-28 18:32:00 +0100"
+          },
+          {
+            "Max": 122,
+            "units": "bpm",
+            "Avg": 116,
+            "Min": 110,
+            "date": "2026-10-28 18:33:00 +0100"
+          },
+          {
+            "Max": 123,
+            "units": "bpm",
+            "Avg": 117,
+            "Min": 111,
+            "date": "2026-10-28 18:34:00 +0100"
+          },
+          {
+            "Max": 113,
+            "units": "bpm",
+            "Avg": 103,
+            "Min": 93,
+            "date": "2026-10-28 18:35:00 +0100"
+          },
+          {
+            "Max": 111,
+            "units": "bpm",
+            "Avg": 106.5,
+            "Min": 102,
+            "date": "2026-10-28 18:36:00 +0100"
+          },
+          {
+            "Max": 119,
+            "units": "bpm",
+            "Avg": 115.5,
+            "Min": 112,
+            "date": "2026-10-28 18:37:00 +0100"
+          },
+          {
+            "Max": 114,
+            "units": "bpm",
+            "Avg": 113,
+            "Min": 112,
+            "date": "2026-10-28 18:38:00 +0100"
+          },
+          {
+            "Max": 122,
+            "units": "bpm",
+            "Avg": 117.5,
+            "Min": 113,
+            "date": "2026-10-28 18:39:00 +0100"
+          },
+          {
+            "Max": 124,
+            "units": "bpm",
+            "Avg": 117,
+            "Min": 110,
+            "date": "2026-10-28 18:40:00 +0100"
+          },
+          {
+            "Max": 109,
+            "units": "bpm",
+            "Avg": 104,
+            "Min": 99,
+            "date": "2026-10-28 18:41:00 +0100"
+          },
+          {
+            "Max": 111,
+            "units": "bpm",
+            "Avg": 105.5,
+            "Min": 100,
+            "date": "2026-10-28 18:42:00 +0100"
+          },
+          {
+            "Max": 113,
+            "units": "bpm",
+            "Avg": 106.5,
+            "Min": 100,
+            "date": "2026-10-28 18:43:00 +0100"
+          },
+          {
+            "Max": 104,
+            "units": "bpm",
+            "Avg": 98.5,
+            "Min": 93,
+            "date": "2026-10-28 18:44:00 +0100"
+          },
+          {
+            "Max": 105,
+            "units": "bpm",
+            "Avg": 103,
+            "Min": 101,
+            "date": "2026-10-28 18:45:00 +0100"
+          },
+          {
+            "Max": 104,
+            "units": "bpm",
+            "Avg": 100.5,
+            "Min": 97,
+            "date": "2026-10-28 18:46:00 +0100"
+          },
+          {
+            "Max": 109,
+            "units": "bpm",
+            "Avg": 105.5,
+            "Min": 102,
+            "date": "2026-10-28 18:47:00 +0100"
+          }
+        ],
+        "source": {
+          "name": "Google Health",
+          "identifier": "com.fitbit.FitbitMobile"
+        },
+        "maxHeartRate": {
+          "units": "bpm",
+          "qty": 127
+        },
+        "activities": [
+          {
+            "id": "00000000-0000-4000-8000-000000000006",
+            "index": 1,
+            "start": "2026-10-28 18:10:27 +0100",
+            "boundaryOrigin": "recordedActivity",
+            "activeDuration": 2250,
+            "activityType": "soccer",
+            "elapsedDuration": 2250,
+            "configuration": {
+              "locationType": "outdoor",
+              "swimmingLocationType": "unknown"
+            },
+            "activityTypeCode": 41,
+            "metrics": {
+              "heartRateMinimum": {
+                "sampleCount": 75,
+                "units": "bpm",
+                "qty": 81,
+                "origin": "sampleSummary"
+              },
+              "activeEnergy": {
+                "origin": "activityStatistics",
+                "qty": 203,
+                "units": "kcal"
+              },
+              "heartRateAverage": {
+                "units": "bpm",
+                "sampleCount": 75,
+                "qty": 109.17333333333333,
+                "origin": "sampleSummary"
+              },
+              "heartRateMaximum": {
+                "sampleCount": 75,
+                "units": "bpm",
+                "qty": 127,
+                "origin": "sampleSummary"
+              }
+            },
+            "duration": 2250,
+            "end": "2026-10-28 18:47:57 +0100",
+            "boundaryKind": "interval"
+          }
+        ],
+        "stepCadence": {
+          "units": "count/min",
+          "qty": 36.586666666666666
+        },
+        "end": "2026-10-28 18:47:57 +0100",
+        "duration": 2250,
+        "name": "Calcio",
+        "activeEnergyBurned": {
+          "qty": 849.352,
+          "units": "kJ"
+        }
+      },
+      {
+        "speed": {
+          "qty": 4.529365187713311,
+          "units": "km/hr"
+        },
+        "id": "00000000-0000-4000-8000-000000000007",
+        "start": "2026-10-27 21:23:43 +0100",
+        "activeEnergyBurned": {
+          "qty": 2447.64,
+          "units": "kJ"
+        },
+        "avgHeartRate": {
+          "units": "bpm",
+          "qty": 166.20422535211267
+        },
+        "heartRateData": [
+          {
+            "Max": 100,
+            "units": "bpm",
+            "Avg": 100,
+            "Min": 100,
+            "date": "2026-10-27 21:23:00 +0100"
+          },
+          {
+            "Max": 121,
+            "units": "bpm",
+            "Avg": 110,
+            "Min": 99,
+            "date": "2026-10-27 21:24:00 +0100"
+          },
+          {
+            "Max": 153,
+            "units": "bpm",
+            "Avg": 137,
+            "Min": 121,
+            "date": "2026-10-27 21:25:00 +0100"
+          },
+          {
+            "Max": 160,
+            "units": "bpm",
+            "Avg": 156.5,
+            "Min": 153,
+            "date": "2026-10-27 21:26:00 +0100"
+          },
+          {
+            "Max": 161,
+            "units": "bpm",
+            "Avg": 158.5,
+            "Min": 156,
+            "date": "2026-10-27 21:27:00 +0100"
+          },
+          {
+            "Max": 155,
+            "units": "bpm",
+            "Avg": 136,
+            "Min": 117,
+            "date": "2026-10-27 21:28:00 +0100"
+          },
+          {
+            "Max": 125,
+            "units": "bpm",
+            "Avg": 120.5,
+            "Min": 116,
+            "date": "2026-10-27 21:29:00 +0100"
+          },
+          {
+            "Max": 152,
+            "units": "bpm",
+            "Avg": 139,
+            "Min": 126,
+            "date": "2026-10-27 21:30:00 +0100"
+          },
+          {
+            "Max": 152,
+            "units": "bpm",
+            "Avg": 146,
+            "Min": 140,
+            "date": "2026-10-27 21:31:00 +0100"
+          },
+          {
+            "Max": 143,
+            "units": "bpm",
+            "Avg": 138.5,
+            "Min": 134,
+            "date": "2026-10-27 21:32:00 +0100"
+          },
+          {
+            "Max": 140,
+            "units": "bpm",
+            "Avg": 136,
+            "Min": 132,
+            "date": "2026-10-27 21:33:00 +0100"
+          },
+          {
+            "Max": 157,
+            "units": "bpm",
+            "Avg": 146,
+            "Min": 135,
+            "date": "2026-10-27 21:34:00 +0100"
+          },
+          {
+            "Max": 166,
+            "units": "bpm",
+            "Avg": 162,
+            "Min": 158,
+            "date": "2026-10-27 21:35:00 +0100"
+          },
+          {
+            "Max": 174,
+            "units": "bpm",
+            "Avg": 169,
+            "Min": 164,
+            "date": "2026-10-27 21:36:00 +0100"
+          },
+          {
+            "Max": 171,
+            "units": "bpm",
+            "Avg": 166,
+            "Min": 161,
+            "date": "2026-10-27 21:37:00 +0100"
+          },
+          {
+            "Max": 183,
+            "units": "bpm",
+            "Avg": 178,
+            "Min": 173,
+            "date": "2026-10-27 21:38:00 +0100"
+          },
+          {
+            "Max": 177,
+            "units": "bpm",
+            "Avg": 173.5,
+            "Min": 170,
+            "date": "2026-10-27 21:39:00 +0100"
+          },
+          {
+            "Max": 174,
+            "units": "bpm",
+            "Avg": 168.5,
+            "Min": 163,
+            "date": "2026-10-27 21:40:00 +0100"
+          },
+          {
+            "Max": 174,
+            "units": "bpm",
+            "Avg": 171.5,
+            "Min": 169,
+            "date": "2026-10-27 21:41:00 +0100"
+          },
+          {
+            "Max": 184,
+            "units": "bpm",
+            "Avg": 177,
+            "Min": 170,
+            "date": "2026-10-27 21:42:00 +0100"
+          },
+          {
+            "Max": 191,
+            "units": "bpm",
+            "Avg": 186.5,
+            "Min": 182,
+            "date": "2026-10-27 21:43:00 +0100"
+          },
+          {
+            "Max": 191,
+            "units": "bpm",
+            "Avg": 190,
+            "Min": 189,
+            "date": "2026-10-27 21:44:00 +0100"
+          },
+          {
+            "Max": 192,
+            "units": "bpm",
+            "Avg": 188.5,
+            "Min": 185,
+            "date": "2026-10-27 21:45:00 +0100"
+          },
+          {
+            "Max": 187,
+            "units": "bpm",
+            "Avg": 177,
+            "Min": 167,
+            "date": "2026-10-27 21:46:00 +0100"
+          },
+          {
+            "Max": 199,
+            "units": "bpm",
+            "Avg": 185.5,
+            "Min": 172,
+            "date": "2026-10-27 21:47:00 +0100"
+          },
+          {
+            "Max": 200,
+            "units": "bpm",
+            "Avg": 191.5,
+            "Min": 183,
+            "date": "2026-10-27 21:48:00 +0100"
+          },
+          {
+            "Max": 183,
+            "units": "bpm",
+            "Avg": 176.5,
+            "Min": 170,
+            "date": "2026-10-27 21:49:00 +0100"
+          },
+          {
+            "Max": 181,
+            "units": "bpm",
+            "Avg": 177,
+            "Min": 173,
+            "date": "2026-10-27 21:50:00 +0100"
+          },
+          {
+            "Max": 186,
+            "units": "bpm",
+            "Avg": 181,
+            "Min": 176,
+            "date": "2026-10-27 21:51:00 +0100"
+          },
+          {
+            "Max": 188,
+            "units": "bpm",
+            "Avg": 186,
+            "Min": 184,
+            "date": "2026-10-27 21:52:00 +0100"
+          },
+          {
+            "Max": 194,
+            "units": "bpm",
+            "Avg": 190.5,
+            "Min": 187,
+            "date": "2026-10-27 21:53:00 +0100"
+          },
+          {
+            "Max": 190,
+            "units": "bpm",
+            "Avg": 180,
+            "Min": 170,
+            "date": "2026-10-27 21:54:00 +0100"
+          },
+          {
+            "Max": 188,
+            "units": "bpm",
+            "Avg": 176,
+            "Min": 164,
+            "date": "2026-10-27 21:55:00 +0100"
+          },
+          {
+            "Max": 189,
+            "units": "bpm",
+            "Avg": 185,
+            "Min": 181,
+            "date": "2026-10-27 21:56:00 +0100"
+          },
+          {
+            "Max": 191,
+            "units": "bpm",
+            "Avg": 187,
+            "Min": 183,
+            "date": "2026-10-27 21:57:00 +0100"
+          },
+          {
+            "Max": 192,
+            "units": "bpm",
+            "Avg": 186.5,
+            "Min": 181,
+            "date": "2026-10-27 21:58:00 +0100"
+          },
+          {
+            "Max": 179,
+            "units": "bpm",
+            "Avg": 164.5,
+            "Min": 150,
+            "date": "2026-10-27 21:59:00 +0100"
+          },
+          {
+            "Max": 151,
+            "units": "bpm",
+            "Avg": 145,
+            "Min": 139,
+            "date": "2026-10-27 22:00:00 +0100"
+          },
+          {
+            "Max": 156,
+            "units": "bpm",
+            "Avg": 147.5,
+            "Min": 139,
+            "date": "2026-10-27 22:01:00 +0100"
+          },
+          {
+            "Max": 187,
+            "units": "bpm",
+            "Avg": 171.5,
+            "Min": 156,
+            "date": "2026-10-27 22:02:00 +0100"
+          },
+          {
+            "Max": 195,
+            "units": "bpm",
+            "Avg": 190.5,
+            "Min": 186,
+            "date": "2026-10-27 22:03:00 +0100"
+          },
+          {
+            "Max": 194,
+            "units": "bpm",
+            "Avg": 182.5,
+            "Min": 171,
+            "date": "2026-10-27 22:04:00 +0100"
+          },
+          {
+            "Max": 170,
+            "units": "bpm",
+            "Avg": 160,
+            "Min": 150,
+            "date": "2026-10-27 22:05:00 +0100"
+          },
+          {
+            "Max": 173,
+            "units": "bpm",
+            "Avg": 170,
+            "Min": 167,
+            "date": "2026-10-27 22:06:00 +0100"
+          },
+          {
+            "Max": 180,
+            "units": "bpm",
+            "Avg": 175.5,
+            "Min": 171,
+            "date": "2026-10-27 22:07:00 +0100"
+          },
+          {
+            "Max": 191,
+            "units": "bpm",
+            "Avg": 183.5,
+            "Min": 176,
+            "date": "2026-10-27 22:08:00 +0100"
+          },
+          {
+            "Max": 191,
+            "units": "bpm",
+            "Avg": 188,
+            "Min": 185,
+            "date": "2026-10-27 22:09:00 +0100"
+          },
+          {
+            "Max": 189,
+            "units": "bpm",
+            "Avg": 186.5,
+            "Min": 184,
+            "date": "2026-10-27 22:10:00 +0100"
+          },
+          {
+            "Max": 196,
+            "units": "bpm",
+            "Avg": 185,
+            "Min": 174,
+            "date": "2026-10-27 22:11:00 +0100"
+          },
+          {
+            "Max": 172,
+            "units": "bpm",
+            "Avg": 162.5,
+            "Min": 153,
+            "date": "2026-10-27 22:12:00 +0100"
+          },
+          {
+            "Max": 152,
+            "units": "bpm",
+            "Avg": 142.5,
+            "Min": 133,
+            "date": "2026-10-27 22:13:00 +0100"
+          },
+          {
+            "Max": 179,
+            "units": "bpm",
+            "Avg": 156.5,
+            "Min": 134,
+            "date": "2026-10-27 22:14:00 +0100"
+          },
+          {
+            "Max": 185,
+            "units": "bpm",
+            "Avg": 182.5,
+            "Min": 180,
+            "date": "2026-10-27 22:15:00 +0100"
+          },
+          {
+            "Max": 187,
+            "units": "bpm",
+            "Avg": 182,
+            "Min": 177,
+            "date": "2026-10-27 22:16:00 +0100"
+          },
+          {
+            "Max": 187,
+            "units": "bpm",
+            "Avg": 179,
+            "Min": 171,
+            "date": "2026-10-27 22:17:00 +0100"
+          },
+          {
+            "Max": 185,
+            "units": "bpm",
+            "Avg": 182,
+            "Min": 179,
+            "date": "2026-10-27 22:18:00 +0100"
+          },
+          {
+            "Max": 180,
+            "units": "bpm",
+            "Avg": 177.5,
+            "Min": 175,
+            "date": "2026-10-27 22:19:00 +0100"
+          },
+          {
+            "Max": 178,
+            "units": "bpm",
+            "Avg": 175.5,
+            "Min": 173,
+            "date": "2026-10-27 22:20:00 +0100"
+          },
+          {
+            "Max": 184,
+            "units": "bpm",
+            "Avg": 179,
+            "Min": 174,
+            "date": "2026-10-27 22:21:00 +0100"
+          },
+          {
+            "Max": 184,
+            "units": "bpm",
+            "Avg": 176.5,
+            "Min": 169,
+            "date": "2026-10-27 22:22:00 +0100"
+          },
+          {
+            "Max": 174,
+            "units": "bpm",
+            "Avg": 171,
+            "Min": 168,
+            "date": "2026-10-27 22:23:00 +0100"
+          },
+          {
+            "Max": 182,
+            "units": "bpm",
+            "Avg": 177.5,
+            "Min": 173,
+            "date": "2026-10-27 22:24:00 +0100"
+          },
+          {
+            "Max": 184,
+            "units": "bpm",
+            "Avg": 178.5,
+            "Min": 173,
+            "date": "2026-10-27 22:25:00 +0100"
+          },
+          {
+            "Max": 185,
+            "units": "bpm",
+            "Avg": 165.5,
+            "Min": 146,
+            "date": "2026-10-27 22:26:00 +0100"
+          },
+          {
+            "Max": 146,
+            "units": "bpm",
+            "Avg": 143,
+            "Min": 140,
+            "date": "2026-10-27 22:27:00 +0100"
+          },
+          {
+            "Max": 146,
+            "units": "bpm",
+            "Avg": 144.5,
+            "Min": 143,
+            "date": "2026-10-27 22:28:00 +0100"
+          },
+          {
+            "Max": 152,
+            "units": "bpm",
+            "Avg": 148,
+            "Min": 144,
+            "date": "2026-10-27 22:29:00 +0100"
+          },
+          {
+            "Max": 152,
+            "units": "bpm",
+            "Avg": 147.5,
+            "Min": 143,
+            "date": "2026-10-27 22:30:00 +0100"
+          },
+          {
+            "Max": 153,
+            "units": "bpm",
+            "Avg": 148.5,
+            "Min": 144,
+            "date": "2026-10-27 22:31:00 +0100"
+          },
+          {
+            "Max": 149,
+            "units": "bpm",
+            "Avg": 148.5,
+            "Min": 148,
+            "date": "2026-10-27 22:32:00 +0100"
+          },
+          {
+            "Max": 149,
+            "units": "bpm",
+            "Avg": 148.5,
+            "Min": 148,
+            "date": "2026-10-27 22:36:00 +0100"
+          }
+        ],
+        "metadata": {},
+        "end": "2026-10-27 22:36:58 +0100",
+        "stepCadence": {
+          "qty": 93.1467576791809,
+          "units": "count/min"
+        },
+        "maxHeartRate": {
+          "units": "bpm",
+          "qty": 200
+        },
+        "source": {
+          "name": "Google Health",
+          "identifier": "com.fitbit.FitbitMobile"
+        },
+        "activities": [
+          {
+            "id": "00000000-0000-4000-8000-000000000007",
+            "start": "2026-10-27 21:23:43 +0100",
+            "boundaryOrigin": "recordedActivity",
+            "index": 1,
+            "activeDuration": 4395,
+            "configuration": {
+              "locationType": "outdoor",
+              "swimmingLocationType": "unknown"
+            },
+            "elapsedDuration": 4395,
+            "activityType": "soccer",
+            "metrics": {
+              "heartRateMinimum": {
+                "units": "bpm",
+                "sampleCount": 141,
+                "qty": 99,
+                "origin": "sampleSummary"
+              },
+              "activeEnergy": {
+                "origin": "activityStatistics",
+                "qty": 585,
+                "units": "kcal"
+              },
+              "heartRateAverage": {
+                "units": "bpm",
+                "sampleCount": 141,
+                "qty": 166.67375886524823,
+                "origin": "sampleSummary"
+              },
+              "heartRateMaximum": {
+                "sampleCount": 141,
+                "units": "bpm",
+                "qty": 200,
+                "origin": "sampleSummary"
+              }
+            },
+            "activityTypeCode": 41,
+            "end": "2026-10-27 22:36:58 +0100",
+            "duration": 4395,
+            "boundaryKind": "interval"
+          }
+        ],
+        "duration": 4395,
+        "distance": {
+          "units": "km",
+          "qty": 5.5296
+        },
+        "heartRate": {
+          "min": {
+            "units": "bpm",
+            "qty": 99
+          },
+          "max": {
+            "qty": 200,
+            "units": "bpm"
+          },
+          "avg": {
+            "qty": 166.20422535211267,
+            "units": "bpm"
+          }
+        },
+        "name": "Calcio"
+      },
+      {
+        "id": "00000000-0000-4000-8000-000000000008",
+        "start": "2026-10-27 18:03:26 +0100",
+        "distance": {
+          "units": "km",
+          "qty": 0.9386
+        },
+        "speed": {
+          "units": "km/hr",
+          "qty": 2.290820338983051
+        },
+        "avgHeartRate": {
+          "units": "bpm",
+          "qty": 105.78
+        },
+        "heartRate": {
+          "max": {
+            "units": "bpm",
+            "qty": 130
+          },
+          "avg": {
+            "qty": 105.78,
+            "units": "bpm"
+          },
+          "min": {
+            "units": "bpm",
+            "qty": 72
+          }
+        },
+        "metadata": {},
+        "heartRateData": [
+          {
+            "Max": 72,
+            "units": "bpm",
+            "Avg": 72,
+            "Min": 72,
+            "date": "2026-10-27 18:03:00 +0100"
+          },
+          {
+            "Max": 84,
+            "units": "bpm",
+            "Avg": 78,
+            "Min": 72,
+            "date": "2026-10-27 18:04:00 +0100"
+          },
+          {
+            "Max": 91,
+            "units": "bpm",
+            "Avg": 86.5,
+            "Min": 82,
+            "date": "2026-10-27 18:05:00 +0100"
+          },
+          {
+            "Max": 91,
+            "units": "bpm",
+            "Avg": 87.5,
+            "Min": 84,
+            "date": "2026-10-27 18:06:00 +0100"
+          },
+          {
+            "Max": 106,
+            "units": "bpm",
+            "Avg": 98.5,
+            "Min": 91,
+            "date": "2026-10-27 18:07:00 +0100"
+          },
+          {
+            "Max": 111,
+            "units": "bpm",
+            "Avg": 108.5,
+            "Min": 106,
+            "date": "2026-10-27 18:08:00 +0100"
+          },
+          {
+            "Max": 109,
+            "units": "bpm",
+            "Avg": 106.5,
+            "Min": 104,
+            "date": "2026-10-27 18:09:00 +0100"
+          },
+          {
+            "Max": 110,
+            "units": "bpm",
+            "Avg": 108.5,
+            "Min": 107,
+            "date": "2026-10-27 18:10:00 +0100"
+          },
+          {
+            "Max": 112,
+            "units": "bpm",
+            "Avg": 110,
+            "Min": 108,
+            "date": "2026-10-27 18:11:00 +0100"
+          },
+          {
+            "Max": 130,
+            "units": "bpm",
+            "Avg": 121.5,
+            "Min": 113,
+            "date": "2026-10-27 18:12:00 +0100"
+          },
+          {
+            "Max": 128,
+            "units": "bpm",
+            "Avg": 126.5,
+            "Min": 125,
+            "date": "2026-10-27 18:13:00 +0100"
+          },
+          {
+            "Max": 127,
+            "units": "bpm",
+            "Avg": 121,
+            "Min": 115,
+            "date": "2026-10-27 18:14:00 +0100"
+          },
+          {
+            "Max": 120,
+            "units": "bpm",
+            "Avg": 114.5,
+            "Min": 109,
+            "date": "2026-10-27 18:15:00 +0100"
+          },
+          {
+            "Max": 113,
+            "units": "bpm",
+            "Avg": 111,
+            "Min": 109,
+            "date": "2026-10-27 18:16:00 +0100"
+          },
+          {
+            "Max": 116,
+            "units": "bpm",
+            "Avg": 113.5,
+            "Min": 111,
+            "date": "2026-10-27 18:17:00 +0100"
+          },
+          {
+            "Max": 112,
+            "units": "bpm",
+            "Avg": 109.5,
+            "Min": 107,
+            "date": "2026-10-27 18:18:00 +0100"
+          },
+          {
+            "Max": 110,
+            "units": "bpm",
+            "Avg": 108.5,
+            "Min": 107,
+            "date": "2026-10-27 18:19:00 +0100"
+          },
+          {
+            "Max": 112,
+            "units": "bpm",
+            "Avg": 109,
+            "Min": 106,
+            "date": "2026-10-27 18:20:00 +0100"
+          },
+          {
+            "Max": 111,
+            "units": "bpm",
+            "Avg": 104.5,
+            "Min": 98,
+            "date": "2026-10-27 18:21:00 +0100"
+          },
+          {
+            "Max": 111,
+            "units": "bpm",
+            "Avg": 106,
+            "Min": 101,
+            "date": "2026-10-27 18:22:00 +0100"
+          },
+          {
+            "Max": 122,
+            "units": "bpm",
+            "Avg": 116,
+            "Min": 110,
+            "date": "2026-10-27 18:23:00 +0100"
+          },
+          {
+            "Max": 121,
+            "units": "bpm",
+            "Avg": 116,
+            "Min": 111,
+            "date": "2026-10-27 18:24:00 +0100"
+          },
+          {
+            "Max": 113,
+            "units": "bpm",
+            "Avg": 104,
+            "Min": 95,
+            "date": "2026-10-27 18:25:00 +0100"
+          },
+          {
+            "Max": 105,
+            "units": "bpm",
+            "Avg": 102.5,
+            "Min": 100,
+            "date": "2026-10-27 18:26:00 +0100"
+          },
+          {
+            "Max": 115,
+            "units": "bpm",
+            "Avg": 104.5,
+            "Min": 94,
+            "date": "2026-10-27 18:27:00 +0100"
+          }
+        ],
+        "source": {
+          "name": "Google Health",
+          "identifier": "com.fitbit.FitbitMobile"
+        },
+        "maxHeartRate": {
+          "qty": 130,
+          "units": "bpm"
+        },
+        "activities": [
+          {
+            "id": "00000000-0000-4000-8000-000000000008",
+            "index": 1,
+            "start": "2026-10-27 18:03:26 +0100",
+            "boundaryOrigin": "recordedActivity",
+            "activeDuration": 1475,
+            "activityType": "soccer",
+            "elapsedDuration": 1475,
+            "configuration": {
+              "locationType": "outdoor",
+              "swimmingLocationType": "unknown"
+            },
+            "activityTypeCode": 41,
+            "metrics": {
+              "heartRateMinimum": {
+                "sampleCount": 49,
+                "units": "bpm",
+                "qty": 72,
+                "origin": "sampleSummary"
+              },
+              "activeEnergy": {
+                "units": "kcal",
+                "qty": 155,
+                "origin": "activityStatistics"
+              },
+              "heartRateAverage": {
+                "units": "bpm",
+                "sampleCount": 49,
+                "qty": 106.46938775510205,
+                "origin": "sampleSummary"
+              },
+              "heartRateMaximum": {
+                "sampleCount": 49,
+                "units": "bpm",
+                "qty": 130,
+                "origin": "sampleSummary"
+              }
+            },
+            "duration": 1475,
+            "end": "2026-10-27 18:28:01 +0100",
+            "boundaryKind": "interval"
+          }
+        ],
+        "stepCadence": {
+          "units": "count/min",
+          "qty": 56.29830508474576
+        },
+        "end": "2026-10-27 18:28:01 +0100",
+        "duration": 1475,
+        "name": "Calcio",
+        "activeEnergyBurned": {
+          "qty": 648.52,
+          "units": "kJ"
+        }
+      },
+      {
+        "activeEnergyBurned": {
+          "units": "kJ",
+          "qty": 1004.16
+        },
+        "source": {
+          "name": "Google Health",
+          "identifier": "com.fitbit.FitbitMobile"
+        },
+        "heartRate": {
+          "min": {
+            "units": "bpm",
+            "qty": 67
+          },
+          "max": {
+            "qty": 142,
+            "units": "bpm"
+          },
+          "avg": {
+            "qty": 104.43859649122807,
+            "units": "bpm"
+          }
+        },
+        "metadata": {},
+        "duration": 3329,
+        "avgHeartRate": {
+          "units": "bpm",
+          "qty": 104.43859649122807
+        },
+        "activities": [
+          {
+            "id": "00000000-0000-4000-8000-000000000009",
+            "start": "2026-10-26 16:44:40 +0100",
+            "boundaryOrigin": "recordedActivity",
+            "index": 1,
+            "activeDuration": 3329,
+            "configuration": {
+              "swimmingLocationType": "unknown",
+              "locationType": "outdoor"
+            },
+            "elapsedDuration": 3332,
+            "activityType": "traditional_strength_training",
+            "metrics": {
+              "heartRateMinimum": {
+                "units": "bpm",
+                "sampleCount": 112,
+                "qty": 67,
+                "origin": "sampleSummary"
+              },
+              "activeEnergy": {
+                "qty": 240,
+                "origin": "activityStatistics",
+                "units": "kcal"
+              },
+              "heartRateAverage": {
+                "sampleCount": 112,
+                "units": "bpm",
+                "qty": 104.50892857142857,
+                "origin": "sampleSummary"
+              },
+              "heartRateMaximum": {
+                "units": "bpm",
+                "sampleCount": 112,
+                "qty": 142,
+                "origin": "sampleSummary"
+              }
+            },
+            "activityTypeCode": 50,
+            "end": "2026-10-26 17:40:12 +0100",
+            "duration": 3329,
+            "boundaryKind": "interval"
+          }
+        ],
+        "name": "Allenamento di Forza Tradizionale",
+        "heartRateData": [
+          {
+            "Max": 85,
+            "units": "bpm",
+            "Avg": 85,
+            "Min": 85,
+            "date": "2026-10-26 16:44:00 +0100"
+          },
+          {
+            "Max": 90,
+            "units": "bpm",
+            "Avg": 80,
+            "Min": 70,
+            "date": "2026-10-26 16:45:00 +0100"
+          },
+          {
+            "Max": 82,
+            "units": "bpm",
+            "Avg": 78.5,
+            "Min": 75,
+            "date": "2026-10-26 16:46:00 +0100"
+          },
+          {
+            "Max": 97,
+            "units": "bpm",
+            "Avg": 89.5,
+            "Min": 82,
+            "date": "2026-10-26 16:47:00 +0100"
+          },
+          {
+            "Max": 109,
+            "units": "bpm",
+            "Avg": 97,
+            "Min": 85,
+            "date": "2026-10-26 16:48:00 +0100"
+          },
+          {
+            "Max": 96,
+            "units": "bpm",
+            "Avg": 83.5,
+            "Min": 71,
+            "date": "2026-10-26 16:49:00 +0100"
+          },
+          {
+            "Max": 70,
+            "units": "bpm",
+            "Avg": 68.5,
+            "Min": 67,
+            "date": "2026-10-26 16:50:00 +0100"
+          },
+          {
+            "Max": 97,
+            "units": "bpm",
+            "Avg": 83,
+            "Min": 69,
+            "date": "2026-10-26 16:51:00 +0100"
+          },
+          {
+            "Max": 115,
+            "units": "bpm",
+            "Avg": 105,
+            "Min": 95,
+            "date": "2026-10-26 16:52:00 +0100"
+          },
+          {
+            "Max": 101,
+            "units": "bpm",
+            "Avg": 89,
+            "Min": 77,
+            "date": "2026-10-26 16:53:00 +0100"
+          },
+          {
+            "Max": 77,
+            "units": "bpm",
+            "Avg": 73.5,
+            "Min": 70,
+            "date": "2026-10-26 16:54:00 +0100"
+          },
+          {
+            "Max": 96,
+            "units": "bpm",
+            "Avg": 83.5,
+            "Min": 71,
+            "date": "2026-10-26 16:55:00 +0100"
+          },
+          {
+            "Max": 113,
+            "units": "bpm",
+            "Avg": 100.5,
+            "Min": 88,
+            "date": "2026-10-26 16:56:00 +0100"
+          },
+          {
+            "Max": 86,
+            "units": "bpm",
+            "Avg": 77.5,
+            "Min": 69,
+            "date": "2026-10-26 16:57:00 +0100"
+          },
+          {
+            "Max": 107,
+            "units": "bpm",
+            "Avg": 88,
+            "Min": 69,
+            "date": "2026-10-26 16:58:00 +0100"
+          },
+          {
+            "Max": 121,
+            "units": "bpm",
+            "Avg": 116,
+            "Min": 111,
+            "date": "2026-10-26 16:59:00 +0100"
+          },
+          {
+            "Max": 117,
+            "units": "bpm",
+            "Avg": 111,
+            "Min": 105,
+            "date": "2026-10-26 17:00:00 +0100"
+          },
+          {
+            "Max": 113,
+            "units": "bpm",
+            "Avg": 103,
+            "Min": 93,
+            "date": "2026-10-26 17:01:00 +0100"
+          },
+          {
+            "Max": 109,
+            "units": "bpm",
+            "Avg": 99,
+            "Min": 89,
+            "date": "2026-10-26 17:02:00 +0100"
+          },
+          {
+            "Max": 90,
+            "units": "bpm",
+            "Avg": 82,
+            "Min": 74,
+            "date": "2026-10-26 17:03:00 +0100"
+          },
+          {
+            "Max": 119,
+            "units": "bpm",
+            "Avg": 105,
+            "Min": 91,
+            "date": "2026-10-26 17:04:00 +0100"
+          },
+          {
+            "Max": 126,
+            "units": "bpm",
+            "Avg": 105.5,
+            "Min": 85,
+            "date": "2026-10-26 17:05:00 +0100"
+          },
+          {
+            "Max": 109,
+            "units": "bpm",
+            "Avg": 94,
+            "Min": 79,
+            "date": "2026-10-26 17:06:00 +0100"
+          },
+          {
+            "Max": 121,
+            "units": "bpm",
+            "Avg": 105,
+            "Min": 89,
+            "date": "2026-10-26 17:07:00 +0100"
+          },
+          {
+            "Max": 90,
+            "units": "bpm",
+            "Avg": 87.5,
+            "Min": 85,
+            "date": "2026-10-26 17:08:00 +0100"
+          },
+          {
+            "Max": 119,
+            "units": "bpm",
+            "Avg": 105,
+            "Min": 91,
+            "date": "2026-10-26 17:09:00 +0100"
+          },
+          {
+            "Max": 122,
+            "units": "bpm",
+            "Avg": 114,
+            "Min": 106,
+            "date": "2026-10-26 17:10:00 +0100"
+          },
+          {
+            "Max": 115,
+            "units": "bpm",
+            "Avg": 107,
+            "Min": 99,
+            "date": "2026-10-26 17:11:00 +0100"
+          },
+          {
+            "Max": 125,
+            "units": "bpm",
+            "Avg": 114.5,
+            "Min": 104,
+            "date": "2026-10-26 17:12:00 +0100"
+          },
+          {
+            "Max": 121,
+            "units": "bpm",
+            "Avg": 119,
+            "Min": 117,
+            "date": "2026-10-26 17:13:00 +0100"
+          },
+          {
+            "Max": 120,
+            "units": "bpm",
+            "Avg": 116,
+            "Min": 112,
+            "date": "2026-10-26 17:14:00 +0100"
+          },
+          {
+            "Max": 131,
+            "units": "bpm",
+            "Avg": 121.5,
+            "Min": 112,
+            "date": "2026-10-26 17:15:00 +0100"
+          },
+          {
+            "Max": 130,
+            "units": "bpm",
+            "Avg": 120.5,
+            "Min": 111,
+            "date": "2026-10-26 17:16:00 +0100"
+          },
+          {
+            "Max": 108,
+            "units": "bpm",
+            "Avg": 99.5,
+            "Min": 91,
+            "date": "2026-10-26 17:17:00 +0100"
+          },
+          {
+            "Max": 128,
+            "units": "bpm",
+            "Avg": 112,
+            "Min": 96,
+            "date": "2026-10-26 17:18:00 +0100"
+          },
+          {
+            "Max": 120,
+            "units": "bpm",
+            "Avg": 110.5,
+            "Min": 101,
+            "date": "2026-10-26 17:19:00 +0100"
+          },
+          {
+            "Max": 133,
+            "units": "bpm",
+            "Avg": 127,
+            "Min": 121,
+            "date": "2026-10-26 17:20:00 +0100"
+          },
+          {
+            "Max": 131,
+            "units": "bpm",
+            "Avg": 125.5,
+            "Min": 120,
+            "date": "2026-10-26 17:21:00 +0100"
+          },
+          {
+            "Max": 132,
+            "units": "bpm",
+            "Avg": 122,
+            "Min": 112,
+            "date": "2026-10-26 17:22:00 +0100"
+          },
+          {
+            "Max": 124,
+            "units": "bpm",
+            "Avg": 116,
+            "Min": 108,
+            "date": "2026-10-26 17:23:00 +0100"
+          },
+          {
+            "Max": 120,
+            "units": "bpm",
+            "Avg": 114,
+            "Min": 108,
+            "date": "2026-10-26 17:24:00 +0100"
+          },
+          {
+            "Max": 134,
+            "units": "bpm",
+            "Avg": 121.5,
+            "Min": 109,
+            "date": "2026-10-26 17:25:00 +0100"
+          },
+          {
+            "Max": 110,
+            "units": "bpm",
+            "Avg": 105,
+            "Min": 100,
+            "date": "2026-10-26 17:26:00 +0100"
+          },
+          {
+            "Max": 134,
+            "units": "bpm",
+            "Avg": 120.5,
+            "Min": 107,
+            "date": "2026-10-26 17:27:00 +0100"
+          },
+          {
+            "Max": 111,
+            "units": "bpm",
+            "Avg": 108,
+            "Min": 105,
+            "date": "2026-10-26 17:28:00 +0100"
+          },
+          {
+            "Max": 129,
+            "units": "bpm",
+            "Avg": 120,
+            "Min": 111,
+            "date": "2026-10-26 17:29:00 +0100"
+          },
+          {
+            "Max": 128,
+            "units": "bpm",
+            "Avg": 122.5,
+            "Min": 117,
+            "date": "2026-10-26 17:30:00 +0100"
+          },
+          {
+            "Max": 142,
+            "units": "bpm",
+            "Avg": 134.5,
+            "Min": 127,
+            "date": "2026-10-26 17:31:00 +0100"
+          },
+          {
+            "Max": 133,
+            "units": "bpm",
+            "Avg": 120,
+            "Min": 107,
+            "date": "2026-10-26 17:32:00 +0100"
+          },
+          {
+            "Max": 112,
+            "units": "bpm",
+            "Avg": 106.5,
+            "Min": 101,
+            "date": "2026-10-26 17:33:00 +0100"
+          },
+          {
+            "Max": 112,
+            "units": "bpm",
+            "Avg": 105.5,
+            "Min": 99,
+            "date": "2026-10-26 17:34:00 +0100"
+          },
+          {
+            "Max": 116,
+            "units": "bpm",
+            "Avg": 107,
+            "Min": 98,
+            "date": "2026-10-26 17:35:00 +0100"
+          },
+          {
+            "Max": 115,
+            "units": "bpm",
+            "Avg": 106,
+            "Min": 97,
+            "date": "2026-10-26 17:36:00 +0100"
+          },
+          {
+            "Max": 107,
+            "units": "bpm",
+            "Avg": 99.5,
+            "Min": 92,
+            "date": "2026-10-26 17:37:00 +0100"
+          },
+          {
+            "Max": 114,
+            "units": "bpm",
+            "Avg": 104.5,
+            "Min": 95,
+            "date": "2026-10-26 17:38:00 +0100"
+          },
+          {
+            "Max": 133,
+            "units": "bpm",
+            "Avg": 122,
+            "Min": 111,
+            "date": "2026-10-26 17:39:00 +0100"
+          },
+          {
+            "Max": 116,
+            "units": "bpm",
+            "Avg": 116,
+            "Min": 116,
+            "date": "2026-10-26 17:40:00 +0100"
+          }
+        ],
+        "id": "00000000-0000-4000-8000-000000000009",
+        "maxHeartRate": {
+          "qty": 142,
+          "units": "bpm"
+        },
+        "totalEnergy": {
+          "qty": 1331.758832,
+          "units": "kJ"
+        },
+        "stepCadence": {
+          "units": "count/min",
+          "qty": 0.8766042652272514
+        },
+        "end": "2026-10-26 17:40:12 +0100",
+        "start": "2026-10-26 16:44:40 +0100",
+        "flightsClimbed": {
+          "qty": 2,
+          "units": "count"
+        }
+      },
+      {
+        "activeEnergyBurned": {
+          "qty": 912.6098960000193,
+          "units": "kJ"
+        },
+        "location": "Interno",
+        "source": {
+          "name": "Bevel",
+          "identifier": "com.supersethealth.superset"
+        },
+        "heartRate": {
+          "max": {
+            "qty": 142,
+            "units": "bpm"
+          },
+          "avg": {
+            "qty": 103.67241379310344,
+            "units": "bpm"
+          },
+          "min": {
+            "qty": 67,
+            "units": "bpm"
+          }
+        },
+        "metadata": {},
+        "duration": 3409.3264899253845,
+        "intensity": {
+          "units": "kcal/hr·kg",
+          "qty": 2.0999999046325692
+        },
+        "avgHeartRate": {
+          "units": "bpm",
+          "qty": 103.67241379310344
+        },
+        "activities": [
+          {
+            "id": "00000000-0000-4000-8000-000000000010",
+            "index": 1,
+            "start": "2026-10-26 16:42:45 +0100",
+            "boundaryOrigin": "recordedActivity",
+            "activeDuration": 3409.3264899253845,
+            "activityType": "traditional_strength_training",
+            "elapsedDuration": 3409.3264899253845,
+            "configuration": {
+              "swimmingLocationType": "unknown",
+              "locationType": "indoor"
+            },
+            "activityTypeCode": 50,
+            "metrics": {
+              "heartRateMinimum": {
+                "sampleCount": 114,
+                "units": "bpm",
+                "qty": 67,
+                "origin": "sampleSummary"
+              },
+              "activeEnergy": {
+                "qty": 218.1190000000046,
+                "units": "kcal",
+                "origin": "activityStatistics"
+              },
+              "heartRateAverage": {
+                "sampleCount": 114,
+                "units": "bpm",
+                "qty": 103.69298245614036,
+                "origin": "sampleSummary"
+              },
+              "heartRateMaximum": {
+                "sampleCount": 114,
+                "units": "bpm",
+                "qty": 142,
+                "origin": "sampleSummary"
+              }
+            },
+            "duration": 3409.3264899253845,
+            "end": "2026-10-26 17:39:35 +0100",
+            "boundaryKind": "interval"
+          }
+        ],
+        "name": "Allenamento di Forza Tradizionale",
+        "heartRateData": [
+          {
+            "Max": 72,
+            "units": "bpm",
+            "Avg": 72,
+            "Min": 72,
+            "date": "2026-10-26 16:42:00 +0100"
+          },
+          {
+            "Max": 98,
+            "units": "bpm",
+            "Avg": 86,
+            "Min": 74,
+            "date": "2026-10-26 16:43:00 +0100"
+          },
+          {
+            "Max": 99,
+            "units": "bpm",
+            "Avg": 92,
+            "Min": 85,
+            "date": "2026-10-26 16:44:00 +0100"
+          },
+          {
+            "Max": 90,
+            "units": "bpm",
+            "Avg": 80,
+            "Min": 70,
+            "date": "2026-10-26 16:45:00 +0100"
+          },
+          {
+            "Max": 82,
+            "units": "bpm",
+            "Avg": 78.5,
+            "Min": 75,
+            "date": "2026-10-26 16:46:00 +0100"
+          },
+          {
+            "Max": 97,
+            "units": "bpm",
+            "Avg": 89.5,
+            "Min": 82,
+            "date": "2026-10-26 16:47:00 +0100"
+          },
+          {
+            "Max": 109,
+            "units": "bpm",
+            "Avg": 97,
+            "Min": 85,
+            "date": "2026-10-26 16:48:00 +0100"
+          },
+          {
+            "Max": 96,
+            "units": "bpm",
+            "Avg": 83.5,
+            "Min": 71,
+            "date": "2026-10-26 16:49:00 +0100"
+          },
+          {
+            "Max": 70,
+            "units": "bpm",
+            "Avg": 68.5,
+            "Min": 67,
+            "date": "2026-10-26 16:50:00 +0100"
+          },
+          {
+            "Max": 97,
+            "units": "bpm",
+            "Avg": 83,
+            "Min": 69,
+            "date": "2026-10-26 16:51:00 +0100"
+          },
+          {
+            "Max": 115,
+            "units": "bpm",
+            "Avg": 105,
+            "Min": 95,
+            "date": "2026-10-26 16:52:00 +0100"
+          },
+          {
+            "Max": 101,
+            "units": "bpm",
+            "Avg": 89,
+            "Min": 77,
+            "date": "2026-10-26 16:53:00 +0100"
+          },
+          {
+            "Max": 77,
+            "units": "bpm",
+            "Avg": 73.5,
+            "Min": 70,
+            "date": "2026-10-26 16:54:00 +0100"
+          },
+          {
+            "Max": 96,
+            "units": "bpm",
+            "Avg": 83.5,
+            "Min": 71,
+            "date": "2026-10-26 16:55:00 +0100"
+          },
+          {
+            "Max": 113,
+            "units": "bpm",
+            "Avg": 100.5,
+            "Min": 88,
+            "date": "2026-10-26 16:56:00 +0100"
+          },
+          {
+            "Max": 86,
+            "units": "bpm",
+            "Avg": 77.5,
+            "Min": 69,
+            "date": "2026-10-26 16:57:00 +0100"
+          },
+          {
+            "Max": 107,
+            "units": "bpm",
+            "Avg": 88,
+            "Min": 69,
+            "date": "2026-10-26 16:58:00 +0100"
+          },
+          {
+            "Max": 121,
+            "units": "bpm",
+            "Avg": 116,
+            "Min": 111,
+            "date": "2026-10-26 16:59:00 +0100"
+          },
+          {
+            "Max": 117,
+            "units": "bpm",
+            "Avg": 111,
+            "Min": 105,
+            "date": "2026-10-26 17:00:00 +0100"
+          },
+          {
+            "Max": 113,
+            "units": "bpm",
+            "Avg": 103,
+            "Min": 93,
+            "date": "2026-10-26 17:01:00 +0100"
+          },
+          {
+            "Max": 109,
+            "units": "bpm",
+            "Avg": 99,
+            "Min": 89,
+            "date": "2026-10-26 17:02:00 +0100"
+          },
+          {
+            "Max": 90,
+            "units": "bpm",
+            "Avg": 82,
+            "Min": 74,
+            "date": "2026-10-26 17:03:00 +0100"
+          },
+          {
+            "Max": 119,
+            "units": "bpm",
+            "Avg": 105,
+            "Min": 91,
+            "date": "2026-10-26 17:04:00 +0100"
+          },
+          {
+            "Max": 126,
+            "units": "bpm",
+            "Avg": 105.5,
+            "Min": 85,
+            "date": "2026-10-26 17:05:00 +0100"
+          },
+          {
+            "Max": 109,
+            "units": "bpm",
+            "Avg": 94,
+            "Min": 79,
+            "date": "2026-10-26 17:06:00 +0100"
+          },
+          {
+            "Max": 121,
+            "units": "bpm",
+            "Avg": 105,
+            "Min": 89,
+            "date": "2026-10-26 17:07:00 +0100"
+          },
+          {
+            "Max": 90,
+            "units": "bpm",
+            "Avg": 87.5,
+            "Min": 85,
+            "date": "2026-10-26 17:08:00 +0100"
+          },
+          {
+            "Max": 119,
+            "units": "bpm",
+            "Avg": 105,
+            "Min": 91,
+            "date": "2026-10-26 17:09:00 +0100"
+          },
+          {
+            "Max": 122,
+            "units": "bpm",
+            "Avg": 114,
+            "Min": 106,
+            "date": "2026-10-26 17:10:00 +0100"
+          },
+          {
+            "Max": 115,
+            "units": "bpm",
+            "Avg": 107,
+            "Min": 99,
+            "date": "2026-10-26 17:11:00 +0100"
+          },
+          {
+            "Max": 125,
+            "units": "bpm",
+            "Avg": 114.5,
+            "Min": 104,
+            "date": "2026-10-26 17:12:00 +0100"
+          },
+          {
+            "Max": 121,
+            "units": "bpm",
+            "Avg": 119,
+            "Min": 117,
+            "date": "2026-10-26 17:13:00 +0100"
+          },
+          {
+            "Max": 120,
+            "units": "bpm",
+            "Avg": 116,
+            "Min": 112,
+            "date": "2026-10-26 17:14:00 +0100"
+          },
+          {
+            "Max": 131,
+            "units": "bpm",
+            "Avg": 121.5,
+            "Min": 112,
+            "date": "2026-10-26 17:15:00 +0100"
+          },
+          {
+            "Max": 130,
+            "units": "bpm",
+            "Avg": 120.5,
+            "Min": 111,
+            "date": "2026-10-26 17:16:00 +0100"
+          },
+          {
+            "Max": 108,
+            "units": "bpm",
+            "Avg": 99.5,
+            "Min": 91,
+            "date": "2026-10-26 17:17:00 +0100"
+          },
+          {
+            "Max": 128,
+            "units": "bpm",
+            "Avg": 112,
+            "Min": 96,
+            "date": "2026-10-26 17:18:00 +0100"
+          },
+          {
+            "Max": 120,
+            "units": "bpm",
+            "Avg": 110.5,
+            "Min": 101,
+            "date": "2026-10-26 17:19:00 +0100"
+          },
+          {
+            "Max": 133,
+            "units": "bpm",
+            "Avg": 127,
+            "Min": 121,
+            "date": "2026-10-26 17:20:00 +0100"
+          },
+          {
+            "Max": 131,
+            "units": "bpm",
+            "Avg": 125.5,
+            "Min": 120,
+            "date": "2026-10-26 17:21:00 +0100"
+          },
+          {
+            "Max": 132,
+            "units": "bpm",
+            "Avg": 122,
+            "Min": 112,
+            "date": "2026-10-26 17:22:00 +0100"
+          },
+          {
+            "Max": 124,
+            "units": "bpm",
+            "Avg": 116,
+            "Min": 108,
+            "date": "2026-10-26 17:23:00 +0100"
+          },
+          {
+            "Max": 120,
+            "units": "bpm",
+            "Avg": 114,
+            "Min": 108,
+            "date": "2026-10-26 17:24:00 +0100"
+          },
+          {
+            "Max": 134,
+            "units": "bpm",
+            "Avg": 121.5,
+            "Min": 109,
+            "date": "2026-10-26 17:25:00 +0100"
+          },
+          {
+            "Max": 110,
+            "units": "bpm",
+            "Avg": 105,
+            "Min": 100,
+            "date": "2026-10-26 17:26:00 +0100"
+          },
+          {
+            "Max": 134,
+            "units": "bpm",
+            "Avg": 120.5,
+            "Min": 107,
+            "date": "2026-10-26 17:27:00 +0100"
+          },
+          {
+            "Max": 111,
+            "units": "bpm",
+            "Avg": 108,
+            "Min": 105,
+            "date": "2026-10-26 17:28:00 +0100"
+          },
+          {
+            "Max": 129,
+            "units": "bpm",
+            "Avg": 120,
+            "Min": 111,
+            "date": "2026-10-26 17:29:00 +0100"
+          },
+          {
+            "Max": 128,
+            "units": "bpm",
+            "Avg": 122.5,
+            "Min": 117,
+            "date": "2026-10-26 17:30:00 +0100"
+          },
+          {
+            "Max": 142,
+            "units": "bpm",
+            "Avg": 134.5,
+            "Min": 127,
+            "date": "2026-10-26 17:31:00 +0100"
+          },
+          {
+            "Max": 133,
+            "units": "bpm",
+            "Avg": 120,
+            "Min": 107,
+            "date": "2026-10-26 17:32:00 +0100"
+          },
+          {
+            "Max": 112,
+            "units": "bpm",
+            "Avg": 106.5,
+            "Min": 101,
+            "date": "2026-10-26 17:33:00 +0100"
+          },
+          {
+            "Max": 112,
+            "units": "bpm",
+            "Avg": 105.5,
+            "Min": 99,
+            "date": "2026-10-26 17:34:00 +0100"
+          },
+          {
+            "Max": 116,
+            "units": "bpm",
+            "Avg": 107,
+            "Min": 98,
+            "date": "2026-10-26 17:35:00 +0100"
+          },
+          {
+            "Max": 115,
+            "units": "bpm",
+            "Avg": 106,
+            "Min": 97,
+            "date": "2026-10-26 17:36:00 +0100"
+          },
+          {
+            "Max": 107,
+            "units": "bpm",
+            "Avg": 99.5,
+            "Min": 92,
+            "date": "2026-10-26 17:37:00 +0100"
+          },
+          {
+            "Max": 114,
+            "units": "bpm",
+            "Avg": 104.5,
+            "Min": 95,
+            "date": "2026-10-26 17:38:00 +0100"
+          },
+          {
+            "Max": 133,
+            "units": "bpm",
+            "Avg": 133,
+            "Min": 133,
+            "date": "2026-10-26 17:39:00 +0100"
+          }
+        ],
+        "id": "00000000-0000-4000-8000-000000000010",
+        "maxHeartRate": {
+          "qty": 142,
+          "units": "bpm"
+        },
+        "effortScore": {
+          "units": "appleEffortScore",
+          "qty": 4
+        },
+        "totalEnergy": {
+          "qty": 1240.2087280000194,
+          "units": "kJ"
+        },
+        "end": "2026-10-26 17:39:35 +0100",
+        "stepCadence": {
+          "qty": 1.4431002764149108,
+          "units": "count/min"
+        },
+        "isIndoor": true,
+        "start": "2026-10-26 16:42:45 +0100"
+      },
+      {
+        "activeEnergyBurned": {
+          "qty": 426.768,
+          "units": "kJ"
+        },
+        "source": {
+          "name": "Google Health",
+          "identifier": "com.fitbit.FitbitMobile"
+        },
+        "heartRate": {
+          "avg": {
+            "qty": 95,
+            "units": "bpm"
+          },
+          "max": {
+            "qty": 110,
+            "units": "bpm"
+          },
+          "min": {
+            "units": "bpm",
+            "qty": 73
+          }
+        },
+        "metadata": {},
+        "duration": 1182,
+        "avgHeartRate": {
+          "units": "bpm",
+          "qty": 95
+        },
+        "speed": {
+          "units": "km/hr",
+          "qty": 2.4307614213197968
+        },
+        "activities": [
+          {
+            "id": "00000000-0000-4000-8000-000000000011",
+            "start": "2026-10-26 08:22:56 +0100",
+            "boundaryOrigin": "recordedActivity",
+            "index": 1,
+            "activeDuration": 1182,
+            "configuration": {
+              "locationType": "outdoor",
+              "swimmingLocationType": "unknown"
+            },
+            "elapsedDuration": 1182,
+            "activityType": "walking",
+            "activityTypeCode": 52,
+            "metrics": {
+              "heartRateMaximum": {
+                "units": "bpm",
+                "sampleCount": 39,
+                "qty": 110,
+                "origin": "sampleSummary"
+              },
+              "distance": {
+                "origin": "activityStatistics",
+                "units": "m",
+                "qty": 798.1
+              },
+              "speed": {
+                "units": "m/s",
+                "qty": 0.6752115059221658,
+                "origin": "activeTimeCalculation"
+              },
+              "heartRateAverage": {
+                "sampleCount": 39,
+                "units": "bpm",
+                "qty": 95.17948717948718,
+                "origin": "sampleSummary"
+              },
+              "paceMile": {
+                "units": "s/mi",
+                "origin": "activeTimeCalculation",
+                "qty": 2383.4664929206865
+              },
+              "activeEnergy": {
+                "units": "kcal",
+                "qty": 102,
+                "origin": "activityStatistics"
+              },
+              "paceKilometre": {
+                "qty": 1481.0174163638642,
+                "units": "s/km",
+                "origin": "activeTimeCalculation"
+              },
+              "heartRateMinimum": {
+                "units": "bpm",
+                "sampleCount": 39,
+                "qty": 73,
+                "origin": "sampleSummary"
+              }
+            },
+            "duration": 1182,
+            "end": "2026-10-26 08:42:38 +0100",
+            "boundaryKind": "interval"
+          }
+        ],
+        "name": "Camminata",
+        "heartRateData": [
+          {
+            "Max": 102,
+            "units": "bpm",
+            "Avg": 100,
+            "Min": 98,
+            "date": "2026-10-26 08:23:00 +0100"
+          },
+          {
+            "Max": 107,
+            "units": "bpm",
+            "Avg": 105,
+            "Min": 103,
+            "date": "2026-10-26 08:24:00 +0100"
+          },
+          {
+            "Max": 102,
+            "units": "bpm",
+            "Avg": 96,
+            "Min": 90,
+            "date": "2026-10-26 08:25:00 +0100"
+          },
+          {
+            "Max": 95,
+            "units": "bpm",
+            "Avg": 92.5,
+            "Min": 90,
+            "date": "2026-10-26 08:26:00 +0100"
+          },
+          {
+            "Max": 98,
+            "units": "bpm",
+            "Avg": 95.5,
+            "Min": 93,
+            "date": "2026-10-26 08:27:00 +0100"
+          },
+          {
+            "Max": 101,
+            "units": "bpm",
+            "Avg": 98.5,
+            "Min": 96,
+            "date": "2026-10-26 08:28:00 +0100"
+          },
+          {
+            "Max": 102,
+            "units": "bpm",
+            "Avg": 101,
+            "Min": 100,
+            "date": "2026-10-26 08:29:00 +0100"
+          },
+          {
+            "Max": 102,
+            "units": "bpm",
+            "Avg": 97.5,
+            "Min": 93,
+            "date": "2026-10-26 08:30:00 +0100"
+          },
+          {
+            "Max": 94,
+            "units": "bpm",
+            "Avg": 89,
+            "Min": 84,
+            "date": "2026-10-26 08:31:00 +0100"
+          },
+          {
+            "Max": 95,
+            "units": "bpm",
+            "Avg": 84,
+            "Min": 73,
+            "date": "2026-10-26 08:32:00 +0100"
+          },
+          {
+            "Max": 82,
+            "units": "bpm",
+            "Avg": 79.5,
+            "Min": 77,
+            "date": "2026-10-26 08:33:00 +0100"
+          },
+          {
+            "Max": 93,
+            "units": "bpm",
+            "Avg": 83.5,
+            "Min": 74,
+            "date": "2026-10-26 08:34:00 +0100"
+          },
+          {
+            "Max": 92,
+            "units": "bpm",
+            "Avg": 87,
+            "Min": 82,
+            "date": "2026-10-26 08:35:00 +0100"
+          },
+          {
+            "Max": 110,
+            "units": "bpm",
+            "Avg": 100,
+            "Min": 90,
+            "date": "2026-10-26 08:36:00 +0100"
+          },
+          {
+            "Max": 110,
+            "units": "bpm",
+            "Avg": 106.5,
+            "Min": 103,
+            "date": "2026-10-26 08:37:00 +0100"
+          },
+          {
+            "Max": 103,
+            "units": "bpm",
+            "Avg": 97,
+            "Min": 91,
+            "date": "2026-10-26 08:38:00 +0100"
+          },
+          {
+            "Max": 99,
+            "units": "bpm",
+            "Avg": 95.5,
+            "Min": 92,
+            "date": "2026-10-26 08:39:00 +0100"
+          },
+          {
+            "Max": 110,
+            "units": "bpm",
+            "Avg": 104,
+            "Min": 98,
+            "date": "2026-10-26 08:40:00 +0100"
+          },
+          {
+            "Max": 103,
+            "units": "bpm",
+            "Avg": 100,
+            "Min": 97,
+            "date": "2026-10-26 08:41:00 +0100"
+          },
+          {
+            "Max": 88,
+            "units": "bpm",
+            "Avg": 88,
+            "Min": 88,
+            "date": "2026-10-26 08:42:00 +0100"
+          }
+        ],
+        "id": "00000000-0000-4000-8000-000000000011",
+        "maxHeartRate": {
+          "qty": 110,
+          "units": "bpm"
+        },
+        "stepCadence": {
+          "units": "count/min",
+          "qty": 60.57299146612041
+        },
+        "distance": {
+          "qty": 0.7981,
+          "units": "km"
+        },
+        "end": "2026-10-26 08:42:38 +0100",
+        "start": "2026-10-26 08:22:56 +0100",
+        "flightsClimbed": {
+          "qty": 2,
+          "units": "count"
+        }
+      },
+      {
+        "id": "00000000-0000-4000-8000-000000000012",
+        "start": "2026-10-25 17:22:07 +0100",
+        "heartRate": {
+          "max": {
+            "qty": 144,
+            "units": "bpm"
+          },
+          "avg": {
+            "qty": 128.51612903225808,
+            "units": "bpm"
+          },
+          "min": {
+            "qty": 112,
+            "units": "bpm"
+          }
+        },
+        "avgHeartRate": {
+          "qty": 128.51612903225808,
+          "units": "bpm"
+        },
+        "heartRateData": [
+          {
+            "Max": 121,
+            "units": "bpm",
+            "Avg": 121,
+            "Min": 121,
+            "date": "2026-10-25 17:22:00 +0100"
+          },
+          {
+            "Max": 131,
+            "units": "bpm",
+            "Avg": 125,
+            "Min": 119,
+            "date": "2026-10-25 17:23:00 +0100"
+          },
+          {
+            "Max": 130,
+            "units": "bpm",
+            "Avg": 125.5,
+            "Min": 121,
+            "date": "2026-10-25 17:24:00 +0100"
+          },
+          {
+            "Max": 130,
+            "units": "bpm",
+            "Avg": 127.5,
+            "Min": 125,
+            "date": "2026-10-25 17:25:00 +0100"
+          },
+          {
+            "Max": 130,
+            "units": "bpm",
+            "Avg": 128,
+            "Min": 126,
+            "date": "2026-10-25 17:26:00 +0100"
+          },
+          {
+            "Max": 135,
+            "units": "bpm",
+            "Avg": 130,
+            "Min": 125,
+            "date": "2026-10-25 17:27:00 +0100"
+          },
+          {
+            "Max": 130,
+            "units": "bpm",
+            "Avg": 126.5,
+            "Min": 123,
+            "date": "2026-10-25 17:28:00 +0100"
+          },
+          {
+            "Max": 132,
+            "units": "bpm",
+            "Avg": 123.5,
+            "Min": 115,
+            "date": "2026-10-25 17:29:00 +0100"
+          },
+          {
+            "Max": 136,
+            "units": "bpm",
+            "Avg": 130.5,
+            "Min": 125,
+            "date": "2026-10-25 17:30:00 +0100"
+          },
+          {
+            "Max": 128,
+            "units": "bpm",
+            "Avg": 123,
+            "Min": 118,
+            "date": "2026-10-25 17:31:00 +0100"
+          },
+          {
+            "Max": 129,
+            "units": "bpm",
+            "Avg": 123.5,
+            "Min": 118,
+            "date": "2026-10-25 17:32:00 +0100"
+          },
+          {
+            "Max": 135,
+            "units": "bpm",
+            "Avg": 131,
+            "Min": 127,
+            "date": "2026-10-25 17:33:00 +0100"
+          },
+          {
+            "Max": 134,
+            "units": "bpm",
+            "Avg": 125,
+            "Min": 116,
+            "date": "2026-10-25 17:34:00 +0100"
+          },
+          {
+            "Max": 131,
+            "units": "bpm",
+            "Avg": 125.5,
+            "Min": 120,
+            "date": "2026-10-25 17:35:00 +0100"
+          },
+          {
+            "Max": 127,
+            "units": "bpm",
+            "Avg": 124,
+            "Min": 121,
+            "date": "2026-10-25 17:36:00 +0100"
+          },
+          {
+            "Max": 131,
+            "units": "bpm",
+            "Avg": 126.5,
+            "Min": 122,
+            "date": "2026-10-25 17:37:00 +0100"
+          },
+          {
+            "Max": 137,
+            "units": "bpm",
+            "Avg": 129.5,
+            "Min": 122,
+            "date": "2026-10-25 17:38:00 +0100"
+          },
+          {
+            "Max": 136,
+            "units": "bpm",
+            "Avg": 132,
+            "Min": 128,
+            "date": "2026-10-25 17:39:00 +0100"
+          },
+          {
+            "Max": 134,
+            "units": "bpm",
+            "Avg": 129,
+            "Min": 124,
+            "date": "2026-10-25 17:40:00 +0100"
+          },
+          {
+            "Max": 133,
+            "units": "bpm",
+            "Avg": 129,
+            "Min": 125,
+            "date": "2026-10-25 17:41:00 +0100"
+          },
+          {
+            "Max": 129,
+            "units": "bpm",
+            "Avg": 123,
+            "Min": 117,
+            "date": "2026-10-25 17:42:00 +0100"
+          },
+          {
+            "Max": 129,
+            "units": "bpm",
+            "Avg": 127,
+            "Min": 125,
+            "date": "2026-10-25 17:43:00 +0100"
+          },
+          {
+            "Max": 137,
+            "units": "bpm",
+            "Avg": 132.5,
+            "Min": 128,
+            "date": "2026-10-25 17:44:00 +0100"
+          },
+          {
+            "Max": 137,
+            "units": "bpm",
+            "Avg": 135,
+            "Min": 133,
+            "date": "2026-10-25 17:45:00 +0100"
+          },
+          {
+            "Max": 138,
+            "units": "bpm",
+            "Avg": 135.5,
+            "Min": 133,
+            "date": "2026-10-25 17:46:00 +0100"
+          },
+          {
+            "Max": 140,
+            "units": "bpm",
+            "Avg": 136,
+            "Min": 132,
+            "date": "2026-10-25 17:47:00 +0100"
+          },
+          {
+            "Max": 144,
+            "units": "bpm",
+            "Avg": 138,
+            "Min": 132,
+            "date": "2026-10-25 17:48:00 +0100"
+          },
+          {
+            "Max": 144,
+            "units": "bpm",
+            "Avg": 137,
+            "Min": 130,
+            "date": "2026-10-25 17:49:00 +0100"
+          },
+          {
+            "Max": 139,
+            "units": "bpm",
+            "Avg": 134.5,
+            "Min": 130,
+            "date": "2026-10-25 17:50:00 +0100"
+          },
+          {
+            "Max": 132,
+            "units": "bpm",
+            "Avg": 128,
+            "Min": 124,
+            "date": "2026-10-25 17:51:00 +0100"
+          },
+          {
+            "Max": 132,
+            "units": "bpm",
+            "Avg": 122,
+            "Min": 112,
+            "date": "2026-10-25 17:52:00 +0100"
+          }
+        ],
+        "metadata": {},
+        "stepCadence": {
+          "qty": 16.45578952042269,
+          "units": "count/min"
+        },
+        "maxHeartRate": {
+          "qty": 144,
+          "units": "bpm"
+        },
+        "source": {
+          "name": "Google Health",
+          "identifier": "com.fitbit.FitbitMobile"
+        },
+        "activities": [
+          {
+            "id": "00000000-0000-4000-8000-000000000012",
+            "start": "2026-10-25 17:22:07 +0100",
+            "boundaryOrigin": "recordedActivity",
+            "index": 1,
+            "activeDuration": 1860,
+            "configuration": {
+              "locationType": "outdoor",
+              "swimmingLocationType": "unknown"
+            },
+            "elapsedDuration": 1860,
+            "activityType": "racquetball",
+            "metrics": {
+              "heartRateMinimum": {
+                "sampleCount": 61,
+                "units": "bpm",
+                "qty": 112,
+                "origin": "sampleSummary"
+              },
+              "activeEnergy": {
+                "qty": 199,
+                "units": "kcal",
+                "origin": "activityStatistics"
+              },
+              "heartRateAverage": {
+                "units": "bpm",
+                "sampleCount": 61,
+                "qty": 128.63934426229508,
+                "origin": "sampleSummary"
+              },
+              "heartRateMaximum": {
+                "units": "bpm",
+                "sampleCount": 61,
+                "qty": 144,
+                "origin": "sampleSummary"
+              }
+            },
+            "activityTypeCode": 34,
+            "end": "2026-10-25 17:53:07 +0100",
+            "duration": 1860,
+            "boundaryKind": "interval"
+          }
+        ],
+        "duration": 1860,
+        "end": "2026-10-25 17:53:07 +0100",
+        "name": "Raquetball",
+        "activeEnergyBurned": {
+          "units": "kJ",
+          "qty": 832.616
+        }
+      },
+      {
+        "id": "00000000-0000-4000-8000-000000000013",
+        "start": "2026-10-25 16:18:44 +0100",
+        "heartRate": {
+          "min": {
+            "qty": 91,
+            "units": "bpm"
+          },
+          "max": {
+            "qty": 157,
+            "units": "bpm"
+          },
+          "avg": {
+            "units": "bpm",
+            "qty": 120.35897435897436
+          }
+        },
+        "avgHeartRate": {
+          "units": "bpm",
+          "qty": 120.35897435897436
+        },
+        "heartRateData": [
+          {
+            "Max": 91,
+            "units": "bpm",
+            "Avg": 91,
+            "Min": 91,
+            "date": "2026-10-25 16:18:00 +0100"
+          },
+          {
+            "Max": 102,
+            "units": "bpm",
+            "Avg": 97.5,
+            "Min": 93,
+            "date": "2026-10-25 16:19:00 +0100"
+          },
+          {
+            "Max": 97,
+            "units": "bpm",
+            "Avg": 95,
+            "Min": 93,
+            "date": "2026-10-25 16:20:00 +0100"
+          },
+          {
+            "Max": 104,
+            "units": "bpm",
+            "Avg": 100.5,
+            "Min": 97,
+            "date": "2026-10-25 16:21:00 +0100"
+          },
+          {
+            "Max": 102,
+            "units": "bpm",
+            "Avg": 99,
+            "Min": 96,
+            "date": "2026-10-25 16:22:00 +0100"
+          },
+          {
+            "Max": 102,
+            "units": "bpm",
+            "Avg": 99.5,
+            "Min": 97,
+            "date": "2026-10-25 16:23:00 +0100"
+          },
+          {
+            "Max": 104,
+            "units": "bpm",
+            "Avg": 101.5,
+            "Min": 99,
+            "date": "2026-10-25 16:24:00 +0100"
+          },
+          {
+            "Max": 105,
+            "units": "bpm",
+            "Avg": 99.5,
+            "Min": 94,
+            "date": "2026-10-25 16:25:00 +0100"
+          },
+          {
+            "Max": 105,
+            "units": "bpm",
+            "Avg": 100,
+            "Min": 95,
+            "date": "2026-10-25 16:26:00 +0100"
+          },
+          {
+            "Max": 110,
+            "units": "bpm",
+            "Avg": 106,
+            "Min": 102,
+            "date": "2026-10-25 16:27:00 +0100"
+          },
+          {
+            "Max": 124,
+            "units": "bpm",
+            "Avg": 111,
+            "Min": 98,
+            "date": "2026-10-25 16:28:00 +0100"
+          },
+          {
+            "Max": 117,
+            "units": "bpm",
+            "Avg": 108,
+            "Min": 99,
+            "date": "2026-10-25 16:29:00 +0100"
+          },
+          {
+            "Max": 119,
+            "units": "bpm",
+            "Avg": 109,
+            "Min": 99,
+            "date": "2026-10-25 16:30:00 +0100"
+          },
+          {
+            "Max": 116,
+            "units": "bpm",
+            "Avg": 107,
+            "Min": 98,
+            "date": "2026-10-25 16:31:00 +0100"
+          },
+          {
+            "Max": 152,
+            "units": "bpm",
+            "Avg": 131,
+            "Min": 110,
+            "date": "2026-10-25 16:32:00 +0100"
+          },
+          {
+            "Max": 157,
+            "units": "bpm",
+            "Avg": 154.5,
+            "Min": 152,
+            "date": "2026-10-25 16:33:00 +0100"
+          },
+          {
+            "Max": 157,
+            "units": "bpm",
+            "Avg": 155,
+            "Min": 153,
+            "date": "2026-10-25 16:34:00 +0100"
+          },
+          {
+            "Max": 156,
+            "units": "bpm",
+            "Avg": 135.5,
+            "Min": 115,
+            "date": "2026-10-25 16:35:00 +0100"
+          },
+          {
+            "Max": 126,
+            "units": "bpm",
+            "Avg": 122,
+            "Min": 118,
+            "date": "2026-10-25 16:36:00 +0100"
+          },
+          {
+            "Max": 125,
+            "units": "bpm",
+            "Avg": 121,
+            "Min": 117,
+            "date": "2026-10-25 16:37:00 +0100"
+          },
+          {
+            "Max": 137,
+            "units": "bpm",
+            "Avg": 131.5,
+            "Min": 126,
+            "date": "2026-10-25 16:38:00 +0100"
+          },
+          {
+            "Max": 155,
+            "units": "bpm",
+            "Avg": 146,
+            "Min": 137,
+            "date": "2026-10-25 16:39:00 +0100"
+          },
+          {
+            "Max": 140,
+            "units": "bpm",
+            "Avg": 136.5,
+            "Min": 133,
+            "date": "2026-10-25 16:40:00 +0100"
+          },
+          {
+            "Max": 139,
+            "units": "bpm",
+            "Avg": 129.5,
+            "Min": 120,
+            "date": "2026-10-25 16:41:00 +0100"
+          },
+          {
+            "Max": 124,
+            "units": "bpm",
+            "Avg": 122.5,
+            "Min": 121,
+            "date": "2026-10-25 16:42:00 +0100"
+          },
+          {
+            "Max": 138,
+            "units": "bpm",
+            "Avg": 130.5,
+            "Min": 123,
+            "date": "2026-10-25 16:43:00 +0100"
+          },
+          {
+            "Max": 137,
+            "units": "bpm",
+            "Avg": 133,
+            "Min": 129,
+            "date": "2026-10-25 16:44:00 +0100"
+          },
+          {
+            "Max": 137,
+            "units": "bpm",
+            "Avg": 131,
+            "Min": 125,
+            "date": "2026-10-25 16:45:00 +0100"
+          },
+          {
+            "Max": 129,
+            "units": "bpm",
+            "Avg": 123.5,
+            "Min": 118,
+            "date": "2026-10-25 16:46:00 +0100"
+          },
+          {
+            "Max": 135,
+            "units": "bpm",
+            "Avg": 126,
+            "Min": 117,
+            "date": "2026-10-25 16:47:00 +0100"
+          },
+          {
+            "Max": 135,
+            "units": "bpm",
+            "Avg": 132.5,
+            "Min": 130,
+            "date": "2026-10-25 16:48:00 +0100"
+          },
+          {
+            "Max": 134,
+            "units": "bpm",
+            "Avg": 132.5,
+            "Min": 131,
+            "date": "2026-10-25 16:49:00 +0100"
+          },
+          {
+            "Max": 133,
+            "units": "bpm",
+            "Avg": 130,
+            "Min": 127,
+            "date": "2026-10-25 16:50:00 +0100"
+          },
+          {
+            "Max": 133,
+            "units": "bpm",
+            "Avg": 127.5,
+            "Min": 122,
+            "date": "2026-10-25 16:51:00 +0100"
+          },
+          {
+            "Max": 134,
+            "units": "bpm",
+            "Avg": 131,
+            "Min": 128,
+            "date": "2026-10-25 16:52:00 +0100"
+          },
+          {
+            "Max": 131,
+            "units": "bpm",
+            "Avg": 126.5,
+            "Min": 122,
+            "date": "2026-10-25 16:53:00 +0100"
+          },
+          {
+            "Max": 123,
+            "units": "bpm",
+            "Avg": 120.5,
+            "Min": 118,
+            "date": "2026-10-25 16:54:00 +0100"
+          },
+          {
+            "Max": 127,
+            "units": "bpm",
+            "Avg": 123.5,
+            "Min": 120,
+            "date": "2026-10-25 16:55:00 +0100"
+          },
+          {
+            "Max": 122,
+            "units": "bpm",
+            "Avg": 116.5,
+            "Min": 111,
+            "date": "2026-10-25 16:56:00 +0100"
+          }
+        ],
+        "metadata": {},
+        "source": {
+          "name": "Google Health",
+          "identifier": "com.fitbit.FitbitMobile"
+        },
+        "maxHeartRate": {
+          "units": "bpm",
+          "qty": 157
+        },
+        "activities": [
+          {
+            "id": "00000000-0000-4000-8000-000000000013",
+            "start": "2026-10-25 16:18:44 +0100",
+            "boundaryOrigin": "recordedActivity",
+            "index": 1,
+            "activeDuration": 2310,
+            "configuration": {
+              "locationType": "outdoor",
+              "swimmingLocationType": "unknown"
+            },
+            "elapsedDuration": 2310,
+            "activityType": "racquetball",
+            "activityTypeCode": 34,
+            "metrics": {
+              "heartRateMinimum": {
+                "units": "bpm",
+                "sampleCount": 77,
+                "qty": 91,
+                "origin": "sampleSummary"
+              },
+              "activeEnergy": {
+                "qty": 263,
+                "origin": "activityStatistics",
+                "units": "kcal"
+              },
+              "heartRateAverage": {
+                "sampleCount": 77,
+                "units": "bpm",
+                "qty": 120.74025974025975,
+                "origin": "sampleSummary"
+              },
+              "heartRateMaximum": {
+                "units": "bpm",
+                "sampleCount": 77,
+                "qty": 157,
+                "origin": "sampleSummary"
+              }
+            },
+            "duration": 2310,
+            "end": "2026-10-25 16:57:14 +0100",
+            "boundaryKind": "interval"
+          }
+        ],
+        "stepCadence": {
+          "units": "count/min",
+          "qty": 22.006145243587337
+        },
+        "end": "2026-10-25 16:57:14 +0100",
+        "duration": 2310,
+        "name": "Raquetball",
+        "activeEnergyBurned": {
+          "qty": 1100.392,
+          "units": "kJ"
+        }
+      },
+      {
+        "id": "00000000-0000-4000-8000-000000000014",
+        "start": "2026-10-25 10:04:44 +0100",
+        "heartRate": {
+          "max": {
+            "units": "bpm",
+            "qty": 165
+          },
+          "avg": {
+            "units": "bpm",
+            "qty": 117.46296296296296
+          },
+          "min": {
+            "qty": 95,
+            "units": "bpm"
+          }
+        },
+        "avgHeartRate": {
+          "qty": 117.46296296296296,
+          "units": "bpm"
+        },
+        "heartRateData": [
+          {
+            "Max": 112,
+            "units": "bpm",
+            "Avg": 112,
+            "Min": 112,
+            "date": "2026-10-25 10:04:00 +0100"
+          },
+          {
+            "Max": 108,
+            "units": "bpm",
+            "Avg": 101.5,
+            "Min": 95,
+            "date": "2026-10-25 10:05:00 +0100"
+          },
+          {
+            "Max": 109,
+            "units": "bpm",
+            "Avg": 103.5,
+            "Min": 98,
+            "date": "2026-10-25 10:06:00 +0100"
+          },
+          {
+            "Max": 154,
+            "units": "bpm",
+            "Avg": 127.5,
+            "Min": 101,
+            "date": "2026-10-25 10:07:00 +0100"
+          },
+          {
+            "Max": 165,
+            "units": "bpm",
+            "Avg": 139.5,
+            "Min": 114,
+            "date": "2026-10-25 10:08:00 +0100"
+          },
+          {
+            "Max": 114,
+            "units": "bpm",
+            "Avg": 111,
+            "Min": 108,
+            "date": "2026-10-25 10:09:00 +0100"
+          },
+          {
+            "Max": 114,
+            "units": "bpm",
+            "Avg": 111.5,
+            "Min": 109,
+            "date": "2026-10-25 10:10:00 +0100"
+          },
+          {
+            "Max": 115,
+            "units": "bpm",
+            "Avg": 113,
+            "Min": 111,
+            "date": "2026-10-25 10:11:00 +0100"
+          },
+          {
+            "Max": 117,
+            "units": "bpm",
+            "Avg": 113,
+            "Min": 109,
+            "date": "2026-10-25 10:12:00 +0100"
+          },
+          {
+            "Max": 116,
+            "units": "bpm",
+            "Avg": 112.5,
+            "Min": 109,
+            "date": "2026-10-25 10:13:00 +0100"
+          },
+          {
+            "Max": 117,
+            "units": "bpm",
+            "Avg": 115,
+            "Min": 113,
+            "date": "2026-10-25 10:14:00 +0100"
+          },
+          {
+            "Max": 118,
+            "units": "bpm",
+            "Avg": 117,
+            "Min": 116,
+            "date": "2026-10-25 10:15:00 +0100"
+          },
+          {
+            "Max": 120,
+            "units": "bpm",
+            "Avg": 118.5,
+            "Min": 117,
+            "date": "2026-10-25 10:16:00 +0100"
+          },
+          {
+            "Max": 121,
+            "units": "bpm",
+            "Avg": 118,
+            "Min": 115,
+            "date": "2026-10-25 10:17:00 +0100"
+          },
+          {
+            "Max": 120,
+            "units": "bpm",
+            "Avg": 118,
+            "Min": 116,
+            "date": "2026-10-25 10:18:00 +0100"
+          },
+          {
+            "Max": 123,
+            "units": "bpm",
+            "Avg": 121,
+            "Min": 119,
+            "date": "2026-10-25 10:19:00 +0100"
+          },
+          {
+            "Max": 123,
+            "units": "bpm",
+            "Avg": 121,
+            "Min": 119,
+            "date": "2026-10-25 10:20:00 +0100"
+          },
+          {
+            "Max": 121,
+            "units": "bpm",
+            "Avg": 119.5,
+            "Min": 118,
+            "date": "2026-10-25 10:21:00 +0100"
+          },
+          {
+            "Max": 124,
+            "units": "bpm",
+            "Avg": 120.5,
+            "Min": 117,
+            "date": "2026-10-25 10:22:00 +0100"
+          },
+          {
+            "Max": 124,
+            "units": "bpm",
+            "Avg": 121.5,
+            "Min": 119,
+            "date": "2026-10-25 10:23:00 +0100"
+          },
+          {
+            "Max": 122,
+            "units": "bpm",
+            "Avg": 120.5,
+            "Min": 119,
+            "date": "2026-10-25 10:24:00 +0100"
+          },
+          {
+            "Max": 123,
+            "units": "bpm",
+            "Avg": 121,
+            "Min": 119,
+            "date": "2026-10-25 10:25:00 +0100"
+          },
+          {
+            "Max": 123,
+            "units": "bpm",
+            "Avg": 121,
+            "Min": 119,
+            "date": "2026-10-25 10:26:00 +0100"
+          },
+          {
+            "Max": 126,
+            "units": "bpm",
+            "Avg": 121.5,
+            "Min": 117,
+            "date": "2026-10-25 10:27:00 +0100"
+          },
+          {
+            "Max": 123,
+            "units": "bpm",
+            "Avg": 120.5,
+            "Min": 118,
+            "date": "2026-10-25 10:28:00 +0100"
+          },
+          {
+            "Max": 122,
+            "units": "bpm",
+            "Avg": 117.5,
+            "Min": 113,
+            "date": "2026-10-25 10:29:00 +0100"
+          },
+          {
+            "Max": 120,
+            "units": "bpm",
+            "Avg": 114.5,
+            "Min": 109,
+            "date": "2026-10-25 10:30:00 +0100"
+          }
+        ],
+        "metadata": {},
+        "stepCadence": {
+          "qty": 1.8135048231511253,
+          "units": "count/min"
+        },
+        "maxHeartRate": {
+          "qty": 165,
+          "units": "bpm"
+        },
+        "source": {
+          "name": "Google Health",
+          "identifier": "com.fitbit.FitbitMobile"
+        },
+        "activities": [
+          {
+            "id": "00000000-0000-4000-8000-000000000014",
+            "start": "2026-10-25 10:04:44 +0100",
+            "boundaryOrigin": "recordedActivity",
+            "index": 1,
+            "activeDuration": 1555,
+            "configuration": {
+              "locationType": "outdoor",
+              "swimmingLocationType": "unknown"
+            },
+            "elapsedDuration": 1555,
+            "activityType": "cycling",
+            "metrics": {
+              "heartRateMinimum": {
+                "units": "bpm",
+                "sampleCount": 53,
+                "qty": 95,
+                "origin": "sampleSummary"
+              },
+              "activeEnergy": {
+                "qty": 177,
+                "units": "kcal",
+                "origin": "activityStatistics"
+              },
+              "heartRateAverage": {
+                "units": "bpm",
+                "sampleCount": 53,
+                "qty": 117.56603773584905,
+                "origin": "sampleSummary"
+              },
+              "heartRateMaximum": {
+                "units": "bpm",
+                "sampleCount": 53,
+                "qty": 165,
+                "origin": "sampleSummary"
+              }
+            },
+            "activityTypeCode": 13,
+            "end": "2026-10-25 10:30:39 +0100",
+            "duration": 1555,
+            "boundaryKind": "interval"
+          }
+        ],
+        "flightsClimbed": {
+          "units": "count",
+          "qty": 0.14171580789457444
+        },
+        "duration": 1555,
+        "end": "2026-10-25 10:30:39 +0100",
+        "name": "Ciclismo",
+        "activeEnergyBurned": {
+          "units": "kJ",
+          "qty": 740.568
+        }
+      },
+      {
+        "activeEnergyBurned": {
+          "units": "kJ",
+          "qty": 1005.8336
+        },
+        "location": "Interno",
+        "source": {
+          "name": "MERACH",
+          "identifier": "com.mrk.MeritInternation"
+        },
+        "heartRate": {
+          "avg": {
+            "qty": 114.17857142857143,
+            "units": "bpm"
+          },
+          "max": {
+            "qty": 165,
+            "units": "bpm"
+          },
+          "min": {
+            "qty": 64,
+            "units": "bpm"
+          }
+        },
+        "metadata": {},
+        "duration": 1607,
+        "avgHeartRate": {
+          "qty": 114.17857142857143,
+          "units": "bpm"
+        },
+        "speed": {
+          "units": "km/hr",
+          "qty": 25.69284380833852
+        },
+        "activities": [
+          {
+            "id": "00000000-0000-4000-8000-000000000015",
+            "start": "2026-10-25 10:02:29 +0100",
+            "boundaryOrigin": "recordedActivity",
+            "index": 1,
+            "activeDuration": 1607,
+            "configuration": {
+              "locationType": "indoor",
+              "swimmingLocationType": "unknown"
+            },
+            "elapsedDuration": 1607,
+            "activityType": "cycling",
+            "activityTypeCode": 13,
+            "metrics": {
+              "speed": {
+                "origin": "activeTimeCalculation",
+                "units": "m/s",
+                "qty": 7.13690105787181
+              },
+              "distance": {
+                "origin": "activityStatistics",
+                "qty": 11469,
+                "units": "m"
+              },
+              "heartRateMaximum": {
+                "units": "bpm",
+                "sampleCount": 55,
+                "qty": 165,
+                "origin": "sampleSummary"
+              },
+              "heartRateAverage": {
+                "units": "bpm",
+                "sampleCount": 55,
+                "qty": 114.2,
+                "origin": "sampleSummary"
+              },
+              "paceMile": {
+                "origin": "activeTimeCalculation",
+                "qty": 225.49619042636675,
+                "units": "s/mi"
+              },
+              "activeEnergy": {
+                "qty": 240.4,
+                "origin": "activityStatistics",
+                "units": "kcal"
+              },
+              "paceKilometre": {
+                "qty": 140.1168366902084,
+                "origin": "activeTimeCalculation",
+                "units": "s/km"
+              },
+              "heartRateMinimum": {
+                "units": "bpm",
+                "sampleCount": 55,
+                "qty": 64,
+                "origin": "sampleSummary"
+              }
+            },
+            "duration": 1607,
+            "end": "2026-10-25 10:29:16 +0100",
+            "boundaryKind": "interval"
+          }
+        ],
+        "name": "Interno Ciclismo",
+        "heartRateData": [
+          {
+            "Max": 76,
+            "units": "bpm",
+            "Avg": 70,
+            "Min": 64,
+            "date": "2026-10-25 10:02:00 +0100"
+          },
+          {
+            "Max": 97,
+            "units": "bpm",
+            "Avg": 87,
+            "Min": 77,
+            "date": "2026-10-25 10:03:00 +0100"
+          },
+          {
+            "Max": 112,
+            "units": "bpm",
+            "Avg": 99.5,
+            "Min": 87,
+            "date": "2026-10-25 10:04:00 +0100"
+          },
+          {
+            "Max": 108,
+            "units": "bpm",
+            "Avg": 101.5,
+            "Min": 95,
+            "date": "2026-10-25 10:05:00 +0100"
+          },
+          {
+            "Max": 109,
+            "units": "bpm",
+            "Avg": 103.5,
+            "Min": 98,
+            "date": "2026-10-25 10:06:00 +0100"
+          },
+          {
+            "Max": 154,
+            "units": "bpm",
+            "Avg": 127.5,
+            "Min": 101,
+            "date": "2026-10-25 10:07:00 +0100"
+          },
+          {
+            "Max": 165,
+            "units": "bpm",
+            "Avg": 139.5,
+            "Min": 114,
+            "date": "2026-10-25 10:08:00 +0100"
+          },
+          {
+            "Max": 114,
+            "units": "bpm",
+            "Avg": 111,
+            "Min": 108,
+            "date": "2026-10-25 10:09:00 +0100"
+          },
+          {
+            "Max": 114,
+            "units": "bpm",
+            "Avg": 111.5,
+            "Min": 109,
+            "date": "2026-10-25 10:10:00 +0100"
+          },
+          {
+            "Max": 115,
+            "units": "bpm",
+            "Avg": 113,
+            "Min": 111,
+            "date": "2026-10-25 10:11:00 +0100"
+          },
+          {
+            "Max": 117,
+            "units": "bpm",
+            "Avg": 113,
+            "Min": 109,
+            "date": "2026-10-25 10:12:00 +0100"
+          },
+          {
+            "Max": 116,
+            "units": "bpm",
+            "Avg": 112.5,
+            "Min": 109,
+            "date": "2026-10-25 10:13:00 +0100"
+          },
+          {
+            "Max": 117,
+            "units": "bpm",
+            "Avg": 115,
+            "Min": 113,
+            "date": "2026-10-25 10:14:00 +0100"
+          },
+          {
+            "Max": 118,
+            "units": "bpm",
+            "Avg": 117,
+            "Min": 116,
+            "date": "2026-10-25 10:15:00 +0100"
+          },
+          {
+            "Max": 120,
+            "units": "bpm",
+            "Avg": 118.5,
+            "Min": 117,
+            "date": "2026-10-25 10:16:00 +0100"
+          },
+          {
+            "Max": 121,
+            "units": "bpm",
+            "Avg": 118,
+            "Min": 115,
+            "date": "2026-10-25 10:17:00 +0100"
+          },
+          {
+            "Max": 120,
+            "units": "bpm",
+            "Avg": 118,
+            "Min": 116,
+            "date": "2026-10-25 10:18:00 +0100"
+          },
+          {
+            "Max": 123,
+            "units": "bpm",
+            "Avg": 121,
+            "Min": 119,
+            "date": "2026-10-25 10:19:00 +0100"
+          },
+          {
+            "Max": 123,
+            "units": "bpm",
+            "Avg": 121,
+            "Min": 119,
+            "date": "2026-10-25 10:20:00 +0100"
+          },
+          {
+            "Max": 121,
+            "units": "bpm",
+            "Avg": 119.5,
+            "Min": 118,
+            "date": "2026-10-25 10:21:00 +0100"
+          },
+          {
+            "Max": 124,
+            "units": "bpm",
+            "Avg": 120.5,
+            "Min": 117,
+            "date": "2026-10-25 10:22:00 +0100"
+          },
+          {
+            "Max": 124,
+            "units": "bpm",
+            "Avg": 121.5,
+            "Min": 119,
+            "date": "2026-10-25 10:23:00 +0100"
+          },
+          {
+            "Max": 122,
+            "units": "bpm",
+            "Avg": 120.5,
+            "Min": 119,
+            "date": "2026-10-25 10:24:00 +0100"
+          },
+          {
+            "Max": 123,
+            "units": "bpm",
+            "Avg": 121,
+            "Min": 119,
+            "date": "2026-10-25 10:25:00 +0100"
+          },
+          {
+            "Max": 123,
+            "units": "bpm",
+            "Avg": 121,
+            "Min": 119,
+            "date": "2026-10-25 10:26:00 +0100"
+          },
+          {
+            "Max": 126,
+            "units": "bpm",
+            "Avg": 121.5,
+            "Min": 117,
+            "date": "2026-10-25 10:27:00 +0100"
+          },
+          {
+            "Max": 123,
+            "units": "bpm",
+            "Avg": 120.5,
+            "Min": 118,
+            "date": "2026-10-25 10:28:00 +0100"
+          },
+          {
+            "Max": 113,
+            "units": "bpm",
+            "Avg": 113,
+            "Min": 113,
+            "date": "2026-10-25 10:29:00 +0100"
+          }
+        ],
+        "id": "00000000-0000-4000-8000-000000000015",
+        "maxHeartRate": {
+          "units": "bpm",
+          "qty": 165
+        },
+        "distance": {
+          "qty": 11.469,
+          "units": "km"
+        },
+        "end": "2026-10-25 10:29:16 +0100",
+        "isIndoor": true,
+        "start": "2026-10-25 10:02:29 +0100"
+      },
+      {
+        "activeEnergyBurned": {
+          "units": "kJ",
+          "qty": 736.384
+        },
+        "source": {
+          "name": "Google Health",
+          "identifier": "com.fitbit.FitbitMobile"
+        },
+        "heartRate": {
+          "min": {
+            "units": "bpm",
+            "qty": 63
+          },
+          "max": {
+            "qty": 135,
+            "units": "bpm"
+          },
+          "avg": {
+            "qty": 97.41333333333333,
+            "units": "bpm"
+          }
+        },
+        "metadata": {},
+        "duration": 4452,
+        "avgHeartRate": {
+          "units": "bpm",
+          "qty": 97.41333333333333
+        },
+        "activities": [
+          {
+            "id": "00000000-0000-4000-8000-000000000016",
+            "start": "2026-10-24 11:43:26 +0200",
+            "boundaryOrigin": "recordedActivity",
+            "index": 1,
+            "activeDuration": 4452,
+            "configuration": {
+              "swimmingLocationType": "unknown",
+              "locationType": "outdoor"
+            },
+            "elapsedDuration": 4452,
+            "activityType": "traditional_strength_training",
+            "metrics": {
+              "heartRateMinimum": {
+                "sampleCount": 148,
+                "units": "bpm",
+                "qty": 63,
+                "origin": "sampleSummary"
+              },
+              "activeEnergy": {
+                "units": "kcal",
+                "origin": "activityStatistics",
+                "qty": 176
+              },
+              "heartRateAverage": {
+                "sampleCount": 148,
+                "units": "bpm",
+                "qty": 97.21621621621621,
+                "origin": "sampleSummary"
+              },
+              "heartRateMaximum": {
+                "sampleCount": 148,
+                "units": "bpm",
+                "qty": 135,
+                "origin": "sampleSummary"
+              }
+            },
+            "activityTypeCode": 50,
+            "end": "2026-10-24 12:57:38 +0200",
+            "duration": 4452,
+            "boundaryKind": "interval"
+          }
+        ],
+        "name": "Allenamento di Forza Tradizionale",
+        "heartRateData": [
+          {
+            "Max": 98,
+            "units": "bpm",
+            "Avg": 98,
+            "Min": 98,
+            "date": "2026-10-24 11:43:00 +0200"
+          },
+          {
+            "Max": 98,
+            "units": "bpm",
+            "Avg": 85,
+            "Min": 72,
+            "date": "2026-10-24 11:44:00 +0200"
+          },
+          {
+            "Max": 79,
+            "units": "bpm",
+            "Avg": 73.5,
+            "Min": 68,
+            "date": "2026-10-24 11:45:00 +0200"
+          },
+          {
+            "Max": 83,
+            "units": "bpm",
+            "Avg": 74,
+            "Min": 65,
+            "date": "2026-10-24 11:46:00 +0200"
+          },
+          {
+            "Max": 89,
+            "units": "bpm",
+            "Avg": 83,
+            "Min": 77,
+            "date": "2026-10-24 11:47:00 +0200"
+          },
+          {
+            "Max": 91,
+            "units": "bpm",
+            "Avg": 81.5,
+            "Min": 72,
+            "date": "2026-10-24 11:48:00 +0200"
+          },
+          {
+            "Max": 98,
+            "units": "bpm",
+            "Avg": 84,
+            "Min": 70,
+            "date": "2026-10-24 11:49:00 +0200"
+          },
+          {
+            "Max": 70,
+            "units": "bpm",
+            "Avg": 66.5,
+            "Min": 63,
+            "date": "2026-10-24 11:50:00 +0200"
+          },
+          {
+            "Max": 96,
+            "units": "bpm",
+            "Avg": 83,
+            "Min": 70,
+            "date": "2026-10-24 11:51:00 +0200"
+          },
+          {
+            "Max": 81,
+            "units": "bpm",
+            "Avg": 76.5,
+            "Min": 72,
+            "date": "2026-10-24 11:52:00 +0200"
+          },
+          {
+            "Max": 93,
+            "units": "bpm",
+            "Avg": 83.5,
+            "Min": 74,
+            "date": "2026-10-24 11:53:00 +0200"
+          },
+          {
+            "Max": 91,
+            "units": "bpm",
+            "Avg": 85,
+            "Min": 79,
+            "date": "2026-10-24 11:54:00 +0200"
+          },
+          {
+            "Max": 90,
+            "units": "bpm",
+            "Avg": 82.5,
+            "Min": 75,
+            "date": "2026-10-24 11:55:00 +0200"
+          },
+          {
+            "Max": 115,
+            "units": "bpm",
+            "Avg": 101,
+            "Min": 87,
+            "date": "2026-10-24 11:56:00 +0200"
+          },
+          {
+            "Max": 94,
+            "units": "bpm",
+            "Avg": 84.5,
+            "Min": 75,
+            "date": "2026-10-24 11:57:00 +0200"
+          },
+          {
+            "Max": 114,
+            "units": "bpm",
+            "Avg": 105,
+            "Min": 96,
+            "date": "2026-10-24 11:58:00 +0200"
+          },
+          {
+            "Max": 120,
+            "units": "bpm",
+            "Avg": 105.5,
+            "Min": 91,
+            "date": "2026-10-24 11:59:00 +0200"
+          },
+          {
+            "Max": 90,
+            "units": "bpm",
+            "Avg": 84.5,
+            "Min": 79,
+            "date": "2026-10-24 12:00:00 +0200"
+          },
+          {
+            "Max": 128,
+            "units": "bpm",
+            "Avg": 104,
+            "Min": 80,
+            "date": "2026-10-24 12:01:00 +0200"
+          },
+          {
+            "Max": 102,
+            "units": "bpm",
+            "Avg": 90,
+            "Min": 78,
+            "date": "2026-10-24 12:02:00 +0200"
+          },
+          {
+            "Max": 90,
+            "units": "bpm",
+            "Avg": 84.5,
+            "Min": 79,
+            "date": "2026-10-24 12:03:00 +0200"
+          },
+          {
+            "Max": 122,
+            "units": "bpm",
+            "Avg": 106.5,
+            "Min": 91,
+            "date": "2026-10-24 12:04:00 +0200"
+          },
+          {
+            "Max": 106,
+            "units": "bpm",
+            "Avg": 94.5,
+            "Min": 83,
+            "date": "2026-10-24 12:05:00 +0200"
+          },
+          {
+            "Max": 119,
+            "units": "bpm",
+            "Avg": 109.5,
+            "Min": 100,
+            "date": "2026-10-24 12:06:00 +0200"
+          },
+          {
+            "Max": 118,
+            "units": "bpm",
+            "Avg": 110,
+            "Min": 102,
+            "date": "2026-10-24 12:07:00 +0200"
+          },
+          {
+            "Max": 103,
+            "units": "bpm",
+            "Avg": 89.5,
+            "Min": 76,
+            "date": "2026-10-24 12:08:00 +0200"
+          },
+          {
+            "Max": 105,
+            "units": "bpm",
+            "Avg": 96,
+            "Min": 87,
+            "date": "2026-10-24 12:09:00 +0200"
+          },
+          {
+            "Max": 107,
+            "units": "bpm",
+            "Avg": 95,
+            "Min": 83,
+            "date": "2026-10-24 12:10:00 +0200"
+          },
+          {
+            "Max": 97,
+            "units": "bpm",
+            "Avg": 89,
+            "Min": 81,
+            "date": "2026-10-24 12:11:00 +0200"
+          },
+          {
+            "Max": 88,
+            "units": "bpm",
+            "Avg": 83.5,
+            "Min": 79,
+            "date": "2026-10-24 12:12:00 +0200"
+          },
+          {
+            "Max": 103,
+            "units": "bpm",
+            "Avg": 91,
+            "Min": 79,
+            "date": "2026-10-24 12:13:00 +0200"
+          },
+          {
+            "Max": 123,
+            "units": "bpm",
+            "Avg": 110,
+            "Min": 97,
+            "date": "2026-10-24 12:14:00 +0200"
+          },
+          {
+            "Max": 105,
+            "units": "bpm",
+            "Avg": 96.5,
+            "Min": 88,
+            "date": "2026-10-24 12:15:00 +0200"
+          },
+          {
+            "Max": 93,
+            "units": "bpm",
+            "Avg": 89.5,
+            "Min": 86,
+            "date": "2026-10-24 12:16:00 +0200"
+          },
+          {
+            "Max": 89,
+            "units": "bpm",
+            "Avg": 86,
+            "Min": 83,
+            "date": "2026-10-24 12:17:00 +0200"
+          },
+          {
+            "Max": 87,
+            "units": "bpm",
+            "Avg": 83.5,
+            "Min": 80,
+            "date": "2026-10-24 12:18:00 +0200"
+          },
+          {
+            "Max": 128,
+            "units": "bpm",
+            "Avg": 108,
+            "Min": 88,
+            "date": "2026-10-24 12:19:00 +0200"
+          },
+          {
+            "Max": 123,
+            "units": "bpm",
+            "Avg": 106,
+            "Min": 89,
+            "date": "2026-10-24 12:20:00 +0200"
+          },
+          {
+            "Max": 105,
+            "units": "bpm",
+            "Avg": 97.5,
+            "Min": 90,
+            "date": "2026-10-24 12:21:00 +0200"
+          },
+          {
+            "Max": 120,
+            "units": "bpm",
+            "Avg": 105,
+            "Min": 90,
+            "date": "2026-10-24 12:22:00 +0200"
+          },
+          {
+            "Max": 102,
+            "units": "bpm",
+            "Avg": 94,
+            "Min": 86,
+            "date": "2026-10-24 12:23:00 +0200"
+          },
+          {
+            "Max": 109,
+            "units": "bpm",
+            "Avg": 101.5,
+            "Min": 94,
+            "date": "2026-10-24 12:24:00 +0200"
+          },
+          {
+            "Max": 127,
+            "units": "bpm",
+            "Avg": 118,
+            "Min": 109,
+            "date": "2026-10-24 12:25:00 +0200"
+          },
+          {
+            "Max": 135,
+            "units": "bpm",
+            "Avg": 123,
+            "Min": 111,
+            "date": "2026-10-24 12:26:00 +0200"
+          },
+          {
+            "Max": 120,
+            "units": "bpm",
+            "Avg": 108,
+            "Min": 96,
+            "date": "2026-10-24 12:27:00 +0200"
+          },
+          {
+            "Max": 125,
+            "units": "bpm",
+            "Avg": 107.5,
+            "Min": 90,
+            "date": "2026-10-24 12:28:00 +0200"
+          },
+          {
+            "Max": 125,
+            "units": "bpm",
+            "Avg": 111.5,
+            "Min": 98,
+            "date": "2026-10-24 12:29:00 +0200"
+          },
+          {
+            "Max": 101,
+            "units": "bpm",
+            "Avg": 96,
+            "Min": 91,
+            "date": "2026-10-24 12:30:00 +0200"
+          },
+          {
+            "Max": 96,
+            "units": "bpm",
+            "Avg": 92.5,
+            "Min": 89,
+            "date": "2026-10-24 12:31:00 +0200"
+          },
+          {
+            "Max": 95,
+            "units": "bpm",
+            "Avg": 91,
+            "Min": 87,
+            "date": "2026-10-24 12:32:00 +0200"
+          },
+          {
+            "Max": 98,
+            "units": "bpm",
+            "Avg": 93,
+            "Min": 88,
+            "date": "2026-10-24 12:33:00 +0200"
+          },
+          {
+            "Max": 91,
+            "units": "bpm",
+            "Avg": 87.5,
+            "Min": 84,
+            "date": "2026-10-24 12:34:00 +0200"
+          },
+          {
+            "Max": 108,
+            "units": "bpm",
+            "Avg": 97.5,
+            "Min": 87,
+            "date": "2026-10-24 12:35:00 +0200"
+          },
+          {
+            "Max": 112,
+            "units": "bpm",
+            "Avg": 99,
+            "Min": 86,
+            "date": "2026-10-24 12:36:00 +0200"
+          },
+          {
+            "Max": 122,
+            "units": "bpm",
+            "Avg": 115.5,
+            "Min": 109,
+            "date": "2026-10-24 12:37:00 +0200"
+          },
+          {
+            "Max": 112,
+            "units": "bpm",
+            "Avg": 97.5,
+            "Min": 83,
+            "date": "2026-10-24 12:38:00 +0200"
+          },
+          {
+            "Max": 93,
+            "units": "bpm",
+            "Avg": 86,
+            "Min": 79,
+            "date": "2026-10-24 12:39:00 +0200"
+          },
+          {
+            "Max": 101,
+            "units": "bpm",
+            "Avg": 91,
+            "Min": 81,
+            "date": "2026-10-24 12:40:00 +0200"
+          },
+          {
+            "Max": 88,
+            "units": "bpm",
+            "Avg": 82.5,
+            "Min": 77,
+            "date": "2026-10-24 12:41:00 +0200"
+          },
+          {
+            "Max": 93,
+            "units": "bpm",
+            "Avg": 89,
+            "Min": 85,
+            "date": "2026-10-24 12:42:00 +0200"
+          },
+          {
+            "Max": 117,
+            "units": "bpm",
+            "Avg": 105.5,
+            "Min": 94,
+            "date": "2026-10-24 12:43:00 +0200"
+          },
+          {
+            "Max": 117,
+            "units": "bpm",
+            "Avg": 107.5,
+            "Min": 98,
+            "date": "2026-10-24 12:44:00 +0200"
+          },
+          {
+            "Max": 106,
+            "units": "bpm",
+            "Avg": 99.5,
+            "Min": 93,
+            "date": "2026-10-24 12:45:00 +0200"
+          },
+          {
+            "Max": 99,
+            "units": "bpm",
+            "Avg": 94.5,
+            "Min": 90,
+            "date": "2026-10-24 12:46:00 +0200"
+          },
+          {
+            "Max": 119,
+            "units": "bpm",
+            "Avg": 108.5,
+            "Min": 98,
+            "date": "2026-10-24 12:47:00 +0200"
+          },
+          {
+            "Max": 120,
+            "units": "bpm",
+            "Avg": 112,
+            "Min": 104,
+            "date": "2026-10-24 12:48:00 +0200"
+          },
+          {
+            "Max": 109,
+            "units": "bpm",
+            "Avg": 103.5,
+            "Min": 98,
+            "date": "2026-10-24 12:49:00 +0200"
+          },
+          {
+            "Max": 121,
+            "units": "bpm",
+            "Avg": 115.5,
+            "Min": 110,
+            "date": "2026-10-24 12:50:00 +0200"
+          },
+          {
+            "Max": 118,
+            "units": "bpm",
+            "Avg": 111.5,
+            "Min": 105,
+            "date": "2026-10-24 12:51:00 +0200"
+          },
+          {
+            "Max": 120,
+            "units": "bpm",
+            "Avg": 112.5,
+            "Min": 105,
+            "date": "2026-10-24 12:52:00 +0200"
+          },
+          {
+            "Max": 124,
+            "units": "bpm",
+            "Avg": 116.5,
+            "Min": 109,
+            "date": "2026-10-24 12:53:00 +0200"
+          },
+          {
+            "Max": 115,
+            "units": "bpm",
+            "Avg": 112.5,
+            "Min": 110,
+            "date": "2026-10-24 12:54:00 +0200"
+          },
+          {
+            "Max": 121,
+            "units": "bpm",
+            "Avg": 114.5,
+            "Min": 108,
+            "date": "2026-10-24 12:55:00 +0200"
+          },
+          {
+            "Max": 131,
+            "units": "bpm",
+            "Avg": 123,
+            "Min": 115,
+            "date": "2026-10-24 12:56:00 +0200"
+          },
+          {
+            "Max": 126,
+            "units": "bpm",
+            "Avg": 126,
+            "Min": 126,
+            "date": "2026-10-24 12:57:00 +0200"
+          }
+        ],
+        "id": "00000000-0000-4000-8000-000000000016",
+        "maxHeartRate": {
+          "qty": 135,
+          "units": "bpm"
+        },
+        "stepCadence": {
+          "units": "count/min",
+          "qty": 6.749697329831661
+        },
+        "totalEnergy": {
+          "qty": 1234.7904480000002,
+          "units": "kJ"
+        },
+        "end": "2026-10-24 12:57:38 +0200",
+        "start": "2026-10-24 11:43:26 +0200",
+        "flightsClimbed": {
+          "units": "count",
+          "qty": 2
+        }
+      },
+      {
+        "activeEnergyBurned": {
+          "units": "kJ",
+          "qty": 1306.0816240000368
+        },
+        "location": "Interno",
+        "source": {
+          "name": "Hevy",
+          "identifier": "com.hevyapp.hevy"
+        },
+        "heartRate": {
+          "max": {
+            "units": "bpm",
+            "qty": 135
+          },
+          "avg": {
+            "qty": 94.55625,
+            "units": "bpm"
+          },
+          "min": {
+            "units": "bpm",
+            "qty": 63
+          }
+        },
+        "metadata": {},
+        "duration": 4750.379440069199,
+        "avgHeartRate": {
+          "units": "bpm",
+          "qty": 94.55625
+        },
+        "activities": [
+          {
+            "id": "00000000-0000-4000-8000-000000000017",
+            "start": "2026-10-24 11:36:33 +0200",
+            "boundaryOrigin": "recordedActivity",
+            "index": 1,
+            "activeDuration": 4750.379440069199,
+            "configuration": {
+              "swimmingLocationType": "unknown",
+              "locationType": "indoor"
+            },
+            "elapsedDuration": 4750.379440069199,
+            "activityType": "traditional_strength_training",
+            "activityTypeCode": 50,
+            "metrics": {
+              "heartRateMinimum": {
+                "units": "bpm",
+                "sampleCount": 158,
+                "qty": 63,
+                "origin": "sampleSummary"
+              },
+              "activeEnergy": {
+                "qty": 312.16100000000876,
+                "units": "kcal",
+                "origin": "activityStatistics"
+              },
+              "heartRateAverage": {
+                "sampleCount": 158,
+                "units": "bpm",
+                "qty": 94.5632911392405,
+                "origin": "sampleSummary"
+              },
+              "heartRateMaximum": {
+                "sampleCount": 158,
+                "units": "bpm",
+                "qty": 135,
+                "origin": "sampleSummary"
+              }
+            },
+            "duration": 4750.379440069199,
+            "end": "2026-10-24 12:55:44 +0200",
+            "boundaryKind": "interval"
+          }
+        ],
+        "name": "Allenamento di Forza Tradizionale",
+        "heartRateData": [
+          {
+            "Max": 80,
+            "units": "bpm",
+            "Avg": 80,
+            "Min": 80,
+            "date": "2026-10-24 11:36:00 +0200"
+          },
+          {
+            "Max": 80,
+            "units": "bpm",
+            "Avg": 75,
+            "Min": 70,
+            "date": "2026-10-24 11:37:00 +0200"
+          },
+          {
+            "Max": 73,
+            "units": "bpm",
+            "Avg": 71,
+            "Min": 69,
+            "date": "2026-10-24 11:38:00 +0200"
+          },
+          {
+            "Max": 76,
+            "units": "bpm",
+            "Avg": 74,
+            "Min": 72,
+            "date": "2026-10-24 11:39:00 +0200"
+          },
+          {
+            "Max": 82,
+            "units": "bpm",
+            "Avg": 77.5,
+            "Min": 73,
+            "date": "2026-10-24 11:40:00 +0200"
+          },
+          {
+            "Max": 81,
+            "units": "bpm",
+            "Avg": 77.5,
+            "Min": 74,
+            "date": "2026-10-24 11:41:00 +0200"
+          },
+          {
+            "Max": 76,
+            "units": "bpm",
+            "Avg": 73,
+            "Min": 70,
+            "date": "2026-10-24 11:42:00 +0200"
+          },
+          {
+            "Max": 98,
+            "units": "bpm",
+            "Avg": 84,
+            "Min": 70,
+            "date": "2026-10-24 11:43:00 +0200"
+          },
+          {
+            "Max": 98,
+            "units": "bpm",
+            "Avg": 85,
+            "Min": 72,
+            "date": "2026-10-24 11:44:00 +0200"
+          },
+          {
+            "Max": 79,
+            "units": "bpm",
+            "Avg": 73.5,
+            "Min": 68,
+            "date": "2026-10-24 11:45:00 +0200"
+          },
+          {
+            "Max": 83,
+            "units": "bpm",
+            "Avg": 74,
+            "Min": 65,
+            "date": "2026-10-24 11:46:00 +0200"
+          },
+          {
+            "Max": 89,
+            "units": "bpm",
+            "Avg": 83,
+            "Min": 77,
+            "date": "2026-10-24 11:47:00 +0200"
+          },
+          {
+            "Max": 91,
+            "units": "bpm",
+            "Avg": 81.5,
+            "Min": 72,
+            "date": "2026-10-24 11:48:00 +0200"
+          },
+          {
+            "Max": 98,
+            "units": "bpm",
+            "Avg": 84,
+            "Min": 70,
+            "date": "2026-10-24 11:49:00 +0200"
+          },
+          {
+            "Max": 70,
+            "units": "bpm",
+            "Avg": 66.5,
+            "Min": 63,
+            "date": "2026-10-24 11:50:00 +0200"
+          },
+          {
+            "Max": 96,
+            "units": "bpm",
+            "Avg": 83,
+            "Min": 70,
+            "date": "2026-10-24 11:51:00 +0200"
+          },
+          {
+            "Max": 81,
+            "units": "bpm",
+            "Avg": 76.5,
+            "Min": 72,
+            "date": "2026-10-24 11:52:00 +0200"
+          },
+          {
+            "Max": 93,
+            "units": "bpm",
+            "Avg": 83.5,
+            "Min": 74,
+            "date": "2026-10-24 11:53:00 +0200"
+          },
+          {
+            "Max": 91,
+            "units": "bpm",
+            "Avg": 85,
+            "Min": 79,
+            "date": "2026-10-24 11:54:00 +0200"
+          },
+          {
+            "Max": 90,
+            "units": "bpm",
+            "Avg": 82.5,
+            "Min": 75,
+            "date": "2026-10-24 11:55:00 +0200"
+          },
+          {
+            "Max": 115,
+            "units": "bpm",
+            "Avg": 101,
+            "Min": 87,
+            "date": "2026-10-24 11:56:00 +0200"
+          },
+          {
+            "Max": 94,
+            "units": "bpm",
+            "Avg": 84.5,
+            "Min": 75,
+            "date": "2026-10-24 11:57:00 +0200"
+          },
+          {
+            "Max": 114,
+            "units": "bpm",
+            "Avg": 105,
+            "Min": 96,
+            "date": "2026-10-24 11:58:00 +0200"
+          },
+          {
+            "Max": 120,
+            "units": "bpm",
+            "Avg": 105.5,
+            "Min": 91,
+            "date": "2026-10-24 11:59:00 +0200"
+          },
+          {
+            "Max": 90,
+            "units": "bpm",
+            "Avg": 84.5,
+            "Min": 79,
+            "date": "2026-10-24 12:00:00 +0200"
+          },
+          {
+            "Max": 128,
+            "units": "bpm",
+            "Avg": 104,
+            "Min": 80,
+            "date": "2026-10-24 12:01:00 +0200"
+          },
+          {
+            "Max": 102,
+            "units": "bpm",
+            "Avg": 90,
+            "Min": 78,
+            "date": "2026-10-24 12:02:00 +0200"
+          },
+          {
+            "Max": 90,
+            "units": "bpm",
+            "Avg": 84.5,
+            "Min": 79,
+            "date": "2026-10-24 12:03:00 +0200"
+          },
+          {
+            "Max": 122,
+            "units": "bpm",
+            "Avg": 106.5,
+            "Min": 91,
+            "date": "2026-10-24 12:04:00 +0200"
+          },
+          {
+            "Max": 106,
+            "units": "bpm",
+            "Avg": 94.5,
+            "Min": 83,
+            "date": "2026-10-24 12:05:00 +0200"
+          },
+          {
+            "Max": 119,
+            "units": "bpm",
+            "Avg": 109.5,
+            "Min": 100,
+            "date": "2026-10-24 12:06:00 +0200"
+          },
+          {
+            "Max": 118,
+            "units": "bpm",
+            "Avg": 110,
+            "Min": 102,
+            "date": "2026-10-24 12:07:00 +0200"
+          },
+          {
+            "Max": 103,
+            "units": "bpm",
+            "Avg": 89.5,
+            "Min": 76,
+            "date": "2026-10-24 12:08:00 +0200"
+          },
+          {
+            "Max": 105,
+            "units": "bpm",
+            "Avg": 96,
+            "Min": 87,
+            "date": "2026-10-24 12:09:00 +0200"
+          },
+          {
+            "Max": 107,
+            "units": "bpm",
+            "Avg": 95,
+            "Min": 83,
+            "date": "2026-10-24 12:10:00 +0200"
+          },
+          {
+            "Max": 97,
+            "units": "bpm",
+            "Avg": 89,
+            "Min": 81,
+            "date": "2026-10-24 12:11:00 +0200"
+          },
+          {
+            "Max": 88,
+            "units": "bpm",
+            "Avg": 83.5,
+            "Min": 79,
+            "date": "2026-10-24 12:12:00 +0200"
+          },
+          {
+            "Max": 103,
+            "units": "bpm",
+            "Avg": 91,
+            "Min": 79,
+            "date": "2026-10-24 12:13:00 +0200"
+          },
+          {
+            "Max": 123,
+            "units": "bpm",
+            "Avg": 110,
+            "Min": 97,
+            "date": "2026-10-24 12:14:00 +0200"
+          },
+          {
+            "Max": 105,
+            "units": "bpm",
+            "Avg": 96.5,
+            "Min": 88,
+            "date": "2026-10-24 12:15:00 +0200"
+          },
+          {
+            "Max": 93,
+            "units": "bpm",
+            "Avg": 89.5,
+            "Min": 86,
+            "date": "2026-10-24 12:16:00 +0200"
+          },
+          {
+            "Max": 89,
+            "units": "bpm",
+            "Avg": 86,
+            "Min": 83,
+            "date": "2026-10-24 12:17:00 +0200"
+          },
+          {
+            "Max": 87,
+            "units": "bpm",
+            "Avg": 83.5,
+            "Min": 80,
+            "date": "2026-10-24 12:18:00 +0200"
+          },
+          {
+            "Max": 128,
+            "units": "bpm",
+            "Avg": 108,
+            "Min": 88,
+            "date": "2026-10-24 12:19:00 +0200"
+          },
+          {
+            "Max": 123,
+            "units": "bpm",
+            "Avg": 106,
+            "Min": 89,
+            "date": "2026-10-24 12:20:00 +0200"
+          },
+          {
+            "Max": 105,
+            "units": "bpm",
+            "Avg": 97.5,
+            "Min": 90,
+            "date": "2026-10-24 12:21:00 +0200"
+          },
+          {
+            "Max": 120,
+            "units": "bpm",
+            "Avg": 105,
+            "Min": 90,
+            "date": "2026-10-24 12:22:00 +0200"
+          },
+          {
+            "Max": 102,
+            "units": "bpm",
+            "Avg": 94,
+            "Min": 86,
+            "date": "2026-10-24 12:23:00 +0200"
+          },
+          {
+            "Max": 109,
+            "units": "bpm",
+            "Avg": 101.5,
+            "Min": 94,
+            "date": "2026-10-24 12:24:00 +0200"
+          },
+          {
+            "Max": 127,
+            "units": "bpm",
+            "Avg": 118,
+            "Min": 109,
+            "date": "2026-10-24 12:25:00 +0200"
+          },
+          {
+            "Max": 135,
+            "units": "bpm",
+            "Avg": 123,
+            "Min": 111,
+            "date": "2026-10-24 12:26:00 +0200"
+          },
+          {
+            "Max": 120,
+            "units": "bpm",
+            "Avg": 108,
+            "Min": 96,
+            "date": "2026-10-24 12:27:00 +0200"
+          },
+          {
+            "Max": 125,
+            "units": "bpm",
+            "Avg": 107.5,
+            "Min": 90,
+            "date": "2026-10-24 12:28:00 +0200"
+          },
+          {
+            "Max": 125,
+            "units": "bpm",
+            "Avg": 111.5,
+            "Min": 98,
+            "date": "2026-10-24 12:29:00 +0200"
+          },
+          {
+            "Max": 101,
+            "units": "bpm",
+            "Avg": 96,
+            "Min": 91,
+            "date": "2026-10-24 12:30:00 +0200"
+          },
+          {
+            "Max": 96,
+            "units": "bpm",
+            "Avg": 92.5,
+            "Min": 89,
+            "date": "2026-10-24 12:31:00 +0200"
+          },
+          {
+            "Max": 95,
+            "units": "bpm",
+            "Avg": 91,
+            "Min": 87,
+            "date": "2026-10-24 12:32:00 +0200"
+          },
+          {
+            "Max": 98,
+            "units": "bpm",
+            "Avg": 93,
+            "Min": 88,
+            "date": "2026-10-24 12:33:00 +0200"
+          },
+          {
+            "Max": 91,
+            "units": "bpm",
+            "Avg": 87.5,
+            "Min": 84,
+            "date": "2026-10-24 12:34:00 +0200"
+          },
+          {
+            "Max": 108,
+            "units": "bpm",
+            "Avg": 97.5,
+            "Min": 87,
+            "date": "2026-10-24 12:35:00 +0200"
+          },
+          {
+            "Max": 112,
+            "units": "bpm",
+            "Avg": 99,
+            "Min": 86,
+            "date": "2026-10-24 12:36:00 +0200"
+          },
+          {
+            "Max": 122,
+            "units": "bpm",
+            "Avg": 115.5,
+            "Min": 109,
+            "date": "2026-10-24 12:37:00 +0200"
+          },
+          {
+            "Max": 112,
+            "units": "bpm",
+            "Avg": 97.5,
+            "Min": 83,
+            "date": "2026-10-24 12:38:00 +0200"
+          },
+          {
+            "Max": 93,
+            "units": "bpm",
+            "Avg": 86,
+            "Min": 79,
+            "date": "2026-10-24 12:39:00 +0200"
+          },
+          {
+            "Max": 101,
+            "units": "bpm",
+            "Avg": 91,
+            "Min": 81,
+            "date": "2026-10-24 12:40:00 +0200"
+          },
+          {
+            "Max": 88,
+            "units": "bpm",
+            "Avg": 82.5,
+            "Min": 77,
+            "date": "2026-10-24 12:41:00 +0200"
+          },
+          {
+            "Max": 93,
+            "units": "bpm",
+            "Avg": 89,
+            "Min": 85,
+            "date": "2026-10-24 12:42:00 +0200"
+          },
+          {
+            "Max": 117,
+            "units": "bpm",
+            "Avg": 105.5,
+            "Min": 94,
+            "date": "2026-10-24 12:43:00 +0200"
+          },
+          {
+            "Max": 117,
+            "units": "bpm",
+            "Avg": 107.5,
+            "Min": 98,
+            "date": "2026-10-24 12:44:00 +0200"
+          },
+          {
+            "Max": 106,
+            "units": "bpm",
+            "Avg": 99.5,
+            "Min": 93,
+            "date": "2026-10-24 12:45:00 +0200"
+          },
+          {
+            "Max": 99,
+            "units": "bpm",
+            "Avg": 94.5,
+            "Min": 90,
+            "date": "2026-10-24 12:46:00 +0200"
+          },
+          {
+            "Max": 119,
+            "units": "bpm",
+            "Avg": 108.5,
+            "Min": 98,
+            "date": "2026-10-24 12:47:00 +0200"
+          },
+          {
+            "Max": 120,
+            "units": "bpm",
+            "Avg": 112,
+            "Min": 104,
+            "date": "2026-10-24 12:48:00 +0200"
+          },
+          {
+            "Max": 109,
+            "units": "bpm",
+            "Avg": 103.5,
+            "Min": 98,
+            "date": "2026-10-24 12:49:00 +0200"
+          },
+          {
+            "Max": 121,
+            "units": "bpm",
+            "Avg": 115.5,
+            "Min": 110,
+            "date": "2026-10-24 12:50:00 +0200"
+          },
+          {
+            "Max": 118,
+            "units": "bpm",
+            "Avg": 111.5,
+            "Min": 105,
+            "date": "2026-10-24 12:51:00 +0200"
+          },
+          {
+            "Max": 120,
+            "units": "bpm",
+            "Avg": 112.5,
+            "Min": 105,
+            "date": "2026-10-24 12:52:00 +0200"
+          },
+          {
+            "Max": 124,
+            "units": "bpm",
+            "Avg": 116.5,
+            "Min": 109,
+            "date": "2026-10-24 12:53:00 +0200"
+          },
+          {
+            "Max": 115,
+            "units": "bpm",
+            "Avg": 112.5,
+            "Min": 110,
+            "date": "2026-10-24 12:54:00 +0200"
+          },
+          {
+            "Max": 108,
+            "units": "bpm",
+            "Avg": 108,
+            "Min": 108,
+            "date": "2026-10-24 12:55:00 +0200"
+          }
+        ],
+        "id": "00000000-0000-4000-8000-000000000017",
+        "maxHeartRate": {
+          "qty": 135,
+          "units": "bpm"
+        },
+        "totalEnergy": {
+          "units": "kJ",
+          "qty": 1804.488072000037
+        },
+        "end": "2026-10-24 12:55:44 +0200",
+        "stepCadence": {
+          "qty": 6.136278771025065,
+          "units": "count/min"
+        },
+        "isIndoor": true,
+        "start": "2026-10-24 11:36:33 +0200"
+      }
+    ],
+    "stateOfMind": [
+      {
+        "id": "00000000-0000-4000-9000-000000000001",
+        "kind": "daily_mood",
+        "start": "2026-10-27T15:50:31Z",
+        "end": "2026-10-27T15:50:31Z",
+        "valence": 0.1,
+        "valenceClassification": "neutral",
+        "labels": [],
+        "associations": []
+      }
+    ],
+    "medications": [
+      {
+        "displayText": "Farmaco",
+        "status": "Assunto",
+        "scheduledDosage": 1,
+        "dosage": 1,
+        "units": "count",
+        "start": "2026-10-27 07:30:00 +0100",
+        "end": "2026-10-27 07:30:00 +0100",
+        "scheduledDate": "2026-10-27 07:30:00 +0100",
+        "isArchived": false,
+        "codings": []
+      }
+    ]
+  }
+}
