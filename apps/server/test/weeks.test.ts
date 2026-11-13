@@ -1,7 +1,7 @@
 import { describe, expect, it, vi } from "vitest";
 import { buildApp } from "../src/app.js";
 import { parseNutritionSummary, parseWeightTrends } from "../src/parsers/summary.js";
-import { loggingStreak, mondayOf, type WeekRoutesOptions } from "../src/routes/weeks.js";
+import { kcalShare, loggingStreak, mondayOf, type WeekRoutesOptions } from "../src/routes/weeks.js";
 import { authOptions, signIn } from "./helpers.js";
 import { fixture } from "./parsers/fixtures.js";
 
@@ -9,10 +9,10 @@ const summary = parseNutritionSummary(JSON.parse(fixture("nutrition-summary.json
 
 describe("summary parsers", () => {
   it("parses real nutrition summary structured content", () => {
-    expect(summary.goals).toEqual({ kcal: 2200, protein: 135, waterMl: 2500 });
+    expect(summary.goals).toEqual({ kcal: 2200, protein: 135, fiber: 30, waterMl: 2500 });
     expect(summary.days).toEqual([
-      { date: "2026-11-04", kcal: 790, protein: 49.4, waterMl: 0, mealCount: 5 },
-      { date: "2026-11-05", kcal: 438, protein: 28.2, waterMl: 0, mealCount: 1 },
+      { date: "2026-11-04", kcal: 790, protein: 49.4, carbs: 53.8, fat: 43.2, fiber: 5.8, waterMl: 0, mealCount: 5 },
+      { date: "2026-11-05", kcal: 438, protein: 28.2, carbs: 68.9, fat: 7, fiber: 7.1, waterMl: 0, mealCount: 1 },
     ]);
   });
 
@@ -54,10 +54,14 @@ describe("week routes", () => {
     expect(week.end).toBe("2026-11-08");
     expect(week.days.map((d: { kcal: number | null }) => d.kcal)).toEqual([null, null, 790, 438, null, null, null]);
     // Today (Thursday) is still in progress: only Wednesday is a completed day
-    expect(week.averages).toEqual({ kcal: 790, protein: 49.4, days: 1 });
+    // Macro calories 197.6 / 215.2 / 388.8 kcal: 24.65 / 26.85 / 48.5 %, rounded to add up to 100
+    expect(week.averages).toEqual({ kcal: 790, protein: 49.4, fiber: 5.8, waterMl: 0, days: 1, kcalShare: { protein: 25, carbs: 27, fat: 48 } });
+    expect(week.goals).toEqual({ kcal: 2200, protein: 135, fiber: 30, waterMl: 2500 });
     expect(week.consistency).toEqual({
       streak: ["2026-11-04", "2026-11-05"],
+      logged: { days: ["2026-11-04", "2026-11-05"], total: 4 },
       protein: { hit: 0, total: 1, best: { date: "2026-11-04", value: 49.4 }, goal: 135 },
+      fiber: { hit: 0, total: 1, best: { date: "2026-11-04", value: 5.8 }, goal: 30 },
       water: { hit: 0, total: 1, best: { date: "2026-11-04", value: 0 }, goal: 2500 },
       asPlanned: 0,
       skipped: 0,
@@ -79,8 +83,32 @@ describe("week routes", () => {
   });
 });
 
+describe("kcalShare", () => {
+  it("returns whole percentages adding up to 100, or null without macros", () => {
+    expect(kcalShare(100, 100, 100 / 2.25)).toEqual({ protein: 34, carbs: 33, fat: 33 });
+    expect(kcalShare(0, 0, 0)).toBeNull();
+  });
+
+  it("leaves days without recorded fiber out of the fiber average", async () => {
+    const days = [
+      { date: "2026-11-02", kcal: 2000, protein: 120, carbs: 200, fat: 70, fiber: 30, waterMl: 2000, mealCount: 4 },
+      { date: "2026-11-03", kcal: 1800, protein: 100, carbs: 180, fat: 60, fiber: null, waterMl: 1000, mealCount: 3 },
+    ];
+    const api: WeekRoutesOptions["api"] = {
+      clock: async () => ({ timezone: "Europe/Rome", localDate: "2026-11-05", localTime: "15:00:00", utc: "" }),
+      summary: async () => ({ goals: { kcal: 2200, protein: 135, fiber: 30, waterMl: 2500 }, days }),
+    };
+    const app = await buildApp({ auth: authOptions(), weekApi: api });
+    const { cookie } = await signIn(app);
+    const week = (await app.inject({ method: "GET", url: "/api/weeks/current", headers: { cookie } })).json();
+    expect(week.averages.fiber).toBe(30);
+    expect(week.averages.waterMl).toBe(1500);
+    expect(week.consistency.fiber).toEqual({ hit: 1, total: 1, best: { date: "2026-11-02", value: 30 }, goal: 30 });
+  });
+});
+
 describe("loggingStreak", () => {
-  const day = (date: string, mealCount: number) => ({ date, kcal: 1, protein: 1, waterMl: 0, mealCount });
+  const day = (date: string, mealCount: number) => ({ date, kcal: 1, protein: 1, carbs: 0, fat: 0, fiber: null, waterMl: 0, mealCount });
 
   it("counts today once it has meals, otherwise ends yesterday", () => {
     const days = [day("2026-11-03", 2), day("2026-11-04", 1), day("2026-11-05", 3)];

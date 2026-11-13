@@ -10,11 +10,11 @@ import { fixture } from "./parsers/fixtures.js";
 const patterns = parseMealPatterns(fixture("meal-patterns-7d.txt")).value;
 const meals = parseMeals(fixture("meals-full-by-date.txt")).value.meals;
 const summary = {
-  goals: { kcal: 2200, protein: 135, waterMl: 2500 },
+  goals: { kcal: 2200, protein: 135, fiber: 30, waterMl: 2500 },
   days: [
-    { date: "2026-11-04", kcal: 790, protein: 49.4, waterMl: 0, mealCount: 5 },
-    { date: "2026-11-05", kcal: 2455, protein: 122, waterMl: 1750, mealCount: 6 },
-    { date: "2026-11-06", kcal: 574, protein: 29.9, waterMl: 750, mealCount: 1 },
+    { date: "2026-11-04", kcal: 790, protein: 49.4, carbs: 0, fat: 0, fiber: null, waterMl: 0, mealCount: 5 },
+    { date: "2026-11-05", kcal: 2455, protein: 122, carbs: 0, fat: 0, fiber: null, waterMl: 1750, mealCount: 6 },
+    { date: "2026-11-06", kcal: 574, protein: 29.9, carbs: 0, fat: 0, fiber: null, waterMl: 750, mealCount: 1 },
   ],
 };
 

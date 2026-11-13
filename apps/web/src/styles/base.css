@@ -2536,23 +2536,6 @@ button.button-primary {
   cursor: default;
 }
 
-.week-layout {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  transition: opacity 0.2s;
-}
-
-.week-layout[aria-busy="true"] {
-  opacity: 0.6;
-}
-
-.week-side {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-
 .week-chart {
   display: flex;
   flex-direction: column;
@@ -2649,24 +2632,6 @@ a.bar-column:hover .bar:not([data-empty]) {
   padding: 0;
 }
 
-.stat-tiles {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 8px;
-}
-
-.stat-tiles .detail-tile {
-  padding: 14px 16px;
-}
-
-.stat-tiles strong {
-  font-size: 20px;
-}
-
-.tile-note {
-  font-size: 11px !important;
-}
-
 .weight-form {
   display: flex;
   gap: 8px;
@@ -2707,24 +2672,6 @@ a.bar-column:hover .bar:not([data-empty]) {
   cursor: default;
 }
 
-@media (min-width: 800px) {
-  .week-layout {
-    flex-direction: row;
-    flex-wrap: wrap;
-    align-items: flex-start;
-    gap: 1.25rem;
-  }
-
-  .week-chart {
-    flex: 1.4 1 420px;
-    padding: 22px 24px;
-  }
-
-  .week-side {
-    flex: 1 1 320px;
-    gap: 1rem;
-  }
-}
 
 /* "Adesso" as the last entry: no rod below it (nothing comes after) */
 .timeline-item.now-marker[data-position="last"]::before {
@@ -3604,19 +3551,12 @@ button.next-meal-primary {
   font-size: 13px;
 }
 
-/* Training day marker under the weekday letter; the chart note lists the days in words */
+/* Workout marks under the weekday letter (Alimentazione); the legend names the types */
 .bar-labels > span {
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 3px;
-}
-
-.training-dot {
-  width: 6px;
-  height: 6px;
-  border-radius: 3px;
-  background: var(--color-accent);
 }
 
 /*
@@ -4818,4 +4758,265 @@ div.connection-row {
 .profile-action[data-kind="danger"] {
   border-color: var(--color-danger-border);
   color: var(--color-danger);
+}
+
+/* ================= Andamento › Alimentazione ================= */
+
+/* Phones: one column, calories first and the two KPI tiles right after (mockup Settimana) */
+.nutrition-layout {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  transition: opacity 0.2s;
+}
+
+.nutrition-layout[aria-busy="true"] {
+  opacity: 0.6;
+}
+
+.nutrition-grid {
+  display: contents;
+}
+
+.nutrition-calories { order: 0; }
+.kpi-row { order: 1; }
+.nutrition-protein { order: 2; }
+.nutrition-consistency { order: 3; }
+.nutrition-grid > .plan-compare { order: 4; }
+
+.kpi-row {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.kpi {
+  padding: 14px 16px;
+  min-width: 0;
+}
+
+.kpi strong {
+  font-size: 20px;
+  white-space: nowrap;
+}
+
+.kpi[data-wide] {
+  display: none;
+}
+
+.kpi .tile-note[data-accent] {
+  color: var(--color-accent);
+}
+
+.nutrition-calories-body {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px 24px;
+  align-items: center;
+}
+
+.nutrition-calories-chart {
+  flex: 3 1 420px;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.bar-marks {
+  height: 18px;
+  display: flex;
+  gap: 2px;
+  align-items: center;
+  justify-content: center;
+}
+
+.week-workout-icon {
+  color: var(--color-water-text);
+  flex: none;
+}
+
+.week-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 14px;
+  font-size: 12px;
+  color: var(--color-text-muted);
+}
+
+.week-legend-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.kcal-share {
+  flex: 1 1 220px;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.kcal-share-title {
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.kcal-share-bar {
+  display: flex;
+  height: 14px;
+  border-radius: 7px;
+  overflow: hidden;
+  gap: 2px;
+}
+
+.kcal-share-bar span,
+.kcal-share-swatch {
+  background: var(--macro);
+}
+
+.kcal-share-bar [data-macro="protein"],
+.kcal-share-legend [data-macro="protein"] { --macro: var(--macro-protein); }
+.kcal-share-bar [data-macro="carbs"],
+.kcal-share-legend [data-macro="carbs"] { --macro: var(--macro-carbs); }
+.kcal-share-bar [data-macro="fat"],
+.kcal-share-legend [data-macro="fat"] { --macro: var(--macro-fat); }
+
+.kcal-share-legend {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 4px 12px;
+  font-size: 12px;
+  color: var(--color-text-2);
+}
+
+.kcal-share-legend > span {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.kcal-share-swatch {
+  width: 8px;
+  height: 8px;
+  border-radius: 2px;
+}
+
+.kcal-share-note {
+  font-size: 11px;
+}
+
+.protein-chart {
+  display: block;
+  width: 100%;
+  height: auto;
+  max-height: 220px;
+  font-family: inherit;
+}
+
+.protein-goal {
+  stroke: var(--color-text-muted);
+  stroke-width: 1.5;
+  stroke-dasharray: 4 3;
+}
+
+.protein-goal-label {
+  font-size: 10px;
+  font-weight: 700;
+  fill: var(--color-text-muted);
+}
+
+.protein-day {
+  font-size: 11px;
+  font-weight: 700;
+  fill: var(--color-text-muted);
+}
+
+.protein-value {
+  font-size: 10px;
+  font-weight: 800;
+  fill: var(--color-text);
+}
+
+.protein-bar {
+  fill: var(--macro-protein);
+}
+
+.protein-bar[data-today] {
+  fill-opacity: 0.45;
+}
+
+.protein-empty {
+  fill: var(--color-track);
+}
+
+.protein-note {
+  font-size: 12px;
+}
+
+/* Tablet and desktop: KPI row on top, then a card grid (SettimanaDesktop); calories always span the row */
+@media (min-width: 800px) {
+  .nutrition-layout {
+    gap: 16px;
+  }
+
+  .kpi-row {
+    order: 0;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 16px;
+  }
+
+  .kpi {
+    padding: 16px 18px;
+  }
+
+  .kpi strong {
+    font-size: 24px;
+  }
+
+  .kpi[data-wide] {
+    display: flex;
+  }
+
+  .nutrition-grid {
+    order: 1;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
+    grid-auto-flow: row dense;
+    gap: 16px;
+    align-items: stretch;
+  }
+
+  .nutrition-calories {
+    grid-column: 1 / -1;
+  }
+
+  .kcal-share-legend {
+    flex-direction: column;
+    gap: 6px;
+    font-size: 13px;
+  }
+
+  .kcal-share-legend > span {
+    justify-content: space-between;
+  }
+
+  .kcal-share-legend strong {
+    margin-left: auto;
+  }
+
+  .nutrition-grid > .card {
+    padding: 22px 24px;
+  }
+
+  .nutrition-grid > .consistency-card {
+    padding: 10px 24px;
+  }
+
+  .nutrition-grid .week-chart-head h2,
+  .nutrition-grid .consistency-card h2 {
+    font-size: 18px;
+  }
 }

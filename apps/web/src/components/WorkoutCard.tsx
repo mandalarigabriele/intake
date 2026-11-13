@@ -13,6 +13,9 @@ const FAMILY_ICONS: Record<string, string> = {
 };
 const DEFAULT_ICON = "M3 12h4l2-5 4 10 2-5h6";
 
+/** Icon path of a workout family ("Forza", "Ciclismo", ...), with a generic pulse for the others. */
+export const familyIcon = (family: string) => FAMILY_ICONS[family] ?? DEFAULT_ICON;
+
 function exerciseNote(exercise: WorkoutExercise): string {
   const parts = [t.workouts.sets(exercise.workingSets)];
   if (exercise.best) parts.push(t.workouts.best(formatGrams(exercise.best.weightKg), exercise.best.reps));
@@ -176,39 +179,5 @@ export function WorkoutCard({ workout }: { workout: Workout }) {
         <p className="workout-sources">{sourcesLine(workout)}</p>
       </div>
     </article>
-  );
-}
-
-/** Settimana: the week's workouts with sessions, total time and volume. */
-export function WeekWorkoutsCard({ workouts, failed, partial }: { workouts: Workout[]; failed: boolean; partial: boolean }) {
-  const minutes = workouts.reduce((sum, w) => sum + w.durationMinutes, 0);
-  const volume = workouts.reduce((sum, w) => sum + w.volumeKg, 0);
-  return (
-    <section className="card consistency-card" aria-label={t.workouts.weekTitle}>
-      <div className="plan-compare-head">
-        <h2>{t.workouts.weekTitle}</h2>
-        {workouts.length > 0 && (
-          <span className="muted">{t.workouts.weekSummary(workouts.length, formatDuration(minutes), volume > 0 ? formatKcal(volume) : null)}</span>
-        )}
-      </div>
-      {failed && <p className="muted workout-empty">{t.workouts.failed}</p>}
-      {partial && <p className="muted workout-empty">{t.workouts.failedPartial}</p>}
-      {!failed && workouts.length === 0 && <p className="muted workout-empty">{t.workouts.none}</p>}
-      {workouts.map((workout) => {
-        const extra = [
-          workout.sets > 0 ? t.workouts.sets(workout.sets) : null,
-          workout.volumeKg > 0 ? t.workouts.volume(formatKcal(workout.volumeKg)) : null,
-          workout.kcal !== null ? t.workouts.kcal(formatKcal(workout.kcal)) : null,
-        ].filter((e): e is string => e !== null);
-        return (
-          <div key={workout.id} className="consistency-row">
-            <div>
-              <strong>{workout.title}</strong>
-              <span className="muted">{t.workouts.weekRow(workout.date, workout.start, formatDuration(workout.durationMinutes), extra)}</span>
-            </div>
-          </div>
-        );
-      })}
-    </section>
   );
 }

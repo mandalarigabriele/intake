@@ -12,6 +12,7 @@ const summarySchema = z.object({
     .object({
       calories: z.number().nullable().optional(),
       protein_g: z.number().nullable().optional(),
+      fiber_g: z.number().nullable().optional(),
       water_ml: z.number().nullable().optional(),
     })
     .nullable()
@@ -21,6 +22,9 @@ const summarySchema = z.object({
       date: z.string(),
       calories: z.number(),
       protein_g: z.number(),
+      carbs_g: z.number().nullable().optional(),
+      fat_g: z.number().nullable().optional(),
+      fiber_g: z.number().nullable().optional(),
       water_ml: z.number().nullable().optional(),
       meal_count: z.number(),
     }),
@@ -28,8 +32,9 @@ const summarySchema = z.object({
 });
 
 export interface NutritionSummary {
-  goals: { kcal: number | null; protein: number | null; waterMl: number | null };
-  days: Array<{ date: string; kcal: number; protein: number; waterMl: number; mealCount: number }>;
+  goals: { kcal: number | null; protein: number | null; fiber: number | null; waterMl: number | null };
+  /** fiber is null when it was not recorded that day (Nutrition leaves such days out of fiber averages). */
+  days: Array<{ date: string; kcal: number; protein: number; carbs: number; fat: number; fiber: number | null; waterMl: number; mealCount: number }>;
 }
 
 export function parseNutritionSummary(structured: unknown): Parsed<NutritionSummary> {
@@ -40,9 +45,19 @@ export function parseNutritionSummary(structured: unknown): Parsed<NutritionSumm
       goals: {
         kcal: result.data.goals?.calories ?? null,
         protein: result.data.goals?.protein_g ?? null,
+        fiber: result.data.goals?.fiber_g ?? null,
         waterMl: result.data.goals?.water_ml ?? null,
       },
-      days: result.data.days.map((d) => ({ date: d.date, kcal: d.calories, protein: d.protein_g, waterMl: d.water_ml ?? 0, mealCount: d.meal_count })),
+      days: result.data.days.map((d) => ({
+        date: d.date,
+        kcal: d.calories,
+        protein: d.protein_g,
+        carbs: d.carbs_g ?? 0,
+        fat: d.fat_g ?? 0,
+        fiber: d.fiber_g ?? null,
+        waterMl: d.water_ml ?? 0,
+        mealCount: d.meal_count,
+      })),
     },
     warnings: [],
   };
