@@ -5647,3 +5647,54 @@ div.connection-row {
   width: 14px;
   border-top: 2px dashed var(--color-text-muted);
 }
+
+/* Alimentazione from tablet width: kcal scale on the left of the calorie bars, "Lun 9" day labels (SettimanaDesktop) */
+.bars-grid {
+  display: none;
+}
+
+.week-nav-label {
+  align-self: center;
+  padding: 0 6px;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+@media (min-width: 800px) {
+  .nutrition-calories .bars,
+  .nutrition-calories .bar-labels {
+    padding-left: 44px;
+  }
+
+  .bars-grid {
+    display: block;
+    position: absolute;
+    left: 44px;
+    right: 0;
+    border-top: 1px solid var(--color-track);
+    pointer-events: none;
+  }
+
+  .bars-grid span {
+    position: absolute;
+    right: calc(100% + 6px);
+    transform: translateY(-50%);
+    font-size: 11px;
+    color: var(--color-text-muted);
+    white-space: nowrap;
+  }
+
+  .week-nav {
+    align-items: center;
+  }
+
+  .nutrition-calories .goal-line {
+    left: 44px;
+  }
+
+  /* Bars and their values stay above the scale lines */
+  .nutrition-calories .bar-column {
+    position: relative;
+    z-index: 1;
+  }
+}

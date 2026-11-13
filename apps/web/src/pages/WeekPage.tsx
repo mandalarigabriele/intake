@@ -104,6 +104,12 @@ function CaloriesCard({ week, workouts }: { week: WeekView; workouts: Workout[] 
       <div className="nutrition-calories-body">
         <div className="nutrition-calories-chart">
           <div className="bars" style={{ height: CHART_HEIGHT + 18 }}>
+            {/* kcal scale, shown from tablet width (SettimanaDesktop) */}
+            {[500, 1000, 1500, 2000, 2500, 3000, 3500].filter((g) => g < max).map((g) => (
+              <span key={g} className="bars-grid" style={{ top: CHART_HEIGHT - (g / max) * CHART_HEIGHT + 18 }} aria-hidden="true">
+                <span>{formatKcal(g)}</span>
+              </span>
+            ))}
             {goalOffset !== null && <div className="goal-line" style={{ top: goalOffset + 18 }} aria-hidden="true" />}
             {week.days.map((day, i) => {
               const height = day.kcal === null ? 4 : Math.max(4, (day.kcal / max) * CHART_HEIGHT);
@@ -132,7 +138,10 @@ function CaloriesCard({ week, workouts }: { week: WeekView; workouts: Workout[] 
               const marks = byDay.get(day.date) ?? [];
               return (
                 <span key={day.date}>
-                  <span aria-hidden="true">{t.weekdaysShort[i]}</span>
+                  <span aria-hidden="true">
+                    <span className="title-phone">{t.weekdaysShort[i]}</span>
+                    <span className="title-wide">{formatWeekdayDay(day.date)}</span>
+                  </span>
                   <span className="bar-marks">
                     {marks.slice(0, 2).map((w) => (
                       <WorkoutIcon key={w.family} family={w.family} size={16} label={t.week.workoutOn(formatWeekdayDay(day.date), [w.type])} />
@@ -224,9 +233,18 @@ function ProteinCard({ week }: { week: WeekView }) {
   const y = (v: number) => base - (v / max) * (base - top);
   const step = (W - 8) / 7;
   const barWidth = step * 0.72;
-  const hit = week.days.filter((d) => goal && d.protein !== null && d.protein >= goal && d.date < week.today).map((d) => lower(d.date));
+  const completed = week.days.filter((d) => d.protein !== null && d.date < week.today);
+  const hit = goal ? completed.filter((d) => d.protein! >= goal).map((d) => t.week.dayWithGrams(lower(d.date), formatKcal(d.protein!))) : [];
+  // The completed day that came closest without reaching the goal, when it was within 15%
+  const closest = goal
+    ? completed.filter((d) => d.protein! < goal && d.protein! >= goal * 0.85).sort((a, b) => b.protein! - a.protein!)[0]
+    : undefined;
   const goalLabel = goal ? formatKcal(goal) : null;
-  const note = [hit.length > 0 ? t.week.proteinHit(hit) : goal ? t.week.proteinNoHit : null, week.days.some((d) => d.date === week.today) ? t.week.inProgress(lower(week.today)) : null]
+  const note = [
+    hit.length > 0 ? t.week.proteinHit(hit) : goal ? t.week.proteinNoHit : null,
+    closest ? t.week.closeTo(formatWeekday(closest.date), formatKcal(goal! - closest.protein!)) : null,
+    week.days.some((d) => d.date === week.today) ? t.week.inProgress(lower(week.today)) : null,
+  ]
     .filter(Boolean)
     .join(" · ");
 
@@ -338,6 +356,7 @@ export function WeekPage() {
               <path d="M15 6l-6 6 6 6" />
             </svg>
           </button>
+          {isCurrent && <span className="week-nav-label title-wide">{t.week.thisWeek}</span>}
           <button type="button" className="icon-button" aria-label={t.week.next} disabled={!data || isCurrent} onClick={() => data && setAnchor(addDays(data.start, 7))}>
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
               <path d="M9 6l6 6-6 6" />
