@@ -174,7 +174,7 @@ export class HealthStore {
 
   /** Dates that have a value for each daily metric, plus nights and workout days (sorted). */
   dates(): { daily: Record<HealthMetric, string[]>; sleep: string[]; workouts: string[] } {
-    const daily: Record<HealthMetric, string[]> = { steps: [], distanceKm: [], activeKcal: [], restingKcal: [], restingHr: [] };
+    const daily: Record<HealthMetric, string[]> = { steps: [], distanceKm: [], activeKcal: [], restingKcal: [], restingHr: [], hrvMs: [], respiratoryRate: [] };
     const rows = this.db.prepare("SELECT date, metric FROM health_daily ORDER BY date").all() as Array<{ date: string; metric: HealthMetric }>;
     for (const row of rows) daily[row.metric]?.push(row.date);
     const column = (sql: string) => (this.db.prepare(sql).all() as Array<{ date: string }>).map((r) => r.date);

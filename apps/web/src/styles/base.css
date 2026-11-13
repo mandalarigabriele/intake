@@ -5827,3 +5827,177 @@ div.connection-row {
     display: none;
   }
 }
+
+/* ================= Oggi: Sforzo / Recupero / Sonno rings ================= */
+
+/* First card on Oggi: before "Prossimo pasto" on phones, top of the left column on desktop */
+.score-card {
+  order: -2;
+  padding: 18px 12px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+@media (min-width: 1000px) {
+  .score-card {
+    order: 0;
+  }
+}
+
+.score-rings {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 4px;
+}
+
+.score-ring {
+  border: none;
+  background: transparent;
+  border-radius: 18px;
+  padding: 8px 2px 10px;
+  font: inherit;
+  color: var(--color-text);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  min-width: 0;
+}
+
+.score-ring[aria-pressed="true"] {
+  background: var(--color-surface-2);
+}
+
+.score-ring[data-ring="effort"] { --ring: var(--color-effort); --ring-track: var(--color-effort-track); }
+.score-ring[data-ring="recovery"] { --ring: var(--color-recovery); --ring-track: var(--color-recovery-track); }
+.score-ring[data-ring="sleep"] { --ring: var(--color-sleep-ring); --ring-track: var(--color-sleep-ring-track); }
+
+.score-ring-dial {
+  position: relative;
+  width: min(92px, 100%);
+  aspect-ratio: 1;
+  display: block;
+}
+
+.score-ring-dial svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.score-ring-track,
+.score-ring-fill {
+  fill: none;
+  stroke-width: 9;
+}
+
+.score-ring-track {
+  stroke: var(--ring-track);
+}
+
+.score-ring-fill {
+  stroke: var(--ring);
+  stroke-linecap: round;
+  transition: stroke-dasharray 0.4s ease;
+}
+
+.score-ring-center {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.score-ring-center strong {
+  font-size: 22px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  font-variant-numeric: tabular-nums;
+}
+
+.score-ring-center span {
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--color-text-muted);
+}
+
+.score-ring-label {
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.score-state {
+  font-size: 11px;
+  font-weight: 800;
+  padding: 2px 8px;
+  border-radius: 999px;
+  white-space: nowrap;
+}
+
+.score-state[data-level="high"] {
+  background: var(--color-accent-soft);
+  color: var(--color-accent-strong);
+}
+
+.score-state[data-level="medium"] {
+  background: var(--color-medium-bg);
+  color: var(--color-medium-text);
+}
+
+.score-state[data-level="low"] {
+  background: var(--color-todo-bg);
+  color: var(--color-todo-text);
+}
+
+.score-state[data-level="none"] {
+  background: var(--color-skipped-bg);
+  color: var(--color-text-2);
+}
+
+.score-info {
+  margin: 0 6px;
+  padding: 12px 14px;
+  border-radius: 16px;
+  background: var(--color-surface-2);
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.score-info strong {
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.score-info p {
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--color-text-2);
+}
+
+.score-info-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  padding-top: 6px;
+  border-top: 1px solid var(--color-border-2);
+  font-size: 12px;
+}
+
+.score-info-row span {
+  color: var(--color-text-muted);
+}
+
+.score-info-row b {
+  text-align: right;
+}
+
+.score-hint {
+  margin: 0 6px;
+  font-size: 11px;
+  color: var(--color-text-muted);
+}

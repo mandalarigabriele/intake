@@ -130,6 +130,8 @@ export function importPreview(data: HealthExport, counts: HealthImportCounts): H
     metric("restingHr", dailyDates(data, "restingHr"), false),
     metric("activeKcal", dailyDates(data, "activeKcal"), true),
     metric("restingKcal", dailyDates(data, "restingKcal"), true),
+    metric("hrvMs", dailyDates(data, "hrvMs"), false),
+    metric("respiratoryRate", dailyDates(data, "respiratoryRate"), false),
   ].filter((m) => m.days > 0);
 
   const sessions = mergeWorkouts(data.workouts);

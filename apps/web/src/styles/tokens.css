@@ -70,6 +70,15 @@
   --color-sleep-chip-text: light-dark(#24305c, #c3cdf2);
   --color-workout-border: light-dark(#c9daec, #2c4258);
   --color-heart: light-dark(#b4412a, #e0714f);
+  /* Oggi: Sforzo / Recupero / Sonno rings and their "Medio" state pill */
+  --color-effort: light-dark(#d9682a, #ec8c55);
+  --color-effort-track: light-dark(#f6e3d6, #3a281c);
+  --color-recovery: light-dark(#2e9a5e, #52c07f);
+  --color-recovery-track: light-dark(#ddefe3, #1e3326);
+  --color-sleep-ring: light-dark(#7461d8, #9d8ff0);
+  --color-sleep-ring-track: light-dark(#e7e3f8, #2a2547);
+  --color-medium-bg: light-dark(#f6ecd8, #3a3020);
+  --color-medium-text: light-dark(#7a5410, #e8c27c);
   --color-heart-soft: light-dark(#f8e7e1, #3a221c);
   --color-now: light-dark(#c2492e, #e0714f);
   --color-on-now: light-dark(#ffffff, #0f1a13);

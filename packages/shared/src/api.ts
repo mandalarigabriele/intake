@@ -322,7 +322,7 @@ export interface WorkoutsResponse {
 // Apple Health (Health Auto Export) — see docs/apple-health.md
 
 /** Metrics shown in the import preview. */
-export type HealthPreviewMetric = "steps" | "distanceKm" | "sleep" | "restingHr" | "activeKcal" | "restingKcal";
+export type HealthPreviewMetric = "steps" | "distanceKm" | "sleep" | "restingHr" | "activeKcal" | "restingKcal" | "hrvMs" | "respiratoryRate";
 
 /** Groups of exported data that Intake does not import, for the "Ignorati" list. */
 export type HealthIgnoredGroup = "nutrition" | "weight" | "private" | "detail" | "vitals" | "vo2max" | "gait" | "other";
@@ -490,4 +490,49 @@ export interface HealthSyncStatus {
   endpoint: string;
   /** Last automatic upload received, ISO; null when none yet. */
   lastReceivedAt: string | null;
+}
+
+/** One input of the Recupero score, with its personal baseline (mean of the previous 30 days) and its 0–100 score. */
+export interface RecoveryPart {
+  key: "hrv" | "restingHr" | "respiratoryRate" | "sleep";
+  value: number;
+  baseline: number | null;
+  score: number;
+  /** Share of the final score, 0–1. */
+  weight: number;
+}
+
+/** The three rings on Oggi: Sforzo, Recupero and Sonno as percentages (docs/apple-health.md § Daily scores). */
+export interface DailyScores {
+  date: string;
+  today: string;
+  /** False until Health data has been imported once: the card stays hidden. */
+  connected: boolean;
+  effort: {
+    percent: number;
+    /** Training load of each workout of the day (TRIMP from heart rate, or an estimate from the duration). */
+    workouts: Array<{ title: string; minutes: number; hrAvg: number | null; load: number }>;
+    /** Load from moving around outside workouts. */
+    movement: { load: number; from: "activeEnergy" | "steps"; value: number };
+    /** Heart-rate range used for the intensity (resting and maximum). */
+    hrRange: { resting: number; max: number };
+  } | null;
+  recovery: {
+    /** null while calibrating (fewer than 5 days of history for the inputs). */
+    percent: number | null;
+    parts: RecoveryPart[];
+    usesHrv: boolean;
+  } | null;
+  sleep: {
+    percent: number;
+    asleepMinutes: number;
+    needMinutes: number;
+    /** Local HH:MM of falling asleep and waking up. */
+    bedtime: string;
+    wake: string;
+    /** Points taken off for falling asleep far from the usual time (mean of the previous 7 nights); 0 when regular or unknown. */
+    regularityPenalty: number;
+  } | null;
+  /** Source labels behind the numbers (Fitbit, Apple Watch, Hevy, ...). */
+  sources: string[];
 }

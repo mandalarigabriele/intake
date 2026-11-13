@@ -217,8 +217,8 @@ class Component extends DCLogic {
       gapPx: per === 7 ? '8px' : (per === 30 ? '3px' : '1px'),
       radius: per === 90 ? '1px' : '4px',
       rangeNote: per === 90 ? 'dati disponibili dall’8 settembre' : '',
-      periods: P.map((p) => ({ label: p[1], sel: per === p[0], bg: per === p[0] ? '#17201B' : '#FFFFFF', fg: per === p[0] ? '#FFFFFF' : '#17201B', border: per === p[0] ? '#17201B' : '#DDE1DA', pick: () => this.setState({ per: p[0] }) })),
-      tabs: TB.map((t) => ({ label: t[1], sel: tab === t[0], bg: tab === t[0] ? '#FFFFFF' : 'transparent', fg: tab === t[0] ? '#17201B' : '#56605A', weight: tab === t[0] ? '800' : '700', pick: () => this.setState({ tab: t[0] }) })),
+      periods: P.map((p) => ({ label: p[1], short: p[0] + ' g', smBg: per === p[0] ? '#FFFFFF' : 'transparent', smFg: per === p[0] ? '#17201B' : '#56605A', sel: per === p[0], bg: per === p[0] ? '#17201B' : '#FFFFFF', fg: per === p[0] ? '#FFFFFF' : '#17201B', border: per === p[0] ? '#17201B' : '#DDE1DA', pick: () => this.setState({ per: p[0] }) })),
+      tabs: TB.map((t) => ({ label: t[1], sel: tab === t[0], line: tab === t[0] ? '#2F6B47' : 'transparent', bg: tab === t[0] ? '#FFFFFF' : 'transparent', fg: tab === t[0] ? '#17201B' : '#56605A', weight: tab === t[0] ? '800' : '700', pick: () => this.setState({ tab: t[0] }) })),
       isSonno: tab === 'sonno', isAtt: tab === 'attivita', isCuore: tab === 'cuore'
     };
   }

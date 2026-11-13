@@ -1,10 +1,11 @@
-import type { HealthDay, HealthImportResult, HealthSettings, HealthStatus, HealthSyncStatus, HealthTrends } from "@intake/shared";
+import type { DailyScores, HealthDay, HealthImportResult, HealthSettings, HealthStatus, HealthSyncStatus, HealthTrends } from "@intake/shared";
 import type { FastifyPluginAsync, preHandlerHookHandler } from "fastify";
 import { z } from "zod";
 import type { HealthStore } from "../db/healthStore.js";
 import type { NutritionApi } from "../mcp/nutritionApi.js";
 import { ParseError } from "../parsers/common.js";
 import { parseHealthExport } from "../parsers/healthAutoExport.js";
+import { dailyScores } from "../services/dailyScores.js";
 import { healthDay } from "../services/healthDay.js";
 import { healthStatus, importPreview, isEmptyExport } from "../services/healthImport.js";
 import type { HealthIngestToken } from "../services/healthSync.js";
@@ -40,6 +41,14 @@ export const appleHealthRoutes: FastifyPluginAsync<AppleHealthRoutesOptions> = a
     const date = request.params.date === "today" ? today : request.params.date;
     if (!isValidDate(date)) return reply.code(400).send({ error: "date must be YYYY-MM-DD or today" });
     return healthDay(store, date, today);
+  });
+
+  // Sforzo, Recupero and Sonno for the rings on Oggi
+  app.get<{ Params: { date: string } }>("/health/scores/:date", async (request, reply): Promise<DailyScores | void> => {
+    const today = (await api.clock()).localDate;
+    const date = request.params.date === "today" ? today : request.params.date;
+    if (!isValidDate(date)) return reply.code(400).send({ error: "date must be YYYY-MM-DD or today" });
+    return dailyScores(store, date, today);
   });
 
   // Andamento › Salute: the last 7, 30 or 90 days ending today
