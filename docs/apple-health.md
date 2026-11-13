@@ -109,6 +109,12 @@ No BMR formulas are used to fill the gap. The Apple Salute screen warns when act
 
 A Health-based insight ("Dai tuoi dati") is shown only if each compared group has at least 5 days and the difference is meaningful (at least 10%).
 
+- Window: the last 28 days, completed logged days only (today is left out); the Nutrition daily totals come from the same
+  `get_nutrition_summary` request the card already makes (its range grows from 7 to 28 days, still one request).
+- Sleep: kcal eaten on the day after a night under 7 hours (the night belongs to its wake-up day) against the other days.
+- Steps: kcal eaten on days at or above the step goal against the other days.
+- The card shows "Ultimi 28 giorni · N giorni registrati" under a Health sentence.
+
 ## File import
 
 - Profile › Apple Salute › "Carica file di Health Auto Export (.json)" (export with JSON format and daily aggregation).
