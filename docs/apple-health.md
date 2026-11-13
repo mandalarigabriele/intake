@@ -103,6 +103,16 @@ A Health-based insight ("Dai tuoi dati") is shown only if each compared group ha
   7-night sleep series, resting heart rate with the average of the week before (days −13 to −7) and an 8-day series, the sleep
   source label, last import time and last data date (for the stale state). `connected` is false until the first import, and the card stays hidden.
 
+## Timeline API
+
+- `GET /api/workouts?from&to` returns Hevy and Apple Health workouts together (`origin: "hevy" | "health"`), each session once:
+  Health records are merged first (see Duplicate workouts); then a merged session that overlaps a Hevy workout by at least half
+  of the shorter one, and is a strength session or was written by Hevy, is attached to it and gives only heart rate, kcal and the
+  per-minute heart-rate curve (minutes counted from the Hevy start). Other sessions are listed as Health workouts.
+- Without `HEVY_API_KEY` only Health workouts are listed (`configured: false`); when Hevy does not answer, Health workouts are
+  still listed with `hevyUnavailable: true`.
+- The sleep chip uses the night of `GET /api/health/days/:date`.
+
 ## Ingest (phase 2)
 
 - `POST` endpoint protected by a token generated in the app (copy / regenerate in the Apple Salute screen), outside Google sign-in.

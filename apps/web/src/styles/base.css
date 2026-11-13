@@ -920,6 +920,8 @@ strong,
 .timeline-section {
   --timeline-bg: var(--color-bg);
   --meal-card-bg: var(--color-surface);
+  /* Chips and stat tiles inside a timeline card */
+  --meal-card-inner-bg: var(--color-surface-2);
   margin-top: 12px;
 }
 
@@ -1088,6 +1090,7 @@ strong,
   .timeline-section {
     --timeline-bg: var(--color-surface);
     --meal-card-bg: var(--color-surface-2);
+    --meal-card-inner-bg: var(--color-surface);
     flex: 1.4 1 420px;
     min-width: 0;
     margin-top: 0;
@@ -3365,34 +3368,204 @@ button.next-meal-primary {
   color: var(--color-water-text);
 }
 
-/* ================= Workouts (Hevy) ================= */
+/* ================= Workouts (Hevy and Apple Health) ================= */
 
-.workout-head {
+.workout-card {
+  gap: 10px;
+  box-shadow: inset 0 0 0 1.5px var(--color-workout-border);
+}
+
+.workout-main {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  padding: 0;
+  border: none;
+  background: none;
+  color: var(--color-text);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.workout-icon {
+  width: 40px;
+  height: 40px;
+  flex: none;
+  border-radius: 12px;
+  background: var(--color-water-soft);
+  color: var(--color-water-text);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.workout-text {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.workout-title-row {
   display: flex;
   justify-content: space-between;
-  align-items: center;
+  align-items: baseline;
   gap: 8px;
+}
+
+.workout-title {
+  font-size: 15px;
+  font-weight: 800;
+  line-height: 1.3;
+}
+
+.workout-kcal {
+  font-size: 14px;
+  font-weight: 800;
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+
+.workout-range {
+  font-size: 13px;
+  color: var(--color-text-2);
+  font-variant-numeric: tabular-nums;
+}
+
+.workout-chevron {
+  flex: none;
+  margin-top: 4px;
+  color: var(--color-text-muted);
+  transition: transform 0.15s;
+}
+
+.workout-main[aria-expanded="true"] .workout-chevron {
+  transform: rotate(180deg);
+}
+
+.workout-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  align-items: center;
+}
+
+.workout-chip {
+  padding: 3px 9px;
+  border-radius: 999px;
+  background: var(--meal-card-inner-bg);
+  color: var(--color-text-2);
   font-size: 12px;
   font-weight: 700;
 }
 
-.workout-chip {
-  padding: 3px 8px;
-  border-radius: 999px;
-  background: var(--color-accent-soft);
-  color: var(--color-accent-strong);
+.workout-details {
+  border-top: 1px solid var(--color-divider);
+  padding-top: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.workout-details[hidden] {
+  display: none;
+}
+
+.workout-stats {
+  margin: 0;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.workout-stats > div {
+  padding: 8px 10px;
+  border-radius: 12px;
+  background: var(--meal-card-inner-bg);
+  display: flex;
+  flex-direction: column;
+}
+
+.workout-stats dt {
   font-size: 11px;
-  font-weight: 800;
-  letter-spacing: 0.06em;
+  font-weight: 700;
+  color: var(--color-text-muted);
 }
 
-.workout-card h3 {
-  font-size: 16px;
+.workout-stats dd {
+  margin: 0;
+  font-size: 15px;
   font-weight: 800;
+  font-variant-numeric: tabular-nums;
 }
 
-.workout-summary {
-  font-size: 13px;
+.workout-section-label {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--color-text-muted);
+}
+
+.workout-hr {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.hr-chart {
+  display: block;
+  max-width: 400px;
+  overflow: visible;
+}
+
+.hr-grid {
+  stroke: var(--color-track);
+  stroke-width: 1;
+}
+
+.hr-axis {
+  font-size: 9px;
+  fill: var(--color-text-muted);
+}
+
+.hr-area {
+  fill: var(--color-heart);
+  fill-opacity: 0.12;
+}
+
+.hr-line {
+  fill: none;
+  stroke: var(--color-heart);
+  stroke-width: 2;
+  stroke-linejoin: round;
+}
+
+.hr-average {
+  stroke: var(--color-text);
+  stroke-width: 1;
+  stroke-dasharray: 3 3;
+}
+
+.hr-average-label {
+  font-size: 10px;
+  font-weight: 800;
+  fill: var(--color-text);
+  /* Halo in the card colour so the label stays readable over the curve */
+  stroke: var(--meal-card-bg);
+  stroke-width: 3px;
+  stroke-linejoin: round;
+  paint-order: stroke;
+}
+
+.hr-hit {
+  fill: transparent;
+}
+
+.hr-peak {
+  fill: var(--color-heart);
+  stroke: var(--meal-card-bg);
+  stroke-width: 2;
 }
 
 .workout-exercises {
@@ -3401,12 +3574,8 @@ button.next-meal-primary {
   list-style: none;
   display: flex;
   flex-direction: column;
-  gap: 4px;
-  font-size: 13px;
-}
-
-.workout-exercises {
   gap: 8px;
+  font-size: 13px;
 }
 
 /* Exercise name, then its sets on a second line: the same rhythm at every width */
@@ -3421,32 +3590,76 @@ button.next-meal-primary {
   font-variant-numeric: tabular-nums;
 }
 
-.workout-exercises[hidden] {
-  display: none;
+.workout-sources {
+  margin: 0;
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--color-text-muted);
 }
 
-.workout-toggle {
-  align-self: flex-start;
-  display: inline-flex;
+/* ================= Sleep chip (Timeline) ================= */
+
+.sleep-dot {
+  width: 28px;
+  height: 28px;
+  border-radius: 14px;
+  background: var(--color-sleep);
+  color: var(--color-surface);
+  display: flex;
   align-items: center;
-  gap: 4px;
-  min-height: 32px;
-  padding: 0 12px;
-  border: 1px solid var(--color-border);
+  justify-content: center;
+  margin-top: -4px;
+  position: relative;
+}
+
+.sleep-entry {
+  flex: 1;
+  min-width: 0;
+  margin-bottom: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.sleep-chip {
+  align-self: flex-start;
+  max-width: 100%;
+  min-height: 44px;
+  padding: 0 14px;
   border-radius: 999px;
-  background: none;
-  color: var(--color-text-2);
+  border: 1px solid var(--color-sleep-chip-border);
+  background: var(--color-sleep-chip-bg);
+  color: var(--color-sleep-chip-text);
+  font: inherit;
   font-size: 13px;
-  font-weight: 700;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  column-gap: 8px;
+  text-align: left;
   cursor: pointer;
 }
 
-.workout-toggle svg {
-  transition: transform 0.15s;
+.sleep-chip strong {
+  font-weight: 800;
 }
 
-.workout-toggle[aria-expanded="true"] svg {
-  transform: rotate(180deg);
+.sleep-chip span {
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+.sleep-entry-panel {
+  padding: 12px 14px;
+  border-radius: 16px;
+  background: var(--meal-card-bg);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.sleep-entry-panel[hidden] {
+  display: none;
 }
 
 .workout-empty {
@@ -4297,19 +4510,23 @@ button.next-meal-primary {
   height: 12px;
 }
 
-.activity-card [data-phase="deep"] {
+.sleep-phases [data-phase="deep"],
+.sleep-legend [data-phase="deep"] {
   background: var(--color-sleep-deep);
 }
 
-.activity-card [data-phase="rem"] {
+.sleep-phases [data-phase="rem"],
+.sleep-legend [data-phase="rem"] {
   background: var(--color-sleep-rem);
 }
 
-.activity-card [data-phase="core"] {
+.sleep-phases [data-phase="core"],
+.sleep-legend [data-phase="core"] {
   background: var(--color-sleep-core);
 }
 
-.activity-card [data-phase="awake"] {
+.sleep-phases [data-phase="awake"],
+.sleep-legend [data-phase="awake"] {
   background: var(--color-chart-amber);
 }
 
@@ -4346,4 +4563,9 @@ button.next-meal-primary {
 
 .activity-updated[data-stale] {
   color: var(--color-todo-text);
+}
+
+/* Source pill inside timeline cards: a thin outline keeps it apart from the chips on every card colour */
+.workout-chips .source-pill {
+  box-shadow: inset 0 0 0 1px var(--color-border);
 }

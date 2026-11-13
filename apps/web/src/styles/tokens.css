@@ -64,6 +64,11 @@
   --color-sleep-deep: light-dark(#3a4d8f, #8fa3e8);
   --color-sleep-rem: light-dark(#7b68c8, #b3a4ec);
   --color-sleep-core: light-dark(#9db4e0, #4f669e);
+  /* Timeline: sleep chip and workout cards (workout tile reuses the water blues) */
+  --color-sleep-chip-bg: light-dark(#eef0f8, #1f2538);
+  --color-sleep-chip-border: light-dark(#d5daec, #323b5a);
+  --color-sleep-chip-text: light-dark(#24305c, #c3cdf2);
+  --color-workout-border: light-dark(#c9daec, #2c4258);
   --color-heart: light-dark(#b4412a, #e0714f);
   --color-heart-soft: light-dark(#f8e7e1, #3a221c);
   --color-now: light-dark(#c2492e, #e0714f);

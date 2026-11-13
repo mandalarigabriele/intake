@@ -66,6 +66,8 @@ export interface MergedWorkout {
   sources: WorkoutSourceUse[];
   /** Source label that gave the heart rate (null when no record has it). */
   heartRateFrom: string | null;
+  /** Source label that gave the kcal (null when no record has it). */
+  kcalFrom: string | null;
   /** The raw records merged into this session, earliest first. */
   records: Array<{ id: string; source: string; label: string; start: string; end: string }>;
 }
@@ -155,6 +157,7 @@ function mergeGroup(group: HealthWorkout[]): MergedWorkout {
     fromHevy: bySource.has("Hevy"),
     sources: byType.map((p) => ({ label: p.label, used: usedLabels.has(p.label) })),
     heartRateFrom: hrPart?.label ?? null,
+    kcalFrom: kcalPart?.label ?? null,
     records: [...group]
       .sort((a, b) => startMs(a) - startMs(b))
       .map((r) => ({ id: r.id, source: sourceLabel(r.source), label: workoutType(r.name).label, start: r.start, end: r.end })),

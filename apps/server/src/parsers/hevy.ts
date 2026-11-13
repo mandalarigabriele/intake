@@ -61,8 +61,11 @@ function toExercise(exercise: z.infer<typeof exerciseSchema>): WorkoutExercise {
   };
 }
 
+/** The part of a Workout that comes from Hevy alone. */
+export type HevyWorkoutSummary = Pick<Workout, "id" | "title" | "date" | "start" | "end" | "durationMinutes" | "exercises" | "sets" | "volumeKg">;
+
 /** A Hevy workout in the profile timezone, with its exercises summarized. */
-export function toWorkout(workout: HevyWorkout, timeZone: string): Workout {
+export function toWorkout(workout: HevyWorkout, timeZone: string): HevyWorkoutSummary {
   const start = localDateTime(workout.start_time, timeZone);
   const end = localDateTime(workout.end_time, timeZone);
   const sets = workout.exercises.flatMap((exercise) => exercise.sets.filter(isWorking));
