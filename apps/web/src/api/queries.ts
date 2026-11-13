@@ -2,6 +2,9 @@ import type {
   AddWaterRequest,
   DayView,
   FavoriteMealRequest,
+  HealthImportResult,
+  HealthSettings,
+  HealthStatus,
   InsightResponse,
   LogWeightRequest,
   Meal,
@@ -305,5 +308,47 @@ export function useWorkouts(from: string | undefined, to: string | undefined) {
     queryFn: () => apiFetch<WorkoutsResponse>(`/api/workouts?from=${from}&to=${to}`),
     enabled: Boolean(from && to),
     staleTime: 5 * 60_000,
+  });
+}
+
+const healthStatusKey = ["health", "status"] as const;
+
+/** Apple Health data status (Profile › Apple Salute). */
+export function useHealthStatus() {
+  return useQuery({
+    queryKey: healthStatusKey,
+    queryFn: () => apiFetch<HealthStatus>("/api/health/status"),
+  });
+}
+
+/**
+ * Sends a Health Auto Export file: `commit: false` only returns the preview, `commit: true` imports it.
+ * Errors are ApiError with code "not_health_export" / "no_data", or status 413 for files over the limit.
+ */
+export function useHealthImport() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({ json, commit }: { json: unknown; commit: boolean }) =>
+      apiFetch<HealthImportResult>(`/api/health/import${commit ? "?commit=true" : ""}`, { method: "POST", json }),
+    onSuccess: (_result, { commit }) => {
+      if (commit) void queryClient.invalidateQueries({ queryKey: ["health"] });
+    },
+  });
+}
+
+/** Saves Apple Health settings (step goal), updating the status optimistically. */
+export function useSetHealthSettings() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (settings: HealthSettings) => apiFetch<HealthSettings>("/api/health/settings", { method: "PUT", json: settings }),
+    onMutate: async (settings) => {
+      await queryClient.cancelQueries({ queryKey: healthStatusKey });
+      const previous = queryClient.getQueryData<HealthStatus>(healthStatusKey);
+      if (previous) queryClient.setQueryData<HealthStatus>(healthStatusKey, { ...previous, settings });
+      return { previous };
+    },
+    onError: (_error, _settings, context) => {
+      if (context?.previous) queryClient.setQueryData(healthStatusKey, context.previous);
+    },
   });
 }

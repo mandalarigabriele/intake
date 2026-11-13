@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState, type CSSProperties } from "react";
+import { useLocation } from "wouter";
 import { useDisconnectNutrition, useSignOut, type User } from "../api/queries";
 import { t } from "../lib/strings";
 import { getThemePreference, setThemePreference, type ThemePreference } from "../lib/theme";
@@ -20,6 +21,7 @@ export function ProfileMenu({ user, variant }: Props) {
   const ref = useRef<HTMLDivElement>(null);
   const button = useRef<HTMLButtonElement>(null);
   const [menuStyle, setMenuStyle] = useState<CSSProperties | undefined>();
+  const [, navigate] = useLocation();
   const signOut = useSignOut();
   const disconnect = useDisconnectNutrition();
   const initial = (user.name ?? user.email).trim().charAt(0).toUpperCase();
@@ -104,6 +106,17 @@ export function ProfileMenu({ user, variant }: Props) {
               ))}
             </div>
           </div>
+          <button
+            type="button"
+            role="menuitem"
+            className="menu-item"
+            onClick={() => {
+              setOpen(false);
+              navigate("/salute");
+            }}
+          >
+            {t.profile.appleHealth}
+          </button>
           <button
             type="button"
             role="menuitem"

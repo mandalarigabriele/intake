@@ -19,6 +19,7 @@ import { HevyError } from "./hevy/hevyApi.js";
 import { weekRoutes, type WeekRoutesOptions } from "./routes/weeks.js";
 import { authRoutes } from "./routes/auth.js";
 import { healthRoutes } from "./routes/health.js";
+import { appleHealthRoutes, type AppleHealthRoutesOptions } from "./routes/appleHealth.js";
 import { nutritionApiRoutes, nutritionConnectRoutes } from "./routes/nutrition.js";
 
 export interface AuthOptions {
@@ -52,6 +53,8 @@ export interface AppOptions {
   push?: Omit<PushRoutesOptions, "requireOwner">;
   /** Hevy workouts; registered together with `auth`. */
   workouts?: Omit<WorkoutRoutesOptions, "requireOwner">;
+  /** Apple Health import and status; registered together with `auth`. */
+  appleHealth?: Omit<AppleHealthRoutesOptions, "requireOwner">;
 }
 
 export async function buildApp(options: AppOptions = {}): Promise<FastifyInstance> {
@@ -83,7 +86,7 @@ export async function buildApp(options: AppOptions = {}): Promise<FastifyInstanc
 
   await app.register(healthRoutes, { prefix: "/api" });
 
-  if ((options.nutrition || options.api || options.mealsApi || options.weekApi || options.insightApi || options.push || options.workouts) && !options.auth) {
+  if ((options.nutrition || options.api || options.mealsApi || options.weekApi || options.insightApi || options.push || options.workouts || options.appleHealth) && !options.auth) {
     throw new Error("Nutrition routes need authentication options");
   }
 
@@ -101,6 +104,9 @@ export async function buildApp(options: AppOptions = {}): Promise<FastifyInstanc
     }
     if (options.workouts) {
       await app.register(workoutRoutes, { prefix: "/api", ...options.workouts, requireOwner });
+    }
+    if (options.appleHealth) {
+      await app.register(appleHealthRoutes, { prefix: "/api", ...options.appleHealth, requireOwner });
     }
     if (options.push) {
       await app.register(pushRoutes, { prefix: "/api", ...options.push, requireOwner });

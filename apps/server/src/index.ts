@@ -45,6 +45,7 @@ const app = await buildApp({
   plans: services.plans,
   push: { store: services.reminders, scheduler, publicKey: vapid.publicKey },
   workouts: { hevy: config.HEVY_API_KEY ? new HevyApi(config.HEVY_API_KEY) : null, api },
+  appleHealth: { store: services.health, api },
 });
 
 app.addHook("onClose", async () => {

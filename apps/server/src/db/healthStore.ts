@@ -1,3 +1,4 @@
+import type { HealthSettings } from "@intake/shared";
 import type { DatabaseSync } from "node:sqlite";
 import type { HealthDailyValue, HealthExport, HealthMetric, HealthSleep, HealthWorkout } from "../parsers/healthAutoExport.js";
 
@@ -50,6 +51,9 @@ interface SleepRow {
   in_bed_minutes: number;
   source: string;
 }
+
+export const DEFAULT_HEALTH_SETTINGS: HealthSettings = { stepGoal: 8000 };
+const SETTINGS_KEY = "health";
 
 function exportDays(data: HealthExport): string[] {
   return [...new Set([...data.daily.map((d) => d.date), ...data.sleep.map((s) => s.date)])].sort();
@@ -166,6 +170,41 @@ export class HealthStore {
       hrMax: r.hr_max,
       heartRate: JSON.parse(r.heart_rate) as HealthWorkout["heartRate"],
     }));
+  }
+
+  /** Dates that have a value for each daily metric, plus nights and workout days (sorted). */
+  dates(): { daily: Record<HealthMetric, string[]>; sleep: string[]; workouts: string[] } {
+    const daily: Record<HealthMetric, string[]> = { steps: [], distanceKm: [], activeKcal: [], restingKcal: [], restingHr: [] };
+    const rows = this.db.prepare("SELECT date, metric FROM health_daily ORDER BY date").all() as Array<{ date: string; metric: HealthMetric }>;
+    for (const row of rows) daily[row.metric]?.push(row.date);
+    const column = (sql: string) => (this.db.prepare(sql).all() as Array<{ date: string }>).map((r) => r.date);
+    return {
+      daily,
+      sleep: column("SELECT date FROM health_sleep ORDER BY date"),
+      workouts: column("SELECT DISTINCT date FROM health_workouts ORDER BY date"),
+    };
+  }
+
+  /** All raw workouts (merged on read by the caller). */
+  allWorkouts(): HealthWorkout[] {
+    const range = this.db.prepare("SELECT MIN(date) AS first, MAX(date) AS last FROM health_workouts").get() as { first: string | null; last: string | null };
+    return range.first && range.last ? this.workouts(range.first, range.last) : [];
+  }
+
+  settings(): HealthSettings {
+    const row = this.db.prepare("SELECT value FROM settings WHERE key = ?").get(SETTINGS_KEY) as { value: string } | undefined;
+    if (!row) return { ...DEFAULT_HEALTH_SETTINGS };
+    try {
+      return { ...DEFAULT_HEALTH_SETTINGS, ...(JSON.parse(row.value) as Partial<HealthSettings>) };
+    } catch {
+      return { ...DEFAULT_HEALTH_SETTINGS };
+    }
+  }
+
+  setSettings(settings: HealthSettings): void {
+    this.db
+      .prepare("INSERT INTO settings (key, value) VALUES (?, ?) ON CONFLICT(key) DO UPDATE SET value = excluded.value")
+      .run(SETTINGS_KEY, JSON.stringify(settings));
   }
 
   /** Most recent imports first. */

@@ -8,6 +8,7 @@ import { AddSheet } from "./components/AddSheet";
 import { AppShell } from "./components/AppShell";
 import { t } from "./lib/strings";
 import { EditMealPage } from "./pages/EditMealPage";
+import { HealthPage } from "./pages/HealthPage";
 import { MealPage } from "./pages/MealPage";
 import { PlanPage } from "./pages/PlanPage";
 import { WeekPage } from "./pages/WeekPage";
@@ -57,6 +58,9 @@ function Root() {
         </Route>
         <Route path="/pasto/:date/:id/modifica">{(params) => <EditMealPage date={params.date} id={params.id} />}</Route>
         <Route path="/pasto/:date/:id">{(params) => <MealPage date={params.date} id={params.id} />}</Route>
+        <Route path="/salute">
+          <HealthPage />
+        </Route>
         <Route path="/piano">
           <PlanPage />
         </Route>

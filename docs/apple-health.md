@@ -86,6 +86,16 @@ No BMR formulas are used to fill the gap. The Apple Salute screen warns when act
 
 A Health-based insight ("Dai tuoi dati") is shown only if each compared group has at least 5 days and the difference is meaningful (at least 10%).
 
+## File import
+
+- Profile › Apple Salute › "Carica file di Health Auto Export (.json)" (export with JSON format and daily aggregation).
+- `POST /api/health/import` (owner only, body up to 50 MB) returns a preview without writing; `POST /api/health/import?commit=true` imports.
+  Errors: `400 not_health_export`, `422 no_data`, `413` for files over the limit.
+- The preview lists the recognized metrics (active and resting energy are flagged when irregular), workouts by family with the
+  duplicate groups resolved, and the ignored groups. New and updated days are counted against what is already stored.
+- `GET /api/health/status` feeds the Apple Salute screen: last import, period, days, merged workouts, coverage per metric and day
+  for the last 90 days at most, sources, and the active energy warning. `PUT /api/health/settings` saves the step goal (2,000–30,000, default 8,000).
+
 ## Ingest (phase 2)
 
 - `POST` endpoint protected by a token generated in the app (copy / regenerate in the Apple Salute screen), outside Google sign-in.

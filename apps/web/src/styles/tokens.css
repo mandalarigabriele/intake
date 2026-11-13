@@ -55,6 +55,8 @@
   --color-todo-button-border: light-dark(#dcc7b6, #4a3a2e);
 
   --color-skipped-bg: light-dark(#eceeea, #2b2e2a);
+  /* Charts: irregular data, shortest night (amber, always with a text label) */
+  --color-chart-amber: light-dark(#e0a63e, #e0a63e);
   --color-now: light-dark(#c2492e, #e0714f);
   --color-on-now: light-dark(#ffffff, #0f1a13);
   --color-now-text: light-dark(#a53a22, #f08f6e);

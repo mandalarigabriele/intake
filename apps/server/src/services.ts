@@ -3,6 +3,7 @@ import type { DatabaseSync } from "node:sqlite";
 import type { Config } from "./config.js";
 import { openDatabase } from "./db/database.js";
 import { SecretBox } from "./db/secretBox.js";
+import { HealthStore } from "./db/healthStore.js";
 import { PlanStore } from "./db/planStore.js";
 import { ReminderStore } from "./db/reminderStore.js";
 import { SecretStore } from "./db/secretStore.js";
@@ -13,6 +14,7 @@ export interface Services {
   secrets: SecretStore;
   plans: PlanStore;
   reminders: ReminderStore;
+  health: HealthStore;
   nutrition: NutritionConnection;
   close(): Promise<void>;
 }
@@ -32,6 +34,7 @@ export function createServices(config: Config): Services {
     secrets,
     plans: new PlanStore(db),
     reminders: new ReminderStore(db),
+    health: new HealthStore(db),
     nutrition,
     async close() {
       await nutrition.close();
