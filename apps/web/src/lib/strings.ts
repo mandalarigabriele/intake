@@ -526,6 +526,22 @@ export const t = {
     } as Record<string, [string, string]>,
   },
 
+  dayCurve: {
+    title: "Andamento della giornata",
+    aria: (eaten: string, time: string | null, planned: string | null) =>
+      `Calorie cumulate${time ? ` di oggi: ${eaten} kcal alle ${time}` : `: ${eaten} kcal`}${planned ? `, il piano prevede ${planned} kcal a fine giornata` : ""}`,
+    at: (time: string, kcal: string) => `Alle ${time}: ${kcal} kcal`,
+    you: (kcal: string) => `tu ${kcal}`,
+    plan: "piano",
+    planKey: "Piano",
+    planStep: (title: string, minute: number, kcal: string) =>
+      `Piano ${String(Math.floor(minute / 60)).padStart(2, "0")}:${String(minute % 60).padStart(2, "0")} · ${title}: +${kcal} kcal`,
+    eaten: "Mangiate",
+    soFar: "a quest’ora:",
+    total: "totale:",
+    ofPlanned: (kcal: string) => `su ${kcal} previste`,
+  },
+
   trends: {
     title: "Salute",
     subtitle: "Sonno, attività e cuore da Apple Salute",

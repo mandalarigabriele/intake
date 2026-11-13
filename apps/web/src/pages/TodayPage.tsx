@@ -2,6 +2,7 @@ import type { DayView } from "@intake/shared";
 import { useAddWater, type User } from "../api/queries";
 import { ActivityCard } from "../components/ActivityCard";
 import { CalorieCard } from "../components/CalorieCard";
+import { DayCurve } from "../components/DayCurve";
 import { DayScreen } from "../components/DayScreen";
 import { InsightCard } from "../components/InsightCard";
 import { MacroCard } from "../components/MacroCard";
@@ -47,7 +48,9 @@ function Summary({ view, selected, onAdd }: { view: DayView; selected: string; o
   return (
     <div className="today-grid">
       <div className="today-main">
-        <CalorieCard eaten={view.totals.kcal} goal={view.goals.kcal} />
+        <CalorieCard eaten={view.totals.kcal} goal={view.goals.kcal}>
+          <DayCurve view={view} />
+        </CalorieCard>
         <MacroCard totals={view.totals} goals={view.goals} />
         <WaterCard
           totalMl={view.totals.waterMl}
