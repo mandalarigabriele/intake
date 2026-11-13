@@ -480,3 +480,14 @@ export interface HealthTrends {
   steps: { days: number; average: number; atGoal: number; best: { date: string; steps: number } } | null;
   heart: { days: number; average: number; min: { date: string; value: number }; previousAverage: number | null } | null;
 }
+
+/** Automatic upload from Health Auto Export (Profilo › Apple Salute › "Sincronizzazione automatica"). */
+export interface HealthSyncStatus {
+  enabled: boolean;
+  /** Shown to the owner to paste into Health Auto Export; null while disabled. */
+  token: string | null;
+  /** Full URL of POST /api/health/ingest on this server. */
+  endpoint: string;
+  /** Last automatic upload received, ISO; null when none yet. */
+  lastReceivedAt: string | null;
+}
