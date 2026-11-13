@@ -57,7 +57,7 @@ const exportSchema = z.looseObject({
 });
 
 /** Daily values stored in Intake. Energy is always kcal, distance km. */
-export type HealthMetric = "steps" | "distanceKm" | "activeKcal" | "restingKcal" | "restingHr";
+export type HealthMetric = "steps" | "distanceKm" | "activeKcal" | "restingKcal" | "restingHr" | "hrvMs" | "respiratoryRate";
 
 export interface HealthDailyValue {
   date: string;
@@ -123,6 +123,9 @@ const DAILY_METRICS: Record<string, HealthMetric> = {
   active_energy: "activeKcal",
   basal_energy_burned: "restingKcal",
   resting_heart_rate: "restingHr",
+  // Daily averages used by the Recupero score; HRV arrives from Apple Watch (SDNN, ms)
+  heart_rate_variability: "hrvMs",
+  respiratory_rate: "respiratoryRate",
 };
 
 const KJ_PER_KCAL = 4.184;
@@ -172,7 +175,10 @@ function dailyValue(metric: HealthMetric, qty: number, units: string): number | 
       return kcal === null ? null : round(kcal, 1);
     }
     case "restingHr":
+    case "respiratoryRate":
       return round(qty, 1);
+    case "hrvMs":
+      return units.toLowerCase() === "ms" ? round(qty, 1) : null;
   }
 }
 

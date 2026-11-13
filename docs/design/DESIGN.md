@@ -166,6 +166,17 @@ The first release builds the grid only; editing comes later.
   (default 16 px; the mockup tweak also shows 12 and 24 px), cards in a row share the same height.
 - Layout is saved per device (local storage), not on Nutrition. Same pattern can be reused later for Today and the mobile Week.
 
+## Today — Strain / Recovery / Sleep rings (Bevel-style)
+
+- First card in Today (after the week strip, before Next meal); on desktop the first card of the left column.
+- Three rings, each with value, unit, label and a text state pill (never colour alone):
+  - **Sforzo** 0–100% "carico" (`#D9682A`, track `#F6E3D6`): Leggero < 34 · Moderato 34–66 · Intenso ≥ 67. All three rings use percentages only.
+  - **Recupero** 0–100% (`#2E9A5E`, track `#DDEFE3`): Basso < 34 · Medio 34–66 · Alto ≥ 67.
+  - **Sonno** 0–100% of need (`#7461D8`, track `#E7E3F8`): Basso < 70 · Medio 70–84 · Alto ≥ 85.
+- Tapping a ring opens an inline panel "come si calcola" with the inputs used (and "non disponibile" for missing ones, e.g. HRV).
+- **Values in the mockup are placeholders** (tweaks "Anelli"); the scoring rules are in [`docs/apple-health.md`](../apple-health.md) § Daily scores. Dark-mode tracks: `#3A281C`, `#1E3326`, `#2A2547`.
+- Needs an "insufficient data" state per ring.
+
 ## Add sheet (`+`) — what is really possible
 
 All of these map to existing Nutrition MCP tools:

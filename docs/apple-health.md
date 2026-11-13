@@ -12,6 +12,8 @@ mockups `Main`, `Timeline*`, `AndamentoSalute`, `SaluteDesktop`, `Profilo`, `Sal
 |---|---|---|
 | Steps | `step_count` | Today, Andamento › Salute, insights |
 | Walking + running distance | `walking_running_distance` | Today (km next to steps) |
+| HRV (Apple Watch) | `heart_rate_variability` (ms) | Recupero score (daily average) |
+| Respiratory rate | `respiratory_rate` | Recupero score (daily average) |
 | Sleep | `sleep_analysis` | Today, Timeline chip, Andamento › Salute, insights |
 | Resting heart rate | `resting_heart_rate` | Today, Andamento › Salute |
 | Active energy | `active_energy` | Stored; shown only when continuous (see "Balance") |
@@ -104,6 +106,27 @@ its warning, Hevy), reminders, theme, "Scollega Nutrition" and sign out.
 The "Bilancio" row in Today is designed but switched off. It needs both active and resting energy to arrive continuously;
 in the first export resting energy covers 2 days and active energy stops on 25 Oct (Fitbit stopped writing it to Health).
 No BMR formulas are used to fill the gap. The Apple Salute screen warns when active energy is missing for more than 3 days while other data keeps arriving.
+
+## Daily scores
+
+The three rings at the top of Oggi (`GET /api/health/scores/:date`, SQLite only). All three are percentages with a text state.
+Data written by an Apple Watch wins when present (HRV, all-day active energy); otherwise the scores are estimated from what
+Fitbit and the other apps write.
+
+- **Sforzo** (0–100%, Leggero < 34 · Moderato 34–66 · Intenso ≥ 67). Load = workouts + movement, then `100 × (1 − e^(−load / 60))`.
+  - Workout load: Banister TRIMP, `minutes × r × 0.64 × e^(1.92 r)`, with `r` = heart-rate reserve
+    (`(average HR − resting HR) / (max HR − resting HR)`). Max HR = the highest workout max of the last 90 days, at least 185;
+    resting HR = that day's, or 60. Without heart rate `r` is 0.5 (0.4 for strength).
+  - Movement: the larger of `steps / 1000 × 1.5` and `(active energy − workout kcal) / 10`.
+- **Sonno** (0–100% of need, Basso < 70 · Medio 70–84 · Alto ≥ 85). Need = 8 h, plus up to 30 min when the previous day's Sforzo
+  was above 50%. Minus one point for every 10 minutes beyond 45 away from the usual sleep start (mean of the previous 7 nights,
+  at least 3 needed), at most 10.
+- **Recupero** (0–100%, Basso < 34 · Medio 34–66 · Alto ≥ 67). Each input is compared with its personal baseline (mean of the
+  previous 30 days, at least 5 days): equal to the baseline scores 65.
+  - With HRV: HRV 50% (+10% over baseline → +20 points), resting HR 20%, Sonno 30%.
+  - Without HRV: resting HR 45% (−1% → +3 points), respiratory rate 20% (−1% → +3 points), Sonno 35%.
+  - Missing inputs are left out and the weights rescaled; without enough resting-HR or HRV history it shows "in calibrazione".
+- Tapping a ring opens "come si calcola" with the day's inputs (HRV "non disponibile" until a watch writes it).
 
 ## Insights
 

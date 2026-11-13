@@ -1,4 +1,5 @@
 import type {
+  DailyScores,
   AddWaterRequest,
   DayView,
   FavoriteMealRequest,
@@ -391,6 +392,14 @@ export function useHealthTrends(period: 7 | 30 | 90) {
     queryKey: ["health", "trends", period],
     queryFn: () => apiFetch<HealthTrends>(`/api/health/trends?days=${period}`),
     placeholderData: keepPreviousData,
+  });
+}
+
+/** Sforzo, Recupero and Sonno for the rings on Oggi (SQLite only). */
+export function useHealthScores(date: string) {
+  return useQuery({
+    queryKey: ["health", "scores", date],
+    queryFn: () => apiFetch<DailyScores>(`/api/health/scores/${date}`),
   });
 }
 

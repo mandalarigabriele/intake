@@ -3,6 +3,7 @@ import { useAddWater, type User } from "../api/queries";
 import { ActivityCard } from "../components/ActivityCard";
 import { CalorieCard } from "../components/CalorieCard";
 import { DayCurve } from "../components/DayCurve";
+import { ScoreRings } from "../components/ScoreRings";
 import { DayScreen } from "../components/DayScreen";
 import { InsightCard } from "../components/InsightCard";
 import { MacroCard } from "../components/MacroCard";
@@ -48,6 +49,7 @@ function Summary({ view, selected, onAdd }: { view: DayView; selected: string; o
   return (
     <div className="today-grid">
       <div className="today-main">
+        <ScoreRings date={view.date} />
         <CalorieCard eaten={view.totals.kcal} goal={view.goals.kcal}>
           <DayCurve view={view} />
         </CalorieCard>
