@@ -17,7 +17,7 @@ a{color:#17201B;text-decoration:none}a:hover{color:#2F6B47}
 <div style="width: 390px; height: 844px; box-sizing: border-box; background: #F4F5F1; font-family: 'Manrope', system-ui, sans-serif; color: #17201B; display: flex; flex-direction: column; overflow: hidden; position: relative">
 
 <header style="padding: 52px 20px 10px; display: flex; justify-content: space-between; align-items: flex-end">
-<div style="display: flex; flex-direction: column; gap: 2px"><span style="font-size: 13px; font-weight: 600; color: #56605A">Attivo dal 4 nov · 2.200 kcal · 135 g prot.</span><h1 style="margin: 0; font-size: 30px; font-weight: 800; letter-spacing: -0.02em">Piano</h1></div>
+<div style="display: flex; flex-direction: column; gap: 2px"><span style="font-size: 13px; font-weight: 600; color: #56605A">Attivo dall'8 nov · 2.200 kcal · 135 g prot.</span><h1 style="margin: 0; font-size: 30px; font-weight: 800; letter-spacing: -0.02em">Piano</h1></div>
 <button onClick="{{toggleMenu}}" aria-label="Gestisci piano" style="width: 44px; height: 44px; border-radius: 22px; border: none; background: #FFFFFF; display: flex; align-items: center; justify-content: center; color: #17201B"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><circle cx="5" cy="12" r="2"></circle><circle cx="12" cy="12" r="2"></circle><circle cx="19" cy="12" r="2"></circle></svg></button>
 </header>
 
@@ -60,7 +60,7 @@ a{color:#17201B;text-decoration:none}a:hover{color:#2F6B47}
 <div style="position: absolute; inset: 0; background: rgba(23, 32, 27, 0.35); display: flex; justify-content: flex-end; align-items: flex-start; padding: 100px 16px 0">
 <div role="menu" aria-label="Gestisci piano" style="width: 270px; padding: 6px; background: #FFFFFF; border-radius: 18px; box-shadow: 0 10px 30px rgba(23, 32, 27, 0.2); display: flex; flex-direction: column">
 <button role="menuitem" style="min-height: 48px; padding: 0 12px; border: none; background: none; border-radius: 12px; font-family: inherit; text-align: left; display: flex; flex-direction: column; justify-content: center"><span style="font-size: 15px; font-weight: 800; color: #17201B">Carica nuovo piano</span><span style="font-size: 12px; color: #56605A">File .json generato da Claude</span></button>
-<button role="menuitem" style="min-height: 48px; padding: 0 12px; border: none; background: none; border-radius: 12px; font-family: inherit; text-align: left; display: flex; flex-direction: column; justify-content: center"><span style="font-size: 15px; font-weight: 800; color: #17201B">Storico versioni</span><span style="font-size: 12px; color: #56605A">1 piano · in uso dal 4 nov 2026</span></button>
+<button role="menuitem" style="min-height: 48px; padding: 0 12px; border: none; background: none; border-radius: 12px; font-family: inherit; text-align: left; display: flex; flex-direction: column; justify-content: center"><span style="font-size: 15px; font-weight: 800; color: #17201B">Storico versioni</span><span style="font-size: 12px; color: #56605A">2 piani · in uso dall'8 nov 2026</span></button>
 <button role="menuitem" onClick="{{toggleMenu}}" style="min-height: 44px; padding: 0 12px; border: none; background: none; border-radius: 12px; font-family: inherit; text-align: left; font-size: 14px; font-weight: 700; color: #56605A">Chiudi</button>
 </div>
 </div>
@@ -83,48 +83,48 @@ class Component extends DCLogic {
     const F = (title, time, lines) => ({ title: title, time: time, lines: lines.map((t) => ({ t: t })), free: false, fixed: true });
     const L = (title) => ({ title: title, free: true, fixed: false, time: '', lines: [] });
     const week = [
-      { name: 'Lunedì', l: 'L', tag: '135 g', note: '~135 g proteine', meals: [
-        F('Colazione', '', ['Caffellatte', 'Yogurt greco 150 g con muesli 40 g e banana']),
-        F('Spuntino', '11:00', ['1 frutto', 'Mandorle 25 g']),
-        F('Pranzo', '', ['Pasta 120 g al pomodoro', 'Tonno al naturale 100 g', 'Insalata']),
-        F('Spuntino', '16:00', ['Pane integrale 40 g con bresaola 40 g', '2 quadratini di cioccolato fondente']),
-        F('Cena', '', ['Frittata con 4 uova e verdure 250 g', 'Pane integrale 2 fette'])] },
-      { name: 'Martedì', l: 'M', tag: '135 g', note: '~135 g proteine', meals: [
-        F('Colazione', '', ['Caffellatte', '2 uova strapazzate', 'Pane integrale 2 fette']),
-        F('Spuntino', '11:00', ['Yogurt greco 150 g con 1 frutto a pezzetti']),
-        F('Pranzo', '', ['Pasta 80 g con fagioli cotti 250 g', 'Parmigiano 15 g', 'Verdure']),
-        F('Spuntino', '16:00', ['1 frutto', 'Bresaola 60 g', 'Noci 15 g']),
-        F('Cena', '', ['Salmone al forno 200 g', 'Patate al forno 250 g', 'Insalata'])] },
-      { name: 'Mercoledì', l: 'M', tag: 'dolce', note: 'spuntino dolce', meals: [
-        F('Colazione', '', ['Caffellatte', 'Pane integrale 2 fette con ricotta 100 g e marmellata']),
-        F('Spuntino', '11:00', ['1 frutto', 'Fesa di tacchino 80 g']),
-        F('Pranzo', '', ['Piadina integrale con bresaola 100 g, stracchino 40 g e rucola', 'Verdure', '1 frutto']),
-        F('Spuntino dolce', '16:00', ['Yogurt greco 150 g con 2 biscotti o 1 cucchiaino di crema di nocciole']),
-        F('Cena', '', ['Lonza di maiale ai ferri 200 g', 'Verdure', 'Pane integrale 100 g', '1 frutto'])] },
-      { name: 'Giovedì', l: 'G', tag: '130 g', note: '~130 g proteine', meals: [
-        F('Colazione', '', ['Caffellatte', "Yogurt greco 150 g con avena 40 g, miele e banana"]),
-        F('Spuntino', '11:00', ['1 frutto', 'Bresaola 40 g']),
-        F('Pranzo', '', ['Pasta 100 g al ragù magro di manzo 120 g', 'Insalata']),
-        F('Spuntino', '16:00', ['1 frutto', 'Mandorle 25 g']),
-        F('Cena', '', ['Merluzzo o orata al forno 250 g', 'Patate al forno 250 g', 'Verdure', 'Pane integrale 1 fetta'])] },
-      { name: 'Venerdì', l: 'V', tag: 'oggi', note: '~135 g proteine', meals: [
-        F('Colazione', '', ['Caffellatte', '2 uova strapazzate', 'Pane integrale 2 fette', '1 frutto']),
-        F('Spuntino', '11:00', ['1 frutto', 'Mandorle 25 g']),
-        F('Pranzo', '', ['Insalata di farro 70 g con tonno 100 g, ceci 100 g, mozzarella 60 g e verdure']),
-        F('Spuntino', '16:00', ['Fesa di tacchino 50 g', 'Pane integrale 1 fetta']),
-        F('Cena', '', ['Straccetti di pollo o tacchino al limone 180 g', 'Patate al forno 250 g', 'Verdure'])] },
-      { name: 'Sabato', l: 'S', tag: 'libero', note: 'pranzo in famiglia · cena libera', meals: [
-        F('Colazione', '', ['Caffellatte', '3 uova strapazzate', 'Pane integrale 2 fette']),
-        F('Spuntino', '11:00', ['Yogurt greco 150 g', '1 frutto']),
-        F('Pranzo in famiglia', '', ['Hamburger di manzo magro 150 g, patate al forno 250 g e verdure', 'oppure pasta 100 g al pomodoro con polpette al forno 150 g']),
-        F('Spuntino', '16:00', ['1 frutto', 'Bresaola 40 g']),
-        L('Cena')] },
-      { name: 'Domenica', l: 'D', tag: 'libero', note: 'pranzo libero', meals: [
-        F('Colazione', '', ['Caffellatte', 'Yogurt greco 150 g con muesli 40 g e banana']),
-        F('Spuntino', '11:00', ['1 frutto', 'Noci 20 g']),
-        L('Pranzo'),
-        F('Spuntino', '16:00', ['Yogurt greco 150 g', 'Noci 20 g']),
-        F('Cena', '', ['Polpette di tacchino al forno 200 g', 'Patate al forno 250 g', 'Insalata mista'])] }
+      { name: "Lunedì", l: "L", tag: "130 g", note: "~130 g proteine", meals: [
+        F("Colazione", "07:44", ["Caffellatte", "yogurt greco 150 g con muesli 40 g e banana"]),
+        F("Spuntino", "11:00", ["1 frutto", "25 g di mandorle"]),
+        F("Pranzo", "13:00", ["Pasta 120 g al pomodoro con tonno al naturale 70 g", "insalata"]),
+        F("Spuntino", "16:00", ["1 fetta di pane integrale con 2 quadratini di cioccolato fondente", "15 g di noci"]),
+        F("Cena", "20:00", ["Pollo alla piastra 220 g", "verdure", "pane integrale 80 g", "1 frutto"])] },
+      { name: "Martedì", l: "M", tag: "130 g", note: "~130 g proteine", meals: [
+        F("Colazione", "07:44", ["Caffellatte", "2 uova strapazzate", "2 fette di pane integrale"]),
+        F("Spuntino", "11:00", ["Yogurt greco 150 g con 1 frutto a pezzetti"]),
+        F("Pranzo", "13:00", ["Piadina integrale con bresaola 70 g, stracchino 30 g e rucola", "verdure", "1 frutto"]),
+        F("Spuntino", "16:00", ["1 frutto", "10 g di mandorle"]),
+        F("Cena", "20:00", ["Salmone 180 g", "insalata", "patate al forno 250 g"])] },
+      { name: "Mercoledì", l: "M", tag: "110 g", note: "~110 g proteine", meals: [
+        F("Colazione", "07:44", ["Caffellatte", "2 fette di pane integrale con ricotta 100 g e marmellata"]),
+        F("Spuntino", "11:00", ["1 frutto", "20 g di mandorle"]),
+        F("Pranzo", "13:00", ["Pasta 100 g con fagioli cotti 150 g", "verdure", "1 frutto"]),
+        F("Spuntino", "16:00", ["Yogurt greco 150 g con 1 frutto a pezzetti"]),
+        F("Cena", "20:00", ["Frittata con 4 uova, 20 g di parmigiano e 250 g di verdure", "2 fette di pane integrale"])] },
+      { name: "Giovedì", l: "G", tag: "145 g", note: "~145 g proteine", meals: [
+        F("Colazione", "07:44", ["Caffellatte", "yogurt greco 150 g con fiocchi d'avena 40 g, miele e banana"]),
+        F("Spuntino", "11:00", ["1 frutto", "15 g di noci"]),
+        F("Pranzo", "13:00", ["Pasta 100 g al ragù magro di manzo 120 g", "insalata"]),
+        F("Spuntino", "16:00", ["1 fetta di pane integrale con fesa di tacchino 50 g", "1 frutto"]),
+        F("Cena", "20:00", ["Merluzzo o orata 250 g con piselli 200 g", "verdure", "1 fetta di pane integrale"])] },
+      { name: "Venerdì", l: "V", tag: "oggi", note: "~130 g proteine", meals: [
+        F("Colazione", "07:44", ["Caffellatte", "2 uova strapazzate", "2 fette di pane integrale", "1 frutto"]),
+        F("Spuntino", "11:00", ["Yogurt greco 150 g", "1 frutto"]),
+        F("Pranzo", "13:00", ["Insalata di farro 90 g con ceci 150 g, pomodorini, rucola e verdure grigliate"]),
+        F("Spuntino", "16:00", ["1 frutto", "20 g di mandorle"]),
+        F("Cena", "20:00", ["Pollo 220 g", "patate al forno 250 g", "verdure"])] },
+      { name: "Sabato", l: "S", tag: "libero", note: "pranzo in famiglia · cena libera", meals: [
+        F("Colazione", "07:44", ["Caffellatte", "yogurt greco 150 g con fiocchi d'avena 40 g e banana"]),
+        F("Spuntino", "11:00", ["1 frutto", "20 g di mandorle"]),
+        F("Pranzo in famiglia", "13:00", ["A scelta, adatto anche al bimbo", "Regola del piatto: metà verdure, un quarto proteine, un quarto pasta, pane o patate"]),
+        F("Spuntino", "16:00", ["1 frutto", "15 g di noci"]),
+        L("Cena")] },
+      { name: "Domenica", l: "D", tag: "libero", note: "pranzo libero", meals: [
+        F("Colazione", "07:44", ["Caffellatte", "2 fette di pane integrale con ricotta 100 g e marmellata"]),
+        F("Spuntino", "11:00", ["1 frutto"]),
+        L("Pranzo"),
+        F("Spuntino", "16:00", ["Yogurt greco 150 g con 1 frutto a pezzetti e 15 g di noci"]),
+        F("Cena veloce", "20:00", ["Piadina integrale con fettine di tacchino 120 g, rucola e pomodorini", "insalata"])] }
     ];
     const d = week[this.state.day];
     return {

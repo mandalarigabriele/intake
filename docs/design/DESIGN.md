@@ -12,12 +12,16 @@ All UI copy is in Italian (the app language); code, comments and docs stay in En
 |---|---|---|
 | `Login.dc.html` | Sign in with Google | Owner-only access note under the button |
 | `Collega.dc.html` | Connect Nutrition (one-time) | Google ✓ and Nutrition "to connect", 3-step explainer |
-| `Main.dc.html` | Today (summary) | Week strip, **Next meal** card, calorie ring, macro bars, water, **daily insight** |
-| `Timeline.dc.html` | Timeline | The day's meals on a continuous vertical rod; day arrows; skip / undo |
-| `Aggiungi.dc.html` | Add sheet (opened by `+`) | Water shortcuts, today's plan meals, repeat / saved / "Chiedi a Claude" |
+| `Main.dc.html` | Today (summary) | Week strip, **Next meal** card, calorie ring, macro bars, water, **Activity & rest**, **daily insight**. Tweaks: Health state, balance preview |
+| `Timeline.dc.html` | Timeline (today) | Sleep chip, meals, planned meals on a continuous rod; day arrows; skip / undo |
+| `TimelineMar10.dc.html` | Timeline (past day) | Example with a Health workout (MERACH indoor cycling) expanded and a short night |
+| `TimelineMer11.dc.html` | Timeline (past day) | Example with a Hevy workout enriched with heart rate from Health, expanded |
+| `Salute.dc.html` | Profile › Apple Salute | Data status, active-energy warning, file import, auto-sync (phase 2), step goal |
+| `SaluteImport.dc.html` | Import preview | Preview, duplicates resolved, ignored data, result; states via the `stato` tweak |
+| `Aggiungi.dc.html` | Add sheet (opened by `+`) | Water shortcuts, today's plan meals, repeat / saved / search / barcode |
 | `Pasto.dc.html` | Meal detail | kcal, macro split bar, items with quantities, fiber/sugar/caffeine |
 | `Modifica.dc.html` | Edit meal | Meal type, time, items (edit/remove/add), values; delete with confirmation sheet |
-| `Settimana.dc.html` | Week | Daily kcal bars vs 2,200 target line, weekly averages, **Consistency** card, weight card |
+| `Settimana.dc.html` | Week | Kcal bars with workout marks, averages, Consistency, **Workouts**, **Steps**, **Sleep**, **Resting HR**, weight |
 | `Piano.dc.html` | Meal plan | Day tabs (today preselected), meals of the selected day, "Libero" cards; `⋯` menu for upload + history |
 | `Desktop.dc.html` | Desktop / iPad — Today | Fluid layout: sticky sidebar; left column = calories, macros, water; right column = Next meal, insight. Timeline stays its own section, never inside Today |
 | `OggiDark.dc.html`, `PianoDark.dc.html` | Dark mode references | See "Dark mode" |
@@ -28,6 +32,7 @@ All UI copy is in Italian (the app language); code, comments and docs stay in En
   `Oggi · Settimana · [+] · Piano · Timeline`. The `+` is the round dark button in the middle slot and opens the add sheet.
   There is no floating button.
 - Meal detail, edit and the add sheet are pushed/modal screens, without the tab bar.
+- The avatar in Today opens the profile, where "Apple Salute" lives.
 - Desktop/iPad (≥ 800 px): left sidebar with `Oggi · Settimana · Piano · Timeline` plus a "+ Aggiungi" button, sticky while the page scrolls.
 - Weight has no dedicated section: it is a card in **Settimana** (one weigh-in per week).
 - Shopping list is **not** in the app: the user keeps it in Apple Reminders ("Spesa"). A later iOS Shortcut may pull the list from the active plan.
@@ -79,21 +84,71 @@ Rows (label, short note, value):
 Sources: `get_nutrition_summary` for the week + local SQLite plan links and skips. Today counts only once it is over.
 The kcal chart scales above the goal (e.g. to 2,600) so days over target stay inside the card; the dashed goal line sits at 2,200.
 
+
+## Apple Health (Health Auto Export)
+
+Full requirements: [`docs/apple-health.md`](../apple-health.md). Summary:
+
+- **No new section.** Health data lives in Today, Timeline and Week. Management is under the avatar → Profile → "Apple Salute".
+- **Today — "ATTIVITÀ E RIPOSO" card** (after water, before the insight; desktop: right column):
+  - Steps: during the day show "N passi finora · km" and the 7-day average as context only. The % comparison appears
+    only for finished days (never compare a partial day with full-day averages).
+  - Sleep of the night: total, bed → wake times, stacked phase bar (deep / REM / core / awake) with text labels and minutes.
+    The value is time awake, labelled "sveglio N min" (not number of wake-ups).
+  - Resting HR with the difference from last week's average.
+  - States: no data ("Nessun dato da Salute per questo giorno"), stale ("Ultimo aggiornamento 2 giorni fa"), sleep missing (hide only that row).
+  - "Bilancio" row is designed but off: it needs **both** active and resting energy to be continuous (resting energy exists for 2 days only). No BMR formulas.
+- **Timeline**: sleep is a compact chip at wake-up time, expandable to the phase bar. Workouts are cards with a type icon,
+  time range, duration, kcal only if present, distance, "FC media", source pill; expanded: stats grid, Hevy exercises,
+  a "Fonti" line. Meals, workouts and sleep differ by shape and icon, not only colour.
+- **Week**: workout marks (icons + legend) under the kcal chart; Workouts card (totals + one row per session, kcal "su N sessioni con dato");
+  Steps (goal line, average of finished days, best day); Sleep (hours per night, shortest night labelled, mean bedtime computed across midnight, mean wake time);
+  small Resting HR card.
+- **Sources and names**: labels come from a mapping table. "Google Health" → **Fitbit**; also **MERACH**, **Hevy**, **Bevel**.
+  Workout names: "Allenamento di Forza Tradizionale" → Forza, "Interno Ciclismo" → Cyclette, "Raquetball" → Racchetta; unknown → original name.
+- **Duplicates**: same workout if overlap ≥ 50% of the shorter session and same family (Forza; Ciclismo + Cyclette; Calcio; Camminata; Racchetta).
+  One session may overlap several (merge all). HR/kcal priority: Fitbit → MERACH → Bevel; time range = union. Hevy always wins on title,
+  exercises and duration and takes only HR/kcal from Health. Hevy-sourced workouts arriving through Health are dropped when Hevy is read directly.
+- **Storage**: SQLite (the only exception to "read live"). Never store GPS routes, all-day per-minute HR, medications, mood, nutrition, weight.
+  The only heart-rate series kept is the one recorded during each workout (one point per minute, for the expanded workout chart).
+  Day = local date in the Nutrition profile timezone; sleep belongs to the wake-up day; energy always in kcal (from kJ);
+  the current day is overwritten on each sync, never summed. Re-importing the same period updates without duplicating.
+- **Ingest endpoint** (phase 2): token-protected, outside Google login (needs a Cloudflare Access bypass for that path only, if Access is used).
+- **Insights**: show one only if each compared group has ≥ 5 days and the difference is meaningful (e.g. ≥ 10%).
+- **Mockup data**: all numbers come from the real export (8 Sep – 13 Nov 2026) and Nutrition, except the "Bilancio" preview and the re-import example.
+
+
+## Charts
+
+All chart data in the mockups is real. Colours are validated (protein `#0A8FA6`, carbs `#C98A1B`, fat `#8A5A9E` pass lightness,
+chroma, CVD and normal-vision checks; carbs is below 3:1 on white, so it always comes with a text label).
+Every chart has a text label or legend (never colour alone), an `aria-label`, and per-point tooltips (`<title>` in the mockups;
+use a real hover/tap tooltip in the app).
+
+| Where | Chart |
+|---|---|
+| Today · Calories | Cumulative kcal through the day (stepped line + area) vs the plan (dashed), "now" marker, label "a quest'ora: X su Y previste" |
+| Today · Activity & rest | 7-day steps sparkline (today hollow = partial), 7-night sleep mini bars (shortest in amber), 8-day resting-HR sparkline |
+| Timeline · workout expanded | Heart-rate curve during the session with dashed average line and max point |
+| Week | Kcal share stacked bar (P/C/F), protein bars vs 135 g goal line, sleep as floating bars bedtime → wake (shortest in amber), 5-week resting-HR line |
+| Apple Salute | Data coverage heatmap per metric and day (present / present but irregular / missing) |
+
 ## Add sheet (`+`) — what is really possible
 
 All of these map to existing Nutrition MCP tools:
 
 | Option | MCP tools |
 |---|---|
-| Water +200 / +250 ml | `log_water` |
+| Water +250 / +500 ml | `log_water` |
 | Today's plan meals not yet logged | `log_meal` with the plan's full nutrients, then link plan entry ↔ meal in SQLite |
 | Repeat a recent meal | `get_meals_by_date_range` → `log_meal` with the same items |
 | Saved meals | `get_saved_meals` → `log_saved_meal` |
-| Chiedi a Claude | link to `https://claude.ai/new?q=…` (opens the Claude app when installed); photos and free descriptions are logged by Claude |
+| Search food + quantity | `search_foods`, `get_food_macros` → `log_meal` |
+| Barcode scan | camera scan in the browser (JS library such as ZXing; Safari has no `BarcodeDetector`) → `lookup_barcode` → `log_meal` |
 
 Not in the app: photo recognition and free-text descriptions ("I had a margherita pizza").
 They need an LLM; the user keeps doing those through Claude, which writes to the same Nutrition account.
-Suggested order: water + plan meals + repeat recent in v1; saved meals in phase 2. Food search (USDA, English names only) and barcode scanning were dropped in favor of "Chiedi a Claude".
+Suggested order: water + plan meals + repeat recent in v1; saved meals, search and barcode in phase 2.
 
 ## Design tokens
 
@@ -106,7 +161,7 @@ Suggested order: water + plan meals + repeat recent in v1; saved meals in phase 
 | Border | `#DDE1DA` / `#E2E5DF` |
 | Accent (brand, ring, active tab, rod, next-meal border) | `#2F6B47` |
 | Accent soft | `#E3F0E6` |
-| Protein | `#1F6F78` (chip bg `#E3EEF0`) |
+| Protein | `#0A8FA6` (chip bg `#E3EEF0`) |
 | Carbs | `#C98A1B` (chip bg `#F6ECD8`) |
 | Fat | `#8A5A9E` (chip bg `#EFE6F2`) |
 | Fiber | `#6B756E` |
@@ -142,12 +197,11 @@ Reference screens: `OggiDark.dc.html` and `PianoDark.dc.html`.
 | Divider / tab bar border | `#ECEEEA` / `#E2E5DF` | `#2B2E2A` |
 | Dashed border, rod after now | `#C3C9C0` / `#B9C0B6` | `#4A5049` |
 | Track (ring, bars) | `#E8EBE5` | `#2B2F2B` |
-| Switch knob (Promemoria toggles; on = Accent, off = Track) | `#FFFFFF` | `#F1F3EF` |
 | Segmented control bg | `#E6E9E3` | `#262926` |
 | Input bg | `#F7F8F5` | `#191B19` |
 | Accent | `#2F6B47` | `#5FB083` |
 | Accent soft | `#E3F0E6` | `#1F3628` |
-| Protein / chip bg / chip text | `#1F6F78` / `#E3EEF0` / `#1B5A62` | `#4FB3BF` / `#1B3236` / `#8FD0D6` |
+| Protein / chip bg / chip text | `#0A8FA6` / `#E3EEF0` / `#1B5A62` | `#4FB3BF` / `#1B3236` / `#8FD0D6` |
 | Carbs / chip bg / chip text | `#C98A1B` / `#F6ECD8` / `#7A5410` | `#E0A63E` / `#3A2E17` / `#E7C17A` |
 | Fat / chip bg / chip text | `#8A5A9E` / `#EFE6F2` / `#66407A` | `#B98BD0` / `#33263A` / `#D4B1E4` |
 | Fiber | `#6B756E` | `#9AA39C` |
