@@ -7,7 +7,7 @@ import { formatKcal, formatLongDate } from "../lib/format";
 import { t } from "../lib/strings";
 import { ConnectPage } from "../pages/ConnectPage";
 import { Logo } from "./Logo";
-import { ProfileMenu } from "./ProfileMenu";
+import { ProfileLink } from "./ProfileLink";
 import { WeekStrip } from "./WeekStrip";
 
 /** "today" or a YYYY-MM-DD date, kept in the URL (?d=) so reloads and the back button keep the day. */
@@ -69,7 +69,7 @@ export function DayScreen({ user, notice, variant, title, className, skeleton, c
             <h1 className="page-title">{title(view)}</h1>
           </div>
           <div className="today-avatar">
-            <ProfileMenu user={user} variant="avatar" />
+            <ProfileLink user={user} variant="avatar" />
           </div>
           {view && today && <WeekStrip selected={view.date} today={today} onSelect={selectDate} />}
         </div>

@@ -108,7 +108,7 @@ export function buildNotification(slot: ReminderSlot, context: ReminderContext):
       const goals = context.goals;
       const kcal = `${integer.format(totals.kcal)} kcal${goals?.kcal ? ` su ${integer.format(goals.kcal)}` : ""}`;
       const protein = `proteine ${integer.format(totals.protein)}${goals?.protein ? ` su ${integer.format(goals.protein)}` : ""} g`;
-      return { title: "Riepilogo di oggi", body: `${kcal} · ${protein}`, url: "/settimana", tag: "summary" };
+      return { title: "Riepilogo di oggi", body: `${kcal} · ${protein}`, url: "/andamento", tag: "summary" };
     }
   }
 }

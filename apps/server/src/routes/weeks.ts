@@ -2,14 +2,13 @@ import type { Meal, MealDeviation, TargetDays, WeekConsistency, WeekPlanComparis
 import type { PlanStore } from "../db/planStore.js";
 import type { NutritionSummary } from "../parsers/summary.js";
 import type { FastifyPluginAsync, preHandlerHookHandler } from "fastify";
-import { z } from "zod";
 import type { NutritionApi } from "../mcp/nutritionApi.js";
 import { isValidDate } from "../services/dayView.js";
 import { planComparison } from "../services/planMatching.js";
 
 export interface WeekRoutesOptions {
   /** mealsByRange is needed for "Piano e realtà"; without it the week has no plan comparison. */
-  api: Pick<NutritionApi, "clock" | "summary" | "weightTrends" | "logWeight"> & Partial<Pick<NutritionApi, "mealsByRange">>;
+  api: Pick<NutritionApi, "clock" | "summary"> & Partial<Pick<NutritionApi, "mealsByRange">>;
   plans?: Pick<PlanStore, "linkCountBetween" | "skipCountBetween" | "activeOn" | "linksOn" | "skipsOn">;
   requireOwner: preHandlerHookHandler;
 }
@@ -79,8 +78,6 @@ export function weekPlanComparison(
   };
 }
 
-const WEIGHT_WINDOW_DAYS = 90;
-
 function shiftDate(value: string, days: number): string {
   const d = new Date(`${value}T12:00:00Z`);
   d.setUTCDate(d.getUTCDate() + days);
@@ -93,12 +90,7 @@ export function mondayOf(date: string): string {
   return shiftDate(date, -((day + 6) % 7));
 }
 
-const logWeightBody = z.object({
-  weightKg: z.number().min(20).max(400),
-  idempotencyKey: z.string().min(8).max(255),
-});
-
-/** Week overview (/api/weeks/:date) and weigh-ins (/api/weight). */
+/** Week overview (/api/weeks/:date) for Andamento › Alimentazione. */
 export const weekRoutes: FastifyPluginAsync<WeekRoutesOptions> = async (app, { api, plans, requireOwner }) => {
   app.addHook("preHandler", requireOwner);
 
@@ -112,14 +104,12 @@ export const weekRoutes: FastifyPluginAsync<WeekRoutesOptions> = async (app, { a
     const end = shiftDate(start, 6);
     // Nothing can be logged after today: ask for the summary up to today at most
     const summaryEnd = end < today ? end : today;
-    const weightEnd = summaryEnd;
 
     // One summary request covers the week and the streak lookback before it
     const lookbackStart = shiftDate(start, -STREAK_LOOKBACK_DAYS);
     const withPlan = plans && api.mealsByRange && start <= today;
-    const [summary, weight, weekMeals] = await Promise.all([
+    const [summary, weekMeals] = await Promise.all([
       start <= today ? api.summary(lookbackStart, summaryEnd) : Promise.resolve<NutritionSummary>({ goals: { kcal: null, protein: null, waterMl: null }, days: [] }),
-      api.weightTrends(WEIGHT_WINDOW_DAYS, weightEnd),
       withPlan ? api.mealsByRange!(start, summaryEnd) : Promise.resolve(null),
     ]);
 
@@ -153,13 +143,6 @@ export const weekRoutes: FastifyPluginAsync<WeekRoutesOptions> = async (app, { a
 
     const plan = plans && weekMeals ? weekPlanComparison(days.map((d) => d.date), clock, plans, weekMeals.meals) : null;
 
-    return { start, end, today, goals: { kcal: summary.goals.kcal, protein: summary.goals.protein }, days, averages, consistency, plan, weight };
-  });
-
-  app.post("/weight", async (request, reply) => {
-    const body = logWeightBody.safeParse(request.body);
-    if (!body.success) return reply.code(400).send({ error: "Invalid weight" });
-    await api.logWeight(body.data.weightKg, body.data.idempotencyKey);
-    return reply.code(201).send({ ok: true });
+    return { start, end, today, goals: { kcal: summary.goals.kcal, protein: summary.goals.protein }, days, averages, consistency, plan };
   });
 };

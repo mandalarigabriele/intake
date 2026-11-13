@@ -34,8 +34,6 @@ describe("week routes", () => {
     return {
       clock: async () => ({ timezone: "Europe/Rome", localDate: "2026-11-05", localTime: "15:00:00", utc: "" }),
       summary: async () => summary,
-      weightTrends: async () => ({ unit: "kg", target: null, entries: [{ date: "2026-11-02", weight: 75.1 }] }),
-      logWeight: async () => {},
       ...overrides,
     };
   }
@@ -46,7 +44,7 @@ describe("week routes", () => {
     return { app, headers: { cookie } };
   }
 
-  it("returns the current week with empty days, averages over logged days and weight", async () => {
+  it("returns the current week with empty days, averages over logged days", async () => {
     const summaryFn = vi.fn(fakeApi().summary);
     const { app, headers } = await signedIn(fakeApi({ summary: summaryFn }));
     const week = (await app.inject({ method: "GET", url: "/api/weeks/current", headers })).json();
@@ -64,7 +62,7 @@ describe("week routes", () => {
       asPlanned: 0,
       skipped: 0,
     });
-    expect(week.weight.entries).toHaveLength(1);
+    expect(week).not.toHaveProperty("weight");
   });
 
   it("does not query the summary for a future week", async () => {
@@ -73,16 +71,6 @@ describe("week routes", () => {
     const week = (await app.inject({ method: "GET", url: "/api/weeks/2026-11-12", headers })).json();
     expect(summaryFn).not.toHaveBeenCalled();
     expect(week.averages).toBeNull();
-  });
-
-  it("logs a weigh-in in kg and validates it", async () => {
-    const logWeight = vi.fn(async () => {});
-    const { app, headers } = await signedIn(fakeApi({ logWeight }));
-    const ok = await app.inject({ method: "POST", url: "/api/weight", headers, payload: { weightKg: 74.8, idempotencyKey: "weigh-123456" } });
-    expect(ok.statusCode).toBe(201);
-    expect(logWeight).toHaveBeenCalledWith(74.8, "weigh-123456");
-    const bad = await app.inject({ method: "POST", url: "/api/weight", headers, payload: { weightKg: 4, idempotencyKey: "weigh-123456" } });
-    expect(bad.statusCode).toBe(400);
   });
 
   it("requires sign-in", async () => {

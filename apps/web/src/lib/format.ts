@@ -133,3 +133,9 @@ export function formatWeekdayDay(date: string): string {
 export function formatOneDecimal(value: number): string {
   return oneDecimal.format(value);
 }
+
+const fixedOneDecimal = new Intl.NumberFormat(LOCALE, { minimumFractionDigits: 1, maximumFractionDigits: 1 });
+/** Weigh-ins always show one decimal: 75 -> "75,0" */
+export function formatWeight(kg: number): string {
+  return fixedOneDecimal.format(kg);
+}

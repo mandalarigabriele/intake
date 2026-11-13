@@ -1,7 +1,7 @@
 import "@fontsource-variable/manrope";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { useCallback, useEffect, useState } from "react";
-import { Route, Switch } from "wouter";
+import { Redirect, Route, Switch } from "wouter";
 import { retryDelay, shouldRetry } from "./api/client";
 import { useMe } from "./api/queries";
 import { AddSheet } from "./components/AddSheet";
@@ -11,6 +11,7 @@ import { EditMealPage } from "./pages/EditMealPage";
 import { HealthPage } from "./pages/HealthPage";
 import { MealPage } from "./pages/MealPage";
 import { PlanPage } from "./pages/PlanPage";
+import { ProfilePage } from "./pages/ProfilePage";
 import { WeekPage } from "./pages/WeekPage";
 import { SignInPage } from "./pages/SignInPage";
 import { TimelinePage } from "./pages/TimelinePage";
@@ -53,13 +54,23 @@ function Root() {
   return (
     <AppShell user={me.data} onAdd={openAdd}>
       <Switch>
-        <Route path="/settimana">
+        <Route path="/andamento">
           <WeekPage />
+        </Route>
+        {/* Old addresses, still in sent notifications and home-screen history */}
+        <Route path="/settimana">
+          <Redirect to="/andamento" replace />
+        </Route>
+        <Route path="/salute">
+          <Redirect to="/profilo/salute" replace />
         </Route>
         <Route path="/pasto/:date/:id/modifica">{(params) => <EditMealPage date={params.date} id={params.id} />}</Route>
         <Route path="/pasto/:date/:id">{(params) => <MealPage date={params.date} id={params.id} />}</Route>
-        <Route path="/salute">
+        <Route path="/profilo/salute">
           <HealthPage />
+        </Route>
+        <Route path="/profilo">
+          <ProfilePage user={me.data} />
         </Route>
         <Route path="/piano">
           <PlanPage />

@@ -2,22 +2,15 @@ import type { HealthDuplicate, HealthImportPreview, HealthStatus } from "@intake
 import { useRef, useState } from "react";
 import { Link } from "wouter";
 import { ApiError } from "../api/client";
-import { useHealthImport, useHealthStatus, useSetHealthSettings } from "../api/queries";
+import { useHealthImport, useHealthStatus } from "../api/queries";
+import { BackIcon } from "../components/icons";
 import { addDays } from "../lib/dates";
 import { formatClock, formatDayLongMonth, formatDayMonth, formatKcal, formatMegabytes, formatShortDate, localIsoDate } from "../lib/format";
 import { t } from "../lib/strings";
 
 /** Same limit as the server (HEALTH_IMPORT_MAX_BYTES). */
 const MAX_BYTES = 50 * 1024 * 1024;
-const STEP_GOAL = { min: 2000, max: 30000, step: 500 };
 
-function BackIcon() {
-  return (
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-      <path d="M15 6l-6 6 6 6" />
-    </svg>
-  );
-}
 
 function Header({ eyebrow, title, back }: { eyebrow: string; title: string; back: { href: string } | { onClick: () => void; label: string } }) {
   return (
@@ -176,31 +169,6 @@ function ActiveEnergyWarning({ warning }: { warning: NonNullable<HealthStatus["a
           ))}
         </ol>
       )}
-    </section>
-  );
-}
-
-function StepGoalCard({ goal }: { goal: number }) {
-  const save = useSetHealthSettings();
-  const change = (delta: number) => {
-    const next = Math.min(STEP_GOAL.max, Math.max(STEP_GOAL.min, goal + delta));
-    if (next !== goal) save.mutate({ stepGoal: next });
-  };
-  return (
-    <section className="health-card health-goal" aria-label={t.health.stepGoal}>
-      <div className="health-goal-text">
-        <span className="health-card-title">{t.health.stepGoal}</span>
-        <span className="health-muted">{save.isError ? t.health.stepGoalFailed : t.health.stepGoalHint}</span>
-      </div>
-      <div className="stepper">
-        <button type="button" aria-label={t.health.stepGoalLess} disabled={goal <= STEP_GOAL.min} onClick={() => change(-STEP_GOAL.step)}>
-          −
-        </button>
-        <span aria-live="polite">{formatKcal(goal)}</span>
-        <button type="button" aria-label={t.health.stepGoalMore} disabled={goal >= STEP_GOAL.max} onClick={() => change(STEP_GOAL.step)}>
-          +
-        </button>
-      </div>
     </section>
   );
 }
@@ -408,7 +376,7 @@ function ImportView({ file, state, onImport, onClose, onChooseAnother }: {
   );
 }
 
-/** Profile › Apple Salute: data status, active energy warning, file import and step goal (docs/design Salute, SaluteImport). */
+/** Profilo › Apple Salute: data status, active energy warning and file import (docs/design Salute, SaluteImport). */
 export function HealthPage() {
   const status = useHealthStatus();
   const send = useHealthImport();
@@ -464,7 +432,7 @@ export function HealthPage() {
 
   return (
     <div className="page detail-page health-page">
-      <Header eyebrow={t.health.eyebrow} title={t.health.title} back={{ href: "/" }} />
+      <Header eyebrow={t.health.eyebrow} title={t.health.title} back={{ href: "/profilo" }} />
       {status.isPending && <div className="card skeleton" style={{ height: 260 }} />}
       {status.isError && <p className="notice" data-kind="error">{t.health.loadFailed}</p>}
       {status.data && <StatusCard status={status.data} />}
@@ -479,7 +447,6 @@ export function HealthPage() {
           {t.health.importButton}
         </button>
       </section>
-      {status.data && <StepGoalCard goal={status.data.settings.stepGoal} />}
       {input}
     </div>
   );
