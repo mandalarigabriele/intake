@@ -123,6 +123,18 @@ export interface WeekDay {
   mealCount: number;
 }
 
+/** Averages over the completed logged days of the week (today excluded). */
+export interface WeekAverages {
+  kcal: number;
+  protein: number;
+  /** null when no completed day recorded fiber. */
+  fiber: number | null;
+  waterMl: number;
+  days: number;
+  /** Share of the macro calories (protein and carbs 4 kcal/g, fat 9 kcal/g), whole percentages adding up to 100; null without macros. */
+  kcalShare: { protein: number; carbs: number; fat: number } | null;
+}
+
 export interface WeightEntry {
   date: string;
   weight: number;
@@ -152,10 +164,10 @@ export interface WeekView {
   start: string;
   end: string;
   today: string;
-  goals: { kcal: number | null; protein: number | null };
+  goals: { kcal: number | null; protein: number | null; fiber: number | null; waterMl: number | null };
   days: WeekDay[];
-  /** Averages over the completed days (today excluded) with meals; null when none. */
-  averages: { kcal: number; protein: number; days: number } | null;
+  /** null when no completed day of the week has meals. */
+  averages: WeekAverages | null;
   consistency: WeekConsistency;
   /** null when no plan with macros was in effect during the week. */
   plan: WeekPlanComparison | null;
@@ -206,7 +218,10 @@ export interface TargetDays {
 export interface WeekConsistency {
   /** Consecutive logged days up to today (today included once it has meals), oldest first. */
   streak: string[];
+  /** Days of the week up to today with meals, out of the days so far (today included). */
+  logged: { days: string[]; total: number };
   protein: TargetDays;
+  fiber: TargetDays;
   water: TargetDays;
   /** Planned meals logged with "Mangiato come previsto" this week. */
   asPlanned: number;

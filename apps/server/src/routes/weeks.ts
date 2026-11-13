@@ -1,4 +1,4 @@
-import type { Meal, MealDeviation, TargetDays, WeekConsistency, WeekPlanComparison, WeekView } from "@intake/shared";
+import type { Meal, MealDeviation, TargetDays, WeekAverages, WeekConsistency, WeekPlanComparison, WeekView } from "@intake/shared";
 import type { PlanStore } from "../db/planStore.js";
 import type { NutritionSummary } from "../parsers/summary.js";
 import type { FastifyPluginAsync, preHandlerHookHandler } from "fastify";
@@ -26,6 +26,19 @@ function targetDays(days: SummaryDay[], value: (d: SummaryDay) => number, goal: 
     best: best ? { date: best.date, value: value(best) } : null,
     goal,
   };
+}
+
+/** Share of the macro calories as whole percentages that add up to 100 (largest remainder). */
+export function kcalShare(protein: number, carbs: number, fat: number): WeekAverages["kcalShare"] {
+  const kcal = [protein * 4, carbs * 4, fat * 9];
+  const total = kcal.reduce((a, b) => a + b, 0);
+  if (total <= 0) return null;
+  const exact = kcal.map((k) => (k / total) * 100);
+  const whole = exact.map(Math.floor);
+  const order = exact.map((v, i) => [v - whole[i]!, i] as const).sort((a, b) => b[0] - a[0]);
+  const missing = 100 - whole.reduce((a, b) => a + b, 0);
+  for (let i = 0; i < missing; i++) whole[order[i]![1]]! += 1;
+  return { protein: whole[0]!, carbs: whole[1]!, fat: whole[2]! };
 }
 
 /** Consecutive logged days ending today (if today already has meals) or yesterday. */
@@ -109,7 +122,7 @@ export const weekRoutes: FastifyPluginAsync<WeekRoutesOptions> = async (app, { a
     const lookbackStart = shiftDate(start, -STREAK_LOOKBACK_DAYS);
     const withPlan = plans && api.mealsByRange && start <= today;
     const [summary, weekMeals] = await Promise.all([
-      start <= today ? api.summary(lookbackStart, summaryEnd) : Promise.resolve<NutritionSummary>({ goals: { kcal: null, protein: null, waterMl: null }, days: [] }),
+      start <= today ? api.summary(lookbackStart, summaryEnd) : Promise.resolve<NutritionSummary>({ goals: { kcal: null, protein: null, fiber: null, waterMl: null }, days: [] }),
       withPlan ? api.mealsByRange!(start, summaryEnd) : Promise.resolve(null),
     ]);
 
@@ -122,20 +135,27 @@ export const weekRoutes: FastifyPluginAsync<WeekRoutesOptions> = async (app, { a
         : { date, kcal: null, protein: null, mealCount: 0 };
     });
     // Averages and targets use completed days only: today counts once it is over
-    const logged = days.filter((d) => d.kcal !== null && d.date < today);
+    const completed = summary.days.filter((d) => d.date >= start && d.date <= end && d.date < today && d.mealCount > 0);
+    const withFiber = completed.filter((d) => d.fiber !== null);
+    const mean = (list: SummaryDay[], value: (d: SummaryDay) => number) => list.reduce((sum, d) => sum + value(d), 0) / list.length;
     const averages =
-      logged.length > 0
+      completed.length > 0
         ? {
-            kcal: logged.reduce((sum, d) => sum + d.kcal!, 0) / logged.length,
-            protein: logged.reduce((sum, d) => sum + d.protein!, 0) / logged.length,
-            days: logged.length,
+            kcal: mean(completed, (d) => d.kcal),
+            protein: mean(completed, (d) => d.protein),
+            fiber: withFiber.length > 0 ? mean(withFiber, (d) => d.fiber!) : null,
+            waterMl: mean(completed, (d) => d.waterMl),
+            days: completed.length,
+            kcalShare: kcalShare(mean(completed, (d) => d.protein), mean(completed, (d) => d.carbs), mean(completed, (d) => d.fat)),
           }
         : null;
 
-    const completed = summary.days.filter((d) => d.date >= start && d.date <= end && d.date < today && d.mealCount > 0);
+    const soFar = days.filter((d) => d.date <= today);
     const consistency: WeekConsistency = {
       streak: loggingStreak(summary.days, today),
+      logged: { days: soFar.filter((d) => d.kcal !== null).map((d) => d.date), total: soFar.length },
       protein: targetDays(completed, (d) => d.protein, summary.goals.protein),
+      fiber: targetDays(withFiber, (d) => d.fiber!, summary.goals.fiber),
       water: targetDays(completed, (d) => d.waterMl, summary.goals.waterMl),
       asPlanned: plans ? plans.linkCountBetween(start, end) : 0,
       skipped: plans ? plans.skipCountBetween(start, end) : 0,
@@ -143,6 +163,6 @@ export const weekRoutes: FastifyPluginAsync<WeekRoutesOptions> = async (app, { a
 
     const plan = plans && weekMeals ? weekPlanComparison(days.map((d) => d.date), clock, plans, weekMeals.meals) : null;
 
-    return { start, end, today, goals: { kcal: summary.goals.kcal, protein: summary.goals.protein }, days, averages, consistency, plan };
+    return { start, end, today, goals: summary.goals, days, averages, consistency, plan };
   });
 };

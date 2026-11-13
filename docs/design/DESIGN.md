@@ -90,11 +90,13 @@ All UI copy is in Italian (the app language); code, comments and docs stay in En
 
 ## Alimentazione — Consistency card
 
-Rows (label, short note, value):
-- Days logged in a row (current streak).
+Rows (label, short note, value), as in the `Settimana` mockup:
+- Days logged (days of the week so far with meals / days so far), note "tutti i giorni da lunedì" or the missing days.
 - Protein at target (days ≥ goal / completed logged days), note with the best day.
+- Fiber at target (same rule, over the completed days that recorded fiber; hidden without a fiber goal).
 - Water at target (same rule).
 - Meals as planned (count of plan entries logged with one tap) and number of skipped meals.
+The KPI row has no "added sugar" tile: `get_nutrition_summary` does not return added sugar per day.
 Sources: `get_nutrition_summary` for the week + local SQLite plan links and skips. Today counts only once it is over.
 The kcal chart scales above the goal (e.g. to 2,600) so days over target stay inside the card; the dashed goal line sits at 2,200.
 
