@@ -153,3 +153,7 @@ vite.config.ts.timestamp-*
 data/
 apps/server/captures/
 backups/
+
+# Design tool exports land here by default; the approved copies live in docs/design/
+/docs/screens/
+/docs/DESIGN.md
