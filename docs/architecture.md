@@ -19,7 +19,7 @@ Cloudflare Tunnel ────────────────────�
 ## Principles
 
 - **Live data.** Meals, goals, water and weight are read from the Nutrition MCP server on every request. The local database never caches them, so the app never shows stale or conflicting numbers.
-- **Local data only where needed.** SQLite stores meal plan versions, which logged meal fulfilled which planned meal (so a planned card disappears once it has been marked as eaten), and the encrypted Nutrition refresh token.
+- **Local data only where needed.** SQLite stores meal plan versions, which logged meal fulfilled which planned meal (so a planned card disappears once it has been marked as eaten), and the encrypted Nutrition refresh token. Apple Health data is the one exception to live data: Health has no server API, so imported values are stored in SQLite (see [apple-health.md](apple-health.md)).
 - **Careful parsing.** MCP tool responses are often formatted text. Each tool has a parser in `apps/server/src/parsers/`, tested against real responses in `__fixtures__/`. `structuredContent` is used when a tool provides it.
 - **Two separate logins.** Google sign-in protects the app and only admits `OWNER_EMAIL`. The Nutrition OAuth connection is done once by the owner; the server keeps the refresh token and renews access tokens on its own.
 - **Timezone.** "Today" and the timeline's "now" marker follow the Nutrition profile's timezone.
