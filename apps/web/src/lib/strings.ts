@@ -116,7 +116,7 @@ export const t = {
       "Torni qui e vedi subito la giornata di oggi",
     ],
     button: "Collega Nutrition",
-    footnote: "Puoi scollegarlo quando vuoi dal menu del profilo.",
+    footnote: "Puoi scollegarlo quando vuoi dal Profilo.",
   },
 
   notices: {
@@ -423,7 +423,28 @@ export const t = {
   health: {
     eyebrow: "Profilo",
     title: "Apple Salute",
-    back: "Torna indietro",
+    back: "Torna al profilo",
+    sync: {
+      title: "Sincronizzazione automatica",
+      subtitle: "Health Auto Export invia i dati da solo",
+      toggle: "Attiva sincronizzazione",
+      endpoint: "URL dell’endpoint",
+      token: "Token segreto",
+      copy: "Copia",
+      copied: "Copiato",
+      regenerate: "Rigenera",
+      regenerateConfirm: "Generare un nuovo token? Quello attuale smette subito di funzionare: andrà incollato di nuovo in Health Auto Export.",
+      offConfirm: "Disattivare la sincronizzazione? Gli invii di Health Auto Export verranno rifiutati finché non la riattivi.",
+      last: "Ultimo invio ricevuto",
+      never: "mai",
+      waiting: "in attesa del primo invio",
+      failed: "Operazione non riuscita. Riprova.",
+      steps: [
+        "In Health Auto Export apri Automazioni e crea un’automazione “REST API”.",
+        "Incolla l’URL e aggiungi l’intestazione “Authorization” con il token.",
+        "Formato JSON, aggregazione giornaliera, metriche e allenamenti senza percorsi, invio ogni ora.",
+      ],
+    },
     status: "Stato",
     fresh: "Dati aggiornati",
     stale: (days: number) => (days === 1 ? "Fermi da ieri" : `Fermi da ${days} giorni`),

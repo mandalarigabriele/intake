@@ -6,6 +6,7 @@ import type {
   HealthImportResult,
   HealthSettings,
   HealthStatus,
+  HealthSyncStatus,
   HealthTrends,
   InsightResponse,
   LogWeightRequest,
@@ -364,6 +365,23 @@ export function useSetHealthSettings() {
     onError: (_error, _settings, context) => {
       if (context?.previous) queryClient.setQueryData(healthStatusKey, context.previous);
     },
+  });
+}
+
+const healthSyncKey = ["health", "sync"] as const;
+
+/** Automatic upload from Health Auto Export: on/off, token and last upload. */
+export function useHealthSync() {
+  return useQuery({ queryKey: healthSyncKey, queryFn: () => apiFetch<HealthSyncStatus>("/api/health/sync") });
+}
+
+/** Creates a new token (turning the sync on) or turns it off; the old token stops working at once. */
+export function useHealthSyncAction() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (action: "token" | "off") =>
+      apiFetch<HealthSyncStatus>(action === "token" ? "/api/health/sync/token" : "/api/health/sync", { method: action === "token" ? "POST" : "DELETE" }),
+    onSuccess: (status) => queryClient.setQueryData(healthSyncKey, status),
   });
 }
 

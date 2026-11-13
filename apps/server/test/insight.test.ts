@@ -3,7 +3,7 @@ import { buildApp } from "../src/app.js";
 import { parseMealPatterns } from "../src/parsers/mealPatterns.js";
 import { parseMeals } from "../src/parsers/meals.js";
 import type { InsightRoutesOptions } from "../src/routes/insight.js";
-import { insightCandidates, pickInsight } from "../src/services/insight.js";
+import { healthCandidates, insightCandidates, pickInsight } from "../src/services/insight.js";
 import { authOptions, signIn } from "./helpers.js";
 import { fixture } from "./parsers/fixtures.js";
 
@@ -18,13 +18,60 @@ const summary = {
   ],
 };
 
+/** 14 completed days before 2026-11-29: kcal 2400 on even days, 1900 on odd ones. */
+function healthInput() {
+  const days = Array.from({ length: 14 }, (_, i) => {
+    const date = new Date(Date.parse("2026-11-15T00:00:00Z") + i * 86_400_000).toISOString().slice(0, 10);
+    return { date, kcal: i % 2 === 0 ? 2400 : 1900, protein: 100, carbs: 0, fat: 0, fiber: null, waterMl: 0, mealCount: 4 };
+  });
+  const night = (date: string, asleepMinutes: number) => ({
+    date, start: `${date}T00:00:00+01:00`, end: `${date}T07:00:00+01:00`, asleepMinutes, deepMinutes: 60, remMinutes: 90, coreMinutes: 200, awakeMinutes: 10, inBedMinutes: asleepMinutes + 10, source: "Fitbit",
+  });
+  return {
+    today: "2026-11-29",
+    patterns: { ...patterns, loggedDays: 7 },
+    meals: [],
+    summary: { goals: { kcal: 2200, protein: 135, fiber: 30, waterMl: 2500 }, days },
+    proteinGoal: null,
+    // Short nights (6 h) before the 2,400 kcal days, long ones (8 h) before the others
+    health: {
+      nights: days.map((d, i) => night(d.date, i % 2 === 0 ? 360 : 480)),
+      steps: days.map((d, i) => ({ date: d.date, value: i % 2 === 0 ? 4000 : 10000 })),
+      stepGoal: 8000,
+    },
+  };
+}
+
+describe("health insights", () => {
+  it("compares kcal after short nights and on days at the step goal, over 28 days", () => {
+    expect(healthCandidates(healthInput()).map((c) => c.text)).toEqual([
+      "Dopo una notte sotto le 7 ore mangi in media 2.400 kcal, contro 1.900 kcal quando dormi di più.",
+      "Nei giorni con almeno 8.000 passi mangi in media 1.900 kcal, contro 2.400 kcal negli altri.",
+    ]);
+  });
+
+  it("needs 5 days in each group and a gap of at least 10%", () => {
+    const input = healthInput();
+    expect(healthCandidates({ ...input, health: { ...input.health, nights: input.health.nights.slice(0, 8) } })).toHaveLength(1);
+    const close = input.summary.days.map((d) => ({ ...d, kcal: d.kcal === 2400 ? 2050 : 1900 }));
+    expect(healthCandidates({ ...input, summary: { ...input.summary, days: close } })).toEqual([]);
+    expect(healthCandidates({ ...input, health: undefined })).toEqual([]);
+  });
+
+  it("labels a Health sentence with its 28-day window", () => {
+    const input = healthInput();
+    const picked = pickInsight({ ...input, health: { ...input.health, steps: [] } });
+    expect(picked).toEqual({ text: expect.stringContaining("notte sotto le 7 ore"), window: "Ultimi 28 giorni · 14 giorni registrati" });
+  });
+});
+
 describe("insight", () => {
   it("builds sentences only from real figures", () => {
     const candidates = insightCandidates({ today: "2026-11-06", patterns, meals, summary, proteinGoal: 135 });
-    expect(candidates[0]).toBe("Nei giorni in cui fai colazione arrivi a 76 g di proteine, contro 49 g quando la salti.");
-    expect(candidates.some((c) => c.startsWith("In media un pasto ti porta"))).toBe(true);
+    expect(candidates[0]!.text).toBe("Nei giorni in cui fai colazione arrivi a 76 g di proteine, contro 49 g quando la salti.");
+    expect(candidates.some((c) => c.text.startsWith("In media un pasto ti porta"))).toBe(true);
     // No weekend day logged: no weekday/weekend comparison
-    expect(candidates.some((c) => c.includes("weekend"))).toBe(false);
+    expect(candidates.some((c) => c.text.includes("weekend"))).toBe(false);
   });
 
   it("picks the same sentence for the whole day and shows the window", () => {

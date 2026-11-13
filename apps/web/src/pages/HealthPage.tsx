@@ -2,7 +2,7 @@ import type { HealthDuplicate, HealthImportPreview, HealthStatus } from "@intake
 import { useRef, useState } from "react";
 import { Link } from "wouter";
 import { ApiError } from "../api/client";
-import { useHealthImport, useHealthStatus } from "../api/queries";
+import { useHealthImport, useHealthStatus, useHealthSync, useHealthSyncAction } from "../api/queries";
 import { BackIcon } from "../components/icons";
 import { addDays } from "../lib/dates";
 import { formatClock, formatDayLongMonth, formatDayMonth, formatKcal, formatMegabytes, formatShortDate, localIsoDate } from "../lib/format";
@@ -169,6 +169,89 @@ function ActiveEnergyWarning({ warning }: { warning: NonNullable<HealthStatus["a
           ))}
         </ol>
       )}
+    </section>
+  );
+}
+
+function CopyButton({ value }: { value: string }) {
+  const [copied, setCopied] = useState(false);
+  return (
+    <button
+      type="button"
+      className="sync-button"
+      onClick={async () => {
+        try {
+          await navigator.clipboard.writeText(value);
+          setCopied(true);
+          setTimeout(() => setCopied(false), 1500);
+        } catch {
+          setCopied(false);
+        }
+      }}
+    >
+      {copied ? t.health.sync.copied : t.health.sync.copy}
+    </button>
+  );
+}
+
+/** "Sincronizzazione automatica" (mockup Salute): Health Auto Export uploads to /api/health/ingest with the token. */
+function SyncCard({ today }: { today: string }) {
+  const sync = useHealthSync();
+  const action = useHealthSyncAction();
+  const data = sync.data;
+  if (!data) return null;
+  const last = data.lastReceivedAt ? lastDataLabel(data.lastReceivedAt, today) : data.enabled ? t.health.sync.waiting : t.health.sync.never;
+  return (
+    <section className="health-card sync-card" aria-label={t.health.sync.title}>
+      <label className="sync-head">
+        <span className="sync-head-text">
+          <span className="health-card-title">{t.health.sync.title}</span>
+          <span className="health-muted">{t.health.sync.subtitle}</span>
+        </span>
+        <input
+          type="checkbox"
+          role="switch"
+          className="switch"
+          aria-label={t.health.sync.toggle}
+          checked={data.enabled}
+          disabled={action.isPending}
+          onChange={(event) => {
+            if (event.target.checked) action.mutate("token");
+            else if (window.confirm(t.health.sync.offConfirm)) action.mutate("off");
+          }}
+        />
+      </label>
+      {data.enabled && data.token && (
+        <>
+          <div className="sync-field">
+            <span className="health-muted">{t.health.sync.endpoint}</span>
+            <div className="sync-value">
+              <code>{data.endpoint}</code>
+              <CopyButton value={data.endpoint} />
+            </div>
+          </div>
+          <div className="sync-field">
+            <span className="health-muted">{t.health.sync.token}</span>
+            <div className="sync-value">
+              <code aria-label={t.health.sync.token}>{"•".repeat(16)}</code>
+              <CopyButton value={data.token} />
+              <button type="button" className="sync-button" disabled={action.isPending} onClick={() => window.confirm(t.health.sync.regenerateConfirm) && action.mutate("token")}>
+                {t.health.sync.regenerate}
+              </button>
+            </div>
+          </div>
+        </>
+      )}
+      <div className="sync-last">
+        <span className="health-muted">{t.health.sync.last}</span>
+        <strong>{last}</strong>
+      </div>
+      {action.isError && <p className="error-text">{t.health.sync.failed}</p>}
+      <ol className="sync-steps">
+        {t.health.sync.steps.map((step) => (
+          <li key={step}>{step}</li>
+        ))}
+      </ol>
     </section>
   );
 }
@@ -447,6 +530,7 @@ export function HealthPage() {
           {t.health.importButton}
         </button>
       </section>
+      {status.data && <SyncCard today={status.data.today} />}
       {input}
     </div>
   );

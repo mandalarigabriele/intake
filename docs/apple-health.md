@@ -2,7 +2,7 @@
 
 Intake reads Apple Health data exported by the iOS app **Health Auto Export** (HAE).
 Apple Health has no web API, so the phone pushes data to Intake: first as a one-time
-file import (history), later through HAE's "REST API" automation (phase 2).
+file import (history), and automatically through HAE's "REST API" automation (see Ingest).
 The UI is specified in [`design/DESIGN.md`](design/DESIGN.md) § Apple Health and the
 mockups `Main`, `Timeline*`, `AndamentoSalute`, `SaluteDesktop`, `Profilo`, `Salute` and `SaluteImport`.
 
@@ -109,6 +109,12 @@ No BMR formulas are used to fill the gap. The Apple Salute screen warns when act
 
 A Health-based insight ("Dai tuoi dati") is shown only if each compared group has at least 5 days and the difference is meaningful (at least 10%).
 
+- Window: the last 28 days, completed logged days only (today is left out); the Nutrition daily totals come from the same
+  `get_nutrition_summary` request the card already makes (its range grows from 7 to 28 days, still one request).
+- Sleep: kcal eaten on the day after a night under 7 hours (the night belongs to its wake-up day) against the other days.
+- Steps: kcal eaten on days at or above the step goal against the other days.
+- The card shows "Ultimi 28 giorni · N giorni registrati" under a Health sentence.
+
 ## File import
 
 - Profile › Apple Salute › "Carica file di Health Auto Export (.json)" (export with JSON format and daily aggregation).
@@ -136,8 +142,18 @@ A Health-based insight ("Dai tuoi dati") is shown only if each compared group ha
   still listed with `hevyUnavailable: true`.
 - The sleep chip uses the night of `GET /api/health/days/:date`.
 
-## Ingest (phase 2)
+## Ingest (automatic upload)
 
-- `POST` endpoint protected by a token generated in the app (copy / regenerate in the Apple Salute screen), outside Google sign-in.
-- If Cloudflare Access protects the app, add a bypass for that path only.
-- HAE automation: JSON, daily aggregation, only the metrics above, workouts without routes.
+- Profilo › Apple Salute › "Sincronizzazione automatica": the switch creates a token and turns the upload on; "Rigenera" replaces
+  the token (the old one stops working at once); turning the switch off deletes it. The screen shows the endpoint URL, the token
+  (masked, "Copia" copies it), the last upload received and the steps for Health Auto Export.
+- `POST /api/health/ingest` is outside Google sign-in and needs `Authorization: Bearer <token>` (the bare token is accepted too),
+  compared in constant time. The token is stored encrypted in the secrets table (`health_ingest_token`), never in the repository.
+- The body is the same Health Auto Export JSON as the file import and is saved the same way (upserts, the current day is overwritten,
+  workouts merged on read), recorded as an import of kind `sync`. Answers: `401 invalid_token`, `400 not_health_export`,
+  `200 { saved: false }` for an upload with nothing Intake keeps (so the automation does not retry it), `200 { saved: true, counts }`.
+  The body is never logged.
+- Owner routes: `GET /api/health/sync`, `POST /api/health/sync/token` (new token, turns it on), `DELETE /api/health/sync` (off).
+- Health Auto Export automation: "REST API", JSON format, daily aggregation, only the metrics above, workouts without routes,
+  header `Authorization` with `Bearer <token>`, sync every hour.
+- If Cloudflare Access protects the app, add a bypass for `/api/health/ingest` only (see docs/deployment.md).

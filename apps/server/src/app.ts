@@ -21,6 +21,7 @@ import { profileRoutes, type ProfileRoutesOptions } from "./routes/profile.js";
 import { authRoutes } from "./routes/auth.js";
 import { healthRoutes } from "./routes/health.js";
 import { appleHealthRoutes, type AppleHealthRoutesOptions } from "./routes/appleHealth.js";
+import { healthIngestRoutes, type HealthIngestRoutesOptions } from "./routes/healthIngest.js";
 import { nutritionApiRoutes, nutritionConnectRoutes } from "./routes/nutrition.js";
 
 export interface AuthOptions {
@@ -46,6 +47,8 @@ export interface AppOptions {
   mealsApi?: MealRoutesOptions["api"];
   /** Daily insight ("Dai tuoi dati"); registered together with `auth`. */
   insightApi?: InsightRoutesOptions["api"];
+  /** Apple Health data for the insight; optional. */
+  insightHealth?: InsightRoutesOptions["health"];
   /** Week overview and weigh-ins; registered together with `auth`. */
   weekApi?: WeekRoutesOptions["api"];
   /** Profilo and weigh-ins; registered together with `auth`. */
@@ -58,6 +61,8 @@ export interface AppOptions {
   workouts?: Omit<WorkoutRoutesOptions, "requireOwner">;
   /** Apple Health import and status; registered together with `auth`. */
   appleHealth?: Omit<AppleHealthRoutesOptions, "requireOwner">;
+  /** Automatic uploads from Health Auto Export; token-protected, outside Google sign-in. */
+  healthIngest?: HealthIngestRoutesOptions;
 }
 
 export async function buildApp(options: AppOptions = {}): Promise<FastifyInstance> {
@@ -88,6 +93,9 @@ export async function buildApp(options: AppOptions = {}): Promise<FastifyInstanc
   });
 
   await app.register(healthRoutes, { prefix: "/api" });
+  if (options.healthIngest) {
+    await app.register(healthIngestRoutes, { prefix: "/api", ...options.healthIngest });
+  }
 
   if ((options.nutrition || options.api || options.mealsApi || options.weekApi || options.insightApi || options.push || options.workouts || options.appleHealth) && !options.auth) {
     throw new Error("Nutrition routes need authentication options");
@@ -115,7 +123,7 @@ export async function buildApp(options: AppOptions = {}): Promise<FastifyInstanc
       await app.register(pushRoutes, { prefix: "/api", ...options.push, requireOwner });
     }
     if (options.insightApi) {
-      await app.register(insightRoutes, { prefix: "/api", api: options.insightApi, requireOwner });
+      await app.register(insightRoutes, { prefix: "/api", api: options.insightApi, health: options.insightHealth, requireOwner });
     }
     if (options.weekApi) {
       await app.register(weekRoutes, { prefix: "/api", api: options.weekApi, plans: options.plans, requireOwner });
