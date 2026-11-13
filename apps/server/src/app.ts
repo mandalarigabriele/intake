@@ -46,6 +46,8 @@ export interface AppOptions {
   mealsApi?: MealRoutesOptions["api"];
   /** Daily insight ("Dai tuoi dati"); registered together with `auth`. */
   insightApi?: InsightRoutesOptions["api"];
+  /** Apple Health data for the insight; optional. */
+  insightHealth?: InsightRoutesOptions["health"];
   /** Week overview and weigh-ins; registered together with `auth`. */
   weekApi?: WeekRoutesOptions["api"];
   /** Profilo and weigh-ins; registered together with `auth`. */
@@ -115,7 +117,7 @@ export async function buildApp(options: AppOptions = {}): Promise<FastifyInstanc
       await app.register(pushRoutes, { prefix: "/api", ...options.push, requireOwner });
     }
     if (options.insightApi) {
-      await app.register(insightRoutes, { prefix: "/api", api: options.insightApi, requireOwner });
+      await app.register(insightRoutes, { prefix: "/api", api: options.insightApi, health: options.insightHealth, requireOwner });
     }
     if (options.weekApi) {
       await app.register(weekRoutes, { prefix: "/api", api: options.weekApi, plans: options.plans, requireOwner });
