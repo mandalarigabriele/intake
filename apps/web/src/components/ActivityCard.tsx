@@ -2,6 +2,7 @@ import type { HealthDay } from "@intake/shared";
 import { useHealthDay } from "../api/queries";
 import { formatClock, formatDuration, formatDurationShort, formatKcal, formatOneDecimal, formatShortDate, formatWeekdayDay, localIsoDate } from "../lib/format";
 import { t } from "../lib/strings";
+import { SleepPhases } from "./SleepPhases";
 
 const W = 120;
 const H = 34;
@@ -135,13 +136,6 @@ function StepsRow({ day }: { day: HealthDay }) {
 
 function SleepRow({ day }: { day: HealthDay }) {
   const night = day.sleep!;
-  const phases = [
-    { key: "deep", label: t.activity.phases.deep, minutes: night.deepMinutes },
-    { key: "rem", label: t.activity.phases.rem, minutes: night.remMinutes },
-    { key: "core", label: t.activity.phases.core, minutes: night.coreMinutes },
-    { key: "awake", label: t.activity.phases.awake, minutes: night.awakeMinutes },
-  ];
-  const total = phases.reduce((sum, p) => sum + p.minutes, 0);
   return (
     <div className="activity-row activity-row-sleep">
       <span className="activity-icon" data-kind="sleep" aria-hidden="true">
@@ -160,30 +154,7 @@ function SleepRow({ day }: { day: HealthDay }) {
             <span>{t.activity.sleepCaption}</span>
           </div>
         </div>
-        {total > 0 && (
-          <>
-            <div
-              className="sleep-phases"
-              role="img"
-              aria-label={t.activity.phasesLabel(
-                formatDurationShort(night.deepMinutes),
-                formatDurationShort(night.remMinutes),
-                formatDurationShort(night.coreMinutes),
-                formatDurationShort(night.awakeMinutes),
-              )}
-            >
-              {phases.map((p) => (p.minutes > 0 ? <div key={p.key} data-phase={p.key} style={{ width: `${(p.minutes / total) * 100}%` }} /> : null))}
-            </div>
-            <div className="sleep-legend">
-              {phases.map((p) => (
-                <span key={p.key}>
-                  <span className="sleep-swatch" data-phase={p.key} aria-hidden="true" />
-                  {p.label} <strong>{formatDurationShort(p.minutes)}</strong>
-                </span>
-              ))}
-            </div>
-          </>
-        )}
+        <SleepPhases night={night} />
       </div>
     </div>
   );

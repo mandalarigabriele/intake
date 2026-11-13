@@ -235,25 +235,56 @@ export interface WorkoutExercise {
   durationSeconds: number;
 }
 
-/** A Hevy workout in the Nutrition profile's timezone. */
+/** One minute of heart rate during a workout, counted from the workout start. */
+export interface WorkoutHeartRatePoint {
+  minute: number;
+  bpm: number;
+}
+
+/**
+ * A workout of the day: from Hevy (read live, possibly enriched with heart rate and kcal from Apple Health)
+ * or from Apple Health only (duplicates already merged, docs/apple-health.md).
+ */
 export interface Workout {
   id: string;
+  /** "hevy" when the workout comes from the Hevy API, "health" when only Apple Health has it. */
+  origin: "hevy" | "health";
   title: string;
+  /** Type label ("Forza", "Cyclette") and family used for the icon ("Forza", "Ciclismo", "Calcio", ...). */
+  type: string;
+  family: string;
   /** Local date and times (YYYY-MM-DD, HH:MM). */
   date: string;
   start: string;
   end: string;
   durationMinutes: number;
+  /** Hevy only: exercises, working sets and volume (empty / 0 for Health workouts). */
   exercises: WorkoutExercise[];
   /** Working sets in the whole workout. */
   sets: number;
   /** Sum of weight × reps over the working sets, in kg. */
   volumeKg: number;
+  /** Label of the source shown on the card ("Hevy", "MERACH", "Fitbit"). */
+  source: string;
+  kcal: number | null;
+  distanceKm: number | null;
+  hrAvg: number | null;
+  hrMax: number | null;
+  /** Heart rate recorded during the workout, one point per minute (empty when none). */
+  heartRate: WorkoutHeartRatePoint[];
+  /** Every source of the session and whether its data was used (false = duplicate discarded). */
+  sources: Array<{ label: string; used: boolean }>;
+  /** Source label that gave the heart rate, null when none. */
+  heartRateFrom: string | null;
+  /** Source label that gave the kcal, null when none. */
+  kcalFrom: string | null;
 }
 
 export interface WorkoutsResponse {
   /** false when no Hevy API key is configured on the server. */
   configured: boolean;
+  /** true when Hevy did not answer: only Apple Health workouts are listed. */
+  hevyUnavailable?: boolean;
   workouts: Workout[];
 }
 

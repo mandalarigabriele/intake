@@ -302,7 +302,7 @@ export function useTestPush() {
   return useMutation({ mutationFn: () => apiFetch<{ sent: number }>("/api/push/test", { method: "POST" }) });
 }
 
-/** Hevy workouts between two local dates (empty and configured: false without a Hevy API key). */
+/** Workouts between two local dates: Hevy (configured: false without a Hevy API key) and Apple Health. */
 export function useWorkouts(from: string | undefined, to: string | undefined) {
   return useQuery({
     queryKey: ["workouts", from, to],
@@ -332,7 +332,10 @@ export function useHealthImport() {
     mutationFn: ({ json, commit }: { json: unknown; commit: boolean }) =>
       apiFetch<HealthImportResult>(`/api/health/import${commit ? "?commit=true" : ""}`, { method: "POST", json }),
     onSuccess: (_result, { commit }) => {
-      if (commit) void queryClient.invalidateQueries({ queryKey: ["health"] });
+      if (commit) {
+        void queryClient.invalidateQueries({ queryKey: ["health"] });
+        void queryClient.invalidateQueries({ queryKey: ["workouts"] });
+      }
     },
   });
 }

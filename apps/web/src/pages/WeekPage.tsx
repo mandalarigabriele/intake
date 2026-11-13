@@ -216,8 +216,8 @@ export function WeekPage() {
             </div>
             <ConsistencyCard week={data} />
             {data.plan && <WeekPlanCard plan={data.plan} />}
-            {workouts.data?.configured !== false && (workouts.data || workouts.isError) && (
-              <WeekWorkoutsCard workouts={workouts.data?.workouts ?? []} failed={workouts.isError} />
+            {(workouts.isError || (workouts.data && (workouts.data.configured || workouts.data.workouts.length > 0))) && (
+              <WeekWorkoutsCard workouts={workouts.data?.workouts ?? []} failed={workouts.isError} partial={workouts.data?.hevyUnavailable === true} />
             )}
             <WeightCard week={data} />
           </div>

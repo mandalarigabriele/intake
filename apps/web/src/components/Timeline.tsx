@@ -1,18 +1,21 @@
-import type { Meal, PlannedEntry, Workout } from "@intake/shared";
-import { useState } from "react";
+import type { HealthNight, Meal, PlannedEntry, Workout } from "@intake/shared";
+import { useId, useState } from "react";
 import { Link } from "wouter";
 import { ConfirmDeleteSheet } from "./ConfirmDeleteSheet";
-import { formatGramsShort, formatKcal, formatTime } from "../lib/format";
+import { formatDuration, formatGramsShort, formatKcal, formatTime } from "../lib/format";
 import { t } from "../lib/strings";
 import { MACROS } from "./MacroCard";
+import { SleepPhases } from "./SleepPhases";
 import { WorkoutCard } from "./WorkoutCard";
 
 interface Props {
   date: string;
   meals: Meal[];
   planned: PlannedEntry[];
-  /** Hevy workouts of the day, shown between the meals at their start time. */
+  /** Workouts of the day (Hevy and Apple Health), shown between the meals at their start time. */
   workouts?: Workout[];
+  /** The night that ended this day (Apple Health), shown as a chip at wake-up time. */
+  sleep?: HealthNight | null;
   hasPlan: boolean;
   /** Show the "Timeline" heading (off on the Timeline page, whose title already says it). */
   heading?: boolean;
@@ -26,10 +29,14 @@ interface Props {
   onOther: () => void;
 }
 
+/** At the same time: sleep first (it ended), then logged meals, then the rest. */
+const order = (entry: Entry) => (entry.kind === "sleep" ? 0 : entry.kind === "meal" ? 1 : 2);
+
 type Entry =
   | { kind: "meal"; time: string; meal: Meal }
   | { kind: "planned"; time: string; entry: PlannedEntry }
   | { kind: "workout"; time: string; workout: Workout }
+  | { kind: "sleep"; time: string; night: HealthNight }
   | { kind: "now"; time: string };
 
 export function mealTitle(meal: Pick<Meal, "type">): string {
@@ -89,6 +96,31 @@ function LoggedCard({ meal }: { meal: Meal }) {
         <ConfirmDeleteSheet mealId={meal.id} mealType={meal.type} onClose={() => setConfirmDelete(false)} onDeleted={() => setConfirmDelete(false)} />
       )}
     </article>
+  );
+}
+
+/** Sleep chip at wake-up time; opens the phase bar. */
+function SleepEntry({ night }: { night: HealthNight }) {
+  const [open, setOpen] = useState(false);
+  const panelId = useId();
+  const total = formatDuration(night.asleepMinutes);
+  return (
+    <div className="sleep-entry">
+      <button
+        type="button"
+        className="sleep-chip"
+        aria-expanded={open}
+        aria-controls={panelId}
+        aria-label={t.timeline.sleepLabel(night.bedtime, night.wake, total)}
+        onClick={() => setOpen((v) => !v)}
+      >
+        <strong>{t.timeline.sleep}</strong>
+        <span>{t.timeline.sleepRange(night.bedtime, night.wake, total)}</span>
+      </button>
+      <div id={panelId} className="sleep-entry-panel" hidden={!open}>
+        <SleepPhases night={night} />
+      </div>
+    </div>
   );
 }
 
@@ -159,12 +191,13 @@ function PlannedCard({
  * Vertical timeline of the day: logged meals, planned meals from the active plan and, for today,
  * the "now" marker. A continuous rod runs behind the time labels: solid until now, dashed after.
  */
-export function Timeline({ meals, planned, workouts = [], hasPlan, heading = true, now, onLogPlanned, onSkipPlanned, loggingPlanned, logFailed, onOther }: Props) {
+export function Timeline({ meals, planned, workouts = [], sleep = null, hasPlan, heading = true, now, onLogPlanned, onSkipPlanned, loggingPlanned, logFailed, onOther }: Props) {
   const entries: Entry[] = [
+    ...(sleep ? [{ kind: "sleep", time: sleep.wake, night: sleep } as Entry] : []),
     ...meals.map((meal): Entry => ({ kind: "meal", time: meal.time, meal })),
     ...planned.map((entry): Entry => ({ kind: "planned", time: entry.time, entry })),
     ...workouts.map((workout): Entry => ({ kind: "workout", time: workout.start, workout })),
-  ].sort((a, b) => a.time.localeCompare(b.time) || (a.kind === "meal" ? -1 : 1));
+  ].sort((a, b) => a.time.localeCompare(b.time) || order(a) - order(b));
 
   const nowHm = now ? formatTime(now) : null;
   if (nowHm) {
@@ -180,6 +213,8 @@ export function Timeline({ meals, planned, workouts = [], hasPlan, heading = tru
     t.timeline.logged(meals.length),
     todo > 0 ? t.timeline.todoCount(todo) : upcoming > 0 ? t.timeline.plannedCount(upcoming) : null,
     skipped > 0 ? t.timeline.skippedCount(skipped) : null,
+    workouts.length > 0 ? t.timeline.workoutsCount(workouts.length) : null,
+    sleep ? t.timeline.sleepCount : null,
   ];
 
   return (
@@ -188,7 +223,7 @@ export function Timeline({ meals, planned, workouts = [], hasPlan, heading = tru
         {heading && <h2>{t.timeline.title}</h2>}
         <span className="muted">{counts.filter(Boolean).join(" · ")}</span>
       </header>
-      {meals.length === 0 && planned.length === 0 && workouts.length === 0 && <p className="muted timeline-empty">{t.timeline.empty}</p>}
+      {meals.length === 0 && planned.length === 0 && workouts.length === 0 && !sleep && <p className="muted timeline-empty">{t.timeline.empty}</p>}
       {!hasPlan && (
         <p className="timeline-hint">
           {t.timeline.noPlan}{" "}
@@ -210,6 +245,21 @@ export function Timeline({ meals, planned, workouts = [], hasPlan, heading = tru
                 <span className="now-label" aria-hidden="true">
                   {t.timeline.now}
                 </span>
+              </li>
+            );
+          }
+
+          if (entry.kind === "sleep") {
+            return (
+              <li key="sleep" className="timeline-item" data-rod={rod} data-position={position}>
+                <span className="timeline-gutter">
+                  <span className="sleep-dot" aria-hidden="true">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z" />
+                    </svg>
+                  </span>
+                </span>
+                <SleepEntry night={entry.night} />
               </li>
             );
           }

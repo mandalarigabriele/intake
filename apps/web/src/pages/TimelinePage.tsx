@@ -1,5 +1,5 @@
 import type { DayView } from "@intake/shared";
-import { useLogPlanned, useSkipPlanned, useWorkouts, type User } from "../api/queries";
+import { useHealthDay, useLogPlanned, useSkipPlanned, useWorkouts, type User } from "../api/queries";
 import { DayScreen } from "../components/DayScreen";
 import { Timeline } from "../components/Timeline";
 import { t } from "../lib/strings";
@@ -9,7 +9,7 @@ interface Props {
   onAdd: () => void;
 }
 
-/** Timeline: logged and planned meals of the selected day, with the "now" marker for today. */
+/** Timeline: logged and planned meals, workouts and the night of the selected day, with the "now" marker for today. */
 export function TimelinePage({ user, onAdd }: Props) {
   return (
     <DayScreen
@@ -29,6 +29,7 @@ function DayTimeline({ view, selected, onAdd }: { view: DayView; selected: strin
   const logPlanned = useLogPlanned(selected);
   const skipPlanned = useSkipPlanned(selected);
   const workouts = useWorkouts(view.date, view.date);
+  const health = useHealthDay(view.date);
   const pending = logPlanned.variables && (logPlanned.isPending || logPlanned.isError) ? logPlanned.variables : null;
   return (
     <Timeline
@@ -36,6 +37,7 @@ function DayTimeline({ view, selected, onAdd }: { view: DayView; selected: strin
       meals={view.meals}
       planned={view.planned}
       workouts={workouts.data?.workouts ?? []}
+      sleep={health.data?.date === view.date ? health.data.sleep : null}
       hasPlan={view.hasPlan}
       now={view.isToday ? view.clock.localTime : null}
       heading={false}
