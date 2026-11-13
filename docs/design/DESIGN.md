@@ -16,25 +16,39 @@ All UI copy is in Italian (the app language); code, comments and docs stay in En
 | `Timeline.dc.html` | Timeline (today) | Sleep chip, meals, planned meals on a continuous rod; day arrows; skip / undo |
 | `TimelineMar10.dc.html` | Timeline (past day) | Example with a Health workout (MERACH indoor cycling) expanded and a short night |
 | `TimelineMer11.dc.html` | Timeline (past day) | Example with a Hevy workout enriched with heart rate from Health, expanded |
-| `Salute.dc.html` | Profile › Apple Salute | Data status, active-energy warning, file import, auto-sync (phase 2), step goal |
+| `AndamentoSalute.dc.html` | Andamento › Salute (iPhone) | Tabs Sonno / Attività / Cuore, period 7 / 30 / 90 days, real data, interactive in Play |
+| `SaluteDesktop.dc.html` | Salute (desktop / iPad) | Same data and period selector; the three tabs side by side as columns |
+| `Profilo.dc.html` | Profile | Weight (log + chart from the 2nd weigh-in), daily goals (read-only, from Nutrition) and step goal, connections, theme, sign out. The app also keeps "Promemoria" and "Scollega Nutrition" here (not drawn) |
+| `Salute.dc.html` | Profile › Apple Salute | Data status, active-energy warning, file import, auto-sync (phase 2). The step goal moved to Profilo |
 | `SaluteImport.dc.html` | Import preview | Preview, duplicates resolved, ignored data, result; states via the `stato` tweak |
 | `Aggiungi.dc.html` | Add sheet (opened by `+`) | Water shortcuts, today's plan meals, repeat / saved / search / barcode |
 | `Pasto.dc.html` | Meal detail | kcal, macro split bar, items with quantities, fiber/sugar/caffeine |
 | `Modifica.dc.html` | Edit meal | Meal type, time, items (edit/remove/add), values; delete with confirmation sheet |
-| `Settimana.dc.html` | Week | Kcal bars with workout marks, averages, Consistency, **Workouts**, **Steps**, **Sleep**, **Resting HR**, weight |
+| `Settimana.dc.html` | Andamento › Alimentazione | Nutrition only: kcal bars with workout marks, averages, kcal share (P/C/F), protein per day vs goal, Consistency |
 | `Piano.dc.html` | Meal plan | Day tabs (today preselected), meals of the selected day, "Libero" cards; `⋯` menu for upload + history |
 | `Desktop.dc.html` | Desktop / iPad — Today | Fluid layout: sticky sidebar; left column = calories, macros, water; right column = Next meal, insight. Timeline stays its own section, never inside Today |
+| `SettimanaDesktop.dc.html` | Desktop / iPad — Alimentazione | Nutrition only: KPI row (kcal, protein, fiber, water, added sugar, days logged); card grid `repeat(auto-fit, minmax(360px, 1fr))` with Calories (full width ≥ 1100 px, workout icons and kcal share), Protein, Consistency. One column on iPad portrait. "Personalizza" is phase 2 |
 | `OggiDark.dc.html`, `PianoDark.dc.html` | Dark mode references | See "Dark mode" |
+
+
+## Navigation update (13 Nov)
+
+- iPhone tab bar: **Oggi · Andamento · [+] · Piano · Timeline**. "Andamento" opens with a segmented control **Alimentazione | Salute**
+  (Alimentazione = former Week, nutrition only; Salute = sleep, activity, heart).
+- Desktop / iPad sidebar: **Oggi · Alimentazione · Salute · Piano · Timeline**.
+- The avatar opens **Profilo** (weight, goals incl. step goal, connections incl. Apple Salute, reminders, theme, "Scollega Nutrition", sign out).
+  Weight is no longer on the Week page.
+- Supersedes older mentions of "Settimana" as a tab, the weight card in Week, and the step goal in the Apple Salute screen.
 
 ## Navigation
 
 - Mobile: bottom tab bar **always fixed on screen** (content scrolls above it), 5 slots:
-  `Oggi · Settimana · [+] · Piano · Timeline`. The `+` is the round dark button in the middle slot and opens the add sheet.
+  `Oggi · Andamento · [+] · Piano · Timeline`. The `+` is the round dark button in the middle slot and opens the add sheet.
   There is no floating button.
 - Meal detail, edit and the add sheet are pushed/modal screens, without the tab bar.
-- The avatar in Today opens the profile, where "Apple Salute" lives.
-- Desktop/iPad (≥ 800 px): left sidebar with `Oggi · Settimana · Piano · Timeline` plus a "+ Aggiungi" button, sticky while the page scrolls.
-- Weight has no dedicated section: it is a card in **Settimana** (one weigh-in per week).
+- The avatar in Today opens **Profilo**, where "Apple Salute" lives.
+- Desktop/iPad (≥ 800 px): left sidebar with `Oggi · Alimentazione · Salute · Piano · Timeline` plus a "+ Aggiungi" button, sticky while the page scrolls.
+- Weight has no dedicated section: it is a card in **Profilo** (one weigh-in per week).
 - Shopping list is **not** in the app: the user keeps it in Apple Reminders ("Spesa"). A later iOS Shortcut may pull the list from the active plan.
 - No training section in v1.
 
@@ -72,9 +86,9 @@ All UI copy is in Italian (the app language); code, comments and docs stay in En
 - Skipping writes **nothing** to Nutrition: it is stored locally in SQLite as `(date, plan entry id, status = skipped)`,
   next to the existing plan entry ↔ logged meal link. Undo deletes that row.
 - A skipped meal no longer counts as "to log" and is excluded from the Next meal card.
-- Skips are counted in the Week consistency card.
+- Skips are counted in the Alimentazione consistency card.
 
-## Week — Consistency card
+## Alimentazione — Consistency card
 
 Rows (label, short note, value):
 - Days logged in a row (current streak).
@@ -89,7 +103,7 @@ The kcal chart scales above the goal (e.g. to 2,600) so days over target stay in
 
 Full requirements: [`docs/apple-health.md`](../apple-health.md). Summary:
 
-- **No new section.** Health data lives in Today, Timeline and Week. Management is under the avatar → Profile → "Apple Salute".
+- Health data lives in Today, Timeline and **Andamento › Salute**. Management is under the avatar → Profilo → "Apple Salute".
 - **Today — "ATTIVITÀ E RIPOSO" card** (after water, before the insight; desktop: right column):
   - Steps: during the day show "N passi finora · km" and the 7-day average as context only. The % comparison appears
     only for finished days (never compare a partial day with full-day averages).
@@ -101,9 +115,12 @@ Full requirements: [`docs/apple-health.md`](../apple-health.md). Summary:
 - **Timeline**: sleep is a compact chip at wake-up time, expandable to the phase bar. Workouts are cards with a type icon,
   time range, duration, kcal only if present, distance, "FC media", source pill; expanded: stats grid, Hevy exercises,
   a "Fonti" line. Meals, workouts and sleep differ by shape and icon, not only colour.
-- **Week**: workout marks (icons + legend) under the kcal chart; Workouts card (totals + one row per session, kcal "su N sessioni con dato");
-  Steps (goal line, average of finished days, best day); Sleep (hours per night, shortest night labelled, mean bedtime computed across midnight, mean wake time);
-  small Resting HR card.
+- **Andamento › Alimentazione**: workout marks (icons + legend) under the kcal chart; no other Health cards.
+- **Andamento › Salute** (`AndamentoSalute`, `SaluteDesktop`): tabs Sonno / Attività / Cuore (columns on desktop), period 7 / 30 / 90 days.
+  Sonno: average sleep, mean bedtime and wake time computed across midnight, floating bars bedtime → wake (shortest night labelled), average phases, facts.
+  Attività: average steps (finished days only), days at or above the step goal, daily bars with goal line (today light), workouts by type, latest workouts with source.
+  Cuore: average and minimum resting HR, difference from the previous period of the same length, line over time with the average, average workout HR by type.
+- Today's "Attività e riposo" card links to Andamento › Salute ("Vedi andamento →").
 - **Sources and names**: labels come from a mapping table. "Google Health" → **Fitbit**; also **MERACH**, **Hevy**, **Bevel**.
   Workout names: "Allenamento di Forza Tradizionale" → Forza, "Interno Ciclismo" → Cyclette, "Raquetball" → Racchetta; unknown → original name.
 - **Duplicates**: same workout if overlap ≥ 50% of the shorter session and same family (Forza; Ciclismo + Cyclette; Calcio; Camminata; Racchetta).
@@ -130,8 +147,22 @@ use a real hover/tap tooltip in the app).
 | Today · Calories | Cumulative kcal through the day (stepped line + area) vs the plan (dashed), "now" marker, label "a quest'ora: X su Y previste" |
 | Today · Activity & rest | 7-day steps sparkline (today hollow = partial), 7-night sleep mini bars (shortest in amber), 8-day resting-HR sparkline |
 | Timeline · workout expanded | Heart-rate curve during the session with dashed average line and max point |
-| Week | Kcal share stacked bar (P/C/F), protein bars vs 135 g goal line, sleep as floating bars bedtime → wake (shortest in amber), 5-week resting-HR line |
+| Andamento › Alimentazione | Kcal bars with workout icons, kcal share stacked bar (P/C/F), protein bars vs 135 g goal line |
+| Andamento › Salute | Sleep as floating bars bedtime → wake (shortest in amber), steps bars with goal line, resting-HR line with average |
 | Apple Salute | Data coverage heatmap per metric and day (present / present but irregular / missing) |
+
+
+## Customise layout (Alimentazione, desktop / iPad) — phase 2
+
+The first release builds the grid only; editing comes later.
+
+- Header button "Personalizza" enters edit mode; "Fine" leaves it, "Ripristina" restores the default.
+- Each card shows a bar with a drag handle, ↑ / ↓ (keyboard and touch alternative to drag), "Intera / Metà" (full or half width) and "Nascondi / Mostra".
+  Hidden cards stay visible but faded in edit mode, and disappear outside it.
+- Default order: Calorie (full width), Proteine, Costanza.
+- Grid: `repeat(auto-fit, minmax(360px, 1fr))`, `grid-auto-flow: row dense`, one gap value for KPI row, grid and page sections
+  (default 16 px; the mockup tweak also shows 12 and 24 px), cards in a row share the same height.
+- Layout is saved per device (local storage), not on Nutrition. Same pattern can be reused later for Today and the mobile Week.
 
 ## Add sheet (`+`) — what is really possible
 
