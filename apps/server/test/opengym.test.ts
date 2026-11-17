@@ -92,6 +92,54 @@ describe("openGym source", () => {
     const failing = new OpenGymApi("https://gym.example", "ogt_test", (async () => new Response(JSON.stringify({ jsonrpc: "2.0", id: 1, error: { message: "nope" } }))) as unknown as typeof fetch);
     await expect(failing.weekPlan()).rejects.toBeInstanceOf(OpenGymError);
   });
+
+  it("keeps at most four requests in flight while naming many workouts", async () => {
+    const inner = fakeFetch();
+    let running = 0;
+    let peak = 0;
+    const slow = (async (url: string | URL, init?: RequestInit) => {
+      running++;
+      peak = Math.max(peak, running);
+      await new Promise((resolve) => setTimeout(resolve, 5));
+      running--;
+      return inner(url, init);
+    }) as unknown as typeof fetch;
+    const api = new OpenGymApi("https://gym.example", "ogt_test", slow);
+    const ids = openGymWorkouts(state).map((w) => w.id);
+    expect(ids.length).toBeGreaterThan(4);
+    await Promise.all(ids.map((id) => api.exerciseNames(id)));
+    expect(peak).toBe(4);
+  });
+
+  it("retries a dropped connection once and reports the real cause", async () => {
+    const reset = () => Object.assign(new TypeError("fetch failed"), { cause: Object.assign(new Error("read ECONNRESET"), { code: "ECONNRESET" }) });
+    let attempts = 0;
+    const flaky = (async (url: string | URL, init?: RequestInit) => {
+      attempts++;
+      if (attempts === 1) throw reset();
+      return fakeFetch()(url, init);
+    }) as unknown as typeof fetch;
+    await expect(new OpenGymApi("https://gym.example", "ogt_test", flaky).weekPlan()).resolves.toBeTruthy();
+    expect(attempts).toBe(2);
+
+    let downAttempts = 0;
+    const down = (async () => {
+      downAttempts++;
+      throw Object.assign(new TypeError("fetch failed"), { cause: Object.assign(new Error("connect ECONNREFUSED 10.0.0.5:8080"), { code: "ECONNREFUSED" }) });
+    }) as unknown as typeof fetch;
+    await expect(new OpenGymApi("https://gym.example", "ogt_test", down).state()).rejects.toThrow(/fetch failed \(ECONNREFUSED connect ECONNREFUSED 10\.0\.0\.5:8080\)/);
+    expect(downAttempts).toBe(2);
+  });
+
+  it("does not retry a timeout", async () => {
+    let attempts = 0;
+    const timeout = (async () => {
+      attempts++;
+      throw new DOMException("The operation was aborted due to timeout", "TimeoutError");
+    }) as unknown as typeof fetch;
+    await expect(new OpenGymApi("https://gym.example", "ogt_test", timeout).state()).rejects.toThrow(/timed out after 10 s/);
+    expect(attempts).toBe(1);
+  });
 });
 
 describe("buildOpenGymTraining", () => {

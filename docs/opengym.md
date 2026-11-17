@@ -29,6 +29,7 @@ The token works on two openGym endpoints:
 
 - Requests carry `Authorization: Bearer <token>`; the MCP endpoint needs `Accept: application/json, text/event-stream`.
 - Reads are cached in memory for a minute; exercise names of a finished workout are kept for the process lifetime.
+- At most four requests run at a time (reading the history asks for one workout per session). A request that fails at the network level is retried once; a timeout (10 s) is not.
 - When openGym does not answer, the Timeline still lists Apple Health workouts and the Training page says so.
 
 ## How the data is shown
@@ -48,3 +49,8 @@ The token works on two openGym endpoints:
   the next session.
 - Exercise names come in English lower case from openGym's library; known ones are translated in `strings.ts`.
 - Body weight stays on Nutrition; openGym's weight log is not read.
+
+## Troubleshooting
+
+- `openGym request failed: fetch failed (CODE …)` in the server logs means Intake cannot reach `OPENGYM_URL` from its container. `ECONNREFUSED` or `ENOTFOUND` point to a wrong address or a container on another Docker network; `ECONNRESET` points to the proxy in front of openGym dropping connections.
+- `openGym answered 401` or `403` means the token is wrong or lacks a scope.

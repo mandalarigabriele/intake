@@ -25,6 +25,24 @@ export class OpenGymError extends Error {
 /** Reads are kept in memory this long; openGym is on the owner's own server, so this is about speed, not limits. */
 const CACHE_MS = 60_000;
 const TIMEOUT_MS = 10_000;
+/** At most this many requests in flight: a burst of one get_workout per session made the self-hosted server drop connections. */
+const MAX_IN_FLIGHT = 4;
+/** Pause before the single retry of a request that failed at the network level. */
+const RETRY_DELAY_MS = 300;
+
+/** "fetch failed" hides the reason; the cause (e.g. ECONNREFUSED, ECONNRESET, ENOTFOUND) is what explains it. */
+export function networkReason(error: unknown): string {
+  const err = error as { name?: string; message?: string; cause?: { code?: string; message?: string } };
+  if (err?.name === "TimeoutError" || err?.name === "AbortError") return `timed out after ${TIMEOUT_MS / 1000} s`;
+  const cause = err?.cause;
+  const detail = [cause?.code, cause?.message].filter((x, i, all) => x && all.indexOf(x) === i).join(" ");
+  return detail ? `${err?.message ?? "error"} (${detail})` : (err?.message ?? String(error));
+}
+
+function isTimeout(error: unknown): boolean {
+  const name = (error as { name?: string })?.name;
+  return name === "TimeoutError" || name === "AbortError";
+}
 
 /**
  * Read-only client of a self-hosted openGym with a scoped API token (Authorization: Bearer ogt_…):
@@ -36,6 +54,8 @@ export class OpenGymApi {
   /** Exercise names per workout id: a finished workout does not change, so they are kept for the process lifetime. */
   private readonly names = new Map<string, Promise<Map<string, string>>>();
   private rpcId = 0;
+  private inFlight = 0;
+  private readonly waiting: Array<() => void> = [];
 
   constructor(
     private readonly baseUrl: string,
@@ -53,16 +73,41 @@ export class OpenGymApi {
     return value;
   }
 
-  private async request(path: string, init: RequestInit = {}): Promise<unknown> {
-    let response: Response;
+  /** Runs `task` when fewer than MAX_IN_FLIGHT requests are running. */
+  private async limited<T>(task: () => Promise<T>): Promise<T> {
+    if (this.inFlight >= MAX_IN_FLIGHT) await new Promise<void>((resolve) => this.waiting.push(resolve));
+    this.inFlight++;
     try {
-      response = await this.fetchImpl(`${this.baseUrl}${path}`, {
+      return await task();
+    } finally {
+      this.inFlight--;
+      this.waiting.shift()?.();
+    }
+  }
+
+  private send(path: string, init: RequestInit): Promise<Response> {
+    return this.limited(() =>
+      this.fetchImpl(`${this.baseUrl}${path}`, {
         ...init,
         headers: { authorization: `Bearer ${this.token}`, accept: "application/json, text/event-stream", ...(init.headers ?? {}) },
         signal: AbortSignal.timeout(TIMEOUT_MS),
-      });
-    } catch (error) {
-      throw new OpenGymError(`openGym request failed: ${(error as Error).message}`);
+      }),
+    );
+  }
+
+  private async request(path: string, init: RequestInit = {}): Promise<unknown> {
+    let response: Response;
+    try {
+      response = await this.send(path, init);
+    } catch (first) {
+      // A dropped connection is retried once; a timeout is not (it already waited TIMEOUT_MS).
+      if (isTimeout(first)) throw new OpenGymError(`openGym request failed: ${networkReason(first)}`);
+      await new Promise((resolve) => setTimeout(resolve, RETRY_DELAY_MS));
+      try {
+        response = await this.send(path, init);
+      } catch (second) {
+        throw new OpenGymError(`openGym request failed: ${networkReason(second)}`);
+      }
     }
     if (!response.ok) throw new OpenGymError(`openGym answered ${response.status}`, response.status);
     const body = await response.json().catch(() => null);
