@@ -576,16 +576,17 @@ export const t = {
 
   training: {
     title: "Allenamenti",
-    subtitle: (source: string) => `da ${source}`,
-    subtitleWide: (source: string, routines: number, rotation: boolean) =>
+    subtitle: "Schede e progressi",
+    subtitleWide: (routines: number, rotation: boolean) =>
       rotation && routines > 1
-        ? `Schede e carichi da ${source} · rotazione ${Array.from({ length: routines }, (_, i) => String.fromCharCode(65 + i)).join(" → ")}`
-        : `Schede, piano e carichi da ${source}`,
+        ? `Schede e carichi · rotazione ${Array.from({ length: routines }, (_, i) => String.fromCharCode(65 + i)).join(" → ")}`
+        : "Schede, piano e carichi",
     liftAria: (title: string) => `Progressi ${title}`,
     loadFailed: "Allenamenti non disponibili. Riprova tra poco.",
     notConfigured: "Per vedere schede e progressi serve una fonte allenamenti sul server: la chiave di Hevy (HEVY_API_KEY) oppure openGym (OPENGYM_URL e OPENGYM_TOKEN).",
+    sourceFallback: "La fonte allenamenti",
     unavailable: (source: string) => `${source} non risponde: schede e progressi non sono disponibili ora.`,
-    empty: "Nessuna scheda trovata su Hevy.",
+    empty: "Nessuna scheda trovata.",
     next: "PROSSIMA SCHEDA",
     nextPlanned: "PROSSIMA SEDUTA",
     nextAria: "Prossima scheda",
@@ -601,7 +602,7 @@ export const t = {
       "First time in this routine, so starting from its own target.": "Prima volta in questa scheda: parte dal suo obiettivo.",
       "Nothing logged yet, so this session sets the baseline.": "Mai registrato: questa seduta fissa il punto di partenza.",
     } as Record<string, string>,
-    reasonFallback: "Carico aggiornato da openGym in base alla progressione.",
+    reasonFallback: "Carico aggiornato in base alla progressione.",
     muscles: "Muscoli nell’ultimo mese",
     musclesTop: "Più allenati",
     musclesNeglected: "Mai allenati",

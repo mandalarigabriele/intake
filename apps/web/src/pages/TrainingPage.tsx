@@ -280,12 +280,11 @@ function Recent({ recent, today }: { recent: TrainingView["recent"]; today: stri
   );
 }
 
-/** Andamento › Allenamenti (mockups AndamentoAllenamenti, AllenamentiDesktop): live from Hevy, nothing stored. */
+/** Andamento › Allenamenti (mockups AndamentoAllenamenti, AllenamentiDesktop): live from the active workout source, nothing stored. */
 export function TrainingPage() {
   const query = useTraining();
   const data = query.data;
   const source = data?.source ?? null;
-  const label = source?.label ?? "Hevy";
   const planned = source?.id === "opengym";
   // "Full Body A" for the lift subtitles, from the week and recent workouts
   const routineTitles = new Map<string, string>();
@@ -297,8 +296,8 @@ export function TrainingPage() {
       <header className="section-header">
         <div className="page-heading">
           <p className="page-date">
-            <span className="title-phone">{t.training.subtitle(label)}</span>
-            <span className="title-wide">{t.training.subtitleWide(label, data?.week.total ?? 0, !planned)}</span>
+            <span className="title-phone">{t.training.subtitle}</span>
+            <span className="title-wide">{t.training.subtitleWide(data?.week.total ?? 0, !planned)}</span>
           </p>
           <TrendsTitle page={t.training.title} />
         </div>
@@ -308,7 +307,7 @@ export function TrainingPage() {
       {query.isPending && <div className="card skeleton" style={{ height: 260 }} />}
       {query.isError && <p className="notice" data-kind="error">{t.training.loadFailed}</p>}
       {data && !data.configured && <p className="card trend-empty muted">{t.training.notConfigured}</p>}
-      {data?.hevyUnavailable && <p className="notice" data-kind="error">{t.training.unavailable(label)}</p>}
+      {data?.hevyUnavailable && <p className="notice" data-kind="error">{t.training.unavailable(source?.label ?? t.training.sourceFallback)}</p>}
       {data && data.configured && !data.hevyUnavailable && !data.next && data.recent.length === 0 && <p className="card trend-empty muted">{t.training.empty}</p>}
 
       {data && data.configured && !data.hevyUnavailable && (data.next || data.recent.length > 0) && (
