@@ -574,6 +574,12 @@ export const t = {
     open: "Vedi allenamento →",
   },
 
+  refresh: {
+    pull: "Trascina per aggiornare",
+    release: "Rilascia per aggiornare",
+    refreshing: "Aggiornamento…",
+  },
+
   training: {
     title: "Allenamenti",
     subtitle: "Schede e progressi",

@@ -5,7 +5,7 @@ import type { HealthStore } from "../db/healthStore.js";
 import type { NutritionApi } from "../mcp/nutritionApi.js";
 import { isGymUnavailable, type GymSource } from "../services/gymSource.js";
 import { mergeWorkouts } from "../services/healthWorkouts.js";
-import { buildOpenGymTraining, nextPlannedDate } from "../services/openGymTraining.js";
+import { buildOpenGymTraining, healthCoveredRoutines, nextPlannedDate } from "../services/openGymTraining.js";
 import { buildTraining } from "../services/training.js";
 
 export interface TrainingRoutesOptions {
@@ -62,12 +62,12 @@ export const trainingRoutes: FastifyPluginAsync<TrainingRoutesOptions> = async (
         return buildTraining({ routines, workouts, health: sessions, timeZone: clock.timezone, today });
       }
       const [state, plan, workouts] = await Promise.all([source.openGym.state(), source.openGym.weekPlan(), source.workoutsSince(since)]);
-      const date = nextPlannedDate(plan, workouts, clock.timezone);
+      const routineNames = await source.openGym.routineExerciseNames(state.routines.map((r) => r.id));
+      const date = nextPlannedDate(plan, workouts, clock.timezone, healthCoveredRoutines(state, sessions, today, routineNames));
       // Optional parts: the view still works if one of them fails
-      const [preview, muscles, routineNames] = await Promise.all([
+      const [preview, muscles] = await Promise.all([
         date ? source.openGym.preview(date).catch(() => null) : Promise.resolve(null),
         source.openGym.muscleBalance().catch(() => null),
-        source.openGym.routineExerciseNames(state.routines.map((r) => r.id)),
       ]);
       return buildOpenGymTraining({ state, plan, preview, muscles, routineNames, workouts, health: sessions, timeZone: clock.timezone, today, openUrl: source.publicUrl });
     } catch (error) {

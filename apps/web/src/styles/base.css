@@ -85,6 +85,60 @@ strong,
   overscroll-behavior-y: contain;
 }
 
+/* Pull to refresh (components/PullToRefresh.tsx): grows with the pull, springs back when released */
+.ptr {
+  overflow: hidden;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+}
+
+.ptr[data-phase="idle"],
+.ptr[data-phase="refreshing"] {
+  transition: height 0.2s ease;
+}
+
+.ptr-content {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding-bottom: 14px;
+  color: var(--color-text-muted);
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.ptr-arrow {
+  display: inline-block;
+  font-size: 16px;
+  transition: transform 0.2s ease;
+}
+
+.ptr-arrow[data-ready] {
+  transform: rotate(180deg);
+}
+
+.ptr-spinner {
+  width: 16px;
+  height: 16px;
+  border: 2px solid var(--color-track);
+  border-top-color: var(--color-accent);
+  border-radius: 50%;
+  animation: ptr-spin 0.8s linear infinite;
+}
+
+@keyframes ptr-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ptr-spinner {
+    animation-duration: 2.4s;
+  }
+}
+
 .sidebar {
   display: none;
 }

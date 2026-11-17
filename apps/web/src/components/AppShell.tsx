@@ -6,6 +6,7 @@ import { trackViewportHeight } from "../lib/viewport";
 import { PlanIcon, PlusIcon, TimelineIcon, TodayIcon, WeekIcon } from "./icons";
 import { Logo } from "./Logo";
 import { ProfileLink } from "./ProfileLink";
+import { PullIndicator, usePullToRefresh } from "./PullToRefresh";
 
 /** Sidebar from 800 px up (docs/design § Navigation): Andamento's two pages are listed on their own. */
 const SIDEBAR = [
@@ -53,6 +54,7 @@ export function AppShell({ user, onAdd, children }: Props) {
   const pushed = location.startsWith("/pasto/") || location.startsWith("/profilo");
   const section = sectionOf(location);
   const main = useRef<HTMLElement>(null);
+  const pull = usePullToRefresh(main);
 
   // The content area is the scroll container: start each screen at the top
   useEffect(() => {
@@ -83,6 +85,7 @@ export function AppShell({ user, onAdd, children }: Props) {
       </nav>
 
       <main className="shell-main" ref={main}>
+        <PullIndicator pull={pull.pull} phase={pull.phase} />
         {children}
       </main>
 

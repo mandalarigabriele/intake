@@ -39,9 +39,40 @@ export function routinesAsHevy(state: Pick<OpenGymState, "routines">): HevyRouti
   }));
 }
 
-/** The first planned day from today whose session is not done yet. */
-export function nextPlannedDate(plan: OpenGymWeekPlan, workouts: HevyWorkout[], timeZone: string): string | null {
-  const doneToday = new Set(workouts.filter((w) => localDateTime(w.start_time, timeZone).date === plan.today).map((w) => w.routine_id));
+/** Keywords in a cardio routine or exercise name → the Apple Health workout family it stands for (healthWorkouts.ts). */
+const CARDIO_FAMILIES: Array<[RegExp, string]> = [
+  [/cyclette|bike|cycl|bici|spinning/i, "Ciclismo"],
+  [/walk|cammin/i, "Camminata"],
+];
+
+/**
+ * The Health family a cardio routine stands for ("Cyclette — Zona 2" → Ciclismo), or null for a strength routine.
+ * A routine is cardio when none of its exercises counts reps.
+ */
+export function cardioFamily(routine: OpenGymState["routines"][number], names?: Map<string, string>): string | null {
+  const exercises = routine.ex as Array<{ id: string; mode?: string | null }>;
+  if (exercises.length === 0 || exercises.some((e) => (e.mode ?? null) === "reps")) return null;
+  const text = [routine.name, ...exercises.map((e) => names?.get(e.id) ?? "")].join(" ");
+  return CARDIO_FAMILIES.find(([pattern]) => pattern.test(text))?.[1] ?? null;
+}
+
+/**
+ * Cardio routines covered on a date by an Apple Health workout of the same family (a ride recorded by the watch
+ * stands for "Cyclette — Zona 2" when the session was not logged in openGym). Nothing is written to openGym.
+ */
+export function healthCoveredRoutines(state: Pick<OpenGymState, "routines">, health: MergedWorkout[], date: string, names?: Map<string, string>): Set<string> {
+  const families = new Set(health.filter((h) => h.date === date).map((h) => h.family));
+  return new Set(
+    state.routines.flatMap((r) => {
+      const family = cardioFamily(r, names);
+      return family && families.has(family) ? [r.id] : [];
+    }),
+  );
+}
+
+/** The first planned day from today whose session is not done yet (in openGym, or a cardio routine covered by Health). */
+export function nextPlannedDate(plan: OpenGymWeekPlan, workouts: HevyWorkout[], timeZone: string, coveredToday: Set<string> = new Set()): string | null {
+  const doneToday = new Set<string | null | undefined>([...coveredToday, ...workouts.filter((w) => localDateTime(w.start_time, timeZone).date === plan.today).map((w) => w.routine_id)]);
   const day = plan.days.find((d) => d.routine_ids.length > 0 && !(d.date === plan.today && d.routine_ids.every((id) => doneToday.has(id))));
   return day?.date ?? null;
 }
@@ -106,6 +137,7 @@ export function buildOpenGymTraining(input: {
 }): TrainingView {
   const { state, plan, preview, muscles, routineNames, workouts, health, timeZone, today, openUrl } = input;
   const base = buildTraining({ routines: routinesAsHevy(state), workouts, health, timeZone, today });
+  const coveredToday = healthCoveredRoutines(state, health, today, routineNames);
   const letterOf = (routineId: string | null | undefined, title = "") => {
     const routine = state.routines.find((r) => r.id === routineId);
     if (routine) return openGymLetter(routine.name);
@@ -139,10 +171,12 @@ export function buildOpenGymTraining(input: {
   const days = base.week.days.map((d) => {
     const raw = workouts.find((w) => localDateTime(w.start_time, timeZone).date === d.date);
     const plannedIds = d.date >= today ? plannedOn.get(d.date) ?? [] : [];
+    // A cardio session of today recorded only in Apple Health counts as done
+    const covered = !raw && d.date === today && plannedIds.length > 0 && plannedIds.every((id) => coveredToday.has(id));
     return {
       ...d,
-      letter: raw ? letterOf(raw.routine_id, raw.title) ?? "•" : null,
-      planned: !raw && plannedIds.length ? plannedIds.map((id) => letterOf(id) ?? "•").join("+") : null,
+      letter: raw ? letterOf(raw.routine_id, raw.title) ?? "•" : covered ? plannedIds.map((id) => letterOf(id) ?? "•").join("+") : null,
+      planned: !raw && !covered && plannedIds.length ? plannedIds.map((id) => letterOf(id) ?? "•").join("+") : null,
     };
   });
   const week: TrainingView["week"] = {

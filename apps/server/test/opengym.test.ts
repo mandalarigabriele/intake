@@ -4,7 +4,8 @@ import { openDatabase } from "../src/db/database.js";
 import { OpenGymApi, OpenGymError } from "../src/opengym/openGymApi.js";
 import { muscleBalanceSchema, openGymWorkouts, parseOpenGymState, previewSchema, weekPlanSchema } from "../src/parsers/openGym.js";
 import { fromOpenGym, GymSources, hevySource, openGymSource } from "../src/services/gymSource.js";
-import { buildOpenGymTraining, nextPlannedDate, openGymLetter } from "../src/services/openGymTraining.js";
+import type { MergedWorkout } from "../src/services/healthWorkouts.js";
+import { buildOpenGymTraining, cardioFamily, healthCoveredRoutines, nextPlannedDate, openGymLetter } from "../src/services/openGymTraining.js";
 import { authOptions, signIn } from "./helpers.js";
 import { fixture } from "./parsers/fixtures.js";
 
@@ -176,6 +177,29 @@ describe("buildOpenGymTraining", () => {
     // Workouts imported from Hevy still get their letter from the title
     expect(view.recent[0]!.letter).toBe("C");
     expect(view.muscles).toEqual({ top: expect.arrayContaining(["chest", "gluteal"]), neglected: ["hip-flexors", "tibialis"] });
+  });
+
+  /** An Apple Health session of a given family on a date. */
+  const session = (family: string, date: string): MergedWorkout =>
+    ({ id: `h-${family}`, label: family, family, source: "Fitbit", date, start: `${date}T18:00:00+01:00`, end: `${date}T18:40:00+01:00`, durationMinutes: 40, kcal: 300, distanceKm: null, hrAvg: 130, hrMax: 150, heartRate: [], fromHevy: false, sources: [], heartRateFrom: null, kcalFrom: null, records: [] }) as MergedWorkout;
+
+  it("knows which routines are cardio and which Health family stands for them", () => {
+    const byId = (id: string) => state.routines.find((r) => r.id === id)!;
+    expect(cardioFamily(byId("rt004"))).toBe("Ciclismo");
+    expect(cardioFamily(byId("rt003"))).toBeNull();
+    expect([...healthCoveredRoutines(state, [session("Ciclismo", "2026-11-17")], "2026-11-17")]).toEqual(["rt004"]);
+    // Football on the same day does not stand for the bike, and yesterday's ride does not count today
+    expect(healthCoveredRoutines(state, [session("Calcio", "2026-11-17"), session("Ciclismo", "2026-11-16")], "2026-11-17").size).toBe(0);
+  });
+
+  it("counts today's cardio routine as done when Apple Health recorded the ride", () => {
+    const health = [session("Ciclismo", "2026-11-17")];
+    expect(nextPlannedDate(plan, workouts, "Europe/Rome", healthCoveredRoutines(state, health, "2026-11-17"))).toBe("2026-11-18");
+    const view = buildOpenGymTraining({ state, plan, preview, muscles, workouts, health, timeZone: "Europe/Rome", today: "2026-11-17", openUrl: "https://gym.example" });
+    const today = view.week.days.find((d) => d.date === "2026-11-17")!;
+    expect(today).toMatchObject({ letter: "C", planned: null });
+    const without = buildOpenGymTraining({ state, plan, preview, muscles, workouts, health: [], timeZone: "Europe/Rome", today: "2026-11-17", openUrl: "https://gym.example" });
+    expect(view.week.done).toBe(without.week.done + 1);
   });
 });
 

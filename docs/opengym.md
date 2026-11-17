@@ -40,6 +40,10 @@ The token works on two openGym endpoints:
 - **Next session**: the first day of the week plan from today whose routine is not done yet, with openGym's
   opening sets (weight × reps), the routine's rep range for context, and the reason when the opening differs from the
   routine. Known reasons are translated; others show a generic line with the original as a tooltip.
+- **Cardio from Apple Health**: a cardio routine (no exercise counts reps, e.g. "Cyclette — Zona 2") planned today
+  counts as done when Apple Health has a workout of the same family that day (a bike routine → an indoor or outdoor
+  ride, a walking routine → a walk). The next session moves on and today's tile shows the routine as done. Nothing is
+  written to openGym, where the session stays not done; another sport (e.g. football) does not count.
 - **Week**: the routine number on days done, the planned routine outlined on the days to come, done out of the
   planned weekdays.
 - **Load progress**: the first two weighted exercises of each routine, best working set per session; only the trend
