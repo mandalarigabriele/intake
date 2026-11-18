@@ -2,8 +2,9 @@ import type { TrainingDoneWorkout, TrainingLift, TrainingTargetExercise, Trainin
 import { useState, type ReactNode } from "react";
 import { useTraining } from "../api/queries";
 import { TrendsSwitch, TrendsTitle } from "../components/TrendsSwitch";
+import { HeartRateChart } from "../components/WorkoutCard";
 import { addDays } from "../lib/dates";
-import { formatKcal, formatOneDecimal, formatWeekday, formatWeekdayDay } from "../lib/format";
+import { formatDuration, formatKcal, formatOneDecimal, formatWeekday, formatWeekdayDay } from "../lib/format";
 import { t } from "../lib/strings";
 
 const LETTERS = ["L", "M", "M", "G", "V", "S", "D"];
@@ -148,9 +149,29 @@ export function doneSetsText(sets: TrainingDoneWorkout["exercises"][number]["set
   return parts.join(" · ");
 }
 
-/** "Oggi": the workout done today with every exercise and its sets. */
+/** Recap tiles: duration, heart rate and kcal (Apple Health), volume against the previous session, sets and reps. */
+function recapStats(workout: TrainingDoneWorkout): Array<{ label: string; value: string; note?: string; kind?: "up" | "down" }> {
+  const r = t.training.recap;
+  const stats: Array<{ label: string; value: string; note?: string; kind?: "up" | "down" }> = [{ label: r.duration, value: formatDuration(workout.minutes) }];
+  if (workout.hrAvg !== null) stats.push({ label: r.heartRate, value: r.bpm(formatKcal(workout.hrAvg)), note: workout.hrMax !== null ? r.max(formatKcal(workout.hrMax)) : undefined });
+  if (workout.kcal !== null) stats.push({ label: r.kcal, value: formatKcal(workout.kcal) });
+  const previous = workout.previous;
+  const change = previous && previous.volumeKg > 0 ? Math.round(((workout.volumeKg - previous.volumeKg) / previous.volumeKg) * 100) : null;
+  stats.push({
+    label: r.volume,
+    value: r.kg(formatKcal(workout.volumeKg)),
+    note: change === null ? undefined : change === 0 ? r.same(formatWeekdayDay(previous!.date)) : r.change(change, formatWeekdayDay(previous!.date)),
+    kind: change === null || change === 0 ? undefined : change > 0 ? "up" : "down",
+  });
+  stats.push({ label: r.sets, value: r.setsReps(workout.sets, workout.reps) });
+  return stats;
+}
+
+/** "Oggi": the workout done today as a recap, then every exercise and its sets. */
 function TodayWorkout({ workout, source, switcher }: { workout: TrainingDoneWorkout; source: NonNullable<TrainingView["source"]>; switcher?: ReactNode }) {
-  const meta = [t.todayTraining.doneMeta(workout.start, workout.minutes, workout.exercises.length), workout.hrAvg !== null ? t.training.hrShort(formatKcal(workout.hrAvg)) : null].filter(Boolean).join(" · ");
+  // Duration and heart rate are in the tiles below
+  const meta = `${workout.start} · ${t.training.exerciseCount(workout.exercises.length)}`;
+  const records = workout.exercises.filter((e) => e.record).length;
   return (
     <section className="card training-card training-next" aria-label={t.training.doneTodayAria}>
       <div className="training-next-head">
@@ -162,6 +183,25 @@ function TodayWorkout({ workout, source, switcher }: { workout: TrainingDoneWork
         <h2>{workout.title}</h2>
         <span className="muted">{meta}</span>
       </div>
+      <dl className="workout-stats training-recap">
+        {recapStats(workout).map((stat) => (
+          <div key={stat.label}>
+            <dt>{stat.label}</dt>
+            <dd>{stat.value}</dd>
+            {stat.note && (
+              <span className="training-recap-note" data-kind={stat.kind}>
+                {stat.note}
+              </span>
+            )}
+          </div>
+        ))}
+      </dl>
+      {workout.heartRate.length >= 2 ? (
+        <HeartRateChart workout={{ heartRate: workout.heartRate, durationMinutes: workout.minutes, hrAvg: workout.hrAvg, hrMax: workout.hrMax }} />
+      ) : (
+        workout.hrAvg === null && <span className="training-reason training-recap-hint">{t.training.recap.noWatch}</span>
+      )}
+      {records > 0 && <span className="training-recap-records">{t.training.recap.records(records)}</span>}
       <div className="training-list">
         {workout.exercises.map((e, i) => (
           <div key={`${e.title}-${i}`} className="training-row">
@@ -169,6 +209,11 @@ function TodayWorkout({ workout, source, switcher }: { workout: TrainingDoneWork
               <strong>{liftName(e.title)}</strong>
               <span className="muted">{doneSetsText(e.sets)}</span>
             </div>
+            {e.record && (
+              <span className="training-pill" data-kind="up">
+                {t.training.recap.record}
+              </span>
+            )}
           </div>
         ))}
       </div>

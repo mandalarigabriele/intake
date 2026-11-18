@@ -184,6 +184,15 @@ describe("buildOpenGymTraining", () => {
     expect(view.todayWorkout).toMatchObject({ title: "Full Body C — Split Squat + Croci + Cavi", start: "16:48", minutes: 41, letter: "C" });
     expect(view.todayWorkout!.exercises.length).toBe(8);
     expect(view.todayWorkout!.exercises[0]!.sets[0]).toEqual({ warmup: true, weightKg: 20, reps: 8, durationSeconds: null });
+    // Recap: working sets and volume, compared with the previous Full Body C (6 Nov, matched by title)
+    expect(view.todayWorkout).toMatchObject({ sets: 18, previous: { date: "2026-11-06" } });
+    expect(view.todayWorkout!.volumeKg).toBeGreaterThan(0);
+    expect(view.todayWorkout!.reps).toBeGreaterThan(view.todayWorkout!.sets);
+    // Bulgarian split squat at 20 kg beats the earlier 10 kg; cable flyes at 12.5 kg do not beat 15 kg
+    expect(view.todayWorkout!.exercises[0]!.record).toBe(true);
+    expect(view.todayWorkout!.exercises[1]!.record).toBe(false);
+    // Without Apple Health there is no heart rate or kcal
+    expect(view.todayWorkout).toMatchObject({ hrMax: null, kcal: null, heartRate: [] });
     // Nothing done on the 17th (the cycling session has no done set)
     expect(buildOpenGymTraining({ state, plan, preview, muscles, workouts, health: [], timeZone: "Europe/Rome", today: "2026-11-17", openUrl: "https://gym.example" }).todayWorkout).toBeNull();
   });

@@ -44,7 +44,7 @@ export function sourcesLine(workout: Workout): string {
 const CHART = { width: 290, height: 104, left: 26, right: 282, top: 10, bottom: 86 };
 
 /** Heart rate during the session: area and line, dashed average, max point; minutes on the x axis. */
-function HeartRateChart({ workout }: { workout: Workout }) {
+export function HeartRateChart({ workout }: { workout: Pick<Workout, "heartRate" | "durationMinutes" | "hrAvg" | "hrMax"> }) {
   const points = workout.heartRate;
   const bpms = points.map((p) => p.bpm);
   // The mockup scale (about 60–170 bpm) so sessions compare at a glance; it widens for values outside it

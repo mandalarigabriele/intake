@@ -633,8 +633,21 @@ export interface TrainingDoneWorkout {
   start: string;
   minutes: number;
   hrAvg: number | null;
+  /** From Apple Health when a watch recorded the session (null otherwise). */
+  hrMax: number | null;
+  kcal: number | null;
+  /** Heart rate during the session, one point per minute (empty without Apple Health). */
+  heartRate: WorkoutHeartRatePoint[];
+  /** Working sets, their reps and weight × reps in kg. */
+  sets: number;
+  reps: number;
+  volumeKg: number;
+  /** The previous session of the same routine, for comparison (null when there is none in the history). */
+  previous: { date: string; volumeKg: number; minutes: number } | null;
   exercises: Array<{
     title: string;
+    /** The heaviest working set beats every earlier session of this exercise in the history. */
+    record: boolean;
     sets: Array<{ warmup: boolean; weightKg: number | null; reps: number | null; durationSeconds: number | null }>;
   }>;
 }

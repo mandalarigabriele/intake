@@ -1,4 +1,4 @@
-import type { TrainingLift, TrainingTargetExercise, TrainingView } from "@intake/shared";
+import type { TrainingLift, TrainingTargetExercise, TrainingView, Workout } from "@intake/shared";
 import type { HevyRoutine, HevyWorkout } from "../parsers/hevy.js";
 import { localDateTime } from "../parsers/hevy.js";
 import { combineWorkouts } from "./dayWorkouts.js";
@@ -59,6 +59,56 @@ function readyToProgress(workouts: HevyWorkout[], templateId: string, repEnd: nu
   const top = Math.max(...sets.map((s) => s.weight_kg!));
   const atTop = sets.filter((s) => s.weight_kg === top);
   return atTop.every((s) => (s.reps ?? 0) >= repEnd) ? nextWeight(top, title) : null;
+}
+
+/** Working sets (warm-ups excluded) of a workout. */
+const workSets = (w: HevyWorkout) => w.exercises.flatMap((e) => e.sets.filter((s) => s.type !== "warmup"));
+const volumeOf = (w: HevyWorkout) => Math.round(workSets(w).reduce((sum, s) => sum + (s.weight_kg ?? 0) * (s.reps ?? 0), 0));
+const heaviest = (e: HevyWorkout["exercises"][number]) => Math.max(0, ...e.sets.filter((s) => s.type !== "warmup").map((s) => s.weight_kg ?? 0));
+
+/**
+ * Today's workout as a recap: every exercise and set, heart rate and kcal from Apple Health when a watch recorded
+ * it, volume compared with the previous session of the same routine, and the exercises with a new heaviest set.
+ */
+export function doneWorkout(raw: HevyWorkout, session: Workout, workouts: HevyWorkout[], timeZone: string, letter: string | null): NonNullable<TrainingView["todayWorkout"]> {
+  const earlier = workouts.filter((w) => w.id !== raw.id && Date.parse(w.start_time) < Date.parse(raw.start_time));
+  const sameRoutine = earlier.filter((w) => (raw.routine_id ? w.routine_id === raw.routine_id : w.title === raw.title)).sort((a, b) => b.start_time.localeCompare(a.start_time))[0];
+  const best = new Map<string, number>();
+  for (const w of earlier) for (const e of w.exercises) if (e.exercise_template_id) best.set(e.exercise_template_id, Math.max(best.get(e.exercise_template_id) ?? 0, heaviest(e)));
+  const sets = workSets(raw);
+  return {
+    id: raw.id,
+    letter,
+    title: session.title,
+    start: session.start,
+    minutes: session.durationMinutes,
+    hrAvg: session.hrAvg,
+    hrMax: session.hrMax,
+    kcal: session.kcal,
+    heartRate: session.heartRate,
+    sets: sets.length,
+    reps: sets.reduce((sum, s) => sum + (s.reps ?? 0), 0),
+    volumeKg: volumeOf(raw),
+    previous: sameRoutine
+      ? {
+          date: localDateTime(sameRoutine.start_time, timeZone).date,
+          volumeKg: volumeOf(sameRoutine),
+          minutes: Math.round((Date.parse(sameRoutine.end_time) - Date.parse(sameRoutine.start_time)) / 60_000),
+        }
+      : null,
+    exercises: raw.exercises
+      .map((e) => {
+        const before = e.exercise_template_id ? best.get(e.exercise_template_id) : undefined;
+        const top = heaviest(e);
+        return {
+          title: e.title,
+          // Only a real improvement on an exercise done before: a first time is not a record
+          record: before !== undefined && before > 0 && top > before,
+          sets: e.sets.map((set) => ({ warmup: set.type === "warmup", weightKg: set.weight_kg ?? null, reps: set.reps ?? null, durationSeconds: set.duration_seconds ?? null })),
+        };
+      })
+      .filter((e) => e.sets.length > 0),
+  };
 }
 
 export function buildTraining(input: {
@@ -206,23 +256,7 @@ export function buildTraining(input: {
   // The latest workout done today, with its sets
   const doneToday = sessions.filter((s) => s.origin === "app" && s.date === today).sort((a, b) => b.start.localeCompare(a.start))[0];
   const rawToday = doneToday ? workouts.find((w) => w.id === doneToday.id) : undefined;
-  const todayWorkout: TrainingView["todayWorkout"] =
-    doneToday && rawToday
-      ? {
-          id: rawToday.id,
-          letter: letterOf(rawToday.routine_id),
-          title: doneToday.title,
-          start: doneToday.start,
-          minutes: doneToday.durationMinutes,
-          hrAvg: doneToday.hrAvg,
-          exercises: rawToday.exercises
-            .map((e) => ({
-              title: e.title,
-              sets: e.sets.map((set) => ({ warmup: set.type === "warmup", weightKg: set.weight_kg ?? null, reps: set.reps ?? null, durationSeconds: set.duration_seconds ?? null })),
-            }))
-            .filter((e) => e.sets.length > 0),
-        }
-      : null;
+  const todayWorkout: TrainingView["todayWorkout"] = doneToday && rawToday ? doneWorkout(rawToday, doneToday, workouts, timeZone, letterOf(rawToday.routine_id)) : null;
 
   return { configured: true, today, source: { id: "hevy", label: "Hevy", openUrl: null }, next, week, lifts, recent, todayWorkout };
 }
