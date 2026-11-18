@@ -26,6 +26,8 @@ export const hevyWorkoutSchema = z.looseObject({
   start_time: z.string(),
   end_time: z.string(),
   exercises: z.array(exerciseSchema).default([]),
+  /** Not from Hevy: average and max heart rate an openGym workout carries (services/gymSource.ts). */
+  heart_rate: z.object({ avg: z.number().nullable(), max: z.number().nullable() }).nullable().optional(),
 });
 
 export const hevyWorkoutPageSchema = z.looseObject({

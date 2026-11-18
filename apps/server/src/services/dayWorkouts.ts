@@ -55,11 +55,12 @@ function fromHevy(raw: HevyWorkout, session: MergedWorkout | null, timeZone: str
     source: appLabel,
     kcal: session?.kcal ?? null,
     distanceKm: null,
-    hrAvg: session?.hrAvg ?? null,
-    hrMax: session?.hrMax ?? null,
+    // A watch session wins; otherwise the average and max the gym app itself carries (openGym reads them from Health)
+    hrAvg: session?.hrAvg ?? raw.heart_rate?.avg ?? null,
+    hrMax: session?.hrMax ?? raw.heart_rate?.max ?? null,
     heartRate: session ? heartRateCurve(session.heartRate, workout.start, workout.durationMinutes) : [],
     sources: [{ label: appLabel, used: true }, ...healthSources],
-    heartRateFrom: session?.heartRateFrom ?? null,
+    heartRateFrom: session?.hrAvg != null ? session.heartRateFrom : raw.heart_rate?.avg != null ? appLabel : (session?.heartRateFrom ?? null),
     kcalFrom: session?.kcalFrom ?? null,
   };
 }

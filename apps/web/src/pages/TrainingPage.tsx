@@ -199,7 +199,7 @@ function TodayWorkout({ workout, source, switcher }: { workout: TrainingDoneWork
       {workout.heartRate.length >= 2 ? (
         <HeartRateChart workout={{ heartRate: workout.heartRate, durationMinutes: workout.minutes, hrAvg: workout.hrAvg, hrMax: workout.hrMax }} />
       ) : (
-        workout.hrAvg === null && <span className="training-reason training-recap-hint">{t.training.recap.noWatch}</span>
+        <span className="training-reason training-recap-hint">{workout.hrAvg === null ? t.training.recap.noHeartRate : t.training.recap.noCurve(workout.heartRateFrom ?? source.label)}</span>
       )}
       {records > 0 && <span className="training-recap-records">{t.training.recap.records(records)}</span>}
       <div className="training-list">

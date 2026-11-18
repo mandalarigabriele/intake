@@ -84,6 +84,7 @@ export function doneWorkout(raw: HevyWorkout, session: Workout, workouts: HevyWo
     minutes: session.durationMinutes,
     hrAvg: session.hrAvg,
     hrMax: session.hrMax,
+    heartRateFrom: session.heartRateFrom,
     kcal: session.kcal,
     heartRate: session.heartRate,
     sets: sets.length,

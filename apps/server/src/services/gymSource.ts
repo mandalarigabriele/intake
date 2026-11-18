@@ -30,6 +30,10 @@ export function fromOpenGym(workout: OpenGymWorkout, names: Map<string, string>,
     routine_id: workout.routineId ?? null,
     start_time: new Date(workout.start).toISOString(),
     end_time: new Date(workout.end).toISOString(),
+    heart_rate:
+      workout.hr && (workout.hr.avg || workout.hr.max)
+        ? { avg: workout.hr.avg ? Math.round(workout.hr.avg) : null, max: workout.hr.max ? Math.round(workout.hr.max) : null }
+        : null,
     exercises: workout.entries
       .map((e) => ({
         title: names.get(e.id) ?? custom[e.id]?.n ?? e.id,

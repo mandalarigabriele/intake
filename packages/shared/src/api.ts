@@ -633,8 +633,10 @@ export interface TrainingDoneWorkout {
   start: string;
   minutes: number;
   hrAvg: number | null;
-  /** From Apple Health when a watch recorded the session (null otherwise). */
+  /** From a watch session in Apple Health, else the average and max the gym app carries (openGym). */
   hrMax: number | null;
+  /** Who gave the heart rate ("Fitbit", "openGym"...); null without any. */
+  heartRateFrom: string | null;
   kcal: number | null;
   /** Heart rate during the session, one point per minute (empty without Apple Health). */
   heartRate: WorkoutHeartRatePoint[];

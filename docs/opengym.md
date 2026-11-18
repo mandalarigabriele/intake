@@ -52,6 +52,7 @@ The token works on two openGym endpoints:
 - **Today card** ("Allenamento di oggi"): done today, today's planned session with its first exercises, or rest with
   the next session. A Today / Next switch shows the session after it; when today's session is still to do, the server
   also previews the next planned day (`following` in `GET /api/training`, one extra `preview_session` call).
+- **Heart rate**: openGym stores, with each workout, the average and max heart rate it read from Apple Health (`hr`). Intake shows them on the Timeline card and the Training recap when no watch workout in Apple Health covers the session; a watch workout wins and also brings the curve and kcal.
 - Exercise names come in English lower case from openGym's library; known ones are translated in `strings.ts`.
 - Body weight stays on Nutrition; openGym's weight log is not read.
 

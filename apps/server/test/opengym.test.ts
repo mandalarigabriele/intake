@@ -3,6 +3,7 @@ import { buildApp } from "../src/app.js";
 import { openDatabase } from "../src/db/database.js";
 import { OpenGymApi, OpenGymError } from "../src/opengym/openGymApi.js";
 import { muscleBalanceSchema, openGymWorkouts, parseOpenGymState, previewSchema, weekPlanSchema } from "../src/parsers/openGym.js";
+import { combineWorkouts } from "../src/services/dayWorkouts.js";
 import { fromOpenGym, GymSources, hevySource, openGymSource } from "../src/services/gymSource.js";
 import type { MergedWorkout } from "../src/services/healthWorkouts.js";
 import { buildOpenGymTraining, cardioFamily, healthCoveredRoutines, nextPlannedDate, openGymLetter, plannedAfter } from "../src/services/openGymTraining.js";
@@ -140,6 +141,29 @@ describe("openGym source", () => {
     }) as unknown as typeof fetch;
     await expect(new OpenGymApi("https://gym.example", "ogt_test", timeout).state()).rejects.toThrow(/timed out after 10 s/);
     expect(attempts).toBe(1);
+  });
+});
+
+describe("openGym heart rate", () => {
+  const raw = openGymWorkouts(state).find((w) => w.entries.length > 0)!;
+  const withHr = fromOpenGym({ ...raw, hr: { avg: 118.4, max: 151 } }, names, state);
+
+  it("carries the average and max openGym read from Apple Health", () => {
+    expect(withHr.heart_rate).toEqual({ avg: 118, max: 151 });
+    expect(fromOpenGym({ ...raw, hr: { avg: 0, max: 0 } }, names, state).heart_rate).toBeNull();
+    expect(fromOpenGym(raw, names, state).heart_rate).toBeNull();
+  });
+
+  it("shows it on the workout when no watch session has heart rate, and the watch wins when there is one", () => {
+    const [own] = combineWorkouts([withHr], [], "Europe/Rome", "openGym");
+    expect(own).toMatchObject({ hrAvg: 118, hrMax: 151, heartRateFrom: "openGym", heartRate: [] });
+    const watch = {
+      id: "h1", label: "Forza", family: "Forza", source: "Fitbit", date: "2026-11-13",
+      start: withHr.start_time, end: withHr.end_time, durationMinutes: 41, kcal: 300, distanceKm: null, hrAvg: 125, hrMax: 160,
+      heartRate: [], fromHevy: false, sources: [{ label: "Fitbit", used: true }], heartRateFrom: "Fitbit", kcalFrom: "Fitbit", records: [],
+    };
+    const [merged] = combineWorkouts([withHr], [watch], "Europe/Rome", "openGym");
+    expect(merged).toMatchObject({ hrAvg: 125, hrMax: 160, heartRateFrom: "Fitbit", kcal: 300 });
   });
 });
 

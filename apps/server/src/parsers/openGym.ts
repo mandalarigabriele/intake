@@ -26,6 +26,12 @@ export const openGymWorkoutSchema = z.looseObject({
   routineId: z.string().nullable().optional(),
   name: z.string().default(""),
   entries: z.array(z.looseObject({ id: z.string(), sets: z.array(setSchema).default([]) })).default([]),
+  /** Heart rate openGym read from Apple Health for the session (average and max only, no curve). */
+  hr: z
+    .looseObject({ avg: z.number().nullable().optional(), max: z.number().nullable().optional() })
+    .nullable()
+    .optional()
+    .catch(null),
 });
 
 const routineSchema = z.looseObject({ id: z.string(), name: z.string().default(""), ex: z.array(z.looseObject({ id: z.string() })).catch([]).default([]) });

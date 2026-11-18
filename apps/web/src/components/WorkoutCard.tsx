@@ -29,7 +29,8 @@ export function sourcesLine(workout: Workout): string {
   const parts: string[] = [];
   if (workout.origin === "app") {
     parts.push(t.workouts.sourcesApp(workout.source));
-    if (workout.heartRateFrom) parts.push(t.workouts.hrFromHealth);
+    // The gym app's own average (openGym) or a watch session in Apple Health
+    if (workout.heartRateFrom) parts.push(workout.heartRateFrom === workout.source ? t.workouts.hrFrom(workout.source) : t.workouts.hrFromHealth);
     parts.push(workout.kcal !== null ? t.workouts.kcalFromHealth : t.workouts.noKcal);
   } else {
     parts.push(t.workouts.source(workout.source));
