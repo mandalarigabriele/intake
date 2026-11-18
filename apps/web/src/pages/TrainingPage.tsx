@@ -1,4 +1,5 @@
-import type { TrainingLift, TrainingTargetExercise, TrainingView } from "@intake/shared";
+import type { TrainingDoneWorkout, TrainingLift, TrainingTargetExercise, TrainingView } from "@intake/shared";
+import { useState, type ReactNode } from "react";
 import { useTraining } from "../api/queries";
 import { TrendsSwitch, TrendsTitle } from "../components/TrendsSwitch";
 import { addDays } from "../lib/dates";
@@ -59,7 +60,7 @@ function plannedWhen(date: string, today: string): string {
 /** openGym's reason, in Italian when it is a known one. */
 const reasonText = (note: string) => t.training.reasons[note] ?? t.training.reasonFallback;
 
-function NextRoutine({ next, today, source }: { next: NonNullable<TrainingView["next"]>; today: string; source: NonNullable<TrainingView["source"]> }) {
+function NextRoutine({ next, today, source, switcher }: { next: NonNullable<TrainingView["next"]>; today: string; source: NonNullable<TrainingView["source"]>; switcher?: ReactNode }) {
   const planned = next.date != null;
   // openGym often gives the same reason for every exercise: then it is shown once, under the list
   const reasons = [...new Set(next.exercises.flatMap((e) => (e.note ? [e.note] : [])))];
@@ -76,6 +77,7 @@ function NextRoutine({ next, today, source }: { next: NonNullable<TrainingView["
         <span className="training-eyebrow">{planned ? t.training.nextPlanned : t.training.next}</span>
         <span className="source-pill">{source.label}</span>
       </div>
+      {switcher}
       <div className="training-next-title">
         <h2>{next.title}</h2>
         <span className="muted">{meta.join(" · ")}</span>
@@ -103,6 +105,73 @@ function NextRoutine({ next, today, source }: { next: NonNullable<TrainingView["
         ))}
       </div>
       {sharedReason && <span className="training-reason">{t.training.sharedReason(reasonText(sharedReason))}</span>}
+      {source.openUrl && (
+        <a className="training-open" href={source.openUrl} target="_blank" rel="noreferrer">
+          {t.training.openApp(source.label)}
+        </a>
+      )}
+    </section>
+  );
+}
+
+type SessionView = "today" | "next";
+
+/** "Oggi | Prossima" above the session card, when something was done today and a session is coming. */
+function SessionSwitch({ view, onChange }: { view: SessionView; onChange: (view: SessionView) => void }) {
+  return (
+    <div className="segmented period-switch training-session-switch" role="radiogroup" aria-label={t.training.sessionSwitchAria}>
+      {(["today", "next"] as const).map((v) => (
+        <button key={v} type="button" role="radio" aria-checked={view === v} className="segmented-option" onClick={() => onChange(v)}>
+          {t.training.sessionViews[v]}
+        </button>
+      ))}
+    </div>
+  );
+}
+
+/** The sets of one exercise, consecutive equal sets grouped: "1 × 8 a 53,5 kg · 2 × 8 a 63,5 kg", warm-ups counted apart. */
+export function doneSetsText(sets: TrainingDoneWorkout["exercises"][number]["sets"]): string {
+  const work = sets.filter((s) => !s.warmup);
+  const warmups = sets.length - work.length;
+  const parts: string[] = [];
+  const minutes = work.reduce((sum, s) => sum + (s.weightKg === null && s.reps === null ? (s.durationSeconds ?? 0) : 0), 0);
+  if (minutes > 0) parts.push(t.training.minutesShort(Math.round(minutes / 60)));
+  const groups: Array<{ count: number; weightKg: number | null; reps: number | null }> = [];
+  for (const s of work) {
+    if (s.weightKg === null && s.reps === null) continue;
+    const last = groups.at(-1);
+    if (last && last.weightKg === s.weightKg && last.reps === s.reps) last.count++;
+    else groups.push({ count: 1, weightKg: s.weightKg, reps: s.reps });
+  }
+  for (const g of groups) parts.push(g.weightKg !== null ? t.training.sameWeight(g.count, String(g.reps ?? "–"), kg(g.weightKg)) : t.training.noWeight(g.count, String(g.reps ?? "–")));
+  if (warmups > 0) parts.push(t.training.warmups(warmups));
+  return parts.join(" · ");
+}
+
+/** "Oggi": the workout done today with every exercise and its sets. */
+function TodayWorkout({ workout, source, switcher }: { workout: TrainingDoneWorkout; source: NonNullable<TrainingView["source"]>; switcher?: ReactNode }) {
+  const meta = [t.todayTraining.doneMeta(workout.start, workout.minutes, workout.exercises.length), workout.hrAvg !== null ? t.training.hrShort(formatKcal(workout.hrAvg)) : null].filter(Boolean).join(" · ");
+  return (
+    <section className="card training-card training-next" aria-label={t.training.doneTodayAria}>
+      <div className="training-next-head">
+        <span className="training-eyebrow">{t.training.doneToday}</span>
+        <span className="source-pill">{source.label}</span>
+      </div>
+      {switcher}
+      <div className="training-next-title">
+        <h2>{workout.title}</h2>
+        <span className="muted">{meta}</span>
+      </div>
+      <div className="training-list">
+        {workout.exercises.map((e, i) => (
+          <div key={`${e.title}-${i}`} className="training-row">
+            <div className="training-row-text">
+              <strong>{liftName(e.title)}</strong>
+              <span className="muted">{doneSetsText(e.sets)}</span>
+            </div>
+          </div>
+        ))}
+      </div>
       {source.openUrl && (
         <a className="training-open" href={source.openUrl} target="_blank" rel="noreferrer">
           {t.training.openApp(source.label)}
@@ -286,6 +355,11 @@ export function TrainingPage() {
   const data = query.data;
   const source = data?.source ?? null;
   const planned = source?.id === "opengym";
+  // Something done today: the card opens on it ("Oggi"), with "Prossima" one tap away; otherwise only the next session
+  const [chosen, setChosen] = useState<SessionView | null>(null);
+  const done = data?.todayWorkout ?? null;
+  const view: SessionView = done && (chosen ?? "today") === "today" ? "today" : data?.next ? "next" : "today";
+  const switcher = done && data?.next ? <SessionSwitch view={view} onChange={setChosen} /> : undefined;
   // "Full Body A" for the lift subtitles, from the week and recent workouts
   const routineTitles = new Map<string, string>();
   for (const w of [...(data?.recent ?? [])].reverse()) if (w.letter) routineTitles.set(w.letter, w.title.split(/\s+[—–-]\s+/)[0]!);
@@ -312,7 +386,8 @@ export function TrainingPage() {
 
       {data && data.configured && !data.hevyUnavailable && (data.next || data.recent.length > 0) && (
         <div className="training-flow">
-          {data.next && source && <NextRoutine next={data.next} today={data.today} source={source} />}
+          {source && view === "today" && done && <TodayWorkout workout={done} source={source} switcher={switcher} />}
+          {source && view === "next" && data.next && <NextRoutine next={data.next} today={data.today} source={source} switcher={switcher} />}
           {data.week.days.length > 0 && <Week week={data.week} planned={planned} />}
           {data.muscles && <Muscles muscles={data.muscles} />}
           {data.lifts.length > 0 && <Progress lifts={data.lifts} routineTitles={routineTitles} />}

@@ -179,6 +179,15 @@ describe("buildOpenGymTraining", () => {
     expect(view.muscles).toEqual({ top: expect.arrayContaining(["chest", "gluteal"]), neglected: ["hip-flexors", "tibialis"] });
   });
 
+  it("details the workout done today, with its sets", () => {
+    const view = buildOpenGymTraining({ state, plan, preview, muscles, workouts, health: [], timeZone: "Europe/Rome", today: "2026-11-13", openUrl: "https://gym.example" });
+    expect(view.todayWorkout).toMatchObject({ title: "Full Body C — Split Squat + Croci + Cavi", start: "16:48", minutes: 41, letter: "C" });
+    expect(view.todayWorkout!.exercises.length).toBe(8);
+    expect(view.todayWorkout!.exercises[0]!.sets[0]).toEqual({ warmup: true, weightKg: 20, reps: 8, durationSeconds: null });
+    // Nothing done on the 17th (the cycling session has no done set)
+    expect(buildOpenGymTraining({ state, plan, preview, muscles, workouts, health: [], timeZone: "Europe/Rome", today: "2026-11-17", openUrl: "https://gym.example" }).todayWorkout).toBeNull();
+  });
+
   it("adds the session after today's when today's is still to do", () => {
     const cardio = previewSchema.parse(tools.preview_session_cardio);
     expect(plannedAfter(plan, "2026-11-17")).toBe("2026-11-18");

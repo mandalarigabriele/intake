@@ -620,6 +620,23 @@ export interface TrainingView {
   /** openGym: muscles trained most and not at all over the last month (slugs, e.g. "hip-flexors"). */
   muscles?: { top: string[]; neglected: string[] } | null;
   recent: Array<{ id: string; letter: string | null; title: string; date: string; start: string; minutes: number; exercises: number; hrAvg: number | null }>;
+  /** The latest workout done today, in detail (null when nothing was done today). */
+  todayWorkout?: TrainingDoneWorkout | null;
+}
+
+/** A finished workout with its exercises and sets (Andamento › Allenamenti, "Oggi"). */
+export interface TrainingDoneWorkout {
+  id: string;
+  letter: string | null;
+  title: string;
+  /** Local start time, "HH:MM". */
+  start: string;
+  minutes: number;
+  hrAvg: number | null;
+  exercises: Array<{
+    title: string;
+    sets: Array<{ warmup: boolean; weightKg: number | null; reps: number | null; durationSeconds: number | null }>;
+  }>;
 }
 
 /** Where workouts come from; one at a time (Profilo › Collegamenti). */

@@ -216,11 +216,16 @@ export function buildOpenGymTraining(input: {
     return { ...r, letter: raw ? letterOf(raw.routine_id, raw.title) : r.letter };
   });
 
+  // Today's workout keeps openGym's routine number as its letter
+  const rawToday = base.todayWorkout ? workouts.find((w) => w.id === base.todayWorkout!.id) : undefined;
+  const todayWorkout = base.todayWorkout ? { ...base.todayWorkout, letter: rawToday ? letterOf(rawToday.routine_id, rawToday.title) : null } : null;
+
   return {
     ...base,
     source: { id: "opengym", label: "openGym", openUrl },
     next,
     following: next?.date === today ? sessionFrom(following) : null,
+    todayWorkout,
     week,
     lifts,
     recent,

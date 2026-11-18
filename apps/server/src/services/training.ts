@@ -203,5 +203,26 @@ export function buildTraining(input: {
       };
     });
 
-  return { configured: true, today, source: { id: "hevy", label: "Hevy", openUrl: null }, next, week, lifts, recent };
+  // The latest workout done today, with its sets
+  const doneToday = sessions.filter((s) => s.origin === "app" && s.date === today).sort((a, b) => b.start.localeCompare(a.start))[0];
+  const rawToday = doneToday ? workouts.find((w) => w.id === doneToday.id) : undefined;
+  const todayWorkout: TrainingView["todayWorkout"] =
+    doneToday && rawToday
+      ? {
+          id: rawToday.id,
+          letter: letterOf(rawToday.routine_id),
+          title: doneToday.title,
+          start: doneToday.start,
+          minutes: doneToday.durationMinutes,
+          hrAvg: doneToday.hrAvg,
+          exercises: rawToday.exercises
+            .map((e) => ({
+              title: e.title,
+              sets: e.sets.map((set) => ({ warmup: set.type === "warmup", weightKg: set.weight_kg ?? null, reps: set.reps ?? null, durationSeconds: set.duration_seconds ?? null })),
+            }))
+            .filter((e) => e.sets.length > 0),
+        }
+      : null;
+
+  return { configured: true, today, source: { id: "hevy", label: "Hevy", openUrl: null }, next, week, lifts, recent, todayWorkout };
 }

@@ -6433,6 +6433,7 @@ div.connection-row {
   text-align: right;
 }
 
+.training-session-switch,
 .today-training-switch {
   align-self: flex-start;
   min-width: 180px;
