@@ -9,6 +9,7 @@ import { GymSources, hevySource, openGymSource } from "./services/gymSource.js";
 import { NutritionApi } from "./mcp/nutritionApi.js";
 import { createServices } from "./services.js";
 import { ReminderScheduler } from "./services/reminderScheduler.js";
+import { HevySync } from "./services/hevySync.js";
 import { WebPushSender, vapidKeys } from "./services/webPush.js";
 
 const config = loadConfig();
@@ -36,6 +37,16 @@ const gymSources = new GymSources(services.db, {
   ...(openGym ? { opengym: openGymSource(openGym, config.OPENGYM_PUBLIC_URL ?? config.OPENGYM_URL!) } : {}),
 });
 const gym = () => gymSources.active();
+// Optional copy of openGym workouts into Hevy, off until turned on in Profile (docs/hevy-sync.md)
+const hevySync =
+  hevy && openGym
+    ? new HevySync({
+        store: services.hevySync,
+        hevy,
+        openGym,
+        log: { warn: (details, message) => app.log.warn(details, message), info: (details, message) => app.log.info(details, message) },
+      })
+    : null;
 const app = await buildApp({
   webDistDir: config.WEB_DIST_DIR ?? resolve(import.meta.dirname, "../../web/dist"),
   logger: true,
@@ -60,12 +71,14 @@ const app = await buildApp({
   push: { store: services.reminders, scheduler, publicKey: vapid.publicKey },
   workouts: { gym, health: services.health, api },
   training: { gym, sources: gymSources, health: services.health, api },
+  hevySync: { sync: hevySync, store: services.hevySync },
   appleHealth: { store: services.health, api, sync: { token: healthToken, endpoint: `${config.PUBLIC_BASE_URL}/api/health/ingest` } },
   healthIngest: { store: services.health, token: healthToken },
 });
 
 app.addHook("onClose", async () => {
   scheduler.stop();
+  hevySync?.stop();
   await services.close();
 });
 
@@ -79,4 +92,5 @@ process.on("SIGINT", () => void shutdown("SIGINT"));
 
 await app.listen({ host: "0.0.0.0", port: config.PORT });
 scheduler.start();
+hevySync?.start();
 app.log.info(`Nutrition account ${services.nutrition.isConnected() ? "connected" : "not connected yet: open /connect/nutrition"}`);

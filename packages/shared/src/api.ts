@@ -647,3 +647,34 @@ export interface TrainingSourceStatus {
   available: TrainingSourceId[];
   active: TrainingSourceId | null;
 }
+
+/** One exercise of a workout the openGym → Hevy copy would send, and the Hevy exercise it becomes. */
+export interface HevySyncExercise {
+  /** openGym exercise name, as in its library (English, lower case); the web app translates it. */
+  name: string;
+  /** The Hevy exercise it is sent as; null when a custom Hevy exercise will be created. */
+  hevyTitle: string | null;
+  /** learned: from workouts present in both apps; custom: a custom exercise created earlier; new: one to create. */
+  origin: "learned" | "custom" | "new";
+}
+
+export interface HevySyncItem {
+  /** openGym workout id. */
+  id: string;
+  title: string;
+  /** ISO start time. */
+  start: string;
+  minutes: number;
+  action: "create" | "update";
+  exercises: HevySyncExercise[];
+}
+
+/** GET /api/hevy-sync: the optional copy of openGym workouts into Hevy (Profilo › Collegamenti). */
+export interface HevySyncStatus {
+  /** Both Hevy and openGym are configured on the server. */
+  available: boolean;
+  enabled: boolean;
+  lastRun: { at: string; created: number; updated: number; error: string | null } | null;
+  /** What the next run would send; null when it could not be computed (an app did not answer). */
+  pending: HevySyncItem[] | null;
+}

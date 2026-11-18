@@ -81,6 +81,26 @@ export const t = {
     trainingSource: "Fonte allenamenti",
     trainingSourceNote: "Una sola alla volta: Timeline, Andamento e Oggi usano quella scelta.",
     trainingSourceFailed: "Fonte non cambiata. Riprova.",
+    hevySync: {
+      title: "Copia su Hevy",
+      toggle: "Copia gli allenamenti di openGym su Hevy",
+      off: "Le sedute fatte su openGym vengono copiate anche su Hevy, come private. Le sedute già su Hevy non vengono duplicate.",
+      on: "Attiva: controlla ogni 15 minuti.",
+      last: (time: string, created: number, updated: number) =>
+        `Ultima copia alle ${time}${created || updated ? ` · ${[created ? (created === 1 ? "1 copiato" : `${created} copiati`) : null, updated ? (updated === 1 ? "1 aggiornato" : `${updated} aggiornati`) : null].filter(Boolean).join(", ")}` : " · niente di nuovo"}`,
+      failed: (time: string) => `Ultima copia alle ${time} non riuscita: riprova più tardi.`,
+      unavailable: "Anteprima non disponibile ora: Hevy o openGym non rispondono.",
+      nothing: "Niente da copiare: ogni seduta degli ultimi 30 giorni è già su Hevy.",
+      pending: (n: number) => (n === 1 ? "1 seduta da copiare" : `${n} sedute da copiare`),
+      update: "da aggiornare",
+      newExercise: "nuovo esercizio su Hevy",
+      run: "Copia ora",
+      confirm: (n: number) =>
+        n === 0
+          ? "Attivare la copia su Hevy? Le prossime sedute fatte su openGym verranno copiate su Hevy, come private."
+          : `Attivare la copia su Hevy? ${n === 1 ? "1 seduta verrà copiata" : `${n} sedute verranno copiate`} subito, come private, e poi le prossime.`,
+      failedAction: "Operazione non riuscita. Riprova.",
+    },
     inUse: "in uso",
     standby: "configurato",
     states: { connected: "collegato", warning: "attenzione", off: "non collegato", standby: "non in uso" },

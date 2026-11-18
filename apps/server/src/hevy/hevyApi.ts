@@ -18,7 +18,38 @@ const CACHE_MS = 5 * 60_000;
 /** Safety limit when walking back in time (10 pages = 100 workouts). */
 const MAX_PAGES = 10;
 
-/** Read-only client of the Hevy public API, authenticated with the owner's API key. */
+/** A set as the Hevy API takes it (POST/PUT /v1/workouts). */
+export interface HevyWriteSet {
+  type: "warmup" | "normal" | "failure" | "dropset";
+  weight_kg: number | null;
+  reps: number | null;
+  distance_meters: number | null;
+  duration_seconds: number | null;
+  rpe: number | null;
+}
+
+/** A workout as the Hevy API takes it. */
+export interface HevyWriteWorkout {
+  title: string;
+  description?: string;
+  start_time: string;
+  end_time: string;
+  is_private: boolean;
+  exercises: Array<{ exercise_template_id: string; superset_id: number | null; notes: string | null; sets: HevyWriteSet[] }>;
+}
+
+/** A custom exercise template (POST /v1/exercise_templates). */
+export interface HevyNewTemplate {
+  title: string;
+  exercise_type: "weight_reps" | "reps_only" | "duration" | "distance_duration";
+  equipment_category: "none" | "barbell" | "dumbbell" | "kettlebell" | "machine" | "plate" | "resistance_band" | "suspension" | "other";
+  muscle_group: string;
+}
+
+/**
+ * Client of the Hevy public API, authenticated with the owner's API key. Reads are live (pages cached briefly);
+ * the only writes are the optional openGym → Hevy copy (services/hevySync.ts).
+ */
 export class HevyApi {
   private readonly cache = new Map<number, { at: number; value: Promise<HevyWorkoutPage> }>();
 
@@ -87,6 +118,52 @@ export class HevyApi {
       if (page >= parsed.data.page_count) break;
     }
     return routines;
+  }
+
+  /** Forgets the cached pages, after a write. */
+  clearCache(): void {
+    this.cache.clear();
+    this.routinesCache = null;
+  }
+
+  private async write(method: "POST" | "PUT", path: string, body: unknown): Promise<unknown> {
+    let response: Response;
+    try {
+      response = await this.fetchImpl(`${BASE_URL}${path}`, {
+        method,
+        headers: { "api-key": this.apiKey, accept: "application/json", "content-type": "application/json" },
+        body: JSON.stringify(body),
+        signal: AbortSignal.timeout(15_000),
+      });
+    } catch (error) {
+      throw new HevyError(`Hevy request failed: ${(error as Error).message}`);
+    }
+    const json = (await response.json().catch(() => null)) as { error?: string } | null;
+    if (!response.ok) throw new HevyError(`Hevy answered ${response.status}${json?.error ? `: ${json.error}` : ""}`, response.status);
+    this.clearCache();
+    return json;
+  }
+
+  /** Creates a workout; returns its Hevy id. */
+  async createWorkout(workout: HevyWriteWorkout): Promise<string> {
+    const body = (await this.write("POST", "/v1/workouts", { workout })) as { workout?: unknown; id?: unknown } | null;
+    // Documented as a one-element array; accept a plain object too
+    const created = Array.isArray(body?.workout) ? body.workout[0] : (body?.workout ?? body);
+    const id = (created as { id?: unknown } | undefined)?.id;
+    if (typeof id !== "string" || !id) throw new HevyError("Hevy created the workout without returning its id");
+    return id;
+  }
+
+  async updateWorkout(id: string, workout: HevyWriteWorkout): Promise<void> {
+    await this.write("PUT", `/v1/workouts/${encodeURIComponent(id)}`, { workout });
+  }
+
+  /** Creates a custom exercise template; returns its id. */
+  async createExerciseTemplate(exercise: HevyNewTemplate): Promise<string> {
+    const body = (await this.write("POST", "/v1/exercise_templates", { exercise })) as { id?: unknown } | null;
+    const id = body?.id;
+    if ((typeof id !== "string" && typeof id !== "number") || id === "") throw new HevyError("Hevy created the exercise without returning its id");
+    return String(id);
   }
 
   /** Workouts that started at or after `since` (an ISO instant), newest first. */

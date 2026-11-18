@@ -1,12 +1,13 @@
 import type { ProfileView, TrainingSourceId } from "@intake/shared";
 import { useState } from "react";
 import { Link } from "wouter";
-import { useDisconnectNutrition, useHealthStatus, useLogWeight, useNutritionStatus, useProfile, useSetHealthSettings, useSignOut, type User, useSetTrainingSource, useTrainingSource } from "../api/queries";
+import { useDisconnectNutrition, useHealthStatus, useLogWeight, useNutritionStatus, useProfile, useSetHealthSettings, useSignOut, type User, useSetTrainingSource, useTrainingSource, useHevySync, useHevySyncAction } from "../api/queries";
 import { Avatar } from "../components/ProfileLink";
 import { RemindersSheet } from "../components/RemindersSheet";
 import { BackIcon } from "../components/icons";
-import { formatKcal, formatShortDate, formatWater, formatWeight } from "../lib/format";
+import { formatClock, formatKcal, formatShortDate, formatWater, formatWeight, formatWeekdayDay } from "../lib/format";
 import { t } from "../lib/strings";
+import { exerciseName } from "./TrainingPage";
 import { getThemePreference, setThemePreference, type ThemePreference } from "../lib/theme";
 
 const THEMES: ThemePreference[] = ["system", "light", "dark"];
@@ -233,6 +234,79 @@ function GymRows() {
   );
 }
 
+/** "Copia su Hevy": the optional copy of openGym workouts into Hevy, with what the next run sends (docs/hevy-sync.md). */
+function HevySyncRow() {
+  const status = useHevySync();
+  const action = useHevySyncAction();
+  const data = status.data;
+  if (!data?.available) return null;
+  const s = t.profile.hevySync;
+  const last = data.lastRun;
+  const note = action.isError
+    ? s.failedAction
+    : last?.error
+      ? s.failed(formatClock(last.at))
+      : last && data.enabled
+        ? s.last(formatClock(last.at), last.created, last.updated)
+        : data.enabled
+          ? s.on
+          : s.off;
+  const pending = data.pending;
+  return (
+    <div className="profile-row-item hevy-sync">
+      <label className="hevy-sync-head">
+        <span className="connection-text">
+          <strong>{s.title}</strong>
+          <span className="muted">{note}</span>
+        </span>
+        <input
+          type="checkbox"
+          role="switch"
+          className="switch"
+          aria-label={s.toggle}
+          checked={data.enabled}
+          disabled={action.isPending}
+          onChange={(event) => {
+            if (!event.target.checked) action.mutate("off");
+            else if (window.confirm(s.confirm(pending?.length ?? 0))) action.mutate("on");
+          }}
+        />
+      </label>
+      {pending === null ? (
+        <span className="muted hevy-sync-hint">{s.unavailable}</span>
+      ) : pending.length === 0 ? (
+        <span className="muted hevy-sync-hint">{s.nothing}</span>
+      ) : (
+        <details className="hevy-sync-preview">
+          <summary>{s.pending(pending.length)}</summary>
+          {pending.map((item) => (
+            <div key={item.id} className="hevy-sync-item">
+              <strong>
+                {item.title}
+                {item.action === "update" && <span className="state-pill" data-state="standby">{s.update}</span>}
+              </strong>
+              <span className="muted">{`${formatWeekdayDay(item.start.slice(0, 10))} · ${formatClock(item.start)} · ${item.minutes} min`}</span>
+              <ul>
+                {item.exercises.map((e, i) => (
+                  <li key={`${e.name}-${i}`}>
+                    <span>{exerciseName({ title: e.name, templateTitle: e.name })}</span>
+                    <span className="muted">{e.hevyTitle ? `→ ${e.hevyTitle}` : s.newExercise}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))}
+        </details>
+      )}
+      {data.enabled && (
+        <button type="button" className="button-secondary-small hevy-sync-run" disabled={action.isPending} onClick={() => action.mutate("run")}>
+          {s.run}
+        </button>
+      )}
+    </div>
+  );
+}
+
 /** Profilo (docs/design Profilo): weight, goals, connections, reminders, theme, Nutrition disconnect and sign out. */
 export function ProfilePage({ user }: { user: User }) {
   const profile = useProfile();
@@ -280,6 +354,7 @@ export function ProfilePage({ user }: { user: User }) {
               href="/profilo/salute"
             />
             <GymRows />
+            <HevySyncRow />
           </section>
 
           <section className="card profile-card profile-list" aria-label={t.profile.reminders}>

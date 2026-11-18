@@ -96,6 +96,20 @@ const MIGRATIONS: string[] = [
      last_date TEXT,
      summary TEXT NOT NULL
    );`,
+  // 6: openGym → Hevy copy: which openGym workout became which Hevy workout, and which Hevy exercise stands for
+  // each openGym exercise (learned from workouts present in both apps, or a custom exercise created by the copy)
+  `CREATE TABLE hevy_sync_links (
+     opengym_id TEXT PRIMARY KEY,
+     hevy_id TEXT NOT NULL,
+     hash TEXT NOT NULL,
+     synced_at TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%fZ', 'now'))
+   );
+   CREATE TABLE hevy_exercise_links (
+     opengym_id TEXT PRIMARY KEY,
+     template_id TEXT NOT NULL,
+     title TEXT NOT NULL,
+     origin TEXT NOT NULL
+   );`,
 ];
 
 /** Opens (and migrates) the SQLite database. Pass ":memory:" for tests. */

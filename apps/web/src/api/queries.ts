@@ -25,6 +25,7 @@ import type {
   TrainingView,
   TrainingSourceId,
   TrainingSourceStatus,
+  HevySyncStatus,
   WorkoutsResponse,
 } from "@intake/shared";
 import { keepPreviousData, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
@@ -342,6 +343,29 @@ export function useSetTrainingSource() {
     onSuccess: (status) => {
       queryClient.setQueryData(trainingSourceKey, status);
       void queryClient.invalidateQueries({ queryKey: ["training"], exact: true });
+      void queryClient.invalidateQueries({ queryKey: ["workouts"] });
+    },
+  });
+}
+
+const hevySyncKey = ["hevy-sync"] as const;
+
+/** The optional openGym → Hevy copy, with a preview of what the next run sends (Profilo › Collegamenti). */
+export function useHevySync() {
+  return useQuery({ queryKey: hevySyncKey, queryFn: () => apiFetch<HevySyncStatus>("/api/hevy-sync") });
+}
+
+/** Turns the copy on (it runs right away) or off, or runs it now. */
+export function useHevySyncAction() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (action: "on" | "off" | "run") =>
+      action === "run"
+        ? apiFetch<HevySyncStatus>("/api/hevy-sync/run", { method: "POST" })
+        : apiFetch<HevySyncStatus>("/api/hevy-sync", { method: "PUT", json: { enabled: action === "on" } }),
+    onSuccess: (status) => {
+      queryClient.setQueryData(hevySyncKey, status);
+      void queryClient.invalidateQueries({ queryKey: ["training"] });
       void queryClient.invalidateQueries({ queryKey: ["workouts"] });
     },
   });

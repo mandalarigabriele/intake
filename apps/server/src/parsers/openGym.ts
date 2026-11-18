@@ -12,6 +12,9 @@ const setSchema = z.looseObject({
   done: z.boolean().optional(),
   phase: z.string().optional(),
   rpe: z.number().nullable().optional(),
+  /** Cardio sets: minutes and average speed (km/h). */
+  min: z.number().nullable().optional(),
+  speed: z.number().nullable().optional(),
 });
 
 export const openGymWorkoutSchema = z.looseObject({
