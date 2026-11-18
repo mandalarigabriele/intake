@@ -115,7 +115,7 @@ Full requirements: [`docs/apple-health.md`](../apple-health.md). Summary:
     The value is time awake, labelled "sveglio N min" (not number of wake-ups).
   - Resting HR with the difference from last week's average.
   - States: no data ("Nessun dato da Salute per questo giorno"), stale ("Ultimo aggiornamento 2 giorni fa"), sleep missing (hide only that row).
-  - "Bilancio" row is designed but off: it needs **both** active and resting energy to be continuous (resting energy exists for 2 days only). No BMR formulas.
+  - "Bilancio" row: on for every day with **both** active and resting energy (eaten vs burned, deficit/surplus as text; today "finora" with an end-of-day estimate). No BMR formulas. Rules in docs/apple-health.md § Balance.
 - **Timeline**: sleep is a compact chip at wake-up time, expandable to the phase bar. Workouts are cards with a type icon,
   time range, duration, kcal only if present, distance, "FC media", source pill; expanded: stats grid, Hevy exercises,
   a "Fonti" line. Meals, workouts and sleep differ by shape and icon, not only colour.

@@ -103,9 +103,20 @@ its warning, Hevy), reminders, theme, "Scollega Nutrition" and sign out.
 
 ## Balance
 
-The "Bilancio" row in Today is designed but switched off. It needs both active and resting energy to arrive continuously;
-in the first export resting energy covers 2 days and active energy stops on 25 Oct (Fitbit stopped writing it to Health).
-No BMR formulas are used to fill the gap. The Apple Health screen warns when active energy is missing for more than 3 days while other data keeps arriving.
+Calories eaten (Nutrition) against calories burned (Apple Health active + resting energy). Shown wherever both energies
+arrived for the day; a day missing either is left out. **No BMR formula** ever fills a gap.
+
+- **Today, "Bilancio" row** at the bottom of the Activity & rest card (Main mockup): "Mangiate · Consumate (attive +
+  riposo)" and, for a finished day, "▼ deficit N kcal", "▲ surplus N kcal" or "in pari" (within ±50 kcal). Today it is
+  "Bilancio · finora" without a verdict, plus an end-of-day estimate: active so far + the average resting energy of the
+  7 days before (only when that average is higher than today's resting energy so far). Eaten kcal come from the same day
+  query as the calorie card (no extra Nutrition call).
+- **Trends › Nutrition, "Bilancio calorico"** card: each day of the week up to today with eaten, burned (active +
+  resting) and deficit/surplus; today "in corso"; days without both energies "consumate non disponibili". The week
+  total (eaten, burned, net and average per day) uses finished days with meals and both energies (`WeekView.balance`).
+- **Training recap**: the session's kcal as a share of the day's active energy so far.
+
+The Apple Health screen warns when active energy is missing for more than 3 days while other data keeps arriving.
 
 ## Daily scores
 

@@ -13,7 +13,7 @@ export interface TrainingRoutesOptions {
   gym: () => GymSource | null;
   /** Configured sources and the owner's choice; without it the source cannot be changed. */
   sources?: { available(): Array<"hevy" | "opengym">; setPreference(id: "hevy" | "opengym"): void };
-  health?: Pick<HealthStore, "workouts">;
+  health?: Pick<HealthStore, "workouts" | "daily">;
   api: Pick<NutritionApi, "clock">;
   requireOwner: preHandlerHookHandler;
 }
@@ -55,11 +55,17 @@ export const trainingRoutes: FastifyPluginAsync<TrainingRoutesOptions> = async (
     };
     if (!source) return empty;
     const since = `${addDays(today, -HISTORY_DAYS)}T00:00:00Z`;
+    // Today's recap puts the session's kcal against the day's active energy (SQLite, no extra request)
+    const withDayEnergy = (view: TrainingView): TrainingView => {
+      if (!view.todayWorkout || !health) return view;
+      const active = health.daily(today, today, ["activeKcal"])[0]?.value;
+      return { ...view, todayWorkout: { ...view.todayWorkout, dayActiveKcal: active === undefined ? null : Math.round(active) } };
+    };
     const sessions = health ? mergeWorkouts(health.workouts(addDays(today, -14), today)) : [];
     try {
       if (source.id === "hevy") {
         const [routines, workouts] = await Promise.all([source.hevy.routines(), source.workoutsSince(since)]);
-        return buildTraining({ routines, workouts, health: sessions, timeZone: clock.timezone, today });
+        return withDayEnergy(buildTraining({ routines, workouts, health: sessions, timeZone: clock.timezone, today }));
       }
       const [state, plan, workouts] = await Promise.all([source.openGym.state(), source.openGym.weekPlan(), source.workoutsSince(since)]);
       const routineNames = await source.openGym.routineExerciseNames(state.routines.map((r) => r.id));
@@ -72,7 +78,9 @@ export const trainingRoutes: FastifyPluginAsync<TrainingRoutesOptions> = async (
         afterDate ? source.openGym.preview(afterDate).catch(() => null) : Promise.resolve(null),
         source.openGym.muscleBalance().catch(() => null),
       ]);
-      return buildOpenGymTraining({ state, plan, preview, following, muscles, routineNames, workouts, health: sessions, timeZone: clock.timezone, today, openUrl: source.publicUrl });
+      return withDayEnergy(
+        buildOpenGymTraining({ state, plan, preview, following, muscles, routineNames, workouts, health: sessions, timeZone: clock.timezone, today, openUrl: source.publicUrl }),
+      );
     } catch (error) {
       if (!isGymUnavailable(error)) throw error;
       request.log.warn({ err: (error as Error).message }, `${source.label} unavailable for the training view`);

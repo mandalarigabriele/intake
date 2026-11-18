@@ -154,7 +154,12 @@ function recapStats(workout: TrainingDoneWorkout): Array<{ label: string; value:
   const r = t.training.recap;
   const stats: Array<{ label: string; value: string; note?: string; kind?: "up" | "down" }> = [{ label: r.duration, value: formatDuration(workout.minutes) }];
   if (workout.hrAvg !== null) stats.push({ label: r.heartRate, value: r.bpm(formatKcal(workout.hrAvg)), note: workout.hrMax !== null ? r.max(formatKcal(workout.hrMax)) : undefined });
-  if (workout.kcal !== null) stats.push({ label: r.kcal, value: formatKcal(workout.kcal) });
+  if (workout.kcal !== null) {
+    const day = workout.dayActiveKcal;
+    // How much of the day's active energy the session was (only when the day total is at least the session)
+    const share = day && day >= workout.kcal ? Math.round((workout.kcal / day) * 100) : null;
+    stats.push({ label: r.kcal, value: formatKcal(workout.kcal), note: share !== null ? r.dayShare(share, formatKcal(day!)) : undefined });
+  }
   const previous = workout.previous;
   const change = previous && previous.volumeKg > 0 ? Math.round(((workout.volumeKg - previous.volumeKg) / previous.volumeKg) * 100) : null;
   stats.push({

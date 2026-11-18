@@ -64,6 +64,7 @@ const app = await buildApp({
   api,
   mealsApi: api,
   weekApi: api,
+  weekHealth: services.health,
   profile: { api, hevyConfigured: Boolean(config.HEVY_API_KEY) },
   insightApi: api,
   insightHealth: services.health,

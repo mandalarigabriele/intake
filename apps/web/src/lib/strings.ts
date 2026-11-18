@@ -631,6 +631,7 @@ export const t = {
       bpm: (value: string) => `${value} bpm`,
       max: (value: string) => `max ${value} bpm`,
       kcal: "Calorie attive",
+      dayShare: (percent: number, day: string) => `${percent}% delle ${day} attive di oggi`,
       volume: "Volume",
       kg: (value: string) => `${value} kg`,
       change: (percent: number, day: string) => `${percent > 0 ? "▲" : "▼"} ${Math.abs(percent)}% rispetto a ${day.toLowerCase()}`,
@@ -917,6 +918,28 @@ export const t = {
     updatedToday: (time: string) => `Aggiornato oggi alle ${time}`,
     updatedOn: (date: string, time: string) => `Aggiornato il ${date} alle ${time}`,
     stale: (days: number) => (days === 1 ? "Ultimo aggiornamento ieri" : `Ultimo aggiornamento ${days} giorni fa`),
+  },
+
+  balance: {
+    title: "Bilancio",
+    titleToday: "Bilancio · finora",
+    line: (eaten: string, burned: string, active: string, resting: string) => `Mangiate ${eaten} · Consumate ${burned} (attive ${active} + riposo ${resting})`,
+    deficit: (kcal: string) => `▼ deficit ${kcal} kcal`,
+    surplus: (kcal: string) => `▲ surplus ${kcal} kcal`,
+    even: "in pari",
+    estimate: (total: string, resting: string) => `A fine giornata almeno ~${total} kcal consumate (riposo medio 7 gg ${resting})`,
+  },
+
+  weekBalance: {
+    title: "Bilancio calorico",
+    note: "Mangiate (Nutrition) contro consumate: attive + a riposo da Apple Salute. Solo i giorni con entrambe.",
+    total: (days: number) => (days === 1 ? "Settimana · 1 giorno completo" : `Settimana · ${days} giorni completi`),
+    totalNote: (eaten: string, burned: string, perDay: string, deficit: boolean) =>
+      `Mangiate ${eaten} · consumate ${burned} · in media ${deficit ? "−" : "+"}${perDay} al giorno`,
+    dayNote: (eaten: string, burned: string, active: string, resting: string) => `Mangiate ${eaten} · consumate ${burned} (attive ${active} + riposo ${resting})`,
+    noEnergy: (eaten: string | null) => (eaten ? `Mangiate ${eaten} · consumate non disponibili` : "Consumate non disponibili"),
+    today: "Oggi",
+    inProgress: "in corso",
   },
 
   mealTypes: {

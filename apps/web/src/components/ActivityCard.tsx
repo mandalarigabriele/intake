@@ -1,6 +1,6 @@
 import type { HealthDay } from "@intake/shared";
 import { Link } from "wouter";
-import { useHealthDay } from "../api/queries";
+import { useDay, useHealthDay } from "../api/queries";
 import { formatClock, formatDuration, formatDurationShort, formatKcal, formatOneDecimal, formatShortDate, formatWeekdayDay, localIsoDate } from "../lib/format";
 import { t } from "../lib/strings";
 import { SleepPhases } from "./SleepPhases";
@@ -201,13 +201,54 @@ function HeartRow({ day }: { day: HealthDay }) {
   );
 }
 
+/** Deficit or surplus as text (never colour alone): within ±50 kcal it is "in pari". */
+export function netLabel(net: number): { text: string; sign: "down" | "up" | "same" } {
+  if (Math.abs(net) <= 50) return { text: t.balance.even, sign: "same" };
+  return net < 0 ? { text: t.balance.deficit(formatKcal(-net)), sign: "down" } : { text: t.balance.surplus(formatKcal(net)), sign: "up" };
+}
+
+/**
+ * "Bilancio" (docs/design § Today, Main mockup): eaten (Nutrition) against burned (Apple Health active + resting).
+ * Only when both energies arrived; today is "so far", with an end-of-day estimate from the 7-day resting average.
+ */
+function BalanceRow({ day, eaten }: { day: HealthDay; eaten: number }) {
+  const { activeKcal, restingKcal, restingAverage } = day.energy;
+  if (activeKcal === null || restingKcal === null || restingKcal <= 0) return null;
+  const isToday = day.date === day.today;
+  const burnedKcal = activeKcal + restingKcal;
+  const parts = t.balance.line(formatKcal(Math.round(eaten)), formatKcal(burnedKcal), formatKcal(activeKcal), formatKcal(restingKcal));
+  const net = netLabel(Math.round(eaten) - burnedKcal);
+  // Resting energy keeps adding up all day: today's total is at least the usual resting energy plus the activity so far
+  const estimate = isToday && restingAverage !== null && restingAverage > restingKcal ? activeKcal + restingAverage : null;
+  return (
+    <div className="activity-balance">
+      <span className="activity-balance-title">{isToday ? t.balance.titleToday : t.balance.title}</span>
+      <span className="activity-balance-text">
+        {parts}
+        {!isToday && (
+          <>
+            {" · "}
+            <strong className="activity-delta" data-sign={net.sign}>
+              {net.text}
+            </strong>
+          </>
+        )}
+      </span>
+      {estimate !== null && <span className="activity-note">{t.balance.estimate(formatKcal(estimate), formatKcal(restingAverage!))}</span>}
+    </div>
+  );
+}
+
 /**
  * "ATTIVITÀ E RIPOSO" on Oggi (docs/design § Today): steps, last night and resting heart rate from Apple Health,
  * with small trends. Hidden until Health data has been imported once.
  */
 export function ActivityCard({ date }: { date: string }) {
   const query = useHealthDay(date);
+  // Same query as the calorie card: no extra Nutrition request
+  const nutrition = useDay(date);
   const day = query.data;
+  const eaten = nutrition.data?.date === date ? nutrition.data.totals.kcal : null;
   if (!day || !day.connected || day.date !== date) return null;
   const hasData = day.steps !== null || day.sleep !== null || day.restingHr !== null;
   const updated = updatedLabel(day);
@@ -224,6 +265,7 @@ export function ActivityCard({ date }: { date: string }) {
           {day.steps !== null && <StepsRow day={day} />}
           {day.sleep && <SleepRow day={day} />}
           {day.restingHr !== null && <HeartRow day={day} />}
+          {eaten !== null && <BalanceRow day={day} eaten={eaten} />}
         </>
       )}
       <div className="activity-foot">

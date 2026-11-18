@@ -171,6 +171,26 @@ export interface WeekView {
   consistency: WeekConsistency;
   /** null when no plan with macros was in effect during the week. */
   plan: WeekPlanComparison | null;
+  /** Eaten against burned (Apple Health); null when no day of the week has both active and resting energy. */
+  balance?: WeekBalance | null;
+}
+
+/** Calories eaten (Nutrition) against burned (Apple Health active + resting), per day of a week. */
+export interface WeekBalance {
+  days: Array<{
+    date: string;
+    eatenKcal: number | null;
+    activeKcal: number | null;
+    restingKcal: number | null;
+    /** Active + resting; null unless both arrived. */
+    burnedKcal: number | null;
+    /** Eaten − burned (negative = deficit); null unless both sides are known. */
+    net: number | null;
+    /** The day is over (today is partial). */
+    complete: boolean;
+  }>;
+  /** Finished days with meals and both energies. */
+  total: { days: number; eatenKcal: number; burnedKcal: number; net: number } | null;
 }
 
 /** Profilo (docs/design Profilo): weigh-ins and daily goals from Nutrition, plus which integrations are set up. */
@@ -433,6 +453,13 @@ export interface HealthDay {
   lastImportAt: string | null;
   /** Latest day with any Health data. */
   lastDataDate: string | null;
+  /** Energy burned that day (kcal); the balance is shown only when both are there. */
+  energy: {
+    activeKcal: number | null;
+    restingKcal: number | null;
+    /** Average resting energy of the 7 days before, for the end-of-day estimate of today. */
+    restingAverage: number | null;
+  };
 }
 
 /** One night on the Andamento › Salute sleep chart: minutes from midnight of the wake-up day (negative = the evening before). */
@@ -637,6 +664,8 @@ export interface TrainingDoneWorkout {
   hrMax: number | null;
   /** Who gave the heart rate ("Fitbit", "openGym"...); null without any. */
   heartRateFrom: string | null;
+  /** Active energy of the whole day so far (Apple Health), to put the session's kcal in context. */
+  dayActiveKcal?: number | null;
   kcal: number | null;
   /** Heart rate during the session, one point per minute (empty without Apple Health). */
   heartRate: WorkoutHeartRatePoint[];

@@ -54,5 +54,14 @@ export function healthDay(store: HealthStore, date: string, today: string): Heal
     source: latestNight?.source ? sourceLabel(latestNight.source) : null,
     lastImportAt: lastImport?.receivedAt ?? null,
     lastDataDate,
+    energy: {
+      activeKcal: value("activeKcal", date) === null ? null : Math.round(value("activeKcal", date)!),
+      restingKcal: value("restingKcal", date) === null ? null : Math.round(value("restingKcal", date)!),
+      restingAverage: (() => {
+        const before = range(addDays(date, -1), 7).flatMap((d) => (value("restingKcal", d) ? [value("restingKcal", d)!] : []));
+        const mean = average(before);
+        return mean === null ? null : Math.round(mean);
+      })(),
+    },
   };
 }

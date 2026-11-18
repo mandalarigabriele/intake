@@ -53,6 +53,8 @@ export interface AppOptions {
   insightHealth?: InsightRoutesOptions["health"];
   /** Week overview and weigh-ins; registered together with `auth`. */
   weekApi?: WeekRoutesOptions["api"];
+  /** Apple Health energy for the week's eaten-vs-burned balance. */
+  weekHealth?: WeekRoutesOptions["health"];
   /** Profilo and weigh-ins; registered together with `auth`. */
   profile?: Omit<ProfileRoutesOptions, "requireOwner">;
   /** Meal plan storage; registered together with `api`. */
@@ -138,7 +140,7 @@ export async function buildApp(options: AppOptions = {}): Promise<FastifyInstanc
       await app.register(insightRoutes, { prefix: "/api", api: options.insightApi, health: options.insightHealth, requireOwner });
     }
     if (options.weekApi) {
-      await app.register(weekRoutes, { prefix: "/api", api: options.weekApi, plans: options.plans, requireOwner });
+      await app.register(weekRoutes, { prefix: "/api", api: options.weekApi, plans: options.plans, health: options.weekHealth, requireOwner });
     }
     if (options.profile) {
       await app.register(profileRoutes, { prefix: "/api", ...options.profile, requireOwner });

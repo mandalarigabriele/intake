@@ -2,6 +2,7 @@ import type { WeekView, Workout } from "@intake/shared";
 import { useState } from "react";
 import { Link } from "wouter";
 import { useWeek, useWorkouts } from "../api/queries";
+import { netLabel } from "../components/ActivityCard";
 import { WeekPlanCard } from "../components/PlanCompare";
 import { TrendsSwitch, TrendsTitle } from "../components/TrendsSwitch";
 import { familyIcon } from "../components/WorkoutCard";
@@ -335,6 +336,50 @@ function ConsistencyCard({ week }: { week: WeekView }) {
   );
 }
 
+/** Eaten (Nutrition) against burned (Apple Health active + resting) per day, and the week's total over finished days. */
+function BalanceCard({ balance, today }: { balance: NonNullable<WeekView["balance"]>; today: string }) {
+  const b = t.weekBalance;
+  const total = balance.total;
+  const totalNet = total ? netLabel(total.net) : null;
+  return (
+    <section className="card consistency-card nutrition-balance" aria-label={b.title}>
+      <h2>{b.title}</h2>
+      <span className="muted nutrition-balance-note">{b.note}</span>
+      {total && totalNet && (
+        <div className="consistency-row nutrition-balance-total">
+          <div>
+            <strong>{b.total(total.days)}</strong>
+            <span className="muted">{b.totalNote(formatKcal(total.eatenKcal), formatKcal(total.burnedKcal), formatKcal(Math.round(Math.abs(total.net) / total.days)), total.net < 0)}</span>
+          </div>
+          <span className="consistency-value stat-value activity-delta" data-sign={totalNet.sign}>
+            {totalNet.text}
+          </span>
+        </div>
+      )}
+      {balance.days
+        .filter((d) => d.date <= today)
+        .map((d) => {
+          const net = d.net !== null && d.complete ? netLabel(d.net) : null;
+          const note =
+            d.burnedKcal === null
+              ? b.noEnergy(d.eatenKcal === null ? null : formatKcal(d.eatenKcal))
+              : b.dayNote(d.eatenKcal === null ? "–" : formatKcal(d.eatenKcal), formatKcal(d.burnedKcal), formatKcal(d.activeKcal!), formatKcal(d.restingKcal!));
+          return (
+            <div key={d.date} className="consistency-row">
+              <div>
+                <strong>{d.date === today ? b.today : formatWeekdayDay(d.date)}</strong>
+                <span className="muted">{note}</span>
+              </div>
+              <span className="consistency-value activity-delta" data-sign={net?.sign}>
+                {net ? net.text : d.date === today && d.burnedKcal !== null ? b.inProgress : "–"}
+              </span>
+            </div>
+          );
+        })}
+    </section>
+  );
+}
+
 /** Andamento › Alimentazione (docs/design Settimana, SettimanaDesktop): nutrition only, with workout marks. */
 export function WeekPage() {
   const [anchor, setAnchor] = useState<string>("current");
@@ -376,6 +421,7 @@ export function WeekPage() {
             <ProteinCard week={data} />
             <ConsistencyCard week={data} />
             {data.plan && <WeekPlanCard plan={data.plan} />}
+            {data.balance && <BalanceCard balance={data.balance} today={data.today} />}
           </div>
         </div>
       )}

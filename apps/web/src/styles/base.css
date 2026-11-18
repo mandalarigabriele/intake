@@ -4323,6 +4323,26 @@ button.next-meal-primary {
   font-variant-numeric: tabular-nums;
 }
 
+/* "Bilancio" row at the bottom of the card (Main mockup) */
+.activity-balance {
+  border-top: 1px solid var(--color-divider);
+  padding-top: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.activity-balance-title {
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.activity-balance-text {
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--color-text-2);
+}
+
 .activity-delta {
   font-weight: 800;
   color: var(--color-text-2);
@@ -4849,6 +4869,21 @@ div.connection-row {
 .nutrition-protein { order: 2; }
 .nutrition-consistency { order: 3; }
 .nutrition-grid > .plan-compare { order: 4; }
+.nutrition-balance { order: 5; }
+
+.nutrition-balance-note {
+  font-size: 12px;
+  margin-top: -4px;
+}
+
+.nutrition-balance .consistency-value {
+  font-size: 13px;
+  text-align: right;
+}
+
+.nutrition-balance-total strong {
+  font-size: 15px;
+}
 
 .kpi-row {
   display: grid;

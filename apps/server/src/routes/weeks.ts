@@ -5,11 +5,15 @@ import type { FastifyPluginAsync, preHandlerHookHandler } from "fastify";
 import type { NutritionApi } from "../mcp/nutritionApi.js";
 import { isValidDate } from "../services/dayView.js";
 import { planComparison } from "../services/planMatching.js";
+import { energyByDate, weekBalance } from "../services/energyBalance.js";
+import type { HealthStore } from "../db/healthStore.js";
 
 export interface WeekRoutesOptions {
   /** mealsByRange is needed for "Piano e realtà"; without it the week has no plan comparison. */
   api: Pick<NutritionApi, "clock" | "summary"> & Partial<Pick<NutritionApi, "mealsByRange">>;
   plans?: Pick<PlanStore, "linkCountBetween" | "skipCountBetween" | "activeOn" | "linksOn" | "skipsOn">;
+  /** Apple Health energy for the eaten-vs-burned balance (SQLite, no Nutrition call). */
+  health?: Pick<HealthStore, "daily">;
   requireOwner: preHandlerHookHandler;
 }
 
@@ -104,7 +108,7 @@ export function mondayOf(date: string): string {
 }
 
 /** Week overview (/api/weeks/:date) for Andamento › Alimentazione. */
-export const weekRoutes: FastifyPluginAsync<WeekRoutesOptions> = async (app, { api, plans, requireOwner }) => {
+export const weekRoutes: FastifyPluginAsync<WeekRoutesOptions> = async (app, { api, plans, health, requireOwner }) => {
   app.addHook("preHandler", requireOwner);
 
   app.get<{ Params: { date: string } }>("/weeks/:date", async (request, reply): Promise<WeekView | void> => {
@@ -163,6 +167,8 @@ export const weekRoutes: FastifyPluginAsync<WeekRoutesOptions> = async (app, { a
 
     const plan = plans && weekMeals ? weekPlanComparison(days.map((d) => d.date), clock, plans, weekMeals.meals) : null;
 
-    return { start, end, today, goals: summary.goals, days, averages, consistency, plan };
+    const balance = health ? weekBalance(days, energyByDate(health, start, end), today) : null;
+
+    return { start, end, today, goals: summary.goals, days, averages, consistency, plan, balance };
   });
 };
