@@ -1,7 +1,7 @@
 import type { HevySyncExercise, HevySyncItem } from "@intake/shared";
 import { createHash } from "node:crypto";
 import type { ExerciseLink, HevySyncStore } from "../db/hevySyncStore.js";
-import type { HevyApi, HevyNewTemplate, HevyWriteSet, HevyWriteWorkout } from "../hevy/hevyApi.js";
+import type { HevyApi, HevyNewTemplate, HevyTemplate, HevyWriteSet, HevyWriteWorkout } from "../hevy/hevyApi.js";
 import type { OpenGymApi } from "../opengym/openGymApi.js";
 import type { HevyWorkout } from "../parsers/hevy.js";
 import { openGymWorkouts, type OpenGymState, type OpenGymWorkout } from "../parsers/openGym.js";
@@ -113,6 +113,26 @@ export function learnExercises(openGym: OpenGymWorkout[], hevy: HevyWorkout[], u
   return learned;
 }
 
+/** Words of an exercise name, order and punctuation aside: "cable single arm lateral raise v. 2" = "Single Arm Lateral Raise (Cable)". */
+export function nameKey(name: string): string {
+  return name
+    .toLowerCase()
+    .replace(/\bv\.?\s*\d+\b/g, " ")
+    .replace(/[^a-z0-9]+/g, " ")
+    .split(" ")
+    .filter((w) => w && !["with", "the", "a", "on", "attachment"].includes(w))
+    .map((w) => (w.endsWith("s") && w.length > 3 && !w.endsWith("ss") ? w.slice(0, -1) : w))
+    .sort()
+    .join(" ");
+}
+
+/** The Hevy exercise with the same name: a library one first, else a custom one (never create a second copy). */
+export function templateByName(name: string, templates: HevyTemplate[]): HevyTemplate | null {
+  const key = nameKey(name);
+  const same = templates.filter((t) => nameKey(t.title) === key);
+  return same.find((t) => !t.custom) ?? same[0] ?? null;
+}
+
 const capitalize = (name: string) => name.charAt(0).toUpperCase() + name.slice(1);
 
 /** A custom Hevy exercise for an openGym exercise never done in Hevy. */
@@ -144,13 +164,14 @@ export interface HevySyncPlan {
   items: HevySyncItem[];
   /** For each item to send: the openGym workout and the exercise names. */
   work: Array<{ item: HevySyncItem; workout: OpenGymWorkout; names: Map<string, string>; existing: string | null }>;
-  exercises: Map<string, ExerciseLink | { templateId: string; title: string; origin: "learned" }>;
+  exercises: Map<string, ExerciseLink | { templateId: string; title: string; origin: "learned" | "name" }>;
+  templates: HevyTemplate[];
   unit: string;
 }
 
 export interface HevySyncDeps {
   store: HevySyncStore;
-  hevy: Pick<HevyApi, "workoutsSince" | "createWorkout" | "updateWorkout" | "createExerciseTemplate">;
+  hevy: Pick<HevyApi, "workoutsSince" | "createWorkout" | "updateWorkout" | "createExerciseTemplate" | "exerciseTemplates">;
   openGym: Pick<OpenGymApi, "state" | "exerciseNames">;
   now?: () => number;
   log: { warn(details: object, message: string): void; info(details: object, message: string): void };
@@ -177,8 +198,9 @@ export class HevySync {
     const linkedHevyIds = new Set([...links.values()].map((l) => l.hevyId));
 
     const saved = store.exerciseLinks();
-    const exercises = new Map<string, ExerciseLink | { templateId: string; title: string; origin: "learned" }>(saved);
+    const exercises = new Map<string, ExerciseLink | { templateId: string; title: string; origin: "learned" | "name" }>(saved);
     for (const [id, learned] of learnExercises(recent, hevyWorkouts, state.unit)) if (!saved.has(id)) exercises.set(id, { ...learned, origin: "learned" });
+    const templates = await hevy.exerciseTemplates();
 
     const work: HevySyncPlan["work"] = [];
     for (const workout of [...recent].reverse()) {
@@ -189,6 +211,12 @@ export class HevySync {
       if (!link && hevyWorkouts.some((h) => !linkedHevyIds.has(h.id) && overlaps(workout, hevySpan(h)))) continue;
       const names = await openGym.exerciseNames(workout.id).catch(() => new Map<string, string>());
       const custom = state.customEx ?? {};
+      // Not learned: a Hevy exercise with the same name (library first, then an existing custom one)
+      for (const e of workout.entries) {
+        const name = names.get(e.id) ?? custom[e.id]?.n;
+        const byName = !exercises.has(e.id) && name ? templateByName(name, templates) : null;
+        if (byName) exercises.set(e.id, { templateId: byName.id, title: byName.title, origin: "name" });
+      }
       const items: HevySyncExercise[] = workout.entries
         .filter((e) => doneSets(e).length > 0)
         .map((e) => {
@@ -205,7 +233,7 @@ export class HevySync {
       };
       work.push({ item, workout, names, existing: link?.hevyId ?? null });
     }
-    return { items: work.map((w) => w.item), work, exercises, unit: state.unit };
+    return { items: work.map((w) => w.item), work, exercises, templates, unit: state.unit };
   }
 
   /** Sends what the plan holds. Runs one at a time; does nothing while the copy is off. */
@@ -228,15 +256,16 @@ export class HevySync {
           if (sets.length === 0) continue;
           let link = plan.exercises.get(entry.id);
           if (!link) {
-            // Never done in Hevy: a custom exercise, created once and remembered
+            // Not in Hevy under any name: a custom exercise, created once and remembered
             const name = names.get(entry.id) ?? entry.id;
             const template = newTemplate(name, sets);
-            const templateId = await hevy.createExerciseTemplate(template);
+            const templateId = (await hevy.createExerciseTemplate(template)) ?? templateByName(template.title, await hevy.exerciseTemplates())?.id;
+            if (!templateId) throw new Error(`Hevy created the exercise "${template.title}" but it could not be found`);
             link = { openGymId: entry.id, templateId, title: template.title, origin: "custom" };
             store.saveExerciseLink(link);
             plan.exercises.set(entry.id, link);
-          } else if (link.origin === "learned") {
-            store.saveExerciseLink({ openGymId: entry.id, templateId: link.templateId, title: link.title, origin: "learned" });
+          } else if (link.origin === "learned" || link.origin === "name") {
+            store.saveExerciseLink({ openGymId: entry.id, templateId: link.templateId, title: link.title, origin: link.origin });
           }
           exercises.push({ exercise_template_id: link.templateId, superset_id: null, notes: null, sets: sets.map((s) => hevySet(s, plan.unit)) });
         }
@@ -253,7 +282,11 @@ export class HevySync {
           store.saveLink({ openGymId: workout.id, hevyId: existing, hash: contentHash(workout) });
           updated++;
         } else {
-          const hevyId = await hevy.createWorkout(payload);
+          // When Hevy does not return the id, the new workout is found by its start time
+          const hevyId =
+            (await hevy.createWorkout(payload)) ??
+            (await hevy.workoutsSince(new Date(workout.start - 60_000).toISOString())).find((h) => Math.abs(Date.parse(h.start_time) - workout.start) < 60_000)?.id;
+          if (!hevyId) throw new Error(`Hevy created "${payload.title}" but it could not be found`);
           store.saveLink({ openGymId: workout.id, hevyId, hash: contentHash(workout) });
           created++;
         }

@@ -22,8 +22,14 @@ whichever workout source is active in Intake.
 - Each openGym exercise is sent as the Hevy exercise **learned from workouts present in both apps**: an openGym entry
   whose done sets are exactly those of one Hevy exercise in the twin workout is that exercise; the template matched
   most often wins. With an import from Hevy, this covers every exercise ever done in Hevy.
-- An exercise never done in Hevy becomes a **custom Hevy exercise**, created once with the openGym name, a type
-  (weight and reps, reps only, duration, or distance and duration) and an equipment category guessed from the name.
+- Otherwise, the Hevy exercise **with the same name** (same words, order and punctuation aside, version suffixes like
+  "v. 2" ignored): "cable single arm lateral raise v. 2" is "Single Arm Lateral Raise (Cable)". A library exercise wins
+  over a custom one; an existing custom exercise with that name is reused, never created again.
+- Only an exercise Hevy has under no name becomes a **custom Hevy exercise**, created once with the openGym name, a
+  type (weight and reps, reps only, duration, or distance and duration) and an equipment category guessed from the name.
+- Hevy does not always answer a create with the documented JSON: the id is read from any shape it returns, and when
+  it is missing the new exercise is found by name (and a new workout by its start time) before anything else is sent.
+  If it still cannot be found the run stops, so a retry never creates a second copy.
 - The Profile row lists what the next run would send, with the Hevy exercise each openGym exercise becomes or
   "new exercise on Hevy".
 

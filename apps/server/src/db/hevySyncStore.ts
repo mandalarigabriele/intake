@@ -1,7 +1,7 @@
 import type { DatabaseSync } from "node:sqlite";
 
 /** How a Hevy exercise was chosen for an openGym exercise. */
-export type ExerciseOrigin = "learned" | "custom";
+export type ExerciseOrigin = "learned" | "name" | "custom";
 
 export interface ExerciseLink {
   openGymId: string;

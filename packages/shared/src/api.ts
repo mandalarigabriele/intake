@@ -667,8 +667,11 @@ export interface HevySyncExercise {
   name: string;
   /** The Hevy exercise it is sent as; null when a custom Hevy exercise will be created. */
   hevyTitle: string | null;
-  /** learned: from workouts present in both apps; custom: a custom exercise created earlier; new: one to create. */
-  origin: "learned" | "custom" | "new";
+  /**
+   * learned: from workouts present in both apps; name: a Hevy exercise with the same name; custom: a custom exercise
+   * created earlier; new: one to create.
+   */
+  origin: "learned" | "name" | "custom" | "new";
 }
 
 export interface HevySyncItem {

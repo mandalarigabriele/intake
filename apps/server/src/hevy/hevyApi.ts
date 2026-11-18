@@ -46,6 +46,36 @@ export interface HevyNewTemplate {
   muscle_group: string;
 }
 
+/** An exercise template of the account (GET /v1/exercise_templates). */
+export interface HevyTemplate {
+  id: string;
+  title: string;
+  custom: boolean;
+}
+
+/** Templates change rarely: kept an hour (cleared after a write). */
+const TEMPLATES_CACHE_MS = 60 * 60_000;
+/** The library has a few hundred templates (100 per page). */
+const MAX_TEMPLATE_PAGES = 20;
+
+/**
+ * Id of something Hevy just created, from whichever shape it answered with: `{ id }`, `{ <key>: { id } }`,
+ * `{ <key>: [{ id }] }`, or the id as plain text. Null when none is recognizable.
+ */
+export function createdId(body: unknown, key: string): string | null {
+  if (typeof body === "string") {
+    const text = body.replace(/^"|"$/g, "").trim();
+    return /^[A-Za-z0-9-]{4,64}$/.test(text) ? text : null;
+  }
+  if (typeof body === "number") return String(body);
+  if (!body || typeof body !== "object") return null;
+  const record = body as Record<string, unknown>;
+  const nested = record[key];
+  const candidates = [record.id, record[`${key}_id`], Array.isArray(nested) ? (nested[0] as { id?: unknown } | undefined)?.id : (nested as { id?: unknown } | undefined)?.id];
+  const id = candidates.find((c) => (typeof c === "string" && c !== "") || typeof c === "number");
+  return id === undefined ? null : String(id);
+}
+
 /**
  * Client of the Hevy public API, authenticated with the owner's API key. Reads are live (pages cached briefly);
  * the only writes are the optional openGym → Hevy copy (services/hevySync.ts).
@@ -124,6 +154,7 @@ export class HevyApi {
   clearCache(): void {
     this.cache.clear();
     this.routinesCache = null;
+    this.templatesCache = null;
   }
 
   private async write(method: "POST" | "PUT", path: string, body: unknown): Promise<unknown> {
@@ -138,32 +169,68 @@ export class HevyApi {
     } catch (error) {
       throw new HevyError(`Hevy request failed: ${(error as Error).message}`);
     }
-    const json = (await response.json().catch(() => null)) as { error?: string } | null;
-    if (!response.ok) throw new HevyError(`Hevy answered ${response.status}${json?.error ? `: ${json.error}` : ""}`, response.status);
+    // The answer is not always the documented JSON (a created template came back in another shape): keep the raw text too
+    const text = await response.text().catch(() => "");
+    let json: unknown = null;
+    try {
+      json = text ? JSON.parse(text) : null;
+    } catch {
+      json = null;
+    }
+    const error = (json as { error?: unknown } | null)?.error;
+    if (!response.ok) throw new HevyError(`Hevy answered ${response.status}${typeof error === "string" ? `: ${error}` : ""}`, response.status);
     this.clearCache();
-    return json;
+    return json ?? text.trim();
   }
 
-  /** Creates a workout; returns its Hevy id. */
-  async createWorkout(workout: HevyWriteWorkout): Promise<string> {
-    const body = (await this.write("POST", "/v1/workouts", { workout })) as { workout?: unknown; id?: unknown } | null;
-    // Documented as a one-element array; accept a plain object too
-    const created = Array.isArray(body?.workout) ? body.workout[0] : (body?.workout ?? body);
-    const id = (created as { id?: unknown } | undefined)?.id;
-    if (typeof id !== "string" || !id) throw new HevyError("Hevy created the workout without returning its id");
-    return id;
+  /** Creates a workout; returns its Hevy id, or null when Hevy did not say it (the caller looks it up). */
+  async createWorkout(workout: HevyWriteWorkout): Promise<string | null> {
+    return createdId(await this.write("POST", "/v1/workouts", { workout }), "workout");
   }
 
   async updateWorkout(id: string, workout: HevyWriteWorkout): Promise<void> {
     await this.write("PUT", `/v1/workouts/${encodeURIComponent(id)}`, { workout });
   }
 
-  /** Creates a custom exercise template; returns its id. */
-  async createExerciseTemplate(exercise: HevyNewTemplate): Promise<string> {
-    const body = (await this.write("POST", "/v1/exercise_templates", { exercise })) as { id?: unknown } | null;
-    const id = body?.id;
-    if ((typeof id !== "string" && typeof id !== "number") || id === "") throw new HevyError("Hevy created the exercise without returning its id");
-    return String(id);
+  /** Creates a custom exercise template; returns its id, or null when Hevy did not say it (the caller looks it up). */
+  async createExerciseTemplate(exercise: HevyNewTemplate): Promise<string | null> {
+    return createdId(await this.write("POST", "/v1/exercise_templates", { exercise }), "exercise_template");
+  }
+
+  private templatesCache: { at: number; value: Promise<HevyTemplate[]> } | null = null;
+
+  /** Every exercise template on the account (library and custom), cached for an hour. */
+  exerciseTemplates(): Promise<HevyTemplate[]> {
+    if (this.templatesCache && this.now() - this.templatesCache.at < TEMPLATES_CACHE_MS) return this.templatesCache.value;
+    const value = this.fetchTemplates();
+    this.templatesCache = { at: this.now(), value };
+    value.catch(() => (this.templatesCache = null));
+    return value;
+  }
+
+  private async fetchTemplates(): Promise<HevyTemplate[]> {
+    const templates: HevyTemplate[] = [];
+    for (let page = 1; page <= MAX_TEMPLATE_PAGES; page++) {
+      let response: Response;
+      try {
+        response = await this.fetchImpl(`${BASE_URL}/v1/exercise_templates?page=${page}&pageSize=100`, {
+          headers: { "api-key": this.apiKey, accept: "application/json" },
+          signal: AbortSignal.timeout(10_000),
+        });
+      } catch (error) {
+        throw new HevyError(`Hevy request failed: ${(error as Error).message}`);
+      }
+      if (response.status === 404) break;
+      if (!response.ok) throw new HevyError(`Hevy answered ${response.status}`, response.status);
+      const body = (await response.json().catch(() => null)) as { page_count?: number; exercise_templates?: unknown[] } | null;
+      if (!body || !Array.isArray(body.exercise_templates)) throw new HevyError("Unexpected Hevy response");
+      for (const raw of body.exercise_templates) {
+        const t = raw as { id?: unknown; title?: unknown; is_custom?: unknown };
+        if (typeof t.id === "string" && typeof t.title === "string") templates.push({ id: t.id, title: t.title, custom: t.is_custom === true });
+      }
+      if (page >= (body.page_count ?? page)) break;
+    }
+    return templates;
   }
 
   /** Workouts that started at or after `since` (an ISO instant), newest first. */
