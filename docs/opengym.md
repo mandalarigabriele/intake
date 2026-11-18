@@ -50,7 +50,8 @@ The token works on two openGym endpoints:
   (last session, since the first session, steady). No "try X kg" from Intake: openGym's preview decides the next load.
 - **Muscles**: trained most (level 4) and not trained in the last month, from `muscle_balance`.
 - **Today card** ("Allenamento di oggi"): done today, today's planned session with its first exercises, or rest with
-  the next session.
+  the next session. A Today / Next switch shows the session after it; when today's session is still to do, the server
+  also previews the next planned day (`following` in `GET /api/training`, one extra `preview_session` call).
 - Exercise names come in English lower case from openGym's library; known ones are translated in `strings.ts`.
 - Body weight stays on Nutrition; openGym's weight log is not read.
 

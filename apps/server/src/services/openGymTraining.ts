@@ -70,6 +70,11 @@ export function healthCoveredRoutines(state: Pick<OpenGymState, "routines">, hea
   );
 }
 
+/** The first planned day after `date`. */
+export function plannedAfter(plan: OpenGymWeekPlan, date: string): string | null {
+  return plan.days.find((d) => d.routine_ids.length > 0 && d.date > date)?.date ?? null;
+}
+
 /** The first planned day from today whose session is not done yet (in openGym, or a cardio routine covered by Health). */
 export function nextPlannedDate(plan: OpenGymWeekPlan, workouts: HevyWorkout[], timeZone: string, coveredToday: Set<string> = new Set()): string | null {
   const doneToday = new Set<string | null | undefined>([...coveredToday, ...workouts.filter((w) => localDateTime(w.start_time, timeZone).date === plan.today).map((w) => w.routine_id)]);
@@ -125,6 +130,8 @@ export function buildOpenGymTraining(input: {
   state: OpenGymState;
   plan: OpenGymWeekPlan;
   preview: OpenGymPreview | null;
+  /** The session after `preview` when that one is planned today. */
+  following?: OpenGymPreview | null;
   muscles: OpenGymMuscleBalance | null;
   /** Exercise names of the routines (get_routine), used when a workout read in detail does not name one. */
   routineNames?: Map<string, string>;
@@ -135,7 +142,7 @@ export function buildOpenGymTraining(input: {
   today: string;
   openUrl: string;
 }): TrainingView {
-  const { state, plan, preview, muscles, routineNames, workouts, health, timeZone, today, openUrl } = input;
+  const { state, plan, preview, following, muscles, routineNames, workouts, health, timeZone, today, openUrl } = input;
   const base = buildTraining({ routines: routinesAsHevy(state), workouts, health, timeZone, today });
   const coveredToday = healthCoveredRoutines(state, health, today, routineNames);
   const letterOf = (routineId: string | null | undefined, title = "") => {
@@ -146,24 +153,27 @@ export function buildOpenGymTraining(input: {
   };
 
   const last = workouts[0];
-  const next: TrainingView["next"] = preview
-    ? {
-        routineId: preview.routine_id,
-        title: preview.routine_name,
-        letter: openGymLetter(preview.routine_name),
-        after: last ? { title: last.title, date: localDateTime(last.start_time, timeZone).date } : null,
-        exerciseCount: preview.exercises.length,
-        typicalMinutes: (() => {
-          const durations = workouts
-            .filter((w) => w.routine_id === preview.routine_id)
-            .slice(0, 3)
-            .map((w) => Math.round((Date.parse(w.end_time) - Date.parse(w.start_time)) / 60_000));
-          return durations.length ? Math.round(durations.reduce((a, b) => a + b, 0) / durations.length / 5) * 5 : null;
-        })(),
-        date: preview.date,
-        exercises: preview.exercises.map(targetExercise),
-      }
-    : null;
+  /** A session preview in the view shape (next, and the one after it when next is today). */
+  const sessionFrom = (preview: OpenGymPreview | null | undefined): TrainingView["next"] =>
+    preview
+      ? {
+          routineId: preview.routine_id,
+          title: preview.routine_name,
+          letter: openGymLetter(preview.routine_name),
+          after: last ? { title: last.title, date: localDateTime(last.start_time, timeZone).date } : null,
+          exerciseCount: preview.exercises.length,
+          typicalMinutes: (() => {
+            const durations = workouts
+              .filter((w) => w.routine_id === preview.routine_id)
+              .slice(0, 3)
+              .map((w) => Math.round((Date.parse(w.end_time) - Date.parse(w.start_time)) / 60_000));
+            return durations.length ? Math.round(durations.reduce((a, b) => a + b, 0) / durations.length / 5) * 5 : null;
+          })(),
+          date: preview.date,
+          exercises: preview.exercises.map(targetExercise),
+        }
+      : null;
+  const next = sessionFrom(preview);
 
   // Week: what was done (routine numbers) and, for the days still to come, what the plan holds
   const plannedOn = new Map(plan.days.map((d) => [d.date, d.routine_ids]));
@@ -210,6 +220,7 @@ export function buildOpenGymTraining(input: {
     ...base,
     source: { id: "opengym", label: "openGym", openUrl },
     next,
+    following: next?.date === today ? sessionFrom(following) : null,
     week,
     lifts,
     recent,

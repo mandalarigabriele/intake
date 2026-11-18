@@ -565,6 +565,7 @@ export const t = {
   todayTraining: {
     aria: "Allenamento di oggi",
     label: "ALLENAMENTO DI OGGI",
+    labelBoth: "ALLENAMENTO",
     done: (title: string) => `Fatto: ${title}`,
     doneMeta: (start: string, minutes: number, exercises: number) => `${start} · ${minutes} min · ${exercises === 1 ? "1 esercizio" : `${exercises} esercizi`}`,
     rest: "Oggi riposo",
@@ -572,6 +573,8 @@ export const t = {
     nextRoutine: (title: string) => `Prossima scheda: ${title}`,
     more: (n: number) => (n === 1 ? "e un altro esercizio" : `e altri ${n} esercizi`),
     open: "Vedi allenamento →",
+    switchAria: "Mostra l’allenamento di oggi o il prossimo",
+    views: { today: "Oggi", next: "Prossimo" },
   },
 
   refresh: {

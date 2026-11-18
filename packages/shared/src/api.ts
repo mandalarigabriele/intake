@@ -595,6 +595,8 @@ export interface TrainingView {
     date?: string | null;
     exercises: TrainingTargetExercise[];
   } | null;
+  /** openGym: the session planned after `next` when `next` is today's, so Today can show both. */
+  following?: TrainingView["next"];
   week: {
     start: string;
     days: Array<{

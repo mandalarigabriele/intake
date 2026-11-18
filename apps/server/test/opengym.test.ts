@@ -5,7 +5,7 @@ import { OpenGymApi, OpenGymError } from "../src/opengym/openGymApi.js";
 import { muscleBalanceSchema, openGymWorkouts, parseOpenGymState, previewSchema, weekPlanSchema } from "../src/parsers/openGym.js";
 import { fromOpenGym, GymSources, hevySource, openGymSource } from "../src/services/gymSource.js";
 import type { MergedWorkout } from "../src/services/healthWorkouts.js";
-import { buildOpenGymTraining, cardioFamily, healthCoveredRoutines, nextPlannedDate, openGymLetter } from "../src/services/openGymTraining.js";
+import { buildOpenGymTraining, cardioFamily, healthCoveredRoutines, nextPlannedDate, openGymLetter, plannedAfter } from "../src/services/openGymTraining.js";
 import { authOptions, signIn } from "./helpers.js";
 import { fixture } from "./parsers/fixtures.js";
 
@@ -177,6 +177,17 @@ describe("buildOpenGymTraining", () => {
     // Workouts imported from Hevy still get their letter from the title
     expect(view.recent[0]!.letter).toBe("C");
     expect(view.muscles).toEqual({ top: expect.arrayContaining(["chest", "gluteal"]), neglected: ["hip-flexors", "tibialis"] });
+  });
+
+  it("adds the session after today's when today's is still to do", () => {
+    const cardio = previewSchema.parse(tools.preview_session_cardio);
+    expect(plannedAfter(plan, "2026-11-17")).toBe("2026-11-18");
+    const view = buildOpenGymTraining({ state, plan, preview: cardio, following: preview, muscles, workouts, health: [], timeZone: "Europe/Rome", today: "2026-11-17", openUrl: "https://gym.example" });
+    expect(view.next).toMatchObject({ title: "Cyclette — Zona 2", date: "2026-11-17" });
+    expect(view.following).toMatchObject({ title: "1 · Forza — Squat & Panca", date: "2026-11-18", exerciseCount: 7 });
+    // When the next session is not today, there is nothing to add
+    const later = buildOpenGymTraining({ state, plan, preview, following: cardio, muscles, workouts, health: [], timeZone: "Europe/Rome", today: "2026-11-17", openUrl: "https://gym.example" });
+    expect(later.following).toBeNull();
   });
 
   /** An Apple Health session of a given family on a date. */
