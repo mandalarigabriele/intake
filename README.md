@@ -196,6 +196,8 @@ The interface is in Italian; this README uses English names for the screens (the
 
 ## 🔧 How it works
 
+- **Optional parts:** Alimentazione is always on; Allenamenti, Salute and Promemoria can be switched off for the whole installation. A part that is off hides its routes (404 `feature_disabled`), stops its background work and keeps its data. See [docs/features.md](docs/features.md) (`GET/PUT /api/features`).
+
 ```mermaid
 flowchart LR
   subgraph Phone["📱 iPhone / iPad / desktop"]
@@ -290,5 +292,6 @@ All configuration comes from environment variables; see [.env.example](.env.exam
 | [docs/meal-plan-format.md](docs/meal-plan-format.md) | Meal plan JSON format and schema |
 | [docs/google-sign-in.md](docs/google-sign-in.md) | Google OAuth client setup |
 | [docs/opengym.md](docs/opengym.md) | openGym as the workout source: setup, what is read, how it is shown |
+| [docs/features.md](docs/features.md) | Optional parts (Allenamenti, Salute, Promemoria): what each includes, what happens when off |
 | [docs/hevy-sync.md](docs/hevy-sync.md) | Copying openGym workouts to Hevy: what is copied, exercise matching, what is stored |
 | [docs/design/DESIGN.md](docs/design/DESIGN.md) | Design system, navigation, approved mockups |

@@ -24,6 +24,7 @@ import { authRoutes } from "./routes/auth.js";
 import { healthRoutes } from "./routes/health.js";
 import { appleHealthRoutes, type AppleHealthRoutesOptions } from "./routes/appleHealth.js";
 import { healthIngestRoutes, type HealthIngestRoutesOptions } from "./routes/healthIngest.js";
+import { featureOf, featureRoutes, type FeatureRoutesOptions } from "./routes/features.js";
 import { nutritionApiRoutes, nutritionConnectRoutes } from "./routes/nutrition.js";
 
 export interface AuthOptions {
@@ -71,6 +72,8 @@ export interface AppOptions {
   appleHealth?: Omit<AppleHealthRoutesOptions, "requireOwner">;
   /** Automatic uploads from Health Auto Export; token-protected, outside Google sign-in. */
   healthIngest?: HealthIngestRoutesOptions;
+  /** Optional parts (Allenamenti, Salute, Promemoria): GET/PUT /api/features and 404 on the routes of a part that is off. */
+  features?: Omit<FeatureRoutesOptions, "requireOwner">;
 }
 
 export async function buildApp(options: AppOptions = {}): Promise<FastifyInstance> {
@@ -100,6 +103,15 @@ export async function buildApp(options: AppOptions = {}): Promise<FastifyInstanc
     return reply.code(status).send({ error: status >= 500 ? "internal_error" : (error as Error).message });
   });
 
+  const { features } = options;
+  if (features) {
+    // A part that is off answers as if it did not exist, including the Health Auto Export uploads
+    app.addHook("onRequest", async (request, reply) => {
+      const key = featureOf(request.url);
+      if (key && !features.features.enabled(key)) return reply.code(404).send({ error: "feature_disabled", feature: key });
+    });
+  }
+
   await app.register(healthRoutes, { prefix: "/api" });
   if (options.healthIngest) {
     await app.register(healthIngestRoutes, { prefix: "/api", ...options.healthIngest });
@@ -116,6 +128,9 @@ export async function buildApp(options: AppOptions = {}): Promise<FastifyInstanc
     const requireOwner = createRequireOwner(cookies, ownerEmail);
 
     await app.register(authRoutes, { google, cookies, ownerEmail, requireOwner });
+    if (features) {
+      await app.register(featureRoutes, { prefix: "/api", ...features, requireOwner });
+    }
 
     if (options.nutrition) {
       await app.register(nutritionConnectRoutes, { connection: options.nutrition, requireOwner });

@@ -16,6 +16,8 @@ export interface ReminderSchedulerDeps {
   api: Pick<NutritionApi, "clock" | "mealsByDate" | "goalProgress">;
   sender: PushSender;
   log: { warn(details: object, message: string): void; info(details: object, message: string): void };
+  /** False while the Promemoria part is off: the checks are skipped. */
+  enabled?: () => boolean;
 }
 
 /**
@@ -30,7 +32,9 @@ export class ReminderScheduler {
   constructor(private readonly deps: ReminderSchedulerDeps) {}
 
   start(intervalMs = 60_000): void {
-    this.timer = setInterval(() => void this.tick(), intervalMs);
+    this.timer = setInterval(() => {
+      if (this.deps.enabled?.() ?? true) void this.tick();
+    }, intervalMs);
     this.timer.unref();
   }
 

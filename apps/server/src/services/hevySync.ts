@@ -175,6 +175,8 @@ export interface HevySyncDeps {
   openGym: Pick<OpenGymApi, "state" | "exerciseNames">;
   now?: () => number;
   log: { warn(details: object, message: string): void; info(details: object, message: string): void };
+  /** False while the Allenamenti part is off: the periodic copy is skipped. */
+  enabled?: () => boolean;
 }
 
 export class HevySync {
@@ -303,7 +305,9 @@ export class HevySync {
 
   /** Checks every `intervalMs` (default 15 minutes) while the copy is on. */
   start(intervalMs = 15 * 60_000): void {
-    this.timer = setInterval(() => void this.run(), intervalMs);
+    this.timer = setInterval(() => {
+      if (this.deps.enabled?.() ?? true) void this.run();
+    }, intervalMs);
     this.timer.unref();
   }
 

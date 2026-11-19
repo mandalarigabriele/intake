@@ -725,3 +725,19 @@ export interface HevySyncStatus {
   /** What the next run would send; null when it could not be computed (an app did not answer). */
   pending: HevySyncItem[] | null;
 }
+
+/** Optional parts of the app; Alimentazione is always on (docs/features.md). */
+export type FeatureKey = "training" | "health" | "reminders";
+
+/** GET /api/features: which optional parts are on and whether the first-run setup was completed. */
+export interface FeaturesResponse {
+  setupDone: boolean;
+  training: boolean;
+  health: boolean;
+  reminders: boolean;
+  /** Workout apps configured in the server environment (HEVY_API_KEY, OPENGYM_URL + OPENGYM_TOKEN). */
+  gymApps: { hevy: boolean; opengym: boolean };
+}
+
+/** PUT /api/features body: any subset. */
+export type FeaturesUpdate = Partial<Pick<FeaturesResponse, "setupDone" | FeatureKey>>;

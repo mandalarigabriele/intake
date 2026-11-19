@@ -8,6 +8,7 @@ import { OpenGymApi } from "./opengym/openGymApi.js";
 import { GymSources, hevySource, openGymSource } from "./services/gymSource.js";
 import { NutritionApi } from "./mcp/nutritionApi.js";
 import { createServices } from "./services.js";
+import { healthWhenOn } from "./db/featureStore.js";
 import { ReminderScheduler } from "./services/reminderScheduler.js";
 import { HevySync } from "./services/hevySync.js";
 import { WebPushSender, vapidKeys } from "./services/webPush.js";
@@ -20,11 +21,16 @@ const api = new NutritionApi(services.nutrition, (tool, warnings) => {
 
 // Reminders: VAPID keys are generated once and kept encrypted next to the Nutrition token
 const vapid = vapidKeys(services.secrets);
+// Optional parts (docs/features.md): an installation from before the switches keeps what it already uses
+const features = services.features;
+features.adoptExisting({ gymConfigured: Boolean(config.HEVY_API_KEY || (config.OPENGYM_URL && config.OPENGYM_TOKEN)) });
+const health = healthWhenOn(services.health, features);
 const scheduler = new ReminderScheduler({
   store: services.reminders,
   plans: services.plans,
   api,
   sender: new WebPushSender(vapid, config.PUBLIC_BASE_URL),
+  enabled: () => features.enabled("reminders"),
   log: { warn: (details, message) => app.log.warn(details, message), info: (details, message) => app.log.info(details, message) },
 });
 
@@ -44,6 +50,7 @@ const hevySync =
         store: services.hevySync,
         hevy,
         openGym,
+        enabled: () => features.enabled("training"),
         log: { warn: (details, message) => app.log.warn(details, message), info: (details, message) => app.log.info(details, message) },
       })
     : null;
@@ -64,17 +71,18 @@ const app = await buildApp({
   api,
   mealsApi: api,
   weekApi: api,
-  weekHealth: services.health,
+  weekHealth: health,
   profile: { api, hevyConfigured: Boolean(config.HEVY_API_KEY) },
   insightApi: api,
-  insightHealth: services.health,
+  insightHealth: health,
   plans: services.plans,
   push: { store: services.reminders, scheduler, publicKey: vapid.publicKey },
-  workouts: { gym, health: services.health, api },
-  training: { gym, sources: gymSources, health: services.health, api },
+  workouts: { gym, health, api },
+  training: { gym, sources: gymSources, health, api },
   hevySync: { sync: hevySync, store: services.hevySync },
   appleHealth: { store: services.health, api, sync: { token: healthToken, endpoint: `${config.PUBLIC_BASE_URL}/api/health/ingest` } },
   healthIngest: { store: services.health, token: healthToken },
+  features: { features, gymApps: { hevy: Boolean(hevy), opengym: Boolean(openGym) } },
 });
 
 app.addHook("onClose", async () => {

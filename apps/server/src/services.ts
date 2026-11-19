@@ -3,6 +3,7 @@ import type { DatabaseSync } from "node:sqlite";
 import type { Config } from "./config.js";
 import { openDatabase } from "./db/database.js";
 import { SecretBox } from "./db/secretBox.js";
+import { FeatureStore } from "./db/featureStore.js";
 import { HealthStore } from "./db/healthStore.js";
 import { HevySyncStore } from "./db/hevySyncStore.js";
 import { PlanStore } from "./db/planStore.js";
@@ -17,6 +18,7 @@ export interface Services {
   reminders: ReminderStore;
   health: HealthStore;
   hevySync: HevySyncStore;
+  features: FeatureStore;
   nutrition: NutritionConnection;
   close(): Promise<void>;
 }
@@ -38,6 +40,7 @@ export function createServices(config: Config): Services {
     reminders: new ReminderStore(db),
     health: new HealthStore(db),
     hevySync: new HevySyncStore(db),
+    features: new FeatureStore(db),
     nutrition,
     async close() {
       await nutrition.close();
