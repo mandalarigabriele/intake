@@ -796,6 +796,7 @@ export const t = {
     respiratoryRate: "Frequenza respiratoria",
     average30: (value: string) => `media 30 giorni ${value}`,
     notAvailable: "non disponibile",
+    hrvCalibrating: (days: number, needed: number) => `in calibrazione · ${days} di ${needed} giorni`,
     slept: "Dormito",
     times: "Orari",
     need: "Bisogno",

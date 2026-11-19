@@ -84,9 +84,10 @@ export function dailyScores(store: Pick<HealthStore, "daily" | "workouts" | "sle
   const daily = store.daily(addDays(from, -1), date);
   const map = new Map(daily.map((d) => [`${d.metric}|${d.date}`, d.value]));
   const values = (metric: string, day: string) => map.get(`${metric}|${day}`) ?? null;
+  const history = (metric: string) => Array.from({ length: BASELINE_DAYS }, (_, i) => values(metric, addDays(from, i))).filter((v): v is number => v !== null);
   const baseline = (metric: string) => {
-    const history = Array.from({ length: BASELINE_DAYS }, (_, i) => values(metric, addDays(from, i))).filter((v): v is number => v !== null);
-    return history.length >= MIN_BASELINE_DAYS ? mean(history) : null;
+    const days = history(metric);
+    return days.length >= MIN_BASELINE_DAYS ? mean(days) : null;
   };
 
   const effort = effortOf(store, date, values);
@@ -131,7 +132,12 @@ export function dailyScores(store: Pick<HealthStore, "daily" | "workouts" | "sle
   for (const p of parts) p.weight = totalWeight > 0 ? Math.round((p.weight / totalWeight) * 100) / 100 : 0;
   const hasAnyInput = hrv !== null || rhr !== null || sleep !== null;
   const recovery = hasAnyInput
-    ? { percent: heartPart ? Math.round(parts.reduce((sum, p) => sum + p.score * p.weight, 0)) : null, parts, usesHrv }
+    ? {
+        percent: heartPart ? Math.round(parts.reduce((sum, p) => sum + p.score * p.weight, 0)) : null,
+        parts,
+        usesHrv,
+        hrvCalibration: hrv !== null && hrvBase === null ? { days: history("hrvMs").length, needed: MIN_BASELINE_DAYS } : null,
+      }
     : null;
 
   const sources = new Set<string>();

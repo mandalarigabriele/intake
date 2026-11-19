@@ -74,7 +74,7 @@ function details(key: RingKey, scores: DailyScores): { title: string; text: stri
     const rows: Array<{ k: string; v: string }> = [];
     const part = (k: "hrv" | "restingHr" | "respiratoryRate") => r?.parts.find((p) => p.key === k);
     const hrv = part("hrv");
-    rows.push({ k: s.hrv, v: hrv ? `${formatKcal(hrv.value)} ms · ${s.average30(`${formatKcal(hrv.baseline!)} ms`)}` : s.notAvailable });
+    rows.push({ k: s.hrv, v: hrv ? `${formatKcal(hrv.value)} ms · ${s.average30(`${formatKcal(hrv.baseline!)} ms`)}` : r?.hrvCalibration ? s.hrvCalibrating(r.hrvCalibration.days, r.hrvCalibration.needed) : s.notAvailable });
     const rhr = part("restingHr");
     if (rhr) rows.push({ k: s.restingHr, v: `${formatKcal(rhr.value)} bpm · ${s.average30(`${formatOneDecimal(rhr.baseline!)} bpm`)}` });
     const resp = part("respiratoryRate");

@@ -85,6 +85,14 @@ describe("dailyScores", () => {
     expect(scores.recovery!.percent).toBe(72);
   });
 
+  it("says how many days of HRV are still missing for the personal average", () => {
+    const s = store({ today: { hrvMs: 44, restingHr: 60 } });
+    s.save({ daily: ["2026-11-16", "2026-11-17", "2026-11-18", "2026-11-19"].map((date) => ({ date, metric: "hrvMs", value: 50 })), sleep: [], workouts: [], ignored: { metrics: [], sections: {}, routes: 0 } } as unknown as HealthExport, "sync");
+    const scores = dailyScores(s, "2026-11-20", "2026-11-20");
+    expect(scores.recovery).toMatchObject({ usesHrv: false, hrvCalibration: { days: 4, needed: 5 } });
+    expect(dailyScores(store({ hrv: true, today: { hrvMs: 55 } }), "2026-11-20", "2026-11-20").recovery!.hrvCalibration).toBeNull();
+  });
+
   it("is calibrating without enough history, and Sforzo comes from the steps", () => {
     const s = new HealthStore(openDatabase(":memory:"));
     s.save({ daily: [{ date: "2026-11-20", metric: "restingHr", value: 58 }, { date: "2026-11-20", metric: "steps", value: 10000 }], sleep: [night("2026-11-20", 420)], workouts: [], ignored: { metrics: [], sections: {}, routes: 0 } } as unknown as HealthExport, "sync");

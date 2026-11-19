@@ -137,7 +137,7 @@ Fitbit and the other apps write.
   - With HRV: HRV 50% (+10% over baseline → +20 points), resting HR 20%, Sleep 30%.
   - Without HRV: resting HR 45% (−1% → +3 points), respiratory rate 20% (−1% → +3 points), Sleep 35%.
   - Missing inputs are left out and the weights rescaled; without enough resting-HR or HRV history it shows "calibrating".
-- Tapping a ring opens "come si calcola" with the day's inputs (HRV "not available" until a watch writes it).
+- Tapping a ring opens "come si calcola" with the day's inputs (HRV "not available" until a watch writes it, then "calibrating · N of 5 days" until the personal average needs no more days: the baseline counts only the days before today).
 
 ## Insights
 

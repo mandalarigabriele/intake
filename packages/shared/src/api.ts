@@ -551,6 +551,8 @@ export interface DailyScores {
     percent: number | null;
     parts: RecoveryPart[];
     usesHrv: boolean;
+    /** HRV arrives but the personal average is not ready yet: days collected before today and days needed. */
+    hrvCalibration: { days: number; needed: number } | null;
   } | null;
   sleep: {
     percent: number;
