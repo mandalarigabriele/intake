@@ -1,7 +1,8 @@
 import type { ProfileView, TrainingSourceId } from "@intake/shared";
 import { useState } from "react";
 import { Link } from "wouter";
-import { useDisconnectNutrition, useHealthStatus, useLogWeight, useNutritionStatus, useProfile, useSetHealthSettings, useSignOut, type User, useSetTrainingSource, useTrainingSource, useHevySync, useHevySyncAction } from "../api/queries";
+import { useDisconnectNutrition, useHealthStatus, useLogWeight, useNutritionStatus, useProfile, useSetHealthSettings, useSignOut, type User, useSetTrainingSource, useTrainingSource, useHevySync, useHevySyncAction, useFeatures, useSetFeatures } from "../api/queries";
+import type { FeatureKey } from "@intake/shared";
 import { Avatar } from "../components/ProfileLink";
 import { RemindersSheet } from "../components/RemindersSheet";
 import { BackIcon } from "../components/icons";
@@ -307,6 +308,51 @@ function HevySyncRow() {
   );
 }
 
+const FEATURE_ROWS: FeatureKey[] = ["training", "health", "reminders"];
+
+/** Profilo › Funzioni (docs/features.md): Alimentazione always on, a switch for each optional part. */
+function FeaturesCard() {
+  const features = useFeatures();
+  const save = useSetFeatures();
+  const data = features.data;
+  if (!data) return null;
+  const s = t.profile.features;
+  return (
+    <section className="card profile-card profile-list" aria-label={s.title}>
+      <div className="profile-card-head">
+        <h2>{s.title}</h2>
+      </div>
+      <div className="profile-row-item feature-row">
+        <span className="connection-text">
+          <strong>{s.nutrition}</strong>
+          <span className="muted">{s.nutritionNote}</span>
+        </span>
+      </div>
+      {FEATURE_ROWS.map((key) => (
+        <label key={key} className="profile-row-item feature-row">
+          <span className="connection-text">
+            <strong>{s[key]}</strong>
+            <span className="muted">{s[`${key}Note`]}</span>
+          </span>
+          <input
+            type="checkbox"
+            role="switch"
+            className="switch"
+            aria-label={s.toggle(s[key])}
+            checked={data[key]}
+            disabled={save.isPending}
+            onChange={(event) => save.mutate({ [key]: event.target.checked })}
+          />
+        </label>
+      ))}
+      <span className="muted feature-hint">{save.isError ? s.failed : s.hint}</span>
+      <button type="button" className="button-secondary-small feature-rerun" disabled={save.isPending} onClick={() => save.mutate({ setupDone: false })}>
+        {s.rerun}
+      </button>
+    </section>
+  );
+}
+
 /** Profilo (docs/design Profilo): weight, goals, connections, reminders, theme, Nutrition disconnect and sign out. */
 export function ProfilePage({ user }: { user: User }) {
   const profile = useProfile();
@@ -316,6 +362,7 @@ export function ProfilePage({ user }: { user: User }) {
   const disconnect = useDisconnectNutrition();
   const [theme, setTheme] = useState<ThemePreference>(getThemePreference);
   const [reminders, setReminders] = useState(false);
+  const features = useFeatures().data;
   const data = profile.data;
   const healthState: LinkState = !health.data?.lastImport ? "off" : health.data.activeEnergyWarning ? "warning" : "connected";
 
@@ -341,33 +388,43 @@ export function ProfilePage({ user }: { user: User }) {
         </div>
 
         <div className="profile-column">
+          <FeaturesCard />
+
           <section className="card profile-card profile-list" aria-label={t.profile.connections}>
             <div className="profile-card-head">
               <h2>{t.profile.connections}</h2>
             </div>
             <ConnectionRow name={t.profile.google} note={t.profile.googleNote} state="connected" />
             <ConnectionRow name={t.profile.nutrition} note={t.profile.nutritionNote} state={nutrition.data?.connected === false ? "off" : "connected"} />
-            <ConnectionRow
-              name={t.profile.appleHealth}
-              note={healthState === "warning" ? `${t.profile.appleHealthNote} · ${t.profile.appleHealthWarning}` : t.profile.appleHealthNote}
-              state={healthState}
-              href="/profilo/salute"
-            />
-            <GymRows />
-            <HevySyncRow />
+            {features?.health && (
+              <ConnectionRow
+                name={t.profile.appleHealth}
+                note={healthState === "warning" ? `${t.profile.appleHealthNote} · ${t.profile.appleHealthWarning}` : t.profile.appleHealthNote}
+                state={healthState}
+                href="/profilo/salute"
+              />
+            )}
+            {features?.training && (
+              <>
+                <GymRows />
+                <HevySyncRow />
+              </>
+            )}
           </section>
 
-          <section className="card profile-card profile-list" aria-label={t.profile.reminders}>
-            <button type="button" className="profile-row-item connection-row profile-first-row" onClick={() => setReminders(true)}>
-              <span className="connection-text">
-                <strong>{t.profile.reminders}</strong>
-                <span className="muted">{t.profile.remindersNote}</span>
-              </span>
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                <path d="M9 6l6 6-6 6" />
-              </svg>
-            </button>
-          </section>
+          {features?.reminders && (
+            <section className="card profile-card profile-list" aria-label={t.profile.reminders}>
+              <button type="button" className="profile-row-item connection-row profile-first-row" onClick={() => setReminders(true)}>
+                <span className="connection-text">
+                  <strong>{t.profile.reminders}</strong>
+                  <span className="muted">{t.profile.remindersNote}</span>
+                </span>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                  <path d="M9 6l6 6-6 6" />
+                </svg>
+              </button>
+            </section>
+          )}
 
           <section className="card profile-card" aria-label={t.profile.appearance}>
             <h2 id="theme-label">{t.profile.appearance}</h2>

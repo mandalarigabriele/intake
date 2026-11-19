@@ -3,7 +3,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { useCallback, useEffect, useState } from "react";
 import { Redirect, Route, Switch } from "wouter";
 import { retryDelay, shouldRetry } from "./api/client";
-import { useMe } from "./api/queries";
+import { useFeatures, useMe, useNutritionStatus, type User } from "./api/queries";
 import { AddSheet } from "./components/AddSheet";
 import { AppShell } from "./components/AppShell";
 import { t } from "./lib/strings";
@@ -14,6 +14,7 @@ import { MealPage } from "./pages/MealPage";
 import { PlanPage } from "./pages/PlanPage";
 import { ProfilePage } from "./pages/ProfilePage";
 import { WeekPage } from "./pages/WeekPage";
+import { SetupPage } from "./pages/SetupPage";
 import { SignInPage } from "./pages/SignInPage";
 import { TimelinePage } from "./pages/TimelinePage";
 import { TodayPage } from "./pages/TodayPage";
@@ -52,16 +53,34 @@ function Root() {
 
   if (me.isPending) return <div className="page" aria-busy="true" />;
   if (!me.data) return <SignInPage notice={notice} />;
+  return <SignedIn user={me.data} notice={notice} adding={adding} openAdd={openAdd} closeAdd={closeAdd} />;
+}
+
+interface SignedInProps {
+  user: User;
+  notice: string | null;
+  adding: boolean;
+  openAdd: () => void;
+  closeAdd: () => void;
+}
+
+/**
+ * The app once signed in. After the Nutrition connection a new installation first runs the setup (docs/features.md);
+ * pages of the optional parts that are off go back to Oggi.
+ */
+function SignedIn({ user, notice, adding, openAdd, closeAdd }: SignedInProps) {
+  const features = useFeatures();
+  const nutrition = useNutritionStatus(true);
+  if (features.isPending) return <div className="page" aria-busy="true" />;
+  const on = features.data;
+  if (on && !on.setupDone && nutrition.data?.connected) return <SetupPage features={on} />;
+  const home = <Redirect to="/" replace />;
 
   return (
-    <AppShell user={me.data} onAdd={openAdd}>
+    <AppShell user={user} onAdd={openAdd}>
       <Switch>
-        <Route path="/andamento/allenamenti">
-          <TrainingPage />
-        </Route>
-        <Route path="/andamento/salute">
-          <HealthTrendsPage />
-        </Route>
+        <Route path="/andamento/allenamenti">{on?.training ? <TrainingPage /> : home}</Route>
+        <Route path="/andamento/salute">{on?.health ? <HealthTrendsPage /> : home}</Route>
         <Route path="/andamento">
           <WeekPage />
         </Route>
@@ -74,20 +93,18 @@ function Root() {
         </Route>
         <Route path="/pasto/:date/:id/modifica">{(params) => <EditMealPage date={params.date} id={params.id} />}</Route>
         <Route path="/pasto/:date/:id">{(params) => <MealPage date={params.date} id={params.id} />}</Route>
-        <Route path="/profilo/salute">
-          <HealthPage />
-        </Route>
+        <Route path="/profilo/salute">{on?.health ? <HealthPage /> : home}</Route>
         <Route path="/profilo">
-          <ProfilePage user={me.data} />
+          <ProfilePage user={user} />
         </Route>
         <Route path="/piano">
           <PlanPage />
         </Route>
         <Route path="/timeline">
-          <TimelinePage user={me.data} onAdd={openAdd} />
+          <TimelinePage user={user} onAdd={openAdd} />
         </Route>
         <Route>
-          <TodayPage user={me.data} notice={notice} onAdd={openAdd} />
+          <TodayPage user={user} notice={notice} onAdd={openAdd} />
         </Route>
       </Switch>
       {adding && <AddSheet onClose={closeAdd} />}

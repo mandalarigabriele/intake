@@ -1,22 +1,27 @@
 import { Link } from "wouter";
+import { useFeatures } from "../api/queries";
 import { t } from "../lib/strings";
 
 /**
  * Andamento on phones: "Alimentazione | Salute | Allenamenti" under the title (docs/design § Navigation update).
- * From 800 px the sidebar lists both pages, so the switch is hidden there.
+ * Only the parts that are on are listed, and the switch is left out when Alimentazione is the only one
+ * (docs/features.md). From 800 px the sidebar lists the pages, so the switch is hidden there.
  */
 export function TrendsSwitch({ current }: { current: "nutrition" | "health" | "training" }) {
+  const features = useFeatures().data;
+  const options = [
+    { key: "nutrition", href: "/andamento", label: t.nav.nutrition, on: true },
+    { key: "health", href: "/andamento/salute", label: t.nav.health, on: features?.health ?? false },
+    { key: "training", href: "/andamento/allenamenti", label: t.nav.training, on: features?.training ?? false },
+  ].filter((o) => o.on);
+  if (options.length < 2) return null;
   return (
     <nav className="trends-switch" aria-label={t.nav.trendsSwitch}>
-      <Link href="/andamento" className="trends-switch-option" aria-current={current === "nutrition" ? "page" : undefined}>
-        {t.nav.nutrition}
-      </Link>
-      <Link href="/andamento/salute" className="trends-switch-option" aria-current={current === "health" ? "page" : undefined}>
-        {t.nav.health}
-      </Link>
-      <Link href="/andamento/allenamenti" className="trends-switch-option" aria-current={current === "training" ? "page" : undefined}>
-        {t.nav.training}
-      </Link>
+      {options.map((o) => (
+        <Link key={o.key} href={o.href} className="trends-switch-option" aria-current={current === o.key ? "page" : undefined}>
+          {o.label}
+        </Link>
+      ))}
     </nav>
   );
 }

@@ -35,6 +35,20 @@ Nutrition and Weight.
   (Salute if Apple Health data was imported, Allenamenti if a workout app is configured, Promemoria always, as
   it costs nothing without subscribed devices) and marks the setup as done.
 
+## Web app
+
+- **First-run setup** (`SetupPage`), shown after the Nutrition connection while `setupDone` is false:
+  1. "Cosa vuoi seguire?": Solo alimentazione · Alimentazione e allenamenti · Tutto, anche Apple Salute.
+  2. "Ultimi dettagli": for Allenamenti, which workout apps are configured (or which environment variables to add);
+     for Apple Salute, where to connect Health Auto Export; a switch for the meal reminders. "Inizia" saves.
+- **Profilo › Funzioni**: Alimentazione (always on) and a switch for each optional part, a note that the data is
+  kept, and "Rifai la configurazione" (sets `setupDone` back to false, so the setup opens again with the current
+  choice preselected).
+- A part that is off disappears everywhere: sidebar and Andamento switch (left out entirely when Alimentazione is
+  the only page), the rings, training card and activity card on Today, the connection rows and reminders in Profile;
+  its pages (`/andamento/allenamenti`, `/andamento/salute`, `/profilo/salute`) go back to Oggi. Its queries are
+  never sent while it is off (`useFeature` in `apps/web/src/api/queries.ts`).
+
 ## API
 
 - `GET /api/features` → `{ setupDone, training, health, reminders, gymApps: { hevy, opengym } }`

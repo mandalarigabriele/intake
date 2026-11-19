@@ -27,6 +27,9 @@ import type {
   TrainingSourceStatus,
   HevySyncStatus,
   WorkoutsResponse,
+  FeatureKey,
+  FeaturesResponse,
+  FeaturesUpdate,
 } from "@intake/shared";
 import { keepPreviousData, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { ApiError, apiFetch, newIdempotencyKey } from "./client";
@@ -35,6 +38,30 @@ export interface User {
   email: string;
   name: string | null;
   picture: string | null;
+}
+
+const featuresKey = ["features"] as const;
+
+/** Which optional parts are on (Allenamenti, Salute, Promemoria) and whether the first-run setup was done (docs/features.md). */
+export function useFeatures() {
+  return useQuery({ queryKey: featuresKey, queryFn: () => apiFetch<FeaturesResponse>("/api/features"), staleTime: 5 * 60_000 });
+}
+
+/** Whether an optional part is on; false until the switches are loaded, so its routes are never asked while off. */
+export function useFeature(key: FeatureKey): boolean {
+  return useFeatures().data?.[key] ?? false;
+}
+
+/** Changes the switches; every screen reloads so hidden parts disappear and turned-on parts load. */
+export function useSetFeatures() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (update: FeaturesUpdate) => apiFetch<FeaturesResponse>("/api/features", { method: "PUT", json: update }),
+    onSuccess: (features) => {
+      queryClient.setQueryData(featuresKey, features);
+      void queryClient.invalidateQueries({ predicate: (query) => query.queryKey[0] !== "features" });
+    },
+  });
 }
 
 /** The signed-in owner, or null when signed out. */
@@ -287,7 +314,8 @@ export function useInsight() {
 
 /** Reminder settings and the number of subscribed devices. */
 export function usePushStatus(enabled: boolean) {
-  return useQuery({ queryKey: ["push"], queryFn: () => apiFetch<PushStatus>("/api/push"), enabled });
+  const on = useFeature("reminders");
+  return useQuery({ queryKey: ["push"], queryFn: () => apiFetch<PushStatus>("/api/push"), enabled: enabled && on });
 }
 
 export function useSubscribePush() {
@@ -321,7 +349,9 @@ export function useTestPush() {
 /** Workouts between two local dates: Hevy (configured: false without a Hevy API key) and Apple Health. */
 /** Andamento › Allenamenti: next routine, week, load progress and recent workouts, live from Hevy. */
 export function useTraining() {
+  const on = useFeature("training");
   return useQuery({
+    enabled: on,
     queryKey: ["training"],
     queryFn: () => apiFetch<TrainingView>("/api/training"),
     staleTime: 5 * 60_000,
@@ -332,7 +362,8 @@ const trainingSourceKey = ["training", "source"] as const;
 
 /** Which workout sources are configured and which one is active (Hevy or openGym). */
 export function useTrainingSource() {
-  return useQuery({ queryKey: trainingSourceKey, queryFn: () => apiFetch<TrainingSourceStatus>("/api/training/source") });
+  const on = useFeature("training");
+  return useQuery({ enabled: on, queryKey: trainingSourceKey, queryFn: () => apiFetch<TrainingSourceStatus>("/api/training/source") });
 }
 
 /** Switches the workout source; everything that shows workouts reloads from the new one. */
@@ -352,7 +383,8 @@ const hevySyncKey = ["hevy-sync"] as const;
 
 /** The optional openGym → Hevy copy, with a preview of what the next run sends (Profilo › Collegamenti). */
 export function useHevySync() {
-  return useQuery({ queryKey: hevySyncKey, queryFn: () => apiFetch<HevySyncStatus>("/api/hevy-sync") });
+  const on = useFeature("training");
+  return useQuery({ enabled: on, queryKey: hevySyncKey, queryFn: () => apiFetch<HevySyncStatus>("/api/hevy-sync") });
 }
 
 /** Turns the copy on (it runs right away) or off, or runs it now. */
@@ -372,10 +404,12 @@ export function useHevySyncAction() {
 }
 
 export function useWorkouts(from: string | undefined, to: string | undefined) {
+  const features = useFeatures().data;
   return useQuery({
     queryKey: ["workouts", from, to],
     queryFn: () => apiFetch<WorkoutsResponse>(`/api/workouts?from=${from}&to=${to}`),
-    enabled: Boolean(from && to),
+    // The list carries the gym app and the Apple Health sessions: hidden only when both parts are off
+    enabled: Boolean(from && to) && Boolean(features?.training || features?.health),
     staleTime: 5 * 60_000,
   });
 }
@@ -384,7 +418,9 @@ const healthStatusKey = ["health", "status"] as const;
 
 /** Apple Health data status (Profile › Apple Salute). */
 export function useHealthStatus() {
+  const on = useFeature("health");
   return useQuery({
+    enabled: on,
     queryKey: healthStatusKey,
     queryFn: () => apiFetch<HealthStatus>("/api/health/status"),
   });
@@ -429,7 +465,8 @@ const healthSyncKey = ["health", "sync"] as const;
 
 /** Automatic upload from Health Auto Export: on/off, token and last upload. */
 export function useHealthSync() {
-  return useQuery({ queryKey: healthSyncKey, queryFn: () => apiFetch<HealthSyncStatus>("/api/health/sync") });
+  const on = useFeature("health");
+  return useQuery({ enabled: on, queryKey: healthSyncKey, queryFn: () => apiFetch<HealthSyncStatus>("/api/health/sync") });
 }
 
 /** Creates a new token (turning the sync on) or turns it off; the old token stops working at once. */
@@ -444,7 +481,9 @@ export function useHealthSyncAction() {
 
 /** Andamento › Salute: the last 7, 30 or 90 days of Apple Health data (SQLite only, no Nutrition calls). */
 export function useHealthTrends(period: 7 | 30 | 90) {
+  const on = useFeature("health");
   return useQuery({
+    enabled: on,
     queryKey: ["health", "trends", period],
     queryFn: () => apiFetch<HealthTrends>(`/api/health/trends?days=${period}`),
     placeholderData: keepPreviousData,
@@ -453,7 +492,9 @@ export function useHealthTrends(period: 7 | 30 | 90) {
 
 /** Sforzo, Recupero and Sonno for the rings on Oggi (SQLite only). */
 export function useHealthScores(date: string) {
+  const on = useFeature("health");
   return useQuery({
+    enabled: on,
     queryKey: ["health", "scores", date],
     queryFn: () => apiFetch<DailyScores>(`/api/health/scores/${date}`),
   });
@@ -461,7 +502,9 @@ export function useHealthScores(date: string) {
 
 /** Apple Health values of one day for the "Attività e riposo" card. */
 export function useHealthDay(date: string) {
+  const on = useFeature("health");
   return useQuery({
+    enabled: on,
     queryKey: ["health", "day", date],
     queryFn: () => apiFetch<HealthDay>(`/api/health/days/${date}`),
     placeholderData: keepPreviousData,

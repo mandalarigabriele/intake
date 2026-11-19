@@ -1,5 +1,5 @@
 import type { DayView } from "@intake/shared";
-import { useAddWater, type User } from "../api/queries";
+import { useAddWater, useFeatures, type User } from "../api/queries";
 import { ActivityCard } from "../components/ActivityCard";
 import { CalorieCard } from "../components/CalorieCard";
 import { DayCurve } from "../components/DayCurve";
@@ -47,10 +47,11 @@ export function TodayPage({ user, notice, onAdd }: Props) {
 
 function Summary({ view, selected, onAdd }: { view: DayView; selected: string; onAdd: () => void }) {
   const addWater = useAddWater(selected);
+  const features = useFeatures().data;
   return (
     <div className="today-grid">
       <div className="today-main">
-        <ScoreRings date={view.date} />
+        {features?.health && <ScoreRings date={view.date} />}
         <CalorieCard eaten={view.totals.kcal} goal={view.goals.kcal}>
           <DayCurve view={view} />
         </CalorieCard>
@@ -66,9 +67,9 @@ function Summary({ view, selected, onAdd }: { view: DayView; selected: string; o
       </div>
       <div className="today-side">
         <NextMealCard view={view} onAdd={onAdd} />
-        {view.isToday && <TodayTrainingCard date={view.date} />}
+        {view.isToday && features?.training && <TodayTrainingCard date={view.date} />}
         <DayPlanCard view={view} />
-        <ActivityCard date={view.date} />
+        {features?.health && <ActivityCard date={view.date} />}
         {view.isToday && <InsightCard />}
       </div>
     </div>

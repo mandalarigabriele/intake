@@ -6570,3 +6570,86 @@ div.connection-row {
 .today-training .activity-more {
   align-self: flex-end;
 }
+
+/* First-run setup (docs/features.md): which optional parts to use */
+.setup-page {
+  padding-top: calc(env(safe-area-inset-top) + 44px);
+}
+
+.setup-choices {
+  margin-top: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.setup-choice {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  width: 100%;
+  padding: 16px;
+  text-align: left;
+  color: var(--color-text);
+  border: 1.5px solid var(--color-border);
+  cursor: pointer;
+}
+
+.setup-choice[aria-checked="true"] {
+  border-color: var(--color-accent);
+  background: var(--color-accent-soft);
+}
+
+.setup-radio {
+  flex: none;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  border: 2px solid var(--color-dashed);
+}
+
+.setup-choice[aria-checked="true"] .setup-radio {
+  border: 7px solid var(--color-accent);
+}
+
+.setup-details {
+  margin-top: 24px;
+}
+
+.setup-switch-row,
+.feature-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.setup-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.setup-page .notice {
+  margin-top: 12px;
+}
+
+.setup-details .profile-row-item,
+.feature-row {
+  padding: 10px 0;
+}
+
+.setup-details .profile-row-item:first-child {
+  border-top: none;
+}
+
+.feature-hint {
+  display: block;
+  padding-top: 8px;
+  font-size: 13px;
+  line-height: 1.45;
+}
+
+.feature-rerun {
+  margin-top: 12px;
+  width: 100%;
+}

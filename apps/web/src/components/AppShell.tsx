@@ -1,6 +1,6 @@
 import { useEffect, useRef, type ReactNode } from "react";
 import { Link, useLocation } from "wouter";
-import { useHealthStatus, useNutritionStatus, type User } from "../api/queries";
+import { useFeatures, useHealthStatus, useNutritionStatus, type User } from "../api/queries";
 import { t } from "../lib/strings";
 import { trackViewportHeight } from "../lib/viewport";
 import { PlanIcon, PlusIcon, TimelineIcon, TodayIcon, WeekIcon } from "./icons";
@@ -12,8 +12,8 @@ import { PullIndicator, usePullToRefresh } from "./PullToRefresh";
 const SIDEBAR = [
   { path: "/", label: t.nav.today },
   { path: "/andamento", label: t.nav.nutrition },
-  { path: "/andamento/salute", label: t.nav.health },
-  { path: "/andamento/allenamenti", label: t.nav.training },
+  { path: "/andamento/salute", label: t.nav.health, feature: "health" },
+  { path: "/andamento/allenamenti", label: t.nav.training, feature: "training" },
   { path: "/piano", label: t.nav.plan },
   { path: "/timeline", label: t.nav.timeline },
 ] as const;
@@ -49,6 +49,9 @@ export function AppShell({ user, onAdd, children }: Props) {
   const status = useNutritionStatus(true);
   // SQLite only: tells whether Apple Health data was ever imported, for the sidebar status line
   const health = useHealthStatus();
+  const features = useFeatures().data;
+  // Pages of the optional parts that are off are left out (docs/features.md)
+  const sidebar = SIDEBAR.filter((item) => !("feature" in item) || features?.[item.feature]);
 
   // Meal detail, edit, Profilo and Apple Salute are pushed screens without the bottom tab bar (docs/design)
   const pushed = location.startsWith("/pasto/") || location.startsWith("/profilo");
@@ -71,7 +74,7 @@ export function AppShell({ user, onAdd, children }: Props) {
           <Logo size={30} />
           <span>{t.appName}</span>
         </div>
-        {SIDEBAR.map(({ path, label }) => (
+        {sidebar.map(({ path, label }) => (
           <Link key={path} href={path} className="sidebar-link" aria-current={(path.startsWith("/andamento") ? location === path : section === path) ? "page" : undefined}>
             {label}
           </Link>
