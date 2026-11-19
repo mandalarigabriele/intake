@@ -24,7 +24,7 @@ import { authRoutes } from "./routes/auth.js";
 import { healthRoutes } from "./routes/health.js";
 import { appleHealthRoutes, type AppleHealthRoutesOptions } from "./routes/appleHealth.js";
 import { healthIngestRoutes, type HealthIngestRoutesOptions } from "./routes/healthIngest.js";
-import { featureOf, featureRoutes, type FeatureRoutesOptions } from "./routes/features.js";
+import { blockedBy, featureRoutes, type FeatureRoutesOptions } from "./routes/features.js";
 import { nutritionApiRoutes, nutritionConnectRoutes } from "./routes/nutrition.js";
 
 export interface AuthOptions {
@@ -107,8 +107,8 @@ export async function buildApp(options: AppOptions = {}): Promise<FastifyInstanc
   if (features) {
     // A part that is off answers as if it did not exist, including the Health Auto Export uploads
     app.addHook("onRequest", async (request, reply) => {
-      const key = featureOf(request.url);
-      if (key && !features.features.enabled(key)) return reply.code(404).send({ error: "feature_disabled", feature: key });
+      const key = blockedBy(request.url, (k) => features.features.enabled(k));
+      if (key) return reply.code(404).send({ error: "feature_disabled", feature: key });
     });
   }
 

@@ -17,8 +17,9 @@ Nutrition and Weight.
 - The choice is stored once per installation in the `settings` table (key `features`), not per device.
 - A part that is off:
   - answers `404 { "error": "feature_disabled", "feature": "<key>" }` on its API routes
-    (`/api/training*`, `/api/workouts*`, `/api/hevy-sync*` · `/api/health/*` including `/api/health/ingest` · `/api/push*`);
-    `/api/health` (the server's own liveness check) is not part of Salute;
+    (`/api/training*`, `/api/hevy-sync*` · `/api/health/*` including `/api/health/ingest` · `/api/push*`);
+    `/api/health` (the server's own liveness check) is not part of Salute. `/api/workouts` serves both parts: it is
+    hidden only when Allenamenti and Salute are both off, and lists only Apple Health sessions while Allenamenti is off;
   - stops its background work: the openGym → Hevy copy for Allenamenti, the reminder checks for Promemoria;
   - gives the other screens no data: with Salute off the week balance, the insight and the workouts see no Apple
     Health values (`healthWhenOn` in `apps/server/src/db/featureStore.ts`);

@@ -14,16 +14,21 @@ const updateSchema = z
   .partial()
   .strict();
 
-/** API routes of each optional part; while the part is off they answer 404 "feature_disabled". */
-const FEATURE_ROUTES: Array<{ key: FeatureKey; prefix: RegExp }> = [
-  { key: "training", prefix: /^\/api\/(training|workouts|hevy-sync)(\/|\?|$)/ },
-  { key: "health", prefix: /^\/api\/health\// },
-  { key: "reminders", prefix: /^\/api\/push(\/|\?|$)/ },
+/**
+ * API routes of the optional parts; while every part listed for a route is off it answers 404 "feature_disabled".
+ * The workouts list serves both Allenamenti (gym app) and Salute (Apple Health sessions).
+ */
+const FEATURE_ROUTES: Array<{ keys: FeatureKey[]; prefix: RegExp }> = [
+  { keys: ["training"], prefix: /^\/api\/(training|hevy-sync)(\/|\?|$)/ },
+  { keys: ["training", "health"], prefix: /^\/api\/workouts(\/|\?|$)/ },
+  { keys: ["health"], prefix: /^\/api\/health\// },
+  { keys: ["reminders"], prefix: /^\/api\/push(\/|\?|$)/ },
 ];
 
-/** The part an API URL belongs to, or null for Alimentazione and the rest of the app. */
-export function featureOf(url: string): FeatureKey | null {
-  return FEATURE_ROUTES.find((r) => r.prefix.test(url))?.key ?? null;
+/** The part that hides an API URL right now, or null when the route is served (Alimentazione and the rest). */
+export function blockedBy(url: string, enabled: (key: FeatureKey) => boolean): FeatureKey | null {
+  const route = FEATURE_ROUTES.find((r) => r.prefix.test(url));
+  return route && !route.keys.some(enabled) ? route.keys[0]! : null;
 }
 
 export const featureRoutes: FastifyPluginAsync<FeatureRoutesOptions> = async (app, { features, gymApps, requireOwner }) => {

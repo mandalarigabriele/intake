@@ -4,7 +4,7 @@ import { openDatabase } from "../src/db/database.js";
 import { FeatureStore, healthWhenOn } from "../src/db/featureStore.js";
 import { HealthStore } from "../src/db/healthStore.js";
 import type { HealthExport } from "../src/parsers/healthAutoExport.js";
-import { featureOf } from "../src/routes/features.js";
+import { blockedBy } from "../src/routes/features.js";
 import { ReminderScheduler } from "../src/services/reminderScheduler.js";
 import { authOptions, signIn } from "./helpers.js";
 
@@ -31,16 +31,20 @@ describe("feature switches", () => {
     expect(new FeatureStore(db).get().training).toBe(false);
   });
 
-  it("maps API URLs to their part", () => {
-    expect(featureOf("/api/training")).toBe("training");
-    expect(featureOf("/api/training/source")).toBe("training");
-    expect(featureOf("/api/workouts/2026-11-19")).toBe("training");
-    expect(featureOf("/api/hevy-sync/run")).toBe("training");
-    expect(featureOf("/api/health/ingest")).toBe("health");
-    expect(featureOf("/api/health")).toBeNull();
-    expect(featureOf("/api/push/subscriptions")).toBe("reminders");
-    expect(featureOf("/api/days/2026-11-19")).toBeNull();
-    expect(featureOf("/api/trainingx")).toBeNull();
+  it("maps API URLs to the part that hides them", () => {
+    const only = (...on: string[]) => (key: string) => on.includes(key);
+    expect(blockedBy("/api/training", only())).toBe("training");
+    expect(blockedBy("/api/training/source", only("health"))).toBe("training");
+    expect(blockedBy("/api/hevy-sync/run", only("health"))).toBe("training");
+    expect(blockedBy("/api/training", only("training"))).toBeNull();
+    // The workouts list also carries the Apple Health sessions
+    expect(blockedBy("/api/workouts?from=2026-11-19&to=2026-11-19", only("health"))).toBeNull();
+    expect(blockedBy("/api/workouts?from=2026-11-19&to=2026-11-19", only())).toBe("training");
+    expect(blockedBy("/api/health/ingest", only("training"))).toBe("health");
+    expect(blockedBy("/api/health", only())).toBeNull();
+    expect(blockedBy("/api/push/subscriptions", only())).toBe("reminders");
+    expect(blockedBy("/api/days/2026-11-19", only())).toBeNull();
+    expect(blockedBy("/api/trainingx", only())).toBeNull();
   });
 
   it("serves GET/PUT /api/features and hides the routes of a part that is off", async () => {

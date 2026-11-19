@@ -77,7 +77,8 @@ const app = await buildApp({
   insightHealth: health,
   plans: services.plans,
   push: { store: services.reminders, scheduler, publicKey: vapid.publicKey },
-  workouts: { gym, health, api },
+  // With Allenamenti off the workouts list keeps only the Apple Health sessions
+  workouts: { gym: () => (features.enabled("training") ? gym() : null), health, api },
   training: { gym, sources: gymSources, health, api },
   hevySync: { sync: hevySync, store: services.hevySync },
   appleHealth: { store: services.health, api, sync: { token: healthToken, endpoint: `${config.PUBLIC_BASE_URL}/api/health/ingest` } },
