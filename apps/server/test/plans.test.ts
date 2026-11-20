@@ -203,9 +203,9 @@ describe("logPlannedMeal", () => {
     return { store, plan, logMeal, api };
   }
 
-  it("logs a passed planned meal at its time with full nutrients, an idempotency key, and links it", async () => {
+  it("logs a planned meal of an earlier day at its planned time with full nutrients, an idempotency key, and links it", async () => {
     const { store, plan, logMeal, api } = setup({ id: "new-meal" });
-    await logPlannedMeal(api, store, { date: "2026-11-05", planId: plan.id, index: 2, today: "2026-11-05", now: "13:30:00" });
+    await logPlannedMeal(api, store, { date: "2026-11-05", planId: plan.id, index: 2, today: "2026-11-06", now: "09:00:00" });
     expect(logMeal).toHaveBeenCalledWith({
       description: "Pranzo: Pasta al ragù magro di manzo 100 g + Insalata",
       meal_type: "lunch",
@@ -224,10 +224,14 @@ describe("logPlannedMeal", () => {
     expect(store.linksOn("2026-11-05")).toEqual([{ planId: plan.id, index: 2, mealId: "new-meal" }]);
   });
 
-  it("logs an upcoming meal now (no logged_at)", async () => {
+  it("logs today's planned meals now (no logged_at), whether their time has passed or not", async () => {
     const { store, plan, logMeal, api } = setup({ id: "m" });
+    // Lunch planned at 13:00, confirmed at 13:30; dinner planned later, confirmed early
+    await logPlannedMeal(api, store, { date: "2026-11-05", planId: plan.id, index: 2, today: "2026-11-05", now: "13:30:00" });
     await logPlannedMeal(api, store, { date: "2026-11-05", planId: plan.id, index: 4, today: "2026-11-05", now: "13:30:00" });
-    expect((logMeal.mock.calls as unknown as Array<[Record<string, unknown>]>)[0]![0]).not.toHaveProperty("logged_at");
+    const sent = logMeal.mock.calls as unknown as Array<[Record<string, unknown>]>;
+    expect(sent).toHaveLength(2);
+    for (const [fields] of sent) expect(fields).not.toHaveProperty("logged_at");
   });
 
   it("finds the new meal when the response has no id", async () => {
