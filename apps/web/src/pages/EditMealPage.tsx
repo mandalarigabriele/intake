@@ -192,16 +192,14 @@ export function EditMealPage({ date, id }: { date: string; id: string }) {
 
   return (
     <div className="page detail-page edit-page">
-      <header className="edit-header">
-        <Link href={detailHref} className="text-button">
-          {t.edit.cancel}
+      {/* X closes without saving (back to the meal); Salva sits at the bottom next to Elimina */}
+      <header className="edit-header edit-header-close">
+        <Link href={detailHref} className="icon-button" aria-label={t.close}>
+          <CloseIcon size={20} strokeWidth={2.2} />
         </Link>
         <h1>{t.edit.title}</h1>
-        <button type="button" className="text-button text-button-strong" onClick={save} disabled={update.isPending || (hasItems && validItems.length === 0)}>
-          {t.edit.save}
-        </button>
+        <span aria-hidden="true" />
       </header>
-      {update.isError && <p className="error-text">{t.edit.saveFailed}</p>}
 
       <div className="segmented" role="radiogroup" aria-label={t.edit.type}>
         {[...MEAL_TYPES, ...(meal && !(MEAL_TYPES as readonly string[]).includes(meal.type) && (NUTRITION_MEAL_TYPES as readonly string[]).includes(meal.type) ? [meal.type as NutritionMealType] : [])].map((option) => (
@@ -326,9 +324,17 @@ export function EditMealPage({ date, id }: { date: string; id: string }) {
       {values && <p className="sheet-note">{t.edit.valuesFromFoods}</p>}
 
       <div className="detail-spacer" />
-      <button type="button" className="button-danger" onClick={() => setConfirmDelete(true)}>
-        {t.edit.delete}
-      </button>
+      <div className="edit-actions">
+        {update.isError && <p className="error-text">{t.edit.saveFailed}</p>}
+        <div className="edit-actions-row">
+          <button type="button" className="button-danger" onClick={() => setConfirmDelete(true)}>
+            {t.edit.delete}
+          </button>
+          <button type="button" className="button-primary" onClick={save} disabled={update.isPending || (hasItems && validItems.length === 0)}>
+            {t.edit.save}
+          </button>
+        </div>
+      </div>
 
       {confirmDelete && (
         <ConfirmDeleteSheet

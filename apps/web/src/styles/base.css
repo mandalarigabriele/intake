@@ -2419,6 +2419,51 @@ button.button-primary {
   justify-self: end;
 }
 
+/* Modifica pasto: X on the left closes without saving */
+.edit-header-close .icon-button {
+  justify-self: start;
+}
+
+/* Modifica pasto: Elimina and Salva side by side, kept at the bottom of the screen while scrolling */
+.edit-actions {
+  position: sticky;
+  bottom: 0;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin: 0 -16px;
+  padding: 10px 16px calc(10px + env(safe-area-inset-bottom));
+  background: var(--color-bg);
+}
+
+.edit-actions-row {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.edit-actions .button-danger,
+.edit-actions .button-primary {
+  height: 52px;
+  margin: 0;
+  border: none;
+  cursor: pointer;
+}
+
+.edit-actions .button-danger {
+  border: 1px solid var(--color-danger-border);
+}
+
+.edit-actions .button-primary:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+.edit-actions .error-text {
+  margin: 0;
+}
+
 .text-button {
   height: 44px;
   padding: 0 6px;
