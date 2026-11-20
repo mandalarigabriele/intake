@@ -1,4 +1,4 @@
-import { mkdtempSync, writeFileSync } from "node:fs";
+import { mkdirSync, mkdtempSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
@@ -46,6 +46,21 @@ describe("static files", () => {
     const response = await app.inject({ method: "GET", url: "/app-123.js" });
     expect(response.statusCode).toBe(200);
     expect(response.headers["content-type"]).toContain("javascript");
+    await app.close();
+  });
+
+  it("never serves a file outside the web folder, also with encoded separators", async () => {
+    // A secret next to the web folder, as the data folder would be on the server
+    const parent = mkdtempSync(join(tmpdir(), "intake-root-"));
+    const webDistDir = join(parent, "web");
+    mkdirSync(webDistDir);
+    writeFileSync(join(webDistDir, "index.html"), "<!doctype html><title>Intake</title>");
+    writeFileSync(join(parent, "secret.txt"), "TOP-SECRET");
+    const app = await buildApp({ webDistDir });
+    for (const url of ["/../secret.txt", "/..%2fsecret.txt", "/%2e%2e/secret.txt", "/..%5csecret.txt", "/%2e%2e%2fsecret.txt"]) {
+      const response = await app.inject({ method: "GET", url });
+      expect(response.body, url).not.toContain("TOP-SECRET");
+    }
     await app.close();
   });
 });
