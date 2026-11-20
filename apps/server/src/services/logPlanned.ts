@@ -44,7 +44,9 @@ export interface LogPlannedInput {
 
 /**
  * "Mangiato come previsto": logs a planned meal with its full planned nutrients and links it.
- * Past meals are logged at their planned time; the idempotency key makes a double tap safe.
+ * Today it is logged at the current time (Nutrition stamps it when logged_at is left out), whatever the planned time:
+ * that is when it was confirmed as eaten. A meal of an earlier day (from the Timeline) keeps its planned time.
+ * The idempotency key makes a double tap safe.
  */
 export async function logPlannedMeal(
   api: Pick<NutritionApi, "logMeal" | "mealsByDate">,
@@ -59,14 +61,14 @@ export async function logPlannedMeal(
   if (!meal.macros) throw new PlanMealWithoutMacrosError();
 
   const time = mealTimes(day.meals)[input.index]!;
-  const isPast = input.date < input.today || (input.date === input.today && time <= input.now.slice(0, 5));
+  const atPlannedTime = input.date < input.today;
   const description = `${meal.title}: ${mealFoodsText(meal)}`;
 
   const { id } = await api.logMeal({
     description,
     meal_type: mealTypeOf(meal),
     ...macrosToFields(meal.macros),
-    ...(isPast ? { logged_at: `${input.date}T${time}` } : {}),
+    ...(atPlannedTime ? { logged_at: `${input.date}T${time}` } : {}),
     idempotency_key: `intake-plan-${stored.id}-${input.date}-${input.index}`,
   });
 
@@ -74,7 +76,7 @@ export async function logPlannedMeal(
   let mealId = id;
   if (!mealId) {
     const { meals } = await api.mealsByDate(input.date);
-    mealId = meals.find((m) => m.description === description && (!isPast || m.time === time))?.id ?? null;
+    mealId = meals.find((m) => m.description === description && (!atPlannedTime || m.time === time))?.id ?? null;
   }
   if (mealId) plans.addLink(input.date, stored.id, input.index, mealId);
   return { mealId };
