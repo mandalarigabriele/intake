@@ -54,3 +54,8 @@ Intake is a self-hosted, responsive nutrition dashboard with a daily meal timeli
 - `npm run build` – build shared, server and web.
 - `npm run capture -w @intake/server` – save raw Nutrition MCP responses to `apps/server/captures/` (gitignored, real data). Copy one into `src/parsers/__fixtures__/` with IDs replaced before changing a parser.
 - `npm run schema` – regenerate `schemas/meal-plan.schema.json` after changing the meal plan schema.
+- `npm run check:standards` – check the machine-verifiable rules (no committed `.env`, empty secrets in `.env.example`, no raw hex in the web app, schema up to date). Runs in CI.
+
+## Contributions
+
+Outside contributors work from a fork and follow [CONTRIBUTING.md](CONTRIBUTING.md); keep it in sync when a rule here changes.

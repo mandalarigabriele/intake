@@ -274,6 +274,9 @@ Other commands:
 | `npm run build` | Build shared, server and web |
 | `npm run capture -w @intake/server` | Save raw Nutrition MCP responses to `apps/server/captures/` (gitignored) |
 | `npm run schema` | Regenerate `schemas/meal-plan.schema.json` after changing the meal plan schema |
+| `npm run check:standards` | Check the machine-verifiable project rules (no secrets, tokens only, schema up to date) |
+
+Contributions are welcome through pull requests: see [CONTRIBUTING.md](CONTRIBUTING.md) for the workflow and the standards every change must follow.
 
 ## 🚀 Deployment
 
@@ -296,3 +299,4 @@ All configuration comes from environment variables; see [.env.example](.env.exam
 | [docs/features.md](docs/features.md) | Optional parts (Allenamenti, Salute, Promemoria): what each includes, what happens when off |
 | [docs/hevy-sync.md](docs/hevy-sync.md) | Copying openGym workouts to Hevy: what is copied, exercise matching, what is stored |
 | [docs/design/DESIGN.md](docs/design/DESIGN.md) | Design system, navigation, approved mockups |
+| [CONTRIBUTING.md](CONTRIBUTING.md) | How to propose a change: fork, pull request, review, automatic deploy; project standards |

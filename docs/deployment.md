@@ -74,11 +74,16 @@ Set `DEPLOY_BRANCH=<branch>` to deploy another branch, e.g. for a test.
 
 Every merge to `main` deploys by itself:
 
-1. **CI** (`.github/workflows/ci.yml`, GitHub-hosted) runs typecheck, tests and build on every pull request and every push to `main`.
+1. **CI** (`.github/workflows/ci.yml`, GitHub-hosted) runs typecheck, tests, build and the project standards check on every pull request and every push to `main`.
 2. **Deploy** (`.github/workflows/deploy.yml`) starts when CI succeeds on a push to `main` and runs on a **self-hosted runner on the Docker host** (`dockerdmz-intake`, label `intake`). It calls `sudo -n /usr/bin/bash /opt/intake/deploy.sh`, so the deploy is exactly the manual one (backup, pull, build, restart, health check). It can also be started by hand from the Actions tab (*Run workflow*).
 3. **Release** (job `release` in the same workflow, GitHub-hosted) runs after a successful deploy: it tags the deployed commit with the next version and publishes a GitHub release whose notes list the merged pull requests. Versions start at `v0.1.0` and every deploy increases the patch number (`v0.1.1`, `v0.1.2`, …). For a bigger step, start the Deploy workflow by hand and choose `minor` or `major`. A deploy of a commit that is already tagged creates no new release.
 
-The runner only makes outbound connections to GitHub: no port is opened and Cloudflare Tunnel is not involved. The repository is private, so no fork pull request can reach the runner.
+The runner only makes outbound connections to GitHub: no port is opened and Cloudflare Tunnel is not involved. The repository is public, so a pull request from a fork could edit a workflow to run on the self-hosted runner. Two settings keep that from happening:
+
+- **Settings → Actions → General → Approval for running fork pull request workflows from contributors**: *Require approval for all external contributors*. No workflow of a fork pull request runs until the maintainer clicks *Approve and run*; look at the changes under `.github/` before approving.
+- Outside contributors work from a **fork** and get **no write access** to this repository, so they cannot push a branch that runs a workflow here. See [CONTRIBUTING.md](../CONTRIBUTING.md).
+
+Deploy itself only runs on a push to `main` or by hand, and `workflow_run` always uses the workflow file from `main`, never one from a pull request.
 
 ### Runner setup (once, on the Docker host, as root)
 

@@ -16,7 +16,8 @@
     "dev:web": "npm run build -w @intake/shared && npm run dev -w @intake/web",
     "test": "npm run build -w @intake/shared && npm test --workspaces --if-present",
     "typecheck": "npm run build -w @intake/shared && npm run typecheck --workspaces --if-present",
-    "schema": "npm run build -w @intake/shared && node scripts/generate-plan-schema.mjs"
+    "schema": "npm run build -w @intake/shared && node scripts/generate-plan-schema.mjs",
+    "check:standards": "npm run build -w @intake/shared && node scripts/check-standards.mjs"
   },
   "devDependencies": {
     "@types/node": "^22.10.0",
