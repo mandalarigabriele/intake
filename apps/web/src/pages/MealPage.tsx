@@ -1,4 +1,4 @@
-import type { Meal } from "@intake/shared";
+import { favoriteNameFrom, type Meal } from "@intake/shared";
 import { useState } from "react";
 import { Link } from "wouter";
 import { mealPhotoUrl, useDay, useFavoriteMeal, useMealPhotos } from "../api/queries";
@@ -149,7 +149,7 @@ export function MealPage({ date, id }: { date: string; id: string }) {
 
 function FavoriteSheet({ meal, onClose }: { meal: Meal; onClose: () => void }) {
   const favorite = useFavoriteMeal();
-  const [name, setName] = useState(() => meal.description.replace(/^[^:]{1,20}:\s*/, "").slice(0, 60));
+  const [name, setName] = useState(() => favoriteNameFrom(meal.description));
 
   return (
     <Scrim onClose={onClose}>
