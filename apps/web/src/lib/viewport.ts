@@ -104,8 +104,8 @@ function probeHeight(css: string): number {
  * iPhone with a notch places the page below the status bar (safe-area-inset-top 0) but still reports 100lvh as the
  * whole screen: on an iPhone 402 × 874 the page is 812 high and 100lvh is 874, so a shell of 100lvh put the tab bar
  * 62 px below the screen edge, and after switching apps the document scrolled by those 62 px. Only then
- * (`data-below-status-bar`) the shell uses 100svh, the height of the page; everywhere else, including the foldable
- * iPhone whose page reaches the top of the screen, it stays 100lvh (base.css).
+ * (`data-below-status-bar`, in portrait) the shell uses 100svh, the height of the page; everywhere else, including the
+ * foldable iPhone whose page reaches the top of the screen and every iPhone in landscape, it stays 100lvh (base.css).
  */
 function trackStatusBar(root: HTMLElement): () => void {
   const check = () => {
@@ -113,19 +113,31 @@ function trackStatusBar(root: HTMLElement): () => void {
     const safeTop = probeHeight("height:env(safe-area-inset-top)");
     const large = probeHeight("height:100lvh");
     const small = probeHeight("height:100svh");
-    const below = safeTop === 0 && small >= MIN_HEIGHT && large - small >= 1;
+    // Portrait only: in landscape safe-area-inset-top is 0 on every iPhone (the island is on the side), and on the
+    // foldable iPhone 100svh is 82 px short after a rotation, so the check would shrink the shell and leave a black band
+    // under it. Landscape keeps 100lvh, which is right there.
+    const portrait = window.matchMedia("(orientation: portrait)").matches;
+    const below = portrait && safeTop === 0 && small >= MIN_HEIGHT && large - small >= 1;
     if (below) root.dataset.belowStatusBar = "";
     else delete root.dataset.belowStatusBar;
     // The document never scrolls (only .shell-main does); undo an offset left from before the shell fitted
     if (window.scrollY !== 0) window.scrollTo(0, 0);
   };
+  // Safari reports the final orientation and sizes a little after the events: check again shortly after
+  const timers: number[] = [];
+  const update = () => {
+    check();
+    timers.splice(0).forEach(clearTimeout);
+    for (const delay of [150, 500, 1200]) timers.push(window.setTimeout(check, delay));
+  };
   const events = ["resize", "orientationchange", "pageshow"] as const;
-  for (const name of events) window.addEventListener(name, check);
-  document.addEventListener("visibilitychange", check);
+  for (const name of events) window.addEventListener(name, update);
+  document.addEventListener("visibilitychange", update);
   check();
   return () => {
-    for (const name of events) window.removeEventListener(name, check);
-    document.removeEventListener("visibilitychange", check);
+    timers.forEach(clearTimeout);
+    for (const name of events) window.removeEventListener(name, update);
+    document.removeEventListener("visibilitychange", update);
     delete root.dataset.standalone;
     delete root.dataset.belowStatusBar;
   };
