@@ -45,7 +45,7 @@ Nutrition and Weight.
   kept, and "Rifai la configurazione" (sets `setupDone` back to false, so the setup opens again with the current
   choice preselected).
 - A part that is off disappears everywhere: sidebar and Andamento switch (left out entirely when Alimentazione is
-  the only page), the rings, training card and activity card on Today, the connection rows and reminders in Profile;
+  the only page), the rings, training card and activity card on Today, the Allenamenti card, the connection rows and the Promemoria card in Impostazioni (with their section links);
   its pages (`/andamento/allenamenti`, `/andamento/salute`, `/profilo/salute`) go back to Oggi. Its queries are
   never sent while it is off (`useFeature` in `apps/web/src/api/queries.ts`).
 

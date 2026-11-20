@@ -1,5 +1,5 @@
 import type { ProfileView, TrainingSourceId } from "@intake/shared";
-import { useState } from "react";
+import { type ReactNode, useState } from "react";
 import { Link } from "wouter";
 import { useDisconnectNutrition, useHealthStatus, useLogWeight, useNutritionStatus, useProfile, useSetHealthSettings, useSignOut, type User, useSetTrainingSource, useTrainingSource, useHevySync, useHevySyncAction, useFeatures, useSetFeatures, useSetLanguage } from "../api/queries";
 import { LANGUAGES, type FeatureKey } from "@intake/shared";
@@ -51,58 +51,64 @@ function WeightCard({ profile }: { profile: ProfileView }) {
   const parsed = Number(value.replace(",", "."));
   const valid = value.trim() !== "" && Number.isFinite(parsed) && parsed >= 20 && parsed <= 400;
   const sign = (d: number) => (d > 0 ? "+" : d < 0 ? "−" : "±");
+  const status = entries.length >= 2 ? null : latest ? t.profile.oneWeight(formatShortDate(latest.date), formatWeight(latest.weight)) : t.profile.noWeight;
 
   return (
-    <section className="card profile-card" aria-label={t.profile.weight}>
+    <section id="settings-weight" className="card profile-card settings-section" aria-label={t.profile.weight}>
       <div className="profile-card-head">
         <h2>{t.profile.weight}</h2>
         <span className="muted">{t.profile.weightCadence}</span>
       </div>
-      <dl className="weight-stats">
-        <div>
-          <dt>{t.profile.last}</dt>
-          <dd>{latest ? `${formatWeight(latest.weight)} ${unit}` : "—"}</dd>
-        </div>
-        <div>
-          <dt>{t.profile.trend}</dt>
-          <dd>{delta !== null ? `${sign(delta)}${formatWeight(Math.abs(delta))} ${unit}` : "—"}</dd>
-          {previous && <dd className="weight-sub">{t.profile.trendNote(formatShortDate(previous.date))}</dd>}
-        </div>
-        <div>
-          <dt>{t.profile.target}</dt>
-          <dd>{target !== null ? `${formatWeight(target)} ${unit}` : "—"}</dd>
-        </div>
-      </dl>
-      <div className="weight-plot" data-empty={entries.length < 2 || undefined}>
-        {entries.length >= 2 ? (
-          <WeightChart entries={entries} target={target} />
-        ) : latest ? (
-          <div className="weight-one">
-            <span className="weight-dot" aria-hidden="true" />
-            <span className="muted">{t.profile.oneWeight(formatShortDate(latest.date), formatWeight(latest.weight))}</span>
+      <div className="weight-top">
+        <dl className="weight-stats">
+          <div>
+            <dt>{t.profile.last}</dt>
+            <dd>{latest ? `${formatWeight(latest.weight)} ${unit}` : "—"}</dd>
           </div>
-        ) : (
-          <span className="muted">{t.profile.noWeight}</span>
-        )}
+          <div>
+            <dt>{t.profile.trend}</dt>
+            <dd>{delta !== null ? `${sign(delta)}${formatWeight(Math.abs(delta))} ${unit}` : "—"}</dd>
+            {previous && <dd className="weight-sub">{t.profile.trendNote(formatShortDate(previous.date))}</dd>}
+          </div>
+          <div>
+            <dt>{t.profile.target}</dt>
+            <dd>{target !== null ? `${formatWeight(target)} ${unit}` : "—"}</dd>
+          </div>
+        </dl>
+        <form
+          className="weight-form"
+          onSubmit={(e) => {
+            e.preventDefault();
+            if (valid) log.mutate(Math.round(parsed * 10) / 10, { onSuccess: () => setValue("") });
+          }}
+        >
+          <label className="weight-input">
+            <input value={value} onChange={(e) => setValue(e.target.value)} inputMode="decimal" placeholder={t.profile.weightPlaceholder} aria-label={t.profile.weightLabel} />
+            <span className="muted">kg</span>
+          </label>
+          <button type="submit" className="button" disabled={!valid || log.isPending}>
+            {t.profile.log}
+          </button>
+        </form>
       </div>
-      <form
-        className="weight-form"
-        onSubmit={(e) => {
-          e.preventDefault();
-          if (valid) log.mutate(Math.round(parsed * 10) / 10, { onSuccess: () => setValue("") });
-        }}
-      >
-        <label className="weight-input">
-          <input value={value} onChange={(e) => setValue(e.target.value)} inputMode="decimal" placeholder={t.profile.weightPlaceholder} aria-label={t.profile.weightLabel} />
-          <span className="muted">kg</span>
-        </label>
-        <button type="submit" className="button" disabled={!valid || log.isPending}>
-          {t.profile.log}
-        </button>
-      </form>
+      {entries.length >= 2 && (
+        <div className="weight-plot">
+          <WeightChart entries={entries} target={target} />
+        </div>
+      )}
       {log.isSuccess && <p className="notice" data-kind="ok">{t.profile.logged}</p>}
       {log.isError && <p className="error-text">{t.profile.logFailed}</p>}
-      <span className="muted weight-note">{t.profile.weightHint}</span>
+      <div className="weight-strip">
+        {status && (
+          <span className="weight-status">
+            {latest && <span className="weight-dot" aria-hidden="true" />}
+            {status}
+          </span>
+        )}
+        <span className="muted" title={t.profile.weightHint}>
+          {t.profile.weightHintShort}
+        </span>
+      </div>
     </section>
   );
 }
@@ -140,11 +146,12 @@ function GoalsCard({ goals, stepGoal }: { goals: ProfileView["goals"] | null; st
       ]
     : [];
   return (
-    <section className="card profile-card profile-list" aria-label={t.profile.goals}>
+    <section id="settings-goals" className="card profile-card profile-list settings-section" aria-label={t.profile.goals}>
       <div className="profile-card-head">
         <h2>{t.profile.goals}</h2>
         {goals && <span className="source-pill">{t.profile.goalsSource}</span>}
       </div>
+      <div className="goal-grid">
       {rows.map((row) => (
         <div key={row.key} className="profile-row-item goal-row" data-goal={row.key}>
           <span className="goal-name">
@@ -163,13 +170,15 @@ function GoalsCard({ goals, stepGoal }: { goals: ProfileView["goals"] | null; st
           <StepGoal goal={stepGoal} />
         </div>
       )}
+      </div>
+      {goals && <p className="muted settings-note">{t.profile.goalsNote}</p>}
     </section>
   );
 }
 
 type LinkState = "connected" | "warning" | "off" | "standby";
 
-function ConnectionRow({ name, note, state, href }: { name: string; note: string; state: LinkState; href?: string }) {
+function ConnectionRow({ name, note, state, href, action }: { name: string; note: string; state: LinkState; href?: string; action?: ReactNode }) {
   const body = (
     <>
       <span className="connection-text">
@@ -177,6 +186,7 @@ function ConnectionRow({ name, note, state, href }: { name: string; note: string
         <span className="muted">{note}</span>
       </span>
       <span className="connection-state">
+        {action}
         <span className="state-pill" data-state={state}>
           {t.profile.states[state]}
         </span>
@@ -197,41 +207,62 @@ function ConnectionRow({ name, note, state, href }: { name: string; note: string
   );
 }
 
-/** Hevy and openGym rows, with the workout source switch when both are configured (one source at a time). */
+/** Hevy and openGym in Collegamenti: configured on the server or not, in use or not. */
 function GymRows() {
-  const status = useTrainingSource();
-  const setSource = useSetTrainingSource();
-  const data = status.data;
+  const data = useTrainingSource().data;
   if (!data) return null;
   const state = (id: TrainingSourceId): LinkState => (!data.available.includes(id) ? "off" : data.active === id ? "connected" : "standby");
   return (
     <>
       <ConnectionRow name={t.profile.hevy} note={data.available.includes("hevy") ? t.profile.hevyNote : t.profile.hevyMissing} state={state("hevy")} />
       <ConnectionRow name={t.profile.openGym} note={data.available.includes("opengym") ? t.profile.openGymNote : t.profile.openGymMissing} state={state("opengym")} />
-      {data.available.length > 1 && (
-        <div className="profile-row-item source-switch">
-          <span className="connection-text">
-            <strong id="training-source-label">{t.profile.trainingSource}</strong>
-            <span className="muted">{setSource.isError ? t.profile.trainingSourceFailed : t.profile.trainingSourceNote}</span>
-          </span>
-          <div className="segmented" role="radiogroup" aria-labelledby="training-source-label">
-            {data.available.map((id) => (
-              <button
-                key={id}
-                type="button"
-                role="radio"
-                aria-checked={data.active === id}
-                className="segmented-option"
-                disabled={setSource.isPending}
-                onClick={() => data.active !== id && setSource.mutate(id)}
-              >
-                {id === "hevy" ? t.profile.hevy : t.profile.openGym}
-              </button>
-            ))}
-          </div>
-        </div>
-      )}
     </>
+  );
+}
+
+/** "Fonte delle schede" (Hevy | openGym), only when both are configured: one source at a time. */
+function SourceRow() {
+  const data = useTrainingSource().data;
+  const setSource = useSetTrainingSource();
+  if (!data || data.available.length < 2) return null;
+  return (
+    <div className="profile-row-item settings-row">
+      <span className="connection-text">
+        <strong id="training-source-label">{t.profile.trainingSource}</strong>
+        <span className="muted">{setSource.isError ? t.profile.trainingSourceFailed : t.profile.trainingSourceNote}</span>
+      </span>
+      <div className="segmented settings-segmented" role="radiogroup" aria-labelledby="training-source-label">
+        {data.available.map((id) => (
+          <button
+            key={id}
+            type="button"
+            role="radio"
+            aria-checked={data.active === id}
+            className="segmented-option"
+            disabled={setSource.isPending}
+            onClick={() => data.active !== id && setSource.mutate(id)}
+          >
+            {id === "hevy" ? t.profile.hevy : t.profile.openGym}
+          </button>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+/** Allenamenti: the workout source and the openGym → Hevy copy; hidden when neither applies. */
+function TrainingCard() {
+  const source = useTrainingSource().data;
+  const sync = useHevySync().data;
+  if (!(source && source.available.length > 1) && !sync?.available) return null;
+  return (
+    <section id="settings-training" className="card profile-card profile-list settings-section" aria-label={t.profile.nav.training}>
+      <div className="profile-card-head">
+        <h2>{t.profile.nav.training}</h2>
+      </div>
+      <SourceRow />
+      <HevySyncRow />
+    </section>
   );
 }
 
@@ -253,30 +284,38 @@ function HevySyncRow() {
           ? s.on
           : s.off;
   const pending = data.pending;
+  const upToDate = data.enabled && last && !last.error && !action.isError && pending?.length === 0;
   return (
     <div className="profile-row-item hevy-sync">
-      <label className="hevy-sync-head">
+      <div className="hevy-sync-head">
         <span className="connection-text">
-          <strong>{s.title}</strong>
-          <span className="muted">{note}</span>
+          <strong id="hevy-sync-label">{s.title}</strong>
+          <span className="muted">{upToDate ? s.upToDate(formatClock(last.at)) : note}</span>
         </span>
-        <input
-          type="checkbox"
-          role="switch"
-          className="switch"
-          aria-label={s.toggle}
-          checked={data.enabled}
-          disabled={action.isPending}
-          onChange={(event) => {
-            if (!event.target.checked) action.mutate("off");
-            else if (window.confirm(s.confirm(pending?.length ?? 0))) action.mutate("on");
-          }}
-        />
-      </label>
+        <span className="hevy-sync-controls">
+          {data.enabled && (
+            <button type="button" className="button-secondary-small" disabled={action.isPending} onClick={() => action.mutate("run")}>
+              {s.run}
+            </button>
+          )}
+          <input
+            type="checkbox"
+            role="switch"
+            className="switch"
+            aria-labelledby="hevy-sync-label"
+            checked={data.enabled}
+            disabled={action.isPending}
+            onChange={(event) => {
+              if (!event.target.checked) action.mutate("off");
+              else if (window.confirm(s.confirm(pending?.length ?? 0))) action.mutate("on");
+            }}
+          />
+        </span>
+      </div>
       {pending === null ? (
         <span className="muted hevy-sync-hint">{s.unavailable}</span>
       ) : pending.length === 0 ? (
-        <span className="muted hevy-sync-hint">{s.nothing}</span>
+        !upToDate && <span className="muted hevy-sync-hint">{s.nothing}</span>
       ) : (
         <details className="hevy-sync-preview">
           <summary>{s.pending(pending.length)}</summary>
@@ -299,11 +338,6 @@ function HevySyncRow() {
           ))}
         </details>
       )}
-      {data.enabled && (
-        <button type="button" className="button-secondary-small hevy-sync-run" disabled={action.isPending} onClick={() => action.mutate("run")}>
-          {s.run}
-        </button>
-      )}
     </div>
   );
 }
@@ -318,7 +352,7 @@ function FeaturesCard() {
   if (!data) return null;
   const s = t.profile.features;
   return (
-    <section className="card profile-card profile-list" aria-label={s.title}>
+    <section id="settings-features" className="card profile-card profile-list settings-section" aria-label={s.title}>
       <div className="profile-card-head">
         <h2>{s.title}</h2>
       </div>
@@ -327,6 +361,7 @@ function FeaturesCard() {
           <strong>{s.nutrition}</strong>
           <span className="muted">{s.nutritionNote}</span>
         </span>
+        <span className="state-pill" data-state="standby">{s.alwaysOn}</span>
       </div>
       {FEATURE_ROWS.map((key) => (
         <label key={key} className="profile-row-item feature-row">
@@ -345,19 +380,42 @@ function FeaturesCard() {
           />
         </label>
       ))}
-      <span className="muted feature-hint">{save.isError ? s.failed : s.hint}</span>
-      <button type="button" className="button-secondary-small feature-rerun" disabled={save.isPending} onClick={() => save.mutate({ setupDone: false })}>
-        {s.rerun}
-      </button>
+      <div className="profile-row-item feature-foot">
+        <span className="muted feature-hint">{save.isError ? s.failed : s.hint}</span>
+        <button type="button" className="button-secondary-small" disabled={save.isPending} onClick={() => save.mutate({ setupDone: false })}>
+          {s.rerun}
+        </button>
+      </div>
     </section>
   );
 }
 
-/** Profilo (docs/design Profilo): weight, goals, connections, reminders, theme, Nutrition disconnect and sign out. */
+type SectionId = "weight" | "goals" | "features" | "training" | "connections" | "reminders" | "appearance" | "account";
+
+/** Section links on the left from desktop width (docs/design: Impostazioni · desktop / iPad); only sections on screen. */
+function SectionNav({ sections }: { sections: SectionId[] }) {
+  return (
+    <nav className="settings-nav" aria-label={t.profile.sections}>
+      {sections.map((id) => (
+        <button key={id} type="button" className="settings-nav-link" onClick={() => document.getElementById(`settings-${id}`)?.scrollIntoView({ behavior: "smooth", block: "start" })}>
+          {t.profile.nav[id]}
+        </button>
+      ))}
+    </nav>
+  );
+}
+
+/**
+ * Impostazioni (route /profilo, docs/design Profilo and "Impostazioni · desktop / iPad"): one column of cards in a fixed
+ * order (peso, obiettivi, funzioni, allenamenti, collegamenti, promemoria, aspetto e lingua, account), with section
+ * links on the left from desktop width.
+ */
 export function ProfilePage({ user }: { user: User }) {
   const profile = useProfile();
   const health = useHealthStatus();
   const nutrition = useNutritionStatus(true);
+  const source = useTrainingSource().data;
+  const sync = useHevySync().data;
   const signOut = useSignOut();
   const disconnect = useDisconnectNutrition();
   const [theme, setTheme] = useState<ThemePreference>(getThemePreference);
@@ -366,37 +424,71 @@ export function ProfilePage({ user }: { user: User }) {
   const features = useFeatures().data;
   const data = profile.data;
   const healthState: LinkState = !health.data?.lastImport ? "off" : health.data.activeEnergyWarning ? "warning" : "connected";
+  const showGoals = Boolean(data || health.data);
+  const showTraining = Boolean(features?.training && ((source && source.available.length > 1) || sync?.available));
+
+  const sections: SectionId[] = [
+    ...(data ? (["weight"] as const) : []),
+    ...(showGoals ? (["goals"] as const) : []),
+    ...(features ? (["features"] as const) : []),
+    ...(showTraining ? (["training"] as const) : []),
+    "connections",
+    ...(features?.reminders ? (["reminders"] as const) : []),
+    "appearance",
+    "account",
+  ];
 
   return (
     <div className="page detail-page profile-page">
       <header className="profile-header">
-        <Link href="/" className="icon-button" aria-label={t.profile.back}>
+        <Link href="/" className="icon-button profile-back" aria-label={t.profile.back}>
           <BackIcon />
         </Link>
         <Avatar user={user} className="avatar profile-avatar" />
         <div className="profile-heading">
-          <h1>{user.name ?? user.email}</h1>
-          {user.name && <span className="muted">{user.email}</span>}
+          <h1>{t.profile.title}</h1>
+          <span className="muted">{`${user.name ?? user.email} · ${t.profile.signedInGoogle}`}</span>
         </div>
       </header>
 
-      <div className="profile-grid">
-        <div className="profile-column">
-          {profile.isPending && <div className="card skeleton" style={{ height: 320 }} />}
+      <div className="settings-layout">
+        <SectionNav sections={sections} />
+
+        <div className="settings-main">
+          {profile.isPending && <div className="card skeleton" style={{ height: 220 }} />}
           {profile.isError && <p className="notice" data-kind="error">{t.profile.loadFailed}</p>}
           {data && <WeightCard profile={data} />}
-          {(data || health.data) && <GoalsCard goals={data?.goals ?? null} stepGoal={health.data?.settings.stepGoal ?? null} />}
-        </div>
+          {showGoals && <GoalsCard goals={data?.goals ?? null} stepGoal={health.data?.settings.stepGoal ?? null} />}
 
-        <div className="profile-column">
           <FeaturesCard />
 
-          <section className="card profile-card profile-list" aria-label={t.profile.connections}>
+          {features?.training && <TrainingCard />}
+
+          <section id="settings-connections" className="card profile-card profile-list settings-section" aria-label={t.profile.connections}>
             <div className="profile-card-head">
               <h2>{t.profile.connections}</h2>
             </div>
             <ConnectionRow name={t.profile.google} note={t.profile.googleNote} state="connected" />
-            <ConnectionRow name={t.profile.nutrition} note={t.profile.nutritionNote} state={nutrition.data?.connected === false ? "off" : "connected"} />
+            <ConnectionRow
+              name={t.profile.nutrition}
+              note={t.profile.nutritionNote}
+              state={nutrition.data?.connected === false ? "off" : "connected"}
+              action={
+                nutrition.data?.connected ? (
+                  <button
+                    type="button"
+                    className="link-danger"
+                    aria-label={t.profile.disconnectNutrition}
+                    disabled={disconnect.isPending}
+                    onClick={() => {
+                      if (window.confirm(t.profile.disconnectConfirm)) disconnect.mutate();
+                    }}
+                  >
+                    {t.profile.disconnect}
+                  </button>
+                ) : undefined
+              }
+            />
             {features?.health && (
               <ConnectionRow
                 name={t.profile.appleHealth}
@@ -405,20 +497,17 @@ export function ProfilePage({ user }: { user: User }) {
                 href="/profilo/salute"
               />
             )}
-            {features?.training && (
-              <>
-                <GymRows />
-                <HevySyncRow />
-              </>
-            )}
+            {features?.training && <GymRows />}
           </section>
 
           {features?.reminders && (
-            <section className="card profile-card profile-list" aria-label={t.profile.reminders}>
-              <button type="button" className="profile-row-item connection-row profile-first-row" onClick={() => setReminders(true)}>
+            <section id="settings-reminders" className="card profile-card profile-list settings-section" aria-label={t.profile.reminders}>
+              <div className="profile-card-head">
+                <h2>{t.profile.reminders}</h2>
+              </div>
+              <button type="button" className="profile-row-item connection-row" onClick={() => setReminders(true)}>
                 <span className="connection-text">
-                  <strong>{t.profile.reminders}</strong>
-                  <span className="muted">{t.profile.remindersNote}</span>
+                  <strong>{t.profile.remindersNote}</strong>
                 </span>
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
                   <path d="M9 6l6 6-6 6" />
@@ -427,69 +516,71 @@ export function ProfilePage({ user }: { user: User }) {
             </section>
           )}
 
-          <section className="card profile-card" aria-label={t.profile.appearance}>
-            <h2 id="theme-label">{t.profile.appearance}</h2>
-            <div className="segmented" role="radiogroup" aria-labelledby="theme-label">
-              {THEMES.map((option) => (
-                <button
-                  key={option}
-                  type="button"
-                  role="radio"
-                  aria-checked={theme === option}
-                  className="segmented-option"
-                  onClick={() => {
-                    setTheme(option);
-                    setThemePreference(option);
-                  }}
-                >
-                  {t.profile.themeOptions[option]}
-                </button>
-              ))}
+          <section id="settings-appearance" className="card profile-card profile-list settings-section" aria-label={t.profile.nav.appearance}>
+            <div className="profile-card-head">
+              <h2>{t.profile.nav.appearance}</h2>
             </div>
-            <span className="muted weight-note">{t.profile.themeNote}</span>
+            <div className="profile-row-item settings-row">
+              <span className="connection-text">
+                <strong id="theme-label">{t.profile.theme}</strong>
+                <span className="muted">{t.profile.themeNote}</span>
+              </span>
+              <div className="segmented settings-segmented" role="radiogroup" aria-labelledby="theme-label">
+                {THEMES.map((option) => (
+                  <button
+                    key={option}
+                    type="button"
+                    role="radio"
+                    aria-checked={theme === option}
+                    className="segmented-option"
+                    onClick={() => {
+                      setTheme(option);
+                      setThemePreference(option);
+                    }}
+                  >
+                    {t.profile.themeOptions[option]}
+                  </button>
+                ))}
+              </div>
+            </div>
+            <div className="profile-row-item settings-row">
+              <span className="connection-text">
+                <strong id="language-label">{t.profile.language}</strong>
+                <span className="muted">{setLanguage.isError ? t.profile.languageFailed : t.profile.languageNote}</span>
+              </span>
+              <div className="segmented settings-segmented" role="radiogroup" aria-labelledby="language-label">
+                {LANGUAGES.map((option) => (
+                  <button
+                    key={option}
+                    type="button"
+                    role="radio"
+                    lang={option}
+                    aria-checked={(setLanguage.variables ?? language) === option}
+                    className="segmented-option"
+                    disabled={setLanguage.isPending}
+                    onClick={() => option !== language && setLanguage.mutate(option)}
+                  >
+                    {LANGUAGE_NAMES[option]}
+                  </button>
+                ))}
+              </div>
+            </div>
           </section>
 
-          <section className="card profile-card" aria-label={t.profile.language}>
-            <h2 id="language-label">{t.profile.language}</h2>
-            <div className="segmented" role="radiogroup" aria-labelledby="language-label">
-              {LANGUAGES.map((option) => (
-                <button
-                  key={option}
-                  type="button"
-                  role="radio"
-                  lang={option}
-                  aria-checked={(setLanguage.variables ?? language) === option}
-                  className="segmented-option"
-                  disabled={setLanguage.isPending}
-                  onClick={() => option !== language && setLanguage.mutate(option)}
-                >
-                  {LANGUAGE_NAMES[option]}
-                </button>
-              ))}
+          <section id="settings-account" className="card profile-card profile-list settings-section" aria-label={t.profile.nav.account}>
+            <div className="profile-card-head">
+              <h2>{t.profile.nav.account}</h2>
             </div>
-            {setLanguage.isError ? (
-              <span className="notice" data-kind="error">{t.profile.languageFailed}</span>
-            ) : (
-              <span className="muted weight-note">{t.profile.languageNote}</span>
-            )}
-          </section>
-
-          <div className="profile-actions">
-            {nutrition.data?.connected && (
-              <button
-                type="button"
-                className="profile-action"
-                onClick={() => {
-                  if (window.confirm(t.profile.disconnectConfirm)) disconnect.mutate();
-                }}
-              >
-                {t.profile.disconnectNutrition}
+            <div className="profile-row-item settings-row">
+              <span className="connection-text">
+                <strong>{user.email}</strong>
+                <span className="muted">{t.profile.accountNote}</span>
+              </span>
+              <button type="button" className="button-secondary-small" data-kind="danger" disabled={signOut.isPending} onClick={() => signOut.mutate()}>
+                {t.profile.signOut}
               </button>
-            )}
-            <button type="button" className="profile-action" data-kind="danger" onClick={() => signOut.mutate()}>
-              {t.profile.signOut}
-            </button>
-          </div>
+            </div>
+          </section>
         </div>
       </div>
       {reminders && <RemindersSheet onClose={() => setReminders(false)} />}

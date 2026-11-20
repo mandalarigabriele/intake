@@ -20,7 +20,7 @@ All UI copy is designed in Italian (the default language; English and Dutch tran
 | `SaluteDesktop.dc.html` | Salute (desktop / iPad) | Same data and period selector; the three tabs side by side as columns |
 | `AndamentoAllenamenti.dc.html` | Andamento › Allenamenti (iPhone) | Next routine (Hevy rotation A → B → C) with targets and progression hints, this week strip, load progress charts, recent workouts |
 | `AllenamentiDesktop.dc.html` | Allenamenti (desktop / iPad) | Same content in a gap-free two-column flow (CSS `columns: 2 380px`, cards `break-inside: avoid`): next routine, week, history, one card per lift; one column on iPad portrait |
-| `Profilo.dc.html` | Profile | Weight (log + chart from the 2nd weigh-in), daily goals (read-only, from Nutrition) and step goal, connections, theme, sign out. The app also keeps "Promemoria" and "Scollega Nutrition" here (not drawn) |
+| `Profilo.dc.html` | Profile | Weight (log + chart from the 2nd weigh-in), daily goals (read-only, from Nutrition) and step goal, connections, theme, sign out. Superseded for order and layout by "Impostazioni (20 Nov)" below |
 | `Salute.dc.html` | Profile › Apple Salute | Data status, active-energy warning, file import, auto-sync (phase 2). The step goal moved to Profilo |
 | `SaluteImport.dc.html` | Import preview | Preview, duplicates resolved, ignored data, result; states via the `stato` tweak |
 | `Aggiungi.dc.html` | Add sheet (opened by `+`) | Water shortcuts, today's plan meals, repeat / saved / search / barcode |
@@ -38,7 +38,7 @@ All UI copy is designed in Italian (the default language; English and Dutch tran
 - iPhone tab bar: **Oggi · Andamento · [+] · Piano · Timeline**. "Andamento" opens with a segmented control **Alimentazione | Salute | Allenamenti**
   (Alimentazione = former Week, nutrition only; Salute = sleep, activity, heart; Allenamenti = Hevy routines and loads).
 - Desktop / iPad sidebar: **Oggi · Alimentazione · Salute · Allenamenti · Piano · Timeline**.
-- The avatar opens **Profilo** (weight, goals incl. step goal, connections incl. Apple Salute, reminders, theme, "Scollega Nutrition", sign out).
+- The avatar opens **Profilo**, titled Impostazioni (see "Impostazioni (20 Nov)").
   Weight is no longer on the Week page.
 - Supersedes older mentions of "Settimana" as a tab, the weight card in Week, and the step goal in the Apple Salute screen.
 
@@ -46,7 +46,19 @@ All UI copy is designed in Italian (the default language; English and Dutch tran
 
 - Alimentazione is always on; Allenamenti, Apple Salute and Promemoria can be switched off (docs/features.md). Navigation, Today and Profile show only the parts that are on; the Andamento switch is hidden when only Alimentazione is left.
 - First-run setup: a focus page like the Nutrition connection (eyebrow "PRIMA CONFIGURAZIONE · PASSO N DI 2"). Step 1: three radio cards (title + one line), the selected one with the accent border and soft accent background, "Avanti" at the bottom. Step 2: a card with one row per chosen part and the reminders switch, "Indietro" / "Inizia", footnote pointing to Profilo › Funzioni.
-- Profilo › Funzioni: first card of the second column; Alimentazione "Sempre attiva", then one switch row per part, a muted note and a secondary "Rifai la configurazione" button.
+- Profilo › Funzioni: third card of Impostazioni (see below); Alimentazione with a "sempre attiva" pill, then one switch row per part, and a last row with the muted note and a small secondary "Rifai la configurazione" button.
+
+## Impostazioni (20 Nov)
+
+The avatar screen (route `/profilo`) is titled **Impostazioni**, with the avatar and "name · accesso con Google" under the title. It replaces the two-column Profilo layout (mockup "Impostazioni · desktop / iPad").
+
+- One column of cards in a fixed order: **Peso · Obiettivi · Funzioni · Allenamenti · Collegamenti · Promemoria · Aspetto e lingua · Account**. A card whose part is off (or that has nothing to show) is left out, and so is its link.
+- From 1100 px a column of section links sits on the left of the cards and stays in view while scrolling; a link scrolls to its card. Below 1100 px there are no links. From 800 px (sidebar visible) the back button is hidden.
+- Peso: Ultimo / Tendenza / Obiettivo and the log field with "Registra" on one line (the field wraps below on phones); the chart from the second weigh-in; a soft strip with the status ("5 nov · 75,0 kg — alla prossima pesata compaiono linea e tendenza.") on the left and "Stesso giorno, al mattino, a digiuno · salvato su Nutrition" on the right.
+- Obiettivi giornalieri: "da Nutrition" pill; rows in two columns from 700 px (Calorie, Proteine, Carboidrati, Grassi | Fibre, Acqua, Passi with − / +), then the note "Calorie, macro e acqua si cambiano su Nutrition (anche parlando con Claude). I passi sono un obiettivo di Intake."
+- Allenamenti: "Fonte delle schede" with the Hevy | openGym segmented control (only when both are configured) and "Copia le sedute su Hevy" with "Copia ora" and the switch on the same row.
+- Collegamenti: Account Google, Nutrition (red "Scollega" text button next to the state pill), Apple Salute (opens Profilo › Apple Salute), Hevy, openGym.
+- Promemoria: one row that opens the reminders sheet. Aspetto e lingua: Tema and Lingua rows, label and note on the left, segmented control on the right (below on phones). Account: the email with a small red "Esci" button.
 
 ## Navigation
 

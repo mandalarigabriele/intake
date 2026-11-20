@@ -2725,6 +2725,8 @@ a.bar-column:hover .bar:not([data-empty]) {
 .weight-form .button {
   height: 48px;
   flex: none;
+  width: auto;
+  padding: 0 18px;
 }
 
 .button:disabled {
@@ -4512,7 +4514,7 @@ button.next-meal-primary {
 /* ================= Profilo ================= */
 
 .profile-page {
-  max-width: 1040px;
+  max-width: 960px;
 }
 
 .profile-header {
@@ -4548,24 +4550,122 @@ button.next-meal-primary {
   overflow-wrap: anywhere;
 }
 
-/* One column on phones; two from tablet width (weight and goals on the left) */
-.profile-grid {
+/* Impostazioni: one column of cards; from desktop width the section links sit on the left (docs/design) */
+.settings-layout {
   display: grid;
   gap: 12px;
   align-items: start;
 }
 
-.profile-column {
+.settings-main {
   display: flex;
   flex-direction: column;
   gap: 12px;
   min-width: 0;
 }
 
-@media (min-width: 900px) {
-  .profile-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+.settings-nav {
+  display: none;
+}
+
+.settings-section {
+  scroll-margin-top: 16px;
+}
+
+/* The sidebar is there from 800px: no back button needed */
+@media (min-width: 800px) {
+  .profile-back {
+    display: none;
   }
+
+  .profile-heading h1 {
+    font-size: 30px;
+  }
+}
+
+@media (min-width: 1100px) {
+  .settings-layout {
+    grid-template-columns: 170px minmax(0, 1fr);
+    gap: 24px;
+  }
+
+  .settings-nav {
+    position: sticky;
+    top: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+}
+
+.settings-nav-link {
+  padding: 8px 10px;
+  border: none;
+  border-radius: 10px;
+  background: none;
+  font: inherit;
+  font-size: 14px;
+  font-weight: 700;
+  text-align: left;
+  color: var(--color-text-2);
+  cursor: pointer;
+}
+
+.settings-nav-link:hover {
+  background: var(--color-surface-2);
+  color: var(--color-text);
+}
+
+/* A row with a label on the left and a control (segmented, button) on the right; the control wraps below on phones */
+.settings-row {
+  flex-wrap: wrap;
+  gap: 10px 16px;
+  padding: 12px 0;
+}
+
+.settings-row .connection-text {
+  flex: 1 1 240px;
+  overflow-wrap: anywhere;
+}
+
+.settings-segmented {
+  flex: 1 1 100%;
+}
+
+@media (min-width: 700px) {
+  .settings-segmented {
+    flex: 0 1 300px;
+  }
+}
+
+.settings-note {
+  margin: 0;
+  padding: 10px 0 14px;
+  font-size: 12px;
+  line-height: 1.45;
+}
+
+.link-danger {
+  padding: 4px 6px;
+  border: none;
+  background: none;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 800;
+  color: var(--color-danger);
+  cursor: pointer;
+}
+
+.settings-row .button-secondary-small {
+  flex: none;
+  height: 36px;
+  padding: 0 14px;
+  white-space: nowrap;
+}
+
+.button-secondary-small[data-kind="danger"] {
+  border-color: var(--color-danger-border);
+  color: var(--color-danger);
 }
 
 .profile-card {
@@ -4612,8 +4712,58 @@ button.next-meal-primary {
   color: var(--color-text);
 }
 
-.profile-first-row {
-  border-top: none;
+/* Peso: the three figures and the log form on one line from tablet width, the form below on phones */
+.weight-top {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 12px 24px;
+}
+
+.weight-top .weight-stats {
+  flex: 1 1 300px;
+}
+
+.weight-top .weight-form {
+  flex: 1 1 260px;
+  min-width: 0;
+}
+
+@media (min-width: 700px) {
+  .weight-top .weight-form {
+    max-width: 300px;
+  }
+}
+
+.weight-strip {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 6px 24px;
+  padding: 10px 14px;
+  border-radius: 12px;
+  background: var(--color-surface-2);
+  font-size: 12px;
+  line-height: 1.45;
+}
+
+.weight-status {
+  flex: 1 1 300px;
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  color: var(--color-text);
+}
+
+.weight-strip > .muted {
+  flex: 1 1 240px;
+}
+
+.weight-strip .weight-dot {
+  flex: none;
+  width: 8px;
+  height: 8px;
+  box-shadow: none;
 }
 
 .weight-stats {
@@ -4658,13 +4808,6 @@ button.next-meal-primary {
   text-align: center;
 }
 
-.weight-plot[data-empty] {
-  border: 1px dashed var(--color-dashed);
-  padding: 0 24px;
-  font-size: 13px;
-  line-height: 1.5;
-}
-
 .weight-chart {
   width: 100%;
   height: 100%;
@@ -4690,14 +4833,6 @@ button.next-meal-primary {
   stroke-linecap: round;
 }
 
-.weight-one {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 6px;
-  font-size: 12px;
-}
-
 .weight-dot {
   width: 12px;
   height: 12px;
@@ -4706,9 +4841,21 @@ button.next-meal-primary {
   box-shadow: 0 0 0 3px var(--color-surface);
 }
 
-.weight-note {
-  font-size: 12px;
-  line-height: 1.5;
+/* Obiettivi: one column on phones, two from tablet width (filled column by column, as in the mockup) */
+.goal-grid {
+  column-gap: 32px;
+}
+
+@media (min-width: 700px) {
+  .goal-grid {
+    columns: 2;
+  }
+}
+
+.goal-grid .goal-row {
+  break-inside: avoid;
+  border-top: none;
+  border-bottom: 1px solid var(--color-divider);
 }
 
 .goal-name {
@@ -4821,29 +4968,6 @@ div.connection-row {
 .state-pill[data-state="off"] {
   background: var(--color-skipped-bg);
   color: var(--color-text-2);
-}
-
-.profile-actions {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-.profile-action {
-  height: 52px;
-  border-radius: 16px;
-  border: 1px solid var(--color-border);
-  background: var(--color-surface);
-  color: var(--color-text);
-  font: inherit;
-  font-size: 15px;
-  font-weight: 800;
-  cursor: pointer;
-}
-
-.profile-action[data-kind="danger"] {
-  border-color: var(--color-danger-border);
-  color: var(--color-danger);
 }
 
 /* ================= Andamento › Alimentazione ================= */
@@ -6409,17 +6533,7 @@ div.connection-row {
   align-items: center;
 }
 
-/* Profilo: workout source switch (Hevy | openGym) under the gym app rows */
-.source-switch {
-  flex-wrap: wrap;
-  padding: 10px 0;
-}
-
-.source-switch .segmented {
-  flex: 1 1 200px;
-}
-
-/* Profilo: "Copia su Hevy" (openGym → Hevy), switch, status and preview of what the next run sends */
+/* Impostazioni › Allenamenti: "Copia le sedute su Hevy" (openGym → Hevy), switch, status and preview of what the next run sends */
 .hevy-sync {
   flex-direction: column;
   align-items: stretch;
@@ -6429,10 +6543,26 @@ div.connection-row {
 
 .hevy-sync-head {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   justify-content: space-between;
-  gap: 12px;
-  cursor: pointer;
+  gap: 10px 16px;
+}
+
+.hevy-sync-head .connection-text {
+  flex: 1 1 240px;
+}
+
+.hevy-sync-controls {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-left: auto;
+}
+
+.hevy-sync-controls .button-secondary-small {
+  height: 36px;
+  padding: 0 14px;
 }
 
 .hevy-sync-head .connection-text .muted,
@@ -6480,10 +6610,6 @@ div.connection-row {
 
 .hevy-sync-item li span:first-child {
   font-weight: 700;
-}
-
-.hevy-sync-run {
-  align-self: flex-start;
 }
 
 /* ================= Oggi: "Allenamento di oggi" ================= */
@@ -6649,7 +6775,20 @@ div.connection-row {
   line-height: 1.45;
 }
 
-.feature-rerun {
-  margin-top: 12px;
-  width: 100%;
+/* Impostazioni › Funzioni: the note and "Rifai la configurazione" on one line, the button below on phones */
+.feature-foot {
+  flex-wrap: wrap;
+  gap: 10px 16px;
+  padding: 12px 0 14px;
+}
+
+.feature-foot .feature-hint {
+  flex: 1 1 260px;
+  padding-top: 0;
+  font-size: 12px;
+}
+
+.feature-foot .button-secondary-small {
+  height: 36px;
+  padding: 0 14px;
 }
