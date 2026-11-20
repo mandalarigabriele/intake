@@ -192,10 +192,12 @@ export function EditMealPage({ date, id }: { date: string; id: string }) {
 
   return (
     <div className="page detail-page edit-page">
-      {/* X closes without saving (back to the meal); Salva sits at the bottom next to Elimina */}
-      <header className="edit-header edit-header-close">
-        <Link href={detailHref} className="icon-button" aria-label={t.close}>
-          <CloseIcon size={20} strokeWidth={2.2} />
+      {/* Like the meal detail: the back arrow leaves without saving; Salva sits at the bottom next to Elimina */}
+      <header className="edit-header edit-header-back">
+        <Link href={detailHref} className="icon-button" aria-label={t.edit.back}>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+            <path d="M15 6l-6 6 6 6" />
+          </svg>
         </Link>
         <h1>{t.edit.title}</h1>
         <span aria-hidden="true" />
@@ -326,11 +328,11 @@ export function EditMealPage({ date, id }: { date: string; id: string }) {
       <div className="detail-spacer" />
       <div className="edit-actions">
         {update.isError && <p className="error-text">{t.edit.saveFailed}</p>}
-        <div className="edit-actions-row">
-          <button type="button" className="button-danger" onClick={() => setConfirmDelete(true)}>
+        <div className="detail-actions edit-actions-row">
+          <button type="button" className="button-secondary edit-delete" onClick={() => setConfirmDelete(true)}>
             {t.edit.delete}
           </button>
-          <button type="button" className="button-primary" onClick={save} disabled={update.isPending || (hasItems && validItems.length === 0)}>
+          <button type="button" className="button-primary-inline" onClick={save} disabled={update.isPending || (hasItems && validItems.length === 0)}>
             {t.edit.save}
           </button>
         </div>

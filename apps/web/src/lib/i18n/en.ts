@@ -436,6 +436,7 @@ export const en: Strings = {
   },
 
   edit: {
+    back: "Back to the meal",
     title: "Edit meal",
     cancel: "Cancel",
     save: "Save",

@@ -2419,12 +2419,13 @@ button.button-primary {
   justify-self: end;
 }
 
-/* Modifica pasto: X on the left closes without saving */
-.edit-header-close .icon-button {
+/* Modifica pasto: the back arrow on the left, as on the meal detail */
+.edit-header-back .icon-button {
   justify-self: start;
 }
 
-/* Modifica pasto: Elimina and Salva side by side, kept at the bottom of the screen while scrolling */
+/* Modifica pasto: Elimina and Salva side by side like Modifica / Salva come preferito on the meal detail, kept at the
+   bottom of the screen while scrolling */
 .edit-actions {
   position: sticky;
   bottom: 0;
@@ -2438,24 +2439,25 @@ button.button-primary {
 }
 
 .edit-actions-row {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 10px;
+  padding-bottom: 0;
 }
 
-.edit-actions .button-danger,
-.edit-actions .button-primary {
-  height: 52px;
-  margin: 0;
-  border: none;
-  cursor: pointer;
+.edit-actions .button-secondary,
+.edit-actions .button-primary-inline {
+  min-width: 0;
+  font: inherit;
+  font-size: 15px;
+  font-weight: 800;
 }
 
-.edit-actions .button-danger {
-  border: 1px solid var(--color-danger-border);
+/* Deleting stays red, with its label */
+.edit-delete {
+  border-color: var(--color-danger-border);
+  background: var(--color-danger-soft);
+  color: var(--color-danger);
 }
 
-.edit-actions .button-primary:disabled {
+.edit-actions .button-primary-inline:disabled {
   opacity: 0.5;
   cursor: default;
 }

@@ -436,6 +436,7 @@ export const it = {
   },
 
   edit: {
+    back: "Torna al pasto",
     title: "Modifica pasto",
     cancel: "Annulla",
     save: "Salva",

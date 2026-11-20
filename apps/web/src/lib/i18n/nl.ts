@@ -436,6 +436,7 @@ export const nl: Strings = {
   },
 
   edit: {
+    back: "Terug naar de maaltijd",
     title: "Maaltijd bewerken",
     cancel: "Annuleren",
     save: "Opslaan",
