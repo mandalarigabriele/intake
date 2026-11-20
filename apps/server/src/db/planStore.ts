@@ -38,6 +38,12 @@ export class PlanStore {
     private readonly now: () => Date = () => new Date(),
   ) {}
 
+  /** Replaces the content of a version (e.g. a meal time changed in Piano); false when there is no such version. */
+  update(id: number, plan: MealPlan): boolean {
+    const result = this.db.prepare("UPDATE plans SET content = ?, valid_from = ? WHERE id = ?").run(JSON.stringify(plan), plan.validFrom, id);
+    return Number(result.changes) > 0;
+  }
+
   add(plan: MealPlan): StoredPlan {
     const uploadedAt = this.now().toISOString();
     const result = this.db

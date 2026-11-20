@@ -341,3 +341,9 @@ Reference screens: `OggiDark.dc.html` and `PianoDark.dc.html`.
 | Water segments | `#DCE6EF` | `#22303D` |
 | To-log card bg / border / label | `#FFF7F0` / `#EDC3A3` / `#8F4310` | `#2A1F17` / `#6E4428` / `#F0A872` |
 | Now marker / destructive text | `#C2492E` / `#A53A22` | `#E0714F` / `#F08F6E` |
+
+## Piano — generate with AI and the day view (21 Nov)
+
+Piano › ⋯ › "Genera con l'IA" opens a pushed screen: targets, meals of the day, free meals, variety, food, cooking, notes, then "Genera piano" (with sparkles). The review starts with a summary card ("Alcune cose non tornano": days off target in one line, repeated dishes), each line opening its day; affected meals have a ⚠ line with the reason, a "Sostituisci" pill (optional wish, then a spinner on that meal) and a time chip that opens the system picker. The day totals card shows each macro against the goal with a bar and a text label ("in linea", "▲ 250 sopra", "▼ 24 sotto"); "Stesso orario tutti i giorni" is on by default.
+
+The same day view (`components/PlanDay.tsx`) is the Piano page: header, switch, day tabs and meals share one centred column (max 1040 px); at ≥ 1000 px a 320 px aside holds the totals, the time switch and the notes.

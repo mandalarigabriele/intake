@@ -8,7 +8,7 @@ parts can be switched on or off for the whole installation.
 | Allenamenti | `training` | Training page and recap, Today's training card, Trends › Training, the Hevy or openGym source, the openGym → Hevy copy |
 | Salute (Apple Salute) | `health` | Activity and rest, sleep, Effort / Recovery / Sleep rings, Trends › Health, eaten-vs-burned balance, Health Auto Export uploads |
 | Promemoria | `reminders` | Web Push reminders for the meals of the plan |
-| Pasti da foto | `photoMeals` | New meals from a photo or a description recognized by Claude, the confirmation screen, "+ Aggiungi alimento" there, and the kept photos (thumbnails in the timeline, photo on the meal page). Works only with `ANTHROPIC_API_KEY`; without it the switch stays off and shows what is missing. Off by default on every installation: the add sheet then keeps "Chiedi a Claude" as before. Favorites and "Ripeti un pasto recente" do not depend on it. Also the AI opinion of Piano › Il tuo fabbisogno (the calculation and the data check stay with Alimentazione) |
+| Pasti da foto | `photoMeals` | New meals from a photo or a description recognized by Claude, the confirmation screen, "+ Aggiungi alimento" there, and the kept photos (thumbnails in the timeline, photo on the meal page). Works only with `ANTHROPIC_API_KEY`; without it the switch stays off and shows what is missing. Off by default on every installation: the add sheet then keeps "Chiedi a Claude" as before. Favorites and "Ripeti un pasto recente" do not depend on it. Also "Genera con l'IA" in Piano (docs/plan-generation.md) and the AI opinion of Piano › Il tuo fabbisogno (the calculation and the data check stay with Alimentazione) |
 | Acqua | `water` | Water card on Today, water shortcuts in the add sheet, water KPI and consistency row in Trends › Nutrition, the water goal in Profile, water reminders. On by default |
 
 Alimentazione: Today with the timeline and macros, meals, weight, meal plans, the daily needs and their data check,
@@ -19,7 +19,7 @@ the daily insight, Trends › Nutrition and Weight.
 - The choice is stored once per installation in the `settings` table (key `features`), not per device.
 - A part that is off:
   - answers `404 { "error": "feature_disabled", "feature": "<key>" }` on its API routes
-    (`/api/training*`, `/api/hevy-sync*` · `/api/health/*` including `/api/health/ingest` · `/api/push*` · `/api/water` · `/api/meals/recognize`, `/api/meals/photos`, `/api/meals/:id/photo`, `/api/needs/ai`);
+    (`/api/training*`, `/api/hevy-sync*` · `/api/health/*` including `/api/health/ingest` · `/api/push*` · `/api/water` · `/api/meals/recognize`, `/api/meals/photos`, `/api/meals/:id/photo`, `/api/needs/ai`, `/api/plans/generate*`, `/api/plans/generation*`);
     `/api/health` (the server's own liveness check) is not part of Salute. `/api/workouts` serves both parts: it is
     hidden only when Allenamenti and Salute are both off, and lists only Apple Health sessions while Allenamenti is off;
   - stops its background work: the openGym → Hevy copy for Allenamenti, the reminder checks for Promemoria;

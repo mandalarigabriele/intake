@@ -1953,8 +1953,13 @@ strong,
 
 .plan-meal header {
   display: flex;
-  justify-content: space-between;
   align-items: center;
+  gap: 10px;
+}
+
+.plan-meal header h3 {
+  flex: 1;
+  min-width: 0;
 }
 
 .plan-meal h3 {
@@ -1996,10 +2001,7 @@ strong,
 }
 
 .plan-meal[data-free] {
-  flex-direction: row;
-  justify-content: space-between;
-  align-items: center;
-  padding: 16px 18px;
+  padding: 14px 18px;
   background: var(--color-accent-soft);
 }
 
@@ -2059,13 +2061,6 @@ strong,
     font-size: 36px;
   }
 
-  .plan-page .plan-tabs {
-    max-width: 640px;
-  }
-
-  .plan-day {
-    max-width: 760px;
-  }
 }
 
 .section-header .page-title {
@@ -7995,4 +7990,451 @@ div.connection-row {
   background: var(--color-surface);
   color: var(--color-text);
   font-weight: 800;
+}
+
+/* ================= Piano › Genera con l'IA (docs/plan-generation.md) ================= */
+
+.plan-gen-page .sheet-section {
+  margin-top: 4px;
+}
+
+.plan-gen-targets,
+.plan-gen-fields {
+  padding: 14px 16px;
+  gap: 8px;
+}
+
+.plan-gen-fields .muted {
+  font-size: 12px;
+  margin-top: -4px;
+}
+
+.plan-gen-fields textarea {
+  width: 100%;
+  min-height: 72px;
+  padding: 10px 12px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-surface-input);
+  color: var(--color-text);
+  font: inherit;
+  font-size: 16px;
+  resize: vertical;
+}
+
+/* A meal of the day: name, time, type and × on one row; the name takes the room left */
+.plan-gen-slot {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto auto auto;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--color-divider);
+}
+
+.plan-gen-slot .note-input {
+  border: none;
+  padding: 0;
+  min-width: 0;
+}
+
+.plan-gen-slot input[type="time"],
+.plan-gen-slot select,
+.plan-gen-page .form-row select {
+  font: inherit;
+  font-size: 15px;
+  color: var(--color-text);
+  background: transparent;
+  border: none;
+}
+
+.plan-gen-progress {
+  width: 100%;
+  max-width: 260px;
+  height: 6px;
+  border-radius: 3px;
+  background: var(--color-track);
+  overflow: hidden;
+}
+
+.plan-gen-progress span {
+  display: block;
+  height: 100%;
+  background: var(--color-accent);
+  transition: width 0.4s;
+}
+
+.plan-gen-mark {
+  font-size: 11px;
+  font-weight: 800;
+  color: var(--color-accent-strong);
+}
+
+.plan-tab[data-free] .plan-gen-mark {
+  color: var(--color-text-muted);
+}
+
+.plan-tab[data-off] .plan-gen-mark {
+  color: var(--color-todo-text);
+}
+
+.plan-empty-actions {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+.plan-empty-actions .button-secondary-small {
+  padding: 0 16px;
+}
+
+/* ================= Piano: day view shared with the AI review ================= */
+
+/* Header, switch, tabs and day all share one centred column */
+.plan-page,
+.plan-gen-review {
+  max-width: 1040px;
+}
+
+.plan-layout {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.plan-aside {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.plan-aside .plan-notes {
+  margin-top: 0;
+}
+
+.plan-meals {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.plan-time {
+  flex: none;
+  min-width: 58px;
+  padding: 4px 8px;
+  border-radius: 999px;
+  background: var(--color-track);
+  color: var(--color-text-2);
+  font: inherit;
+  font-size: 13px;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+  text-align: center;
+}
+
+/* The time is the editable field itself: a chip that opens the system picker */
+.plan-time-edit {
+  border: 1px solid var(--color-border);
+  background: var(--color-surface);
+  color: var(--color-text);
+  cursor: pointer;
+  appearance: none;
+  -webkit-appearance: none;
+  min-height: 32px;
+}
+
+.plan-time-edit::-webkit-calendar-picker-indicator {
+  display: none;
+}
+
+.plan-time-edit:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 1px;
+}
+
+.plan-meal[data-free] .plan-time-edit {
+  background: var(--color-surface);
+}
+
+.plan-meal-kcal {
+  flex: none;
+  font-size: 13px;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+}
+
+.plan-meal-dish {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 700;
+  line-height: 1.4;
+}
+
+.plan-meal-macros {
+  margin: 0;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--color-text-muted);
+  font-variant-numeric: tabular-nums;
+}
+
+.plan-meal[data-warn] {
+  box-shadow: inset 0 0 0 1.5px var(--color-todo-border);
+}
+
+.plan-meal-warn {
+  margin: 0;
+  padding: 6px 10px;
+  border-radius: var(--radius-md);
+  background: var(--color-todo-bg);
+  color: var(--color-todo-text);
+  font-size: 13px;
+  font-weight: 700;
+  line-height: 1.4;
+}
+
+.plan-meal[aria-busy="true"] > :not(.plan-meal-busy):not(header) {
+  opacity: 0.45;
+}
+
+.plan-meal-busy {
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.plan-meal-busy .recognize-spinner {
+  width: 16px;
+  height: 16px;
+  border-width: 2px;
+}
+
+.plan-meal-action {
+  align-self: flex-start;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 34px;
+  padding: 0 12px;
+  border-radius: 999px;
+  border: 1px solid var(--color-border);
+  background: var(--color-surface);
+  color: var(--color-text);
+  font: inherit;
+  font-size: 13px;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.plan-meal-action:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+.plan-replace {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding-top: 4px;
+}
+
+.plan-replace-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.plan-replace-actions .button-secondary-small {
+  padding: 0 14px;
+}
+
+.plan-day-note {
+  margin: -4px 4px 0;
+  font-size: 13px;
+}
+
+/* Day totals against the goals */
+.plan-summary {
+  padding: 16px 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.plan-summary-title {
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  color: var(--color-text-muted);
+}
+
+.plan-summary-row {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.plan-summary-line {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 8px;
+  font-size: 14px;
+}
+
+.plan-summary-value {
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  color: var(--color-text-2);
+}
+
+.plan-summary-bar {
+  height: 6px;
+  border-radius: 3px;
+  background: var(--color-track);
+  overflow: hidden;
+}
+
+.plan-summary-bar span {
+  display: block;
+  height: 100%;
+  border-radius: 3px;
+  background: var(--color-text-muted);
+}
+
+.plan-summary-row[data-state="ok"] .plan-summary-bar span {
+  background: var(--color-accent);
+}
+
+.plan-summary-row[data-state="over"] .plan-summary-bar span,
+.plan-summary-row[data-state="under"] .plan-summary-bar span {
+  background: var(--color-todo-border);
+}
+
+.plan-summary-state {
+  font-size: 12px;
+  font-weight: 800;
+  color: var(--color-text-muted);
+}
+
+.plan-summary-row[data-state="ok"] .plan-summary-state {
+  color: var(--color-accent-strong);
+}
+
+.plan-summary-row[data-state="over"] .plan-summary-state,
+.plan-summary-row[data-state="under"] .plan-summary-state {
+  color: var(--color-todo-text);
+}
+
+.plan-summary-note {
+  margin: 0;
+  font-size: 12px;
+}
+
+.plan-times {
+  padding: 12px 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.plan-times p {
+  margin: 0;
+  font-size: 12px;
+}
+
+.plan-same-time {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  font-size: 14px;
+  font-weight: 700;
+  min-height: 40px;
+}
+
+/* Review: what the AI could not meet, in plain words, each line opens its day */
+.plan-gen-issues {
+  padding: 16px 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  background: var(--color-todo-bg);
+  box-shadow: inset 0 0 0 1px var(--color-todo-border);
+}
+
+.plan-gen-issues strong {
+  color: var(--color-todo-text);
+  font-size: 15px;
+}
+
+.plan-gen-issues p {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.plan-gen-issues ul {
+  margin: 4px 0 0;
+  padding-left: 18px;
+}
+
+.plan-gen-issues li {
+  padding: 3px 0;
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+/* A button is an inline block: align it to the top so the bullet stays on its first line */
+.plan-gen-issues .text-button {
+  display: inline;
+  vertical-align: top;
+  max-width: 100%;
+  height: auto;
+  min-height: 0;
+  padding: 2px 0;
+  text-align: left;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--color-text);
+  text-decoration: underline;
+  text-decoration-color: var(--color-todo-border);
+  text-underline-offset: 3px;
+}
+
+.plan-gen-activate,
+.plan-gen-actions {
+  width: 100%;
+  max-width: 640px;
+  align-self: center;
+}
+
+@media (min-width: 1000px) {
+  .plan-layout {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 320px;
+    grid-template-areas:
+      "tabs tabs"
+      "day aside";
+    align-items: start;
+    gap: 16px 24px;
+  }
+
+  .plan-layout > .plan-tabs {
+    grid-area: tabs;
+  }
+
+  .plan-layout > .plan-day {
+    grid-area: day;
+  }
+
+  .plan-layout > .plan-aside {
+    grid-area: aside;
+    position: sticky;
+    top: 24px;
+  }
 }

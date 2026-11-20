@@ -38,6 +38,11 @@ import type {
   FeaturesUpdate,
   GoalsUpdate,
   BackupStatus,
+  PlanGenerationJob,
+  MealReplace,
+  MealTimeChange,
+  PlanGenerationView,
+  PlanPreferences,
   MealPhotosResponse,
   MealPhotoUpload,
   Language,
@@ -688,5 +693,91 @@ export function useAskNeedsAi() {
   return useMutation({
     mutationFn: () => apiFetch<NeedsAiOpinion>("/api/needs/ai", { method: "POST" }),
     onSuccess: (ai) => queryClient.setQueryData<NeedsView>(needsKey, (view) => (view ? { ...view, ai } : view)),
+  });
+}
+
+const planGenerationKey = ["plan-generation"] as const;
+
+/** "Genera con l'IA": the preferences (or the defaults), the targets and the plan model. */
+export function usePlanGeneration(enabled = true) {
+  return useQuery({ queryKey: planGenerationKey, queryFn: () => apiFetch<PlanGenerationView>("/api/plans/generation"), enabled });
+}
+
+export function useSavePlanPreferences() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (preferences: PlanPreferences) => apiFetch<PlanGenerationView>("/api/plans/generation/preferences", { method: "PUT", json: preferences }),
+    onSuccess: (view) => queryClient.setQueryData(planGenerationKey, view),
+  });
+}
+
+export function useSetPlanModel() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (model: string) => apiFetch<PlanGenerationView>("/api/plans/generation/model", { method: "PUT", json: { model } }),
+    onSuccess: (view) => queryClient.setQueryData(planGenerationKey, view),
+  });
+}
+
+/** Starts a generation with the saved preferences; the job is then read every few seconds. */
+export function useStartPlanGeneration() {
+  return useMutation({ mutationFn: () => apiFetch<{ id: string }>("/api/plans/generate", { method: "POST" }) });
+}
+
+export function usePlanGenerationJob(id: string | null) {
+  return useQuery({
+    queryKey: ["plan-generation-job", id ?? ""],
+    queryFn: () => apiFetch<PlanGenerationJob>(`/api/plans/generate/${id}`),
+    enabled: id !== null,
+    refetchInterval: (query) => (query.state.data?.status === "running" || !query.state.data ? 2000 : false),
+  });
+}
+
+/** "Attiva piano": the draft becomes a new plan version. */
+export function useActivatePlanDraft() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({ id, validFrom }: { id: string; validFrom: string }) => apiFetch(`/api/plans/generate/${id}/activate`, { method: "POST", json: { validFrom } }),
+    onSuccess: () => {
+      void queryClient.invalidateQueries({ queryKey: ["plans"] });
+      return invalidateDays(queryClient);
+    },
+  });
+}
+
+const planJobKey = (id: string) => ["plan-generation-job", id] as const;
+
+/** A meal time of the draft, on one day or on every day. */
+export function useSetDraftTime(id: string) {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (change: MealTimeChange) => apiFetch<PlanGenerationJob>(`/api/plans/generate/${id}/time`, { method: "PATCH", json: change }),
+    onSuccess: (job) => queryClient.setQueryData(planJobKey(id), job),
+  });
+}
+
+/** "Sostituisci": another dish for one meal of the draft. */
+export function useReplaceDraftMeal(id: string) {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (request: MealReplace) => apiFetch<PlanGenerationJob>(`/api/plans/generate/${id}/replace`, { method: "POST", json: request }),
+    onSuccess: (job) => queryClient.setQueryData(planJobKey(id), job),
+  });
+}
+
+/** One stored plan version (Piano shows the scheduled one when none is active yet). */
+export function usePlan(id: number | undefined) {
+  return useQuery({ queryKey: ["plans", id], queryFn: () => apiFetch<StoredPlan>(`/api/plans/${id}`), enabled: id !== undefined });
+}
+
+/** A meal time of a stored version; Oggi and Timeline follow the new time. */
+export function useSetPlanTime() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({ id, ...change }: MealTimeChange & { id: number }) => apiFetch<StoredPlan>(`/api/plans/${id}/time`, { method: "PATCH", json: change }),
+    onSuccess: () => {
+      void queryClient.invalidateQueries({ queryKey: ["plans"] });
+      return invalidateDays(queryClient);
+    },
   });
 }

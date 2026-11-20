@@ -14,6 +14,7 @@ import { HevySync } from "./services/hevySync.js";
 import { NutritionBackups } from "./services/nutritionBackups.js";
 import { MealRecognizer } from "./services/mealRecognition.js";
 import { NeedsAdvisor } from "./services/needsAdvisor.js";
+import { PlanGenerator } from "./services/planGenerator.js";
 import { WebPushSender, vapidKeys } from "./services/webPush.js";
 
 const config = loadConfig();
@@ -109,6 +110,21 @@ const app = await buildApp({
         })
       : undefined,
     aiEnabled: () => features.enabled("photoMeals"),
+  },
+  // "Genera con l'IA" in Piano: its own model (Impostazioni › Modello per i piani), only token usage is logged
+  planGeneration: {
+    api,
+    plans: services.plans,
+    store: services.planGeneration,
+    needs: services.needs,
+    generator: config.ANTHROPIC_API_KEY
+      ? new PlanGenerator({
+          apiKey: config.ANTHROPIC_API_KEY,
+          model: () => services.planGeneration.get().model,
+          language: () => services.language.get(),
+          log: { info: (details, message) => app.log.info(details, message), warn: (details, message) => app.log.warn(details, message) },
+        })
+      : undefined,
   },
   weekApi: api,
   weekHealth: health,

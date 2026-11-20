@@ -1,7 +1,7 @@
 import type { ProfileView, TrainingSourceId } from "@intake/shared";
 import { Fragment, type ReactNode, useState } from "react";
 import { Link } from "wouter";
-import { useDisconnectNutrition, useHealthStatus, useLogWeight, useNutritionStatus, useProfile, useSetHealthSettings, useRecognitionModel, useSetRecognitionModel, useSignOut, type User, useSetTrainingSource, useTrainingSource, useHevySync, useHevySyncAction, useFeature, useFeatures, useSetFeatures, useSetLanguage, useSetGoals, useBackups, useBackupAction } from "../api/queries";
+import { useDisconnectNutrition, useHealthStatus, useLogWeight, useNutritionStatus, useProfile, useSetHealthSettings, useRecognitionModel, useSetRecognitionModel, usePlanGeneration, useSetPlanModel, useSignOut, type User, useSetTrainingSource, useTrainingSource, useHevySync, useHevySyncAction, useFeature, useFeatures, useSetFeatures, useSetLanguage, useSetGoals, useBackups, useBackupAction } from "../api/queries";
 import { BACKUP_KEEP, LANGUAGES, parseGoalInput, weightUnitOf, type FeatureKey, type GoalsUpdate, type WeightUnit } from "@intake/shared";
 import { Avatar } from "../components/ProfileLink";
 import { RemindersSheet } from "../components/RemindersSheet";
@@ -510,6 +510,7 @@ function FeaturesCard() {
           </label>
           {/* The model sits right under its switch, only while the part is on and the key is set */}
           {key === "photoMeals" && data.photoMeals && data.recognitionConfigured && <RecognitionModelRow />}
+          {key === "photoMeals" && data.photoMeals && data.recognitionConfigured && <PlanModelRow />}
         </Fragment>
       ))}
       <div className="profile-row-item feature-foot">
@@ -555,6 +556,33 @@ function RecognitionModelRow() {
             disabled={save.isPending}
             onClick={() => option !== model.data.model && save.mutate(option)}
           >
+            {modelName(option)}
+          </button>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+/** Pasti da foto › Modello per i piani: Sonnet (default), Opus or Haiku for "Genera con l'IA" in Piano. */
+function PlanModelRow() {
+  const view = usePlanGeneration();
+  const save = useSetPlanModel();
+  const s = t.planGen;
+  if (!view.data) return null;
+  const current = save.variables ?? view.data.model;
+  return (
+    <div className="profile-row-item settings-row recognition-model-row">
+      <span className="connection-text">
+        <strong id="plan-model-label" className="ai-label">
+          <SparklesIcon size={16} />
+          {s.modelRow}
+        </strong>
+        <span className="muted">{save.isError ? s.modelFailed : s.modelNote}</span>
+      </span>
+      <div className="segmented settings-segmented" role="radiogroup" aria-labelledby="plan-model-label">
+        {view.data.models.map((option) => (
+          <button key={option} type="button" role="radio" aria-checked={current === option} className="segmented-option" disabled={save.isPending} onClick={() => option !== view.data.model && save.mutate(option)}>
             {modelName(option)}
           </button>
         ))}

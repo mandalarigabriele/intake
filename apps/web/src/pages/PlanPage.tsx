@@ -1,19 +1,17 @@
 import {
   WEEKDAYS,
   dayTotals,
-  foodLine,
-  isFixedMeal,
   planAverages,
   weekdayOf,
   type PlanUploadError,
   type PlannedDay,
-  type StoredPlan,
   type Weekday,
 } from "@intake/shared";
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { useLocation, useSearch } from "wouter";
-import { PlanUploadFailed, usePlans, useUploadPlan } from "../api/queries";
-import { CloseIcon, PlanIcon } from "../components/icons";
+import { PlanUploadFailed, useDay, useFeatures, usePlan, usePlans, useSetPlanTime, useUploadPlan } from "../api/queries";
+import { PlanDayMeals, PlanDaySummary, SameTimeSwitch } from "../components/PlanDay";
+import { CloseIcon, PlanIcon, SparklesIcon } from "../components/icons";
 import { formatKcal, formatMediumDate, formatShortDate } from "../lib/format";
 import { t } from "../lib/strings";
 import { Scrim } from "../components/Scrim";
@@ -41,6 +39,8 @@ export function PlanPage() {
   const [, navigate] = useLocation();
   const [tab, setTab] = useState<PlanTab>(() => planTabFromSearch(search) ?? preferredPlanTab());
   const plans = usePlans();
+  // "Genera con l'IA" needs the AI part (Pasti da foto) and the key
+  const canGenerate = useFeatures().data?.recognition === true;
   const upload = useUploadPlan();
   const fileInput = useRef<HTMLInputElement>(null);
   const [menuOpen, setMenuOpen] = useState(false);
@@ -50,16 +50,12 @@ export function PlanPage() {
   const data = plans.data;
   // Show the plan in effect today, or the next scheduled one if none is active yet
   const scheduled = data?.versions.filter((v) => v.status === "scheduled").at(-1);
-  const [scheduledPlan, setScheduledPlan] = useState<StoredPlan | null>(null);
-  useEffect(() => {
-    if (data && !data.active && scheduled) {
-      fetch(`/api/plans/${scheduled.id}`, { credentials: "same-origin" })
-        .then((r) => (r.ok ? r.json() : null))
-        .then(setScheduledPlan)
-        .catch(() => setScheduledPlan(null));
-    }
-  }, [data, scheduled]);
+  const scheduledPlan = usePlan(data && !data.active ? scheduled?.id : undefined).data ?? null;
   const shown = data?.active ?? scheduledPlan;
+  // Goals for the day totals: today's view is usually cached by Oggi already
+  const goals = useDay("today").data?.goals ?? null;
+  const setTime = useSetPlanTime();
+  const [sameTime, setSameTime] = useState(true);
 
   const todayWeekday = data ? weekdayOf(data.today) : "monday";
   const [selected, setSelected] = useState<Weekday | null>(null);
@@ -119,6 +115,15 @@ export function PlanPage() {
             </button>
             {menuOpen && (
               <div className="menu" role="menu">
+                {canGenerate && (
+                  <button type="button" role="menuitem" className="menu-item menu-item-rich" onClick={() => navigate("/piano/genera")}>
+                    <strong className="ai-label">
+                      <SparklesIcon size={16} />
+                      {t.planGen.menu}
+                    </strong>
+                    <span className="muted">{t.planGen.menuHint}</span>
+                  </button>
+                )}
                 <button type="button" role="menuitem" className="menu-item menu-item-rich" onClick={() => fileInput.current?.click()}>
                   <strong>{t.plan.upload}</strong>
                   <span className="muted">{t.plan.uploadHint}</span>
@@ -192,14 +197,22 @@ export function PlanPage() {
               </span>
               <strong>{t.plan.emptyTitle}</strong>
               <p className="muted">{t.plan.emptyBody}</p>
-              <button type="button" className="button" onClick={() => fileInput.current?.click()} disabled={upload.isPending}>
-                {t.plan.upload}
-              </button>
+              <div className="plan-empty-actions">
+                {canGenerate && (
+                  <button type="button" className="button button-ai" onClick={() => navigate("/piano/genera")}>
+                    <SparklesIcon size={18} />
+                    {t.planGen.menu}
+                  </button>
+                )}
+                <button type="button" className={canGenerate ? "button-secondary-small" : "button"} onClick={() => fileInput.current?.click()} disabled={upload.isPending}>
+                  {t.plan.upload}
+                </button>
+              </div>
             </div>
           )}
 
           {shown && day && (
-            <>
+            <div className="plan-layout">
               <div className="plan-tabs" role="tablist" aria-label={t.plan.daysTabs}>
                 {WEEKDAYS.map((w, i) => (
                   <button
@@ -222,30 +235,22 @@ export function PlanPage() {
                   <h2>{t.weekdaysLong[dayIndex]}</h2>
                   <span className="muted">{dayNote(day)}</span>
                 </div>
+                <PlanDayMeals
+                  day={day}
+                  timeBusy={setTime.isPending}
+                  onTime={(index, time) => setTime.mutate({ id: shown.id, day: weekday, index, time, allDays: sameTime })}
+                />
+              </div>
 
-                {day.meals.map((meal, i) =>
-                  isFixedMeal(meal) ? (
-                    <article key={i} className="plan-meal">
-                      <header>
-                        <h3>{meal.title}</h3>
-                        {meal.time && <span className="muted">{meal.time}</span>}
-                      </header>
-                      <ul>
-                        {meal.foods.map((food, j) => (
-                          <li key={j}>{foodLine(food)}</li>
-                        ))}
-                      </ul>
-                    </article>
-                  ) : (
-                    <article key={i} className="plan-meal" data-free>
-                      <h3>{meal.title}</h3>
-                      <span className="free-badge">{t.plan.freeBadge}</span>
-                    </article>
-                  ),
-                )}
-
+              <aside className="plan-aside">
+                <PlanDaySummary day={day} goals={goals} />
+                <section className="card plan-times">
+                  <SameTimeSwitch checked={sameTime} onChange={setSameTime} />
+                  <p className="muted">{t.plan.timeHint}</p>
+                  {setTime.isError && <p className="error-text">{t.plan.timeFailed}</p>}
+                </section>
                 {shown.plan.notes && shown.plan.notes.length > 0 && (
-                  <details className="plan-notes">
+                  <details className="plan-notes" open>
                     <summary>{t.plan.notes}</summary>
                     <ul>
                       {shown.plan.notes.map((note, i) => (
@@ -254,8 +259,8 @@ export function PlanPage() {
                     </ul>
                   </details>
                 )}
-              </div>
-            </>
+              </aside>
+            </div>
           )}
         </>
       )}

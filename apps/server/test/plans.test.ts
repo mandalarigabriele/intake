@@ -277,6 +277,19 @@ describe("plan routes", () => {
     expect(list.versions[0].status).toBe("active");
   });
 
+  it("changes a meal time of a stored version on one day or on every day", async () => {
+    const { app, plans, headers } = await signedIn();
+    const { id } = (await app.inject({ method: "POST", url: "/api/plans", headers, payload: examplePlan })).json();
+    const all = await app.inject({ method: "PATCH", url: `/api/plans/${id}/time`, headers, payload: { day: "monday", index: 0, time: "06:45", allDays: true } });
+    expect(all.statusCode).toBe(200);
+    expect(plans.get(id)?.plan.days.sunday.meals[0]?.time).toBe("06:45");
+    await app.inject({ method: "PATCH", url: `/api/plans/${id}/time`, headers, payload: { day: "tuesday", index: 0, time: "08:15", allDays: false } });
+    expect([plans.get(id)?.plan.days.tuesday.meals[0]?.time, plans.get(id)?.plan.days.monday.meals[0]?.time]).toEqual(["08:15", "06:45"]);
+    expect(plans.versions("2026-11-05")).toHaveLength(1);
+    expect((await app.inject({ method: "PATCH", url: `/api/plans/${id}/time`, headers, payload: { day: "monday", index: 42, time: "06:45", allDays: true } })).statusCode).toBe(400);
+    expect((await app.inject({ method: "PATCH", url: "/api/plans/999/time", headers, payload: { day: "monday", index: 0, time: "06:45", allDays: true } })).statusCode).toBe(404);
+  });
+
   it("rejects an invalid plan with readable issues", async () => {
     const { app, headers } = await signedIn();
     const response = await app.inject({ method: "POST", url: "/api/plans", headers, payload: { ...examplePlan, validFrom: "domani" } });
