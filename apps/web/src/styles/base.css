@@ -2424,18 +2424,13 @@ button.button-primary {
   justify-self: start;
 }
 
-/* Modifica pasto: Elimina and Salva side by side like Modifica / Salva come preferito on the meal detail, kept at the
-   bottom of the screen while scrolling */
+/* Modifica pasto: Elimina and Salva side by side like Modifica / Salva come preferito on the meal detail, at the end of
+   the page after the meal values (not floating over the content) */
 .edit-actions {
-  position: sticky;
-  bottom: 0;
-  z-index: 2;
   display: flex;
   flex-direction: column;
   gap: 8px;
-  margin: 0 -16px;
-  padding: 10px 16px calc(10px + env(safe-area-inset-bottom));
-  background: var(--color-bg);
+  padding-bottom: calc(8px + env(safe-area-inset-bottom));
 }
 
 .edit-actions-row {
