@@ -53,7 +53,7 @@ Never commit credentials, tokens, API keys, `.env` files or real personal data (
 
 - `docs/design/DESIGN.md` and the mockups in `docs/design/screens/` are the source of truth: rebuild from them, do not invent new layouts.
 - Colors are tokens from `apps/web/src/styles/tokens.css`, never raw hex. Every colored state also has a text label.
-- Check every UI change at phone, tablet and desktop widths, in light and dark mode, with no horizontal scrolling. Attach screenshots to the pull request.
+- Check every UI change at phone, tablet and desktop widths, in light and dark mode, with no horizontal scrolling, and say in the pull request what you checked. Screenshots are not required.
 
 ### Server
 

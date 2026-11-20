@@ -4,7 +4,7 @@
 
 ## How I tested it
 
-<!-- Commands run, screens checked, screenshots for UI changes (phone, tablet, desktop; light and dark). -->
+<!-- Commands run and screens checked for UI changes (phone, tablet, desktop; light and dark). Screenshots are optional. -->
 
 ## Checklist
 
