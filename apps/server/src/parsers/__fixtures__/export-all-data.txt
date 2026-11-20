@@ -1,0 +1,2 @@
+Exported all data to a ZIP archive: 91 meals, 96 water entries, 1 weight entry, 0 body measurements, nutrition goals, 1 goal change, profile settings, account details, 5558 tool-usage telemetry rows, 10 app connection records, 8 Apple Health sync days.
+Download (link valid for 60 minutes): https://exampleproject.supabase.co/storage/v1/object/sign/exports/00000000-0000-4000-8000-000000000000/nutrition-mcp-export.zip?token=eyJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJleHBvcnRzL2V4YW1wbGUuemlwIn0.c2lnbmF0dXJl

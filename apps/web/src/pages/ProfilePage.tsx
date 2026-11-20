@@ -1,12 +1,12 @@
 import type { ProfileView, TrainingSourceId } from "@intake/shared";
 import { type ReactNode, useState } from "react";
 import { Link } from "wouter";
-import { useDisconnectNutrition, useHealthStatus, useLogWeight, useNutritionStatus, useProfile, useSetHealthSettings, useSignOut, type User, useSetTrainingSource, useTrainingSource, useHevySync, useHevySyncAction, useFeature, useFeatures, useSetFeatures, useSetLanguage, useSetGoals } from "../api/queries";
-import { LANGUAGES, parseGoalInput, weightUnitOf, type FeatureKey, type GoalsUpdate, type WeightUnit } from "@intake/shared";
+import { useDisconnectNutrition, useHealthStatus, useLogWeight, useNutritionStatus, useProfile, useSetHealthSettings, useSignOut, type User, useSetTrainingSource, useTrainingSource, useHevySync, useHevySyncAction, useFeature, useFeatures, useSetFeatures, useSetLanguage, useSetGoals, useBackups, useBackupAction } from "../api/queries";
+import { BACKUP_KEEP, LANGUAGES, parseGoalInput, weightUnitOf, type FeatureKey, type GoalsUpdate, type WeightUnit } from "@intake/shared";
 import { Avatar } from "../components/ProfileLink";
 import { RemindersSheet } from "../components/RemindersSheet";
 import { BackIcon } from "../components/icons";
-import { formatClock, formatKcal, formatOneDecimal, formatShortDate, formatWater, formatWeight, formatWeekdayDay } from "../lib/format";
+import { formatClock, formatDayLongMonth, formatMegabytes, formatKcal, formatOneDecimal, formatShortDate, formatWater, formatWeight, formatWeekdayDay } from "../lib/format";
 import { LANGUAGE_NAMES, language, t } from "../lib/strings";
 import { exerciseName } from "./TrainingPage";
 import { getThemePreference, setThemePreference, type ThemePreference } from "../lib/theme";
@@ -514,7 +514,85 @@ function FeaturesCard() {
   );
 }
 
-type SectionId = "weight" | "goals" | "features" | "training" | "connections" | "reminders" | "appearance" | "account";
+/** Backups listed before "Mostra altri". */
+const BACKUPS_SHOWN = 3;
+
+/** Impostazioni › Backup (docs/backups.md): the daily Nutrition exports saved on the server, to download. */
+function BackupCard() {
+  const backups = useBackups();
+  const action = useBackupAction();
+  const data = backups.data;
+  if (!data) return null;
+  const s = t.profile.backups;
+  const running = data.running || (action.isPending && "run" in (action.variables ?? {}));
+  const keep = (delta: number) => {
+    const next = Math.min(BACKUP_KEEP.max, Math.max(BACKUP_KEEP.min, data.keep + delta));
+    if (next !== data.keep) action.mutate({ keep: next });
+  };
+  const row = (file: (typeof data.files)[number]) => {
+    const day = formatDayLongMonth(file.date);
+    return (
+      <div key={file.name} className="profile-row-item settings-row backup-row">
+        <span className="connection-text">
+          <strong>{`${day} · ${formatClock(file.createdAt)}`}</strong>
+          <span className="muted">{formatMegabytes(file.size)}</span>
+        </span>
+        <a className="button-secondary-small" href={`/api/backups/${encodeURIComponent(file.name)}`} download aria-label={s.downloadLabel(day)}>
+          {s.download}
+        </a>
+      </div>
+    );
+  };
+  const older = data.files.slice(BACKUPS_SHOWN);
+  return (
+    <section id="settings-backup" className="card profile-card profile-list settings-section" aria-label={s.title}>
+      <div className="profile-card-head">
+        <h2>{s.title}</h2>
+      </div>
+      <p className="muted settings-note backup-note">{s.note}</p>
+      {data.lastRun?.error && (
+        <p className="notice" data-kind="error">
+          {s.failed(formatClock(data.lastRun.at), s.reasons[data.lastRun.error] ?? s.reasons.failed!)}
+        </p>
+      )}
+      {data.files.length === 0 ? (
+        <p className="muted settings-note">{s.empty}</p>
+      ) : (
+        <>
+          {data.files.slice(0, BACKUPS_SHOWN).map(row)}
+          {older.length > 0 && (
+            <details className="backup-older">
+              <summary>{s.more(older.length)}</summary>
+              {older.map(row)}
+            </details>
+          )}
+        </>
+      )}
+      <div className="profile-row-item settings-row backup-row">
+        <span className="connection-text">
+          <strong>{s.keep}</strong>
+          <span className="muted">{s.keepNote}</span>
+        </span>
+        <div className="stepper stepper-sm">
+          <button type="button" aria-label={s.keepLess} disabled={data.keep <= BACKUP_KEEP.min || action.isPending} onClick={() => keep(-1)}>
+            −
+          </button>
+          <span aria-live="polite">{data.keep}</span>
+          <button type="button" aria-label={s.keepMore} disabled={data.keep >= BACKUP_KEEP.max || action.isPending} onClick={() => keep(1)}>
+            +
+          </button>
+        </div>
+      </div>
+      <div className="profile-row-item feature-foot">
+        <button type="button" className="button-secondary-small" disabled={running} onClick={() => action.mutate({ run: true })}>
+          {running ? s.running : s.run}
+        </button>
+      </div>
+    </section>
+  );
+}
+
+type SectionId = "weight" | "goals" | "features" | "training" | "connections" | "backup" | "reminders" | "appearance" | "account";
 
 /** Section links on the left from desktop width (docs/design: Impostazioni · desktop / iPad); only sections on screen. */
 function SectionNav({ sections }: { sections: SectionId[] }) {
@@ -557,6 +635,7 @@ export function ProfilePage({ user }: { user: User }) {
     ...(features ? (["features"] as const) : []),
     ...(showTraining ? (["training"] as const) : []),
     "connections",
+    "backup",
     ...(features?.reminders ? (["reminders"] as const) : []),
     "appearance",
     "account",
@@ -623,6 +702,8 @@ export function ProfilePage({ user }: { user: User }) {
             )}
             {features?.training && <GymRows />}
           </section>
+
+          <BackupCard />
 
           {features?.reminders && (
             <section id="settings-reminders" className="card profile-card profile-list settings-section" aria-label={t.profile.reminders}>

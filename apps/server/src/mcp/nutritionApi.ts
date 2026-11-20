@@ -7,6 +7,8 @@ import {
   parseMeals,
   parseNutritionSummary,
   parseWeightTrends,
+  parseExportLink,
+  type ExportLink,
   type GoalProgress,
   type MealPatterns,
   type NutritionSummary,
@@ -197,6 +199,14 @@ export class NutritionApi {
   async logMeal(fields: MealWriteFields & { description: string; meal_type: string }): Promise<{ id: string | null }> {
     const result = await this.call("log_meal", { ...fields });
     return { id: UUID.exec(result.text)?.[0] ?? null };
+  }
+
+  /**
+   * Asks Nutrition for a full export (export_all_data) and returns its download link, valid for 60 minutes.
+   * Never cached: every call produces a new archive.
+   */
+  async exportAllData(): Promise<ExportLink> {
+    return this.report("export_all_data", parseExportLink((await this.request("export_all_data", {})).text));
   }
 
   /** Logs water now. The idempotency key makes a retried request safe. */

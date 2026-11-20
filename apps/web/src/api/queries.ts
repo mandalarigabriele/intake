@@ -31,6 +31,7 @@ import type {
   FeaturesResponse,
   FeaturesUpdate,
   GoalsUpdate,
+  BackupStatus,
   Language,
   LanguageResponse,
 } from "@intake/shared";
@@ -531,5 +532,24 @@ export function useSetGoals() {
   return useMutation({
     mutationFn: (update: GoalsUpdate) => apiFetch<{ ok: true }>("/api/goals", { method: "PUT", json: update }),
     onSuccess: () => queryClient.invalidateQueries(),
+  });
+}
+
+const backupsKey = ["backups"] as const;
+
+/** Impostazioni › Backup: the daily Nutrition backups saved on the server (docs/backups.md). */
+export function useBackups() {
+  return useQuery({ queryKey: backupsKey, queryFn: () => apiFetch<BackupStatus>("/api/backups") });
+}
+
+/** "Fai un backup ora", or a new number of backups to keep. */
+export function useBackupAction() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (action: { run: true } | { keep: number }) =>
+      "run" in action
+        ? apiFetch<BackupStatus>("/api/backups/run", { method: "POST" })
+        : apiFetch<BackupStatus>("/api/backups/settings", { method: "PUT", json: { keep: action.keep } }),
+    onSuccess: (status) => queryClient.setQueryData(backupsKey, status),
   });
 }

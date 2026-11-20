@@ -146,7 +146,7 @@ Keep the folder path `/opt/intake`: the compose project name, and so the volume 
 
 ## Data and backups
 
-The `intake-data` Docker volume holds the SQLite database (meal plans and their history, plan↔meal links) and the encrypted Nutrition token. Nutrition data itself lives on the Nutrition MCP server.
+The `intake-data` Docker volume holds the SQLite database (meal plans and their history, plan↔meal links, Apple Health data, settings) and the encrypted Nutrition token. Nutrition data itself lives on the Nutrition MCP server; a daily copy of it, the original `export_all_data` ZIP, is kept in the same volume under `backups/nutrition/` (newest 10 by default, downloadable from Impostazioni › Backup, see [backups.md](backups.md)). These archives contain personal and health data: encrypt any copy of the volume kept elsewhere.
 
 Back up `.env` together with `backups/`. To restore a backup:
 
@@ -157,7 +157,7 @@ docker run --rm -v intake_intake-data:/data -v "$PWD/backups":/backups alpine \
 docker compose start intake
 ```
 
-Losing the volume only means connecting Nutrition again and re-uploading the current meal plan.
+Losing the volume means connecting Nutrition again and re-uploading the current meal plan, and losing the Nutrition backups kept in it: download one from Impostazioni › Backup now and then, or keep an off-site copy of the volume.
 
 ## Health check
 

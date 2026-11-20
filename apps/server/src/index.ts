@@ -1,4 +1,4 @@
-import { resolve } from "node:path";
+import { join, resolve } from "node:path";
 import { buildApp } from "./app.js";
 import { GoogleSignIn } from "./auth/google.js";
 import { loadConfig } from "./config.js";
@@ -11,6 +11,7 @@ import { createServices } from "./services.js";
 import { healthWhenOn } from "./db/featureStore.js";
 import { ReminderScheduler } from "./services/reminderScheduler.js";
 import { HevySync } from "./services/hevySync.js";
+import { NutritionBackups } from "./services/nutritionBackups.js";
 import { WebPushSender, vapidKeys } from "./services/webPush.js";
 
 const config = loadConfig();
@@ -33,6 +34,14 @@ const scheduler = new ReminderScheduler({
   enabled: () => features.enabled("reminders"),
   language: () => services.language.get(),
   waterEnabled: () => features.enabled("water"),
+  log: { warn: (details, message) => app.log.warn(details, message), info: (details, message) => app.log.info(details, message) },
+});
+
+// Daily backup of everything in Nutrition, saved as the original ZIP in the data volume (docs/backups.md)
+const backups = new NutritionBackups({
+  dir: join(config.DATA_DIR, "backups", "nutrition"),
+  api,
+  store: services.backups,
   log: { warn: (details, message) => app.log.warn(details, message), info: (details, message) => app.log.info(details, message) },
 });
 
@@ -86,12 +95,14 @@ const app = await buildApp({
   appleHealth: { store: services.health, api, sync: { token: healthToken, endpoint: `${config.PUBLIC_BASE_URL}/api/health/ingest` } },
   healthIngest: { store: services.health, token: healthToken },
   language: services.language,
+  backups: { backups },
   features: { features, gymApps: { hevy: Boolean(hevy), opengym: Boolean(openGym) } },
 });
 
 app.addHook("onClose", async () => {
   scheduler.stop();
   hevySync?.stop();
+  backups.stop();
   await services.close();
 });
 
@@ -106,4 +117,5 @@ process.on("SIGINT", () => void shutdown("SIGINT"));
 await app.listen({ host: "0.0.0.0", port: config.PORT });
 scheduler.start();
 hevySync?.start();
+backups.start();
 app.log.info(`Nutrition account ${services.nutrition.isConnected() ? "connected" : "not connected yet: open /connect/nutrition"}`);

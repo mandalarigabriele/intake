@@ -770,3 +770,27 @@ export interface GoalsUpdate {
   targetWeight?: number | null;
   weightUnit?: "kg" | "lb";
 }
+
+/** How many daily Nutrition backups are kept on the server (Impostazioni › Backup). */
+export const BACKUP_KEEP = { min: 1, max: 30, default: 10 } as const;
+
+/** One daily backup: the export_all_data ZIP exactly as Nutrition produced it. */
+export interface BackupFile {
+  /** File name on the server, e.g. "nutrition-2026-11-21.zip"; also the download id. */
+  name: string;
+  /** Local date (Nutrition profile timezone) the backup was taken. */
+  date: string;
+  /** When it was saved (ISO). */
+  createdAt: string;
+  size: number;
+}
+
+/** GET /api/backups */
+export interface BackupStatus {
+  keep: number;
+  /** Newest first. */
+  files: BackupFile[];
+  /** Last attempt, automatic or by hand; error is a short reason when it failed. */
+  lastRun: { at: string; error: string | null } | null;
+  running: boolean;
+}

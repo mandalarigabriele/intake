@@ -1,3 +1,4 @@
+import { readFileSync } from "node:fs";
 import { describe, expect, it, vi } from "vitest";
 import type { ToolResult } from "../src/mcp/connection.js";
 import { rateLimitFrom } from "../src/mcp/connection.js";
@@ -35,6 +36,18 @@ describe("NutritionApi", () => {
     expect(callTool).toHaveBeenCalledTimes(1);
     await api.setGoals({ targetWeight: 160, weightUnit: "lb" });
     expect(callTool).toHaveBeenLastCalledWith("set_nutrition_goals", { target_weight: 160, unit: "lb" });
+  });
+});
+
+describe("NutritionApi export", () => {
+  it("asks for a new export every time (never from the read cache) and returns its link", async () => {
+    const text = readFileSync(new URL("../src/parsers/__fixtures__/export-all-data.txt", import.meta.url), "utf8");
+    const callTool = vi.fn(async () => result(text));
+    const api = new NutritionApi({ callTool });
+    expect((await api.exportAllData()).url).toMatch(/^https:\/\/exampleproject\.supabase\.co\//);
+    await api.exportAllData();
+    expect(callTool).toHaveBeenCalledTimes(2);
+    expect(callTool).toHaveBeenCalledWith("export_all_data", {});
   });
 });
 

@@ -6897,6 +6897,36 @@ div.connection-row {
   line-height: 1.45;
 }
 
+/* Impostazioni › Backup: one row per daily Nutrition backup with "Scarica", older ones behind "Mostra altri" */
+.backup-note {
+  padding-top: 0;
+}
+
+/* Short controls (Scarica, the − / + of copies) stay on the right even on phones */
+.backup-row {
+  flex-wrap: nowrap;
+}
+
+.backup-row .connection-text {
+  flex: 1 1 0;
+}
+
+.backup-row a {
+  flex: none;
+  text-decoration: none;
+}
+
+.backup-older {
+  border-top: 1px solid var(--color-divider);
+}
+
+.backup-older summary {
+  padding: 12px 0;
+  font-size: 13px;
+  font-weight: 800;
+  cursor: pointer;
+}
+
 /* Impostazioni › Funzioni: the note and "Rifai la configurazione" on one line, the button below on phones */
 .feature-foot {
   flex-wrap: wrap;
