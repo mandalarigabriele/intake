@@ -257,6 +257,13 @@ export const en: Strings = {
   },
 
   weekStrip: "Days of the week",
+  weekNav: { previous: "Previous week", next: "Next week" },
+  dayNav: {
+    openTimeline: "Day timeline →",
+    chooseDate: "Choose a date",
+    dateLabel: (date: string) => `${date}. Choose another day`,
+    goToday: "Back to today",
+  },
   weekdaysShort: ["M", "T", "W", "T", "F", "S", "S"],
   weekdaysLong: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"],
 
@@ -953,6 +960,7 @@ export const en: Strings = {
     sleepTimesAria: (days: number) => `Sleep times per night over the last ${days} days`,
     sleepBar: (day: string, start: string, end: string, duration: string) => `${day}: ${start} → ${end} · ${duration}`,
     noNight: (day: string) => `${day}: no data`,
+    openDay: (label: string) => `${label}. Open the day in the Timeline`,
     sleepLegend: "from falling asleep to waking up",
     shortest: (date: string, duration: string) => `shortest night · ${date} · ${duration}`,
     phases: "Average stages",

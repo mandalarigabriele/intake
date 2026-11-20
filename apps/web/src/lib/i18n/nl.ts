@@ -257,6 +257,13 @@ export const nl: Strings = {
   },
 
   weekStrip: "Dagen van de week",
+  weekNav: { previous: "Vorige week", next: "Volgende week" },
+  dayNav: {
+    openTimeline: "Tijdlijn van de dag →",
+    chooseDate: "Kies een datum",
+    dateLabel: (date: string) => `${date}. Kies een andere dag`,
+    goToday: "Terug naar vandaag",
+  },
   weekdaysShort: ["M", "D", "W", "D", "V", "Z", "Z"],
   weekdaysLong: ["Maandag", "Dinsdag", "Woensdag", "Donderdag", "Vrijdag", "Zaterdag", "Zondag"],
 
@@ -956,6 +963,7 @@ export const nl: Strings = {
     sleepTimesAria: (days: number) => `Slaaptijden per nacht in de laatste ${days} dagen`,
     sleepBar: (day: string, start: string, end: string, duration: string) => `${day}: ${start} → ${end} · ${duration}`,
     noNight: (day: string) => `${day}: geen gegevens`,
+    openDay: (label: string) => `${label}. Open de dag in de tijdlijn`,
     sleepLegend: "van inslapen tot wakker worden",
     shortest: (date: string, duration: string) => `kortste nacht · ${date} · ${duration}`,
     phases: "Gemiddelde fasen",

@@ -257,6 +257,13 @@ export const it = {
   },
 
   weekStrip: "Giorni della settimana",
+  weekNav: { previous: "Settimana precedente", next: "Settimana successiva" },
+  dayNav: {
+    openTimeline: "Timeline del giorno →",
+    chooseDate: "Scegli una data",
+    dateLabel: (date: string) => `${date}. Scegli un altro giorno`,
+    goToday: "Torna a oggi",
+  },
   weekdaysShort: ["L", "M", "M", "G", "V", "S", "D"],
   weekdaysLong: ["Lunedì", "Martedì", "Mercoledì", "Giovedì", "Venerdì", "Sabato", "Domenica"],
 
@@ -1012,6 +1019,7 @@ export const it = {
     sleepTimesAria: (days: number) => `Orari di sonno per notte negli ultimi ${days} giorni`,
     sleepBar: (day: string, start: string, end: string, duration: string) => `${day}: ${start} → ${end} · ${duration}`,
     noNight: (day: string) => `${day}: nessun dato`,
+    openDay: (label: string) => `${label}. Apri il giorno nella Timeline`,
     sleepLegend: "dall’addormentamento al risveglio",
     shortest: (date: string, duration: string) => `notte più corta · ${date} · ${duration}`,
     phases: "Fasi in media",

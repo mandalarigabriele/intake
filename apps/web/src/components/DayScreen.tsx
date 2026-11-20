@@ -1,11 +1,13 @@
 import type { DayView } from "@intake/shared";
 import { useEffect, useState, type ReactNode } from "react";
+import { Link } from "wouter";
 import { ApiError } from "../api/client";
 import { useDay, type User } from "../api/queries";
 import { addDays, isIsoDate } from "../lib/dates";
-import { formatKcal, formatLongDate } from "../lib/format";
+import { formatKcal, formatLongDate, formatShortDate } from "../lib/format";
 import { t } from "../lib/strings";
 import { ConnectPage } from "../pages/ConnectPage";
+import { dayHref } from "../pages/MealPage";
 import { Logo } from "./Logo";
 import { ProfileLink } from "./ProfileLink";
 import { WeekStrip } from "./WeekStrip";
@@ -25,12 +27,45 @@ function useSelectedDay(): [string, (date: string) => void] {
   return [selected, setSelected];
 }
 
+/**
+ * Timeline: the date between the arrows opens the system date picker (wheel or calendar on iPhone). The native input
+ * covers the label, so a tap reaches it directly; with a mouse, showPicker() opens the calendar. Future days are not offered.
+ */
+function DatePicker({ value, max, onChange }: { value: string; max: string; onChange: (date: string) => void }) {
+  return (
+    <label className="day-picker" title={t.dayNav.chooseDate}>
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+        <rect x="3.5" y="5" width="17" height="15" rx="2.5" />
+        <path d="M3.5 10h17M8 3v4M16 3v4" />
+      </svg>
+      <span aria-hidden="true">{formatShortDate(value)}</span>
+      <input
+        type="date"
+        value={value}
+        max={max}
+        aria-label={t.dayNav.dateLabel(formatLongDate(value))}
+        onClick={(event) => {
+          try {
+            event.currentTarget.showPicker?.();
+          } catch {
+            // Not allowed here (e.g. in an iframe): the input still works by keyboard
+          }
+        }}
+        onChange={(event) => {
+          const date = event.target.value;
+          if (isIsoDate(date) && date <= max) onChange(date);
+        }}
+      />
+    </label>
+  );
+}
+
 interface Props {
   user: User;
   notice: string | null;
   /**
    * "today": logo row, profile avatar and week strip (Oggi).
-   * "timeline": "date · kcal" subtitle and previous/next day arrows (Timeline mockup).
+   * "timeline": "date · kcal" subtitle, previous/next day arrows with a date picker between them and "Oggi" (Timeline mockup).
    */
   variant: "today" | "timeline";
   title: (view: DayView | undefined) => string;
@@ -67,6 +102,11 @@ export function DayScreen({ user, notice, variant, title, className, skeleton, c
             </div>
             <p className="page-date">{view ? formatLongDate(view.date) : " "}</p>
             <h1 className="page-title">{title(view)}</h1>
+            {view && today && (
+              <Link href={dayHref(view.date, today)} className="activity-more day-timeline-link">
+                {t.dayNav.openTimeline}
+              </Link>
+            )}
           </div>
           <div className="today-avatar">
             <ProfileLink user={user} variant="avatar" />
@@ -79,12 +119,18 @@ export function DayScreen({ user, notice, variant, title, className, skeleton, c
             <p className="page-date">{view ? `${formatLongDate(view.date)} · ${formatKcal(view.totals.kcal)} kcal` : " "}</p>
             <h1 className="page-title">{title(view)}</h1>
           </div>
-          <div className="week-nav">
+          <div className="week-nav day-nav">
+            {view && today && view.date !== today && (
+              <button type="button" className="day-today" aria-label={t.dayNav.goToday} onClick={() => selectDate(today)}>
+                {t.today}
+              </button>
+            )}
             <button type="button" className="icon-button" aria-label={t.timeline.previousDay} disabled={!view} onClick={() => view && selectDate(addDays(view.date, -1))}>
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
                 <path d="M15 6l-6 6 6 6" />
               </svg>
             </button>
+            {view && today && <DatePicker value={view.date} max={today} onChange={selectDate} />}
             <button
               type="button"
               className="icon-button"

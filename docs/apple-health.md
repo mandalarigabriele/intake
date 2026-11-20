@@ -90,6 +90,7 @@ Mockups `AndamentoSalute` (iPhone: tabs) and `SaluteDesktop` (desktop / iPad: th
   daily bars with the dashed goal line and the best day, workouts by type (sessions and time), latest workouts with their source.
 - **Heart**: average and minimum resting heart rate, difference from the previous period of the same length, line over time with
   the average, average workout heart rate by type.
+- Each day of the sleep and steps charts, and each resting heart rate point, is a link to that day in the Timeline (`/timeline?d=YYYY-MM-DD`; sleep belongs to the wake-up day). The chart groups have an accessible name and every day a label such as "Dom 15 nov: 00:30 → 05:39 · 5 h 09. Apri il giorno nella Timeline"; the points show a dot on hover and keyboard focus.
 - Today's Activity & rest card links here ("See trends →").
 - API: `GET /api/health/trends?days=7|30|90` returns one entry per day (steps, distance, resting HR, the night as minutes from
   midnight of the wake-up day, negative for the evening before) and the period statistics. Workouts come from `GET /api/workouts`

@@ -48,6 +48,12 @@ All UI copy is designed in Italian (the default language; English and Dutch tran
 - First-run setup: a focus page like the Nutrition connection (eyebrow "PRIMA CONFIGURAZIONE · PASSO N DI 2"). Step 1: three radio cards (title + one line), the selected one with the accent border and soft accent background, "Avanti" at the bottom. Step 2: a card with one row per chosen part and the reminders switch, "Indietro" / "Inizia", footnote pointing to Profilo › Funzioni.
 - Profilo › Funzioni: third card of Impostazioni (see below); Alimentazione with a "sempre attiva" pill, then one switch row per part, and a last row with the muted note and a small secondary "Rifai la configurazione" button.
 
+## Day navigation (20 Nov)
+
+- **Oggi**: the week strip has a ‹ arrow on its left and a › arrow on its right (muted, no border) to move a week back or forward, keeping the weekday; › is disabled in the current week. Under the title, "Timeline del giorno →" (accent, small, bold) opens the Timeline of the day shown, so a day opened from Andamento › Alimentazione leads to its meals in one tap.
+- **Timeline**: on the right of the header, "Oggi" (outlined pill, only when another day is shown), ‹, a date pill with a calendar icon and the short date, ›. The date pill opens the system date picker (wheel or calendar on iPhone); future days are not offered. On phones the controls wrap under the title.
+- **Andamento › Salute**: each day of the sleep and steps charts and each resting heart rate point opens that day in the Timeline; the charts look unchanged.
+
 ## Impostazioni (20 Nov)
 
 The avatar screen (route `/profilo`) is titled **Impostazioni**, with the avatar and "name · accesso con Google" under the title. It replaces the two-column Profilo layout (mockup "Impostazioni · desktop / iPad").

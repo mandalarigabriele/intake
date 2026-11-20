@@ -1,10 +1,11 @@
 import type { HealthTrendDay, HealthTrends, Workout } from "@intake/shared";
 import { useState } from "react";
-import { Link } from "wouter";
+import { Link, useLocation } from "wouter";
 import { useHealthTrends, useWorkouts } from "../api/queries";
 import { TrendsSwitch, TrendsTitle } from "../components/TrendsSwitch";
 import { formatDayLongMonth, formatDurationShort, formatKcal, formatOneDecimal, formatShortDate, formatWeekdayDay, formatWeekdayLetter } from "../lib/format";
 import { t } from "../lib/strings";
+import { dayHref } from "./MealPage";
 
 type Period = 7 | 30 | 90;
 type Tab = "sleep" | "activity" | "heart";
@@ -104,22 +105,25 @@ function SleepSection({ data }: { data: HealthTrends }) {
             ))}
           </div>
           <div className="sleep-plot-wrap">
-            <div className="sleep-plot trend-columns" data-period={data.period} role="img" aria-label={t.trends.sleepTimesAria(data.period)}>
+            <div className="sleep-plot trend-columns" data-period={data.period} role="group" aria-label={t.trends.sleepTimesAria(data.period)}>
               {ticks.map((m) => (
                 <span key={m} className="sleep-grid" style={{ top: `${pos(m)}%` }} aria-hidden="true" />
               ))}
-              {data.days.map((d) => (
-                <span key={d.date} className="trend-column">
-                  {d.sleep && (
-                    <span
-                      className="sleep-range"
-                      data-shortest={d.date === sleep.shortest.date || undefined}
-                      style={{ top: `${pos(d.sleep.start)}%`, height: `${pos(d.sleep.end) - pos(d.sleep.start)}%` }}
-                      title={t.trends.sleepBar(dayLabel(d.date), clock(d.sleep.start), clock(d.sleep.end), formatDurationShort(d.sleep.asleep))}
-                    />
-                  )}
-                </span>
-              ))}
+              {data.days.map((d) => {
+                // Sleep belongs to the wake-up day: the column opens that day in the Timeline
+                const label = d.sleep ? t.trends.sleepBar(dayLabel(d.date), clock(d.sleep.start), clock(d.sleep.end), formatDurationShort(d.sleep.asleep)) : t.trends.noNight(dayLabel(d.date));
+                return (
+                  <Link key={d.date} href={dayHref(d.date, data.today)} className="trend-column trend-day-link" aria-label={t.trends.openDay(label)} title={label}>
+                    {d.sleep && (
+                      <span
+                        className="sleep-range"
+                        data-shortest={d.date === sleep.shortest.date || undefined}
+                        style={{ top: `${pos(d.sleep.start)}%`, height: `${pos(d.sleep.end) - pos(d.sleep.start)}%` }}
+                      />
+                    )}
+                  </Link>
+                );
+              })}
             </div>
             <DayLabels days={data.days} period={data.period} />
           </div>
@@ -208,18 +212,20 @@ function ActivitySection({ data, workouts }: { data: HealthTrends; workouts: Wor
           <span className="steps-goal" style={{ bottom: `${(goal / max) * 100}%` }} aria-hidden="true">
             <span>{t.trends.goalLine(formatKcal(goal))}</span>
           </span>
-          <div className="steps-plot trend-columns" data-period={data.period} role="img" aria-label={t.trends.stepsAria(data.period)}>
-            {data.days.map((d) => (
-              <span key={d.date} className="trend-column">
-                <span
-                  className="steps-bar"
-                  data-empty={d.steps === null || undefined}
-                  data-today={d.date === data.today || undefined}
-                  style={{ height: d.steps === null ? "2px" : `${Math.max(1.5, (d.steps / max) * 100)}%` }}
-                  title={d.steps === null ? t.trends.noNight(dayLabel(d.date)) : t.trends.stepsBar(dayLabel(d.date), formatKcal(d.steps), d.date === data.today)}
-                />
-              </span>
-            ))}
+          <div className="steps-plot trend-columns" data-period={data.period} role="group" aria-label={t.trends.stepsAria(data.period)}>
+            {data.days.map((d) => {
+              const label = d.steps === null ? t.trends.noNight(dayLabel(d.date)) : t.trends.stepsBar(dayLabel(d.date), formatKcal(d.steps), d.date === data.today);
+              return (
+                <Link key={d.date} href={dayHref(d.date, data.today)} className="trend-column trend-day-link" aria-label={t.trends.openDay(label)} title={label}>
+                  <span
+                    className="steps-bar"
+                    data-empty={d.steps === null || undefined}
+                    data-today={d.date === data.today || undefined}
+                    style={{ height: d.steps === null ? "2px" : `${Math.max(1.5, (d.steps / max) * 100)}%` }}
+                  />
+                </Link>
+              );
+            })}
           </div>
         </div>
         <DayLabels days={data.days} period={data.period} />
@@ -291,6 +297,7 @@ function HeartSection({ data, workouts }: { data: HealthTrends; workouts: Workou
   const delta = heart.previousAverage === null ? null : heart.average - heart.previousAverage;
   const avgLabel = formatKcal(heart.average);
   const types = byType(workouts).filter(([, v]) => v.hr.length > 0);
+  const [, navigate] = useLocation();
 
   return (
     <>
@@ -307,7 +314,7 @@ function HeartSection({ data, workouts }: { data: HealthTrends; workouts: Workou
 
       <section className="card week-chart" aria-label={t.trends.hrOverTime}>
         <CardHead title={t.trends.hrOverTime} source={data.source} />
-        <svg className="hr-trend" viewBox="0 0 320 130" role="img" aria-label={t.trends.hrAria(formatShortDate(data.from), avgLabel)}>
+        <svg className="hr-trend" viewBox="0 0 320 130" role="group" aria-label={t.trends.hrAria(formatShortDate(data.from), avgLabel)}>
           {[g1, g2].map((g) => (
             <g key={g}>
               <line className="hr-grid" x1="30" x2="316" y1={Y(g)} y2={Y(g)} />
@@ -318,11 +325,27 @@ function HeartSection({ data, workouts }: { data: HealthTrends; workouts: Workou
           ))}
           <line className="hr-average" x1="30" x2="316" y1={Y(heart.average)} y2={Y(heart.average)} />
           <polyline className="hr-line" points={points.map((p) => `${p.x.toFixed(1)},${p.y.toFixed(1)}`).join(" ")} />
-          {points.map((p) => (
-            <circle key={p.d.date} className="hr-hit" cx={p.x} cy={p.y} r="5">
-              <title>{t.trends.hrPoint(dayLabel(p.d.date), formatKcal(p.d.restingHr!))}</title>
-            </circle>
-          ))}
+          {points.map((p) => {
+            const label = t.trends.hrPoint(dayLabel(p.d.date), formatKcal(p.d.restingHr!));
+            const href = dayHref(p.d.date, data.today);
+            // A point opens its day in the Timeline; the transparent circle is a larger touch target than the dot
+            return (
+              <a
+                key={p.d.date}
+                href={href}
+                className="hr-day-link"
+                aria-label={t.trends.openDay(label)}
+                onClick={(event) => {
+                  event.preventDefault();
+                  navigate(href);
+                }}
+              >
+                <title>{label}</title>
+                <circle className="hr-hit" cx={p.x} cy={p.y} r="9" />
+                <circle className="hr-dot" cx={p.x} cy={p.y} r="2.5" />
+              </a>
+            );
+          })}
           <circle className="hr-last" cx={last.x} cy={last.y} r="4" />
           <text className="hr-average-label" x="316" y={Y(heart.average) - 4} textAnchor="end">
             {t.trends.average(avgLabel)}
