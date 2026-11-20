@@ -7,10 +7,12 @@ keeps "Chiedi a Claude" as before.
 ## How it works
 
 1. The add sheet shows "Foto del piatto" and "Descrivi a parole" (`/pasto/nuovo`, `/pasto/nuovo/testo`).
-2. A photo from the camera or the library is resized **in the browser** (longest edge 1568 px, JPEG quality 0.85)
-   and shown with "Cambia foto" and an optional note. Nothing is sent until "Analizza". Redrawing the photo on a
+2. Photos from the camera or the library, **up to 6** (e.g. one per course), are resized **in the browser** (longest
+   edge 1568 px, JPEG quality 0.85) and shown in a carousel with a × on each, an "Aggiungi foto" tile and an optional
+   note. Nothing is sent until "Analizza", which sends all of them in one request; the prompt asks Claude to list each
+   food once even when it appears in more than one photo. Redrawing the photo on a
    canvas also drops its EXIF data (GPS position, camera, date): neither Anthropic nor the server receives it.
-3. `POST /api/meals/recognize` sends the photo and/or the text to the Claude API (`services/mealRecognition.ts`,
+3. `POST /api/meals/recognize` sends the photos (`images`, 1–6) and/or the text to the Claude API (`services/mealRecognition.ts`,
    official SDK `@anthropic-ai/sdk`). The answer is a **structured output** (`output_config.format`, a JSON schema
    with `additionalProperties: false` at every level), so it always has the expected shape: foods, estimated grams
    eaten, nutrition per 100 g (kcal, macros, fiber, sugar, added sugar), and likely hidden fats such as cooking oil
@@ -59,13 +61,25 @@ keeps "Chiedi a Claude" as before.
 
 ## Kept photos
 
-- The resized JPEG of a meal logged from a photo is saved as `<DATA_DIR>/meal-photos/<meal id>.jpg`
-  (`db/mealPhotoStore.ts`), usually **200–400 KB**; Nutrition stores no images. It is shown as a thumbnail on the
-  Timeline card and on top of the meal detail (`GET /api/meals/photos`, `GET /api/meals/:id/photo`).
-- Deleting the meal in Intake deletes its photo. Turning the part off hides the photos (their routes answer 404
+- Up to **6 photos per meal** (`MEAL_PHOTOS_MAX`), saved as `<DATA_DIR>/meal-photos/<meal id>/<photo id>.jpg`
+  (`db/mealPhotoStore.ts`), each the resized JPEG, usually **200–400 KB**; Nutrition stores no images. Photo ids start
+  with the creation time, so the order is the order they were added. The single `<meal id>.jpg` of earlier versions is
+  moved into the meal's folder when the server starts.
+- Shown as a carousel on top of the meal detail (swipe, arrows, "2 / 3") and as the first photo with the number of
+  photos on the Timeline card.
+- **Modifica pasto** (part on): the same carousel with a × on each photo and an "Aggiungi foto" tile (camera or library).
+  A new photo asks "Vuoi aggiungere al pasto i cibi di questa foto?": "Aggiungi i cibi con Claude" recognizes only
+  that photo (with an optional note) and adds its foods as rows, "Solo la foto" keeps it as a photo. Nothing is saved
+  until "Salva": the meal is updated first, then removed photos are deleted and new ones uploaded; if a photo fails, the
+  meal stays saved and the screen says so.
+- API (owner only, hidden while the part is off): `GET /api/meals/photos` → `{ photos: { <meal id>: [photo ids] } }`;
+  `GET /api/meals/:id/photos/:photoId`; `GET /api/meals/:id/photo` (the first one); `POST /api/meals/:id/photos` with
+  `{ mediaType: "image/jpeg", data }` → `{ photoId }` (409 `too_many_photos` after 6); `DELETE /api/meals/:id/photos/:photoId`;
+  `POST /api/meals` takes `photos` (up to 6). Only JPEGs up to 3 MB are kept; ids are validated, so no other file can be reached.
+- Deleting the meal in Intake deletes all its photos. Turning the part off hides the photos (their routes answer 404
   `feature_disabled`) but keeps them.
 - **Backups:** the photos are in the data volume, so every `deploy.sh` volume backup contains all of them (JPEG does
-  not compress further). At 3 photos a day that is about 0.3–0.4 GB a year, and `deploy.sh` keeps 10 volume backups,
+  not compress further). At 3 photos a day that is about 0.3–0.4 GB a year (more if you add several photos per meal), and `deploy.sh` keeps 10 volume backups,
   so up to ten times that in `backups/`. They are **not** part of the nightly Nutrition backup
   ([backups.md](backups.md)), which only holds Nutrition's own export.
 

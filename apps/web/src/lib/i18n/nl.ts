@@ -257,6 +257,23 @@ export const nl: Strings = {
   },
 
   weekStrip: "Dagen van de week",
+  photos: {
+    label: "Foto's van de maaltijd",
+    item: (index: number, count: number) => `Foto ${index} van ${count}`,
+    remove: (index: number) => `Foto ${index} verwijderen`,
+    add: "Foto toevoegen",
+    previous: "Vorige foto",
+    next: "Volgende foto",
+    count: (count: number) => `${count} foto's`,
+    limit: (max: number) => `Maximaal ${max} foto's per maaltijd.`,
+    tip: "Je kunt meer foto's toevoegen, bijvoorbeeld één per gang: Claude telt elk voedingsmiddel maar één keer.",
+    section: "FOTO'S",
+    newPhoto: "Nieuwe foto",
+    newPhotoNote: "De voedingsmiddelen van deze foto aan de maaltijd toevoegen?",
+    recognize: "Toevoegen met Claude",
+    photoOnly: "Alleen de foto",
+    saveFailed: "Maaltijd opgeslagen, maar sommige foto's zijn niet opgeslagen. Probeer het opnieuw.",
+  },
   weekNav: { previous: "Vorige week", next: "Volgende week" },
   dayNav: {
     openTimeline: "Tijdlijn van de dag →",

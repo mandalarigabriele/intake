@@ -257,6 +257,23 @@ export const en: Strings = {
   },
 
   weekStrip: "Days of the week",
+  photos: {
+    label: "Meal photos",
+    item: (index: number, count: number) => `Photo ${index} of ${count}`,
+    remove: (index: number) => `Remove photo ${index}`,
+    add: "Add photo",
+    previous: "Previous photo",
+    next: "Next photo",
+    count: (count: number) => `${count} photos`,
+    limit: (max: number) => `At most ${max} photos per meal.`,
+    tip: "You can add more photos, for example one per course: Claude counts each food only once.",
+    section: "PHOTOS",
+    newPhoto: "New photo",
+    newPhotoNote: "Add the foods in this photo to the meal?",
+    recognize: "Add the foods with Claude",
+    photoOnly: "Photo only",
+    saveFailed: "Meal saved, but some photos were not saved. Try again.",
+  },
   weekNav: { previous: "Previous week", next: "Next week" },
   dayNav: {
     openTimeline: "Day timeline →",

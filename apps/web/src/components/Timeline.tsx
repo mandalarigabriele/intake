@@ -60,7 +60,7 @@ function LoggedCard({ meal }: { meal: Meal }) {
   const values = { protein: meal.nutrients.protein, carbs: meal.nutrients.carbs, fat: meal.nutrients.fat, fiber: meal.nutrients.fiber };
   const chips = MACROS.filter((key) => values[key] !== null && Math.round(values[key]) > 0);
   const title = mealTitle(meal);
-  const hasPhoto = useMealPhotos().data?.has(meal.id) ?? false;
+  const photoCount = useMealPhotos().data?.get(meal.id)?.length ?? 0;
   return (
     <article className="meal-card" data-kind="logged">
       <header className="meal-card-head">
@@ -84,9 +84,16 @@ function LoggedCard({ meal }: { meal: Meal }) {
           </button>
         </span>
       </header>
-      {hasPhoto ? (
+      {photoCount > 0 ? (
         <div className="meal-body">
-          <img className="meal-thumb" src={mealPhotoUrl(meal.id)} alt={t.meal.photoAlt(title)} loading="lazy" />
+          <span className="meal-thumb-wrap">
+            <img className="meal-thumb" src={mealPhotoUrl(meal.id)} alt={t.meal.photoAlt(title)} loading="lazy" />
+            {photoCount > 1 && (
+              <span className="meal-thumb-count" aria-label={t.photos.count(photoCount)}>
+                {photoCount}
+              </span>
+            )}
+          </span>
           <p className="meal-summary">{mealSummary(meal)}</p>
         </div>
       ) : (

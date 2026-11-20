@@ -27,7 +27,7 @@ const FEATURE_ROUTES: Array<{ keys: FeatureKey[]; prefix: RegExp }> = [
   { keys: ["reminders"], prefix: /^\/api\/push(\/|\?|$)/ },
   { keys: ["water"], prefix: /^\/api\/water(\/|\?|$)/ },
   // Photo meals: the recognition and the kept photos (logging a meal and the favorites stay with Alimentazione)
-  { keys: ["photoMeals"], prefix: /^\/api\/meals\/(recognize|photos)(\/|\?|$)|^\/api\/meals\/[^/?]+\/photo(\?|$)/ },
+  { keys: ["photoMeals"], prefix: /^\/api\/meals\/(recognize|photos)(\/|\?|$)|^\/api\/meals\/[^/?]+\/photos?(\/|\?|$)/ },
 ];
 
 /** The part that hides an API URL right now, or null when the route is served (Alimentazione and the rest). */

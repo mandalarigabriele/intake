@@ -10,9 +10,9 @@ import Anthropic, {
 import type { ContentBlockParam, Message } from "@anthropic-ai/sdk/resources/messages";
 import { z } from "zod";
 
-/** What the user sends: a photo of the plate, a free description, or both. */
+/** What the user sends: photos of the plate (e.g. one per course), a free description, or both. */
 export interface RecognitionInput {
-  image?: { mediaType: "image/jpeg" | "image/png" | "image/webp"; data: string };
+  images?: Array<{ mediaType: "image/jpeg" | "image/png" | "image/webp"; data: string }>;
   text?: string;
 }
 
@@ -147,9 +147,17 @@ export class MealRecognizer {
 
   async recognize(input: RecognitionInput): Promise<RecognizedMeal> {
     const content: ContentBlockParam[] = [];
-    if (input.image) content.push({ type: "image", source: { type: "base64", media_type: input.image.mediaType, data: input.image.data } });
+    const images = input.images ?? [];
+    for (const image of images) content.push({ type: "image", source: { type: "base64", media_type: image.mediaType, data: image.data } });
     const text = input.text?.trim();
-    content.push({ type: "text", text: input.image ? `Photo of my meal.${text ? ` Notes: ${text}` : ""}` : `I ate: ${text ?? ""}` });
+    // Several photos are one meal: each course once, and the same food seen in two photos counted once
+    const intro =
+      images.length > 1
+        ? `${images.length} photos of one meal (for example one per course, or the same plate before and after a second helping): list every food once, and count a food seen in more than one photo only once unless the photos clearly show two servings.`
+        : images.length === 1
+          ? "Photo of my meal."
+          : null;
+    content.push({ type: "text", text: intro ? `${intro}${text ? ` Notes: ${text}` : ""}` : `I ate: ${text ?? ""}` });
     const model = this.options.model();
 
     let response: Message;

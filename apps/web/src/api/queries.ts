@@ -38,6 +38,8 @@ import type {
   FeaturesUpdate,
   GoalsUpdate,
   BackupStatus,
+  MealPhotosResponse,
+  MealPhotoUpload,
   Language,
   LanguageResponse,
 } from "@intake/shared";
@@ -264,7 +266,7 @@ export function useRecognizeMeal() {
 export function useCreateMeal() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: (request: CreateMealRequest) => apiFetch<{ mealId: string | null; photoSaved: boolean; favoriteSaved: boolean }>("/api/meals", { method: "POST", json: request }),
+    mutationFn: (request: CreateMealRequest) => apiFetch<{ mealId: string | null; photosSaved: number; favoriteSaved: boolean }>("/api/meals", { method: "POST", json: request }),
     onSettled: () => {
       void queryClient.invalidateQueries({ queryKey: ["meal-photos"] });
       void queryClient.invalidateQueries({ queryKey: ["saved-meals"] });
@@ -273,19 +275,32 @@ export function useCreateMeal() {
   });
 }
 
-/** Ids of the meals that have a photo kept on the server (logged from a photo). */
+/** Meal id → photo ids (oldest first) of the photos kept on the server (Pasti da foto). */
 export function useMealPhotos() {
   // Kept photos belong to the photo meals part: while it is off they are not shown (and the route answers 404)
   const on = useFeatures().data?.recognition ?? false;
   return useQuery({
     queryKey: ["meal-photos"],
     enabled: on,
-    queryFn: () => apiFetch<{ mealIds: string[] }>("/api/meals/photos").then((r) => new Set(r.mealIds)),
+    queryFn: () => apiFetch<MealPhotosResponse>("/api/meals/photos").then((r) => new Map(Object.entries(r.photos))),
     staleTime: 5 * 60_000,
   });
 }
 
-export const mealPhotoUrl = (id: string) => `/api/meals/${id}/photo`;
+/** One photo of a meal; without a photo id, the first one (timeline thumbnail). */
+export const mealPhotoUrl = (mealId: string, photoId?: string) => (photoId ? `/api/meals/${mealId}/photos/${photoId}` : `/api/meals/${mealId}/photo`);
+
+/** Modifica pasto, after the meal itself is saved: photos removed and photos added (the second course, …). */
+export function useSaveMealPhotos() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async ({ mealId, remove, add }: { mealId: string; remove: string[]; add: MealPhotoUpload[] }) => {
+      for (const photoId of remove) await apiFetch(`/api/meals/${mealId}/photos/${photoId}`, { method: "DELETE" });
+      for (const photo of add) await apiFetch(`/api/meals/${mealId}/photos`, { method: "POST", json: photo });
+    },
+    onSettled: () => queryClient.invalidateQueries({ queryKey: ["meal-photos"] }),
+  });
+}
 
 /** Saved meals ("preferiti") on Nutrition, for the add sheet. */
 export function useSavedMeals() {

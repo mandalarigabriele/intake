@@ -1,10 +1,10 @@
-import { NUTRITION_MEAL_TYPES, type NutritionMealType, type RecognitionModelResponse } from "@intake/shared";
-import type { FastifyPluginAsync, preHandlerHookHandler } from "fastify";
+import { MEAL_PHOTOS_MAX, NUTRITION_MEAL_TYPES, type NutritionMealType, type RecognitionModelResponse, type MealPhotosResponse } from "@intake/shared";
+import type { FastifyPluginAsync, FastifyReply, preHandlerHookHandler } from "fastify";
 import { z } from "zod";
 import type { NutritionApi } from "../mcp/nutritionApi.js";
 import { isValidDate } from "../services/dayView.js";
 import { copyMealFields, recentDistinctMeals, updateMealFields } from "../services/mealWrites.js";
-import { MEAL_PHOTO_MAX_BYTES, MealPhotoStore } from "../db/mealPhotoStore.js";
+import { MEAL_PHOTO_MAX_BYTES, MealPhotoStore, TooManyPhotosError } from "../db/mealPhotoStore.js";
 import type { RecognitionModelStore } from "../db/recognitionModelStore.js";
 import { RecognitionError, type MealRecognizer, type RecognitionFailure } from "../services/mealRecognition.js";
 
@@ -20,14 +20,26 @@ export interface MealRoutesOptions {
 }
 
 /** Room for a resized photo (the app sends at most about 1 MB of base64). */
-const RECOGNIZE_MAX_BYTES = 8 * 1024 * 1024;
+const RECOGNIZE_MAX_BYTES = 16 * 1024 * 1024;
+
+const jpegUpload = z.object({ mediaType: z.literal("image/jpeg"), data: z.string().min(16).max(RECOGNIZE_MAX_BYTES) });
+
+/** A base64 JPEG from the app, or null when it is not a JPEG of an acceptable size. */
+function decodeJpeg(upload: { data: string }): Buffer | null {
+  const jpeg = Buffer.from(upload.data, "base64");
+  return MealPhotoStore.isJpeg(jpeg) && jpeg.length <= MEAL_PHOTO_MAX_BYTES ? jpeg : null;
+}
 
 const recognizeSchema = z
   .object({
-    image: z.object({ mediaType: z.enum(["image/jpeg", "image/png", "image/webp"]), data: z.string().min(16).max(RECOGNIZE_MAX_BYTES) }).optional(),
+    images: z
+      .array(z.object({ mediaType: z.enum(["image/jpeg", "image/png", "image/webp"]), data: z.string().min(16).max(RECOGNIZE_MAX_BYTES) }))
+      .min(1)
+      .max(MEAL_PHOTOS_MAX)
+      .optional(),
     text: z.string().trim().max(1000).optional(),
   })
-  .refine((body) => body.image || body.text, "A photo or a description is required");
+  .refine((body) => body.images || body.text, "A photo or a description is required");
 
 const RECOGNITION_STATUS: Record<RecognitionFailure, number> = { auth: 502, credit: 402, busy: 503, refused: 422, unreadable: 502, failed: 502 };
 
@@ -126,21 +138,24 @@ export const mealRoutes: FastifyPluginAsync<MealRoutesOptions> = async (app, { a
     const extra = z
       .object({
         idempotencyKey: z.string().min(8).max(255),
-        photo: z.object({ mediaType: z.literal("image/jpeg"), data: z.string().min(16) }).optional(),
+        photos: z.array(jpegUpload).max(MEAL_PHOTOS_MAX).optional(),
         favoriteName: z.string().trim().min(1).max(100).optional(),
       })
       .safeParse(request.body);
     if (!body.success || !extra.success) return reply.code(400).send({ error: "Invalid meal" });
-    const jpeg = extra.data.photo ? Buffer.from(extra.data.photo.data, "base64") : null;
-    if (jpeg && (!MealPhotoStore.isJpeg(jpeg) || jpeg.length > MEAL_PHOTO_MAX_BYTES)) return reply.code(400).send({ error: "Invalid photo" });
+    const jpegs = (extra.data.photos ?? []).map(decodeJpeg);
+    if (jpegs.some((jpeg) => jpeg === null)) return reply.code(400).send({ error: "Invalid photo" });
     const result = await api.logMeal({ ...updateMealFields(body.data), description: body.data.description, meal_type: body.data.type, idempotency_key: extra.data.idempotencyKey });
-    let photoSaved = false;
-    if (jpeg && photos && result.id) {
-      try {
-        photos.save(result.id, jpeg);
-        photoSaved = true;
-      } catch (error) {
-        request.log.warn({ err: error }, "meal photo not saved");
+    // The meal is logged; a photo that can't be kept does not undo it
+    let photosSaved = 0;
+    if (photos && result.id) {
+      for (const jpeg of jpegs) {
+        try {
+          photos.add(result.id, jpeg!);
+          photosSaved += 1;
+        } catch (error) {
+          request.log.warn({ err: error }, "meal photo not saved");
+        }
       }
     }
     // "Salva anche come preferito": a saved meal made from the new meal; the meal itself is already logged
@@ -153,16 +168,39 @@ export const mealRoutes: FastifyPluginAsync<MealRoutesOptions> = async (app, { a
         request.log.warn({ err: error }, "favorite not saved");
       }
     }
-    return reply.code(201).send({ mealId: result.id, photoSaved, favoriteSaved });
+    return reply.code(201).send({ mealId: result.id, photosSaved, favoriteSaved });
   });
 
   // Meal photos: the ids that have one (for the timeline) and the image itself
-  app.get("/meals/photos", async () => ({ mealIds: photos?.list() ?? [] }));
+  app.get("/meals/photos", async (): Promise<MealPhotosResponse> => ({ photos: photos?.list() ?? {} }));
 
-  app.get<{ Params: { id: string } }>("/meals/:id/photo", async (request, reply) => {
-    const jpeg = photos?.get(request.params.id) ?? null;
-    if (!jpeg) return reply.code(404).send({ error: "No photo" });
-    return reply.header("content-type", "image/jpeg").header("cache-control", "private, max-age=31536000, immutable").send(jpeg);
+  const sendJpeg = (reply: FastifyReply, jpeg: Buffer | null) =>
+    jpeg ? reply.header("content-type", "image/jpeg").header("cache-control", "private, max-age=31536000, immutable").send(jpeg) : reply.code(404).send({ error: "No photo" });
+
+  // The first photo (timeline thumbnails, and the single-photo URL of earlier versions)
+  app.get<{ Params: { id: string } }>("/meals/:id/photo", async (request, reply) => sendJpeg(reply, photos?.first(request.params.id) ?? null));
+
+  app.get<{ Params: { id: string; photoId: string } }>("/meals/:id/photos/:photoId", async (request, reply) =>
+    sendJpeg(reply, photos?.get(request.params.id, request.params.photoId) ?? null),
+  );
+
+  // Modifica pasto: a photo added to a meal already logged (e.g. the second course), at most MEAL_PHOTOS_MAX per meal
+  app.post<{ Params: { id: string } }>("/meals/:id/photos", { bodyLimit: RECOGNIZE_MAX_BYTES }, async (request, reply) => {
+    if (!photos) return reply.code(503).send({ error: "photos_not_available" });
+    const body = jpegUpload.safeParse(request.body);
+    const jpeg = body.success ? decodeJpeg(body.data) : null;
+    if (!jpeg || !MealPhotoStore.isMealId(request.params.id)) return reply.code(400).send({ error: "Invalid photo" });
+    try {
+      return reply.code(201).send({ photoId: photos.add(request.params.id, jpeg) });
+    } catch (error) {
+      if (error instanceof TooManyPhotosError) return reply.code(409).send({ error: "too_many_photos", max: MEAL_PHOTOS_MAX });
+      throw error;
+    }
+  });
+
+  app.delete<{ Params: { id: string; photoId: string } }>("/meals/:id/photos/:photoId", async (request, reply) => {
+    if (!photos?.remove(request.params.id, request.params.photoId)) return reply.code(404).send({ error: "No photo" });
+    return { ok: true };
   });
 
   // Distinct meals of the last two weeks, for "Ripeti un pasto recente"

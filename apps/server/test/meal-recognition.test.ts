@@ -1,4 +1,4 @@
-import { mkdtempSync } from "node:fs";
+import { existsSync, mkdirSync, mkdtempSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { describe, expect, it, vi } from "vitest";
@@ -35,7 +35,7 @@ describe("MealRecognizer", () => {
     const client = fakeClient(message(JSON.stringify(answer)));
     const log = { info: vi.fn(), warn: vi.fn() };
     const recognizer = new MealRecognizer({ apiKey: "sk-test", model: () => "claude-haiku-5-5", client: client as never, log });
-    const meal = await recognizer.recognize({ image: { mediaType: "image/jpeg", data: "aGVsbG8gd29ybGQgaGVsbG8=" }, text: "senza parmigiano" });
+    const meal = await recognizer.recognize({ images: [{ mediaType: "image/jpeg", data: "aGVsbG8gd29ybGQgaGVsbG8=" }], text: "senza parmigiano" });
 
     expect(meal.description).toBe("Pasta al pomodoro con insalata");
     expect(meal.items[0]).toEqual({ name: "Pasta al pomodoro (cotta)", grams: 251, visible: true, per100g: answer.items[0]!.per100g });
@@ -56,6 +56,18 @@ describe("MealRecognizer", () => {
     expect(sent.messages[0].content[1].text).toContain("senza parmigiano");
     // Token usage is logged, never the photo or the text
     expect(log.info).toHaveBeenCalledWith({ model: "claude-haiku-5-5", stopReason: "end_turn", inputTokens: 3400, outputTokens: 520, thinkingTokens: 120 }, "meal recognition");
+  });
+
+  it("sends several photos of one meal in the same request and asks to count each food once", async () => {
+    const client = fakeClient(message(JSON.stringify(answer)));
+    const recognizer = new MealRecognizer({ apiKey: "sk-test", model: () => "claude-haiku-5-5", client: client as never });
+    const first = { mediaType: "image/jpeg" as const, data: "Zmlyc3QgY291cnNlIHBob3Rv" };
+    const second = { mediaType: "image/jpeg" as const, data: "c2Vjb25kIGNvdXJzZSBwaG90bw==" };
+    await recognizer.recognize({ images: [first, second] });
+    const content = (client.create.mock.calls[0] as unknown as [Record<string, any>])[0].messages[0].content;
+    expect(content.slice(0, 2).map((block: any) => block.source.data)).toEqual([first.data, second.data]);
+    expect(content[2].text).toMatch(/^2 photos of one meal/);
+    expect(content[2].text).toContain("only once");
   });
 
   it("uses the model chosen at the time of each request", async () => {
@@ -183,7 +195,7 @@ describe("recognize and create routes", () => {
       },
     });
     expect(response.statusCode).toBe(201);
-    expect(response.json()).toEqual({ mealId: "new-meal-id", photoSaved: false, favoriteSaved: false });
+    expect(response.json()).toEqual({ mealId: "new-meal-id", photosSaved: 0, favoriteSaved: false });
     expect(api.logMeal).toHaveBeenCalledWith(
       expect.objectContaining({ description: "Pasta al pomodoro con insalata", meal_type: "lunch", logged_at: "2026-11-19T13:05", idempotency_key: "photo-12345678" }),
     );
@@ -217,37 +229,83 @@ describe("recognize and create routes", () => {
       headers,
       payload: { date: "2026-11-19", time: "08:00", type: "breakfast", description: "Yogurt", idempotencyKey: "photo-fav-12345", favoriteName: "Colazione solita", totals: { kcal: 200, protein: 15, carbs: 20, fat: 5 } },
     });
-    expect(withFavorite.json()).toEqual({ mealId: "fav-meal-id", photoSaved: false, favoriteSaved: true });
+    expect(withFavorite.json()).toEqual({ mealId: "fav-meal-id", photosSaved: 0, favoriteSaved: true });
     expect(api.saveMeal).toHaveBeenCalledWith("Colazione solita", "fav-meal-id");
 
     const missingKey = await app.inject({ method: "POST", url: "/api/meals", headers, payload: { date: "2026-11-19", time: "13:05", type: "lunch", description: "x", totals: { kcal: 1, protein: 0, carbs: 0, fat: 0 } } });
     expect(missingKey.statusCode).toBe(400);
   });
 
-  it("keeps the photo of a meal logged from a photo, serves it and deletes it with the meal", async () => {
+  const jpegOf = (n: number) => Buffer.concat([Buffer.from([0xff, 0xd8, 0xff, 0xe0]), Buffer.alloc(64, n)]);
+  const upload = (jpeg: Buffer) => ({ mediaType: "image/jpeg", data: jpeg.toString("base64") });
+
+  it("keeps the photos of a meal logged from photos, serves them and deletes them with the meal", async () => {
     const id = "3f2b9c1e-1111-4222-8333-944455556666";
     api.logMeal.mockResolvedValueOnce({ id });
     const photos = new MealPhotoStore(join(mkdtempSync(join(tmpdir(), "intake-photos-")), "meal-photos"));
     const { app, headers } = await signedIn(undefined, photos);
-    const jpeg = Buffer.concat([Buffer.from([0xff, 0xd8, 0xff, 0xe0]), Buffer.alloc(64, 1)]);
     const meal = { date: "2026-11-19", time: "13:05", type: "lunch", description: "Pasta", idempotencyKey: "photo-87654321", totals: { kcal: 300, protein: 10, carbs: 50, fat: 5 } };
 
-    const logged = await app.inject({ method: "POST", url: "/api/meals", headers, payload: { ...meal, photo: { mediaType: "image/jpeg", data: jpeg.toString("base64") } } });
-    expect(logged.json()).toEqual({ mealId: id, photoSaved: true, favoriteSaved: false });
-    expect((await app.inject({ method: "GET", url: "/api/meals/photos", headers })).json()).toEqual({ mealIds: [id] });
-    const photo = await app.inject({ method: "GET", url: `/api/meals/${id}/photo`, headers });
-    expect(photo.headers["content-type"]).toBe("image/jpeg");
-    expect(photo.rawPayload.equals(jpeg)).toBe(true);
-    expect((await app.inject({ method: "GET", url: `/api/meals/${id}/photo` })).statusCode).toBe(401);
+    const logged = await app.inject({ method: "POST", url: "/api/meals", headers, payload: { ...meal, photos: [upload(jpegOf(1)), upload(jpegOf(2))] } });
+    expect(logged.json()).toEqual({ mealId: id, photosSaved: 2, favoriteSaved: false });
+    const list = (await app.inject({ method: "GET", url: "/api/meals/photos", headers })).json() as { photos: Record<string, string[]> };
+    expect(Object.keys(list.photos)).toEqual([id]);
+    const [firstId, secondId] = list.photos[id]!;
+    expect((await app.inject({ method: "GET", url: `/api/meals/${id}/photos/${secondId}`, headers })).rawPayload.equals(jpegOf(2))).toBe(true);
+    // The single-photo URL serves the first one
+    const first = await app.inject({ method: "GET", url: `/api/meals/${id}/photo`, headers });
+    expect(first.headers["content-type"]).toBe("image/jpeg");
+    expect(first.rawPayload.equals(jpegOf(1))).toBe(true);
+    expect((await app.inject({ method: "GET", url: `/api/meals/${id}/photos/${firstId}` })).statusCode).toBe(401);
 
     // Not a JPEG: refused before anything is logged
     const calls = api.logMeal.mock.calls.length;
-    const bad = await app.inject({ method: "POST", url: "/api/meals", headers, payload: { ...meal, photo: { mediaType: "image/jpeg", data: Buffer.from("not a jpeg at all").toString("base64") } } });
+    const bad = await app.inject({ method: "POST", url: "/api/meals", headers, payload: { ...meal, photos: [upload(Buffer.from("not a jpeg at all"))] } });
     expect(bad.statusCode).toBe(400);
     expect(api.logMeal.mock.calls.length).toBe(calls);
 
     expect((await app.inject({ method: "DELETE", url: `/api/meals/${id}`, headers })).statusCode).toBe(200);
     expect((await app.inject({ method: "GET", url: `/api/meals/${id}/photo`, headers })).statusCode).toBe(404);
+    expect((await app.inject({ method: "GET", url: "/api/meals/photos", headers })).json()).toEqual({ photos: {} });
     expect((await app.inject({ method: "GET", url: "/api/meals/..%2F..%2Fintake.db/photo", headers })).statusCode).toBe(404);
+    expect((await app.inject({ method: "GET", url: `/api/meals/${id}/photos/..%2F..%2Fintake.db`, headers })).statusCode).toBe(404);
+  });
+
+  it("adds a photo to a logged meal and removes one, at most six per meal", async () => {
+    const id = "3f2b9c1e-2222-4222-8333-944455556666";
+    const photos = new MealPhotoStore(join(mkdtempSync(join(tmpdir(), "intake-photos-")), "meal-photos"));
+    const { app, headers } = await signedIn(undefined, photos);
+    const added: string[] = [];
+    for (let n = 1; n <= 6; n += 1) {
+      const response = await app.inject({ method: "POST", url: `/api/meals/${id}/photos`, headers, payload: upload(jpegOf(n)) });
+      expect(response.statusCode).toBe(201);
+      added.push((response.json() as { photoId: string }).photoId);
+    }
+    expect(photos.photos(id)).toEqual(added);
+    const seventh = await app.inject({ method: "POST", url: `/api/meals/${id}/photos`, headers, payload: upload(jpegOf(7)) });
+    expect(seventh.statusCode).toBe(409);
+    expect(seventh.json()).toEqual({ error: "too_many_photos", max: 6 });
+    expect((await app.inject({ method: "POST", url: `/api/meals/${id}/photos`, headers, payload: upload(Buffer.from("plain text, not a photo")) })).statusCode).toBe(400);
+    expect((await app.inject({ method: "POST", url: "/api/meals/not-a-meal/photos", headers, payload: upload(jpegOf(1)) })).statusCode).toBe(400);
+
+    expect((await app.inject({ method: "DELETE", url: `/api/meals/${id}/photos/${added[0]}`, headers })).json()).toEqual({ ok: true });
+    expect((await app.inject({ method: "DELETE", url: `/api/meals/${id}/photos/${added[0]}`, headers })).statusCode).toBe(404);
+    expect(photos.photos(id)).toEqual(added.slice(1));
   });
 });
+
+describe("MealPhotoStore", () => {
+  it("moves the single photo of earlier versions into the meal's folder on start", () => {
+    const dir = join(mkdtempSync(join(tmpdir(), "intake-photos-")), "meal-photos");
+    mkdirSync(dir, { recursive: true });
+    const id = "3f2b9c1e-3333-4222-8333-944455556666";
+    const jpeg = Buffer.concat([Buffer.from([0xff, 0xd8, 0xff, 0xe0]), Buffer.alloc(32, 9)]);
+    writeFileSync(join(dir, `${id}.jpg`), jpeg);
+    const store = new MealPhotoStore(dir);
+    expect(existsSync(join(dir, `${id}.jpg`))).toBe(false);
+    expect(store.photos(id)).toHaveLength(1);
+    expect(store.first(id)!.equals(jpeg)).toBe(true);
+    expect(Object.keys(store.list())).toEqual([id]);
+  });
+});
+

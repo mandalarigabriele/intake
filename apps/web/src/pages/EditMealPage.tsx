@@ -1,9 +1,11 @@
-import { MEAL_TYPES, NUTRITION_MEAL_TYPES, type Meal, type MealItemInput, type Nutrients, type NutritionMealType, type RecognizedItem } from "@intake/shared";
-import { useEffect, useMemo, useState } from "react";
+import { MEAL_PHOTOS_MAX, MEAL_TYPES, NUTRITION_MEAL_TYPES, type Meal, type MealItemInput, type Nutrients, type NutritionMealType, type RecognizedItem } from "@intake/shared";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Link, useLocation } from "wouter";
-import { useDay, useFeatures, useRecognizeMeal, useUpdateMeal } from "../api/queries";
+import { mealPhotoUrl, useDay, useFeatures, useMealPhotos, useRecognizeMeal, useSaveMealPhotos, useUpdateMeal } from "../api/queries";
 import { ConfirmDeleteSheet } from "../components/ConfirmDeleteSheet";
 import { CloseIcon } from "../components/icons";
+import { PhotoCarousel } from "../components/PhotoCarousel";
+import { photoForRecognition } from "../lib/image";
 import { formatGrams, formatKcal } from "../lib/format";
 import { t } from "../lib/strings";
 import { dayHref } from "./MealPage";
@@ -90,6 +92,17 @@ export function EditMealPage({ date, id }: { date: string; id: string }) {
   const recognizeFood = useRecognizeMeal();
   const [adding, setAdding] = useState(false);
   const [foodText, setFoodText] = useState("");
+  // Photos (Pasti da foto): the kept ones, those removed and those added here, all saved with "Salva"
+  const keptPhotos = useMealPhotos().data?.get(id) ?? [];
+  const [removedPhotos, setRemovedPhotos] = useState<string[]>([]);
+  const [addedPhotos, setAddedPhotos] = useState<Array<{ key: string; preview: string; mediaType: "image/jpeg"; data: string }>>([]);
+  // A photo just added: its foods can be recognized and added to the meal, or it is kept as a photo only
+  const [askPhoto, setAskPhoto] = useState<string | null>(null);
+  const [photoNote, setPhotoNote] = useState("");
+  const [photoError, setPhotoError] = useState(false);
+  const recognizePhoto = useRecognizeMeal();
+  const savePhotos = useSaveMealPhotos();
+  const photoInput = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     if (!meal || loadedId === meal.id) return;
@@ -177,7 +190,59 @@ export function EditMealPage({ date, id }: { date: string; id: string }) {
               totals: { kcal: parseNumber(totals.kcal) ?? 0, protein: parseNumber(totals.protein) ?? 0, carbs: parseNumber(totals.carbs) ?? 0, fat: parseNumber(totals.fat) ?? 0 },
             },
       },
-      { onSuccess: () => navigate(detailHref) },
+      {
+        onSuccess: () => {
+          if (removedPhotos.length === 0 && addedPhotos.length === 0) return navigate(detailHref);
+          savePhotos.mutate(
+            { mealId: meal.id, remove: removedPhotos, add: addedPhotos.map(({ mediaType, data }) => ({ mediaType, data })) },
+            { onSuccess: () => navigate(detailHref) },
+          );
+        },
+      },
+    );
+  }
+
+  const shownPhotos = [
+    ...keptPhotos.filter((photoId) => !removedPhotos.includes(photoId)).map((photoId) => ({ key: photoId, src: mealPhotoUrl(id, photoId) })),
+    ...addedPhotos.map((photo) => ({ key: photo.key, src: photo.preview })),
+  ];
+
+  async function onPhotoFile(file: File | undefined) {
+    if (!file || shownPhotos.length >= MEAL_PHOTOS_MAX) return;
+    setPhotoError(false);
+    try {
+      const photo = await photoForRecognition(file);
+      const key = `new-${Date.now()}`;
+      setAddedPhotos((list) => [...list, { key, preview: photo.previewUrl, mediaType: photo.mediaType, data: photo.data }]);
+      setAskPhoto(key);
+      recognizePhoto.reset();
+    } catch {
+      setPhotoError(true);
+    }
+  }
+
+  function removePhoto(key: string) {
+    if (keptPhotos.includes(key)) setRemovedPhotos((list) => [...list, key]);
+    else setAddedPhotos((list) => list.filter((photo) => photo.key !== key));
+    if (askPhoto === key) setAskPhoto(null);
+  }
+
+  /** The foods of the photo just added (e.g. the second course) become rows of the meal; nothing is saved until "Salva". */
+  function recognizeNewPhoto() {
+    const photo = addedPhotos.find((p) => p.key === askPhoto);
+    if (!photo) return;
+    recognizePhoto.mutate(
+      { images: [{ mediaType: photo.mediaType, data: photo.data }], text: photoNote.trim() || undefined },
+      {
+        onSuccess: (recognized) => {
+          setItems((list) => {
+            const room = Math.max(0, 30 - list.length);
+            return [...list, ...recognized.items.slice(0, room).map((item, i) => draftFromRecognized(item, Date.now() + i))];
+          });
+          setAskPhoto(null);
+          setPhotoNote("");
+        },
+      },
     );
   }
 
@@ -202,6 +267,50 @@ export function EditMealPage({ date, id }: { date: string; id: string }) {
         <h1>{t.edit.title}</h1>
         <span aria-hidden="true" />
       </header>
+
+      {canRecognize && (
+        <section className="edit-photos" aria-label={t.photos.label}>
+          {shownPhotos.length > 0 ? (
+            <PhotoCarousel photos={shownPhotos} title={t.edit.title} onRemove={removePhoto} onAdd={() => photoInput.current?.click()} disabled={recognizePhoto.isPending} />
+          ) : (
+            <button type="button" className="capture-button" onClick={() => photoInput.current?.click()}>
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                <path d="M4 8h3l2-3h6l2 3h3v11H4z" />
+                <path d="M12 10v6M9 13h6" />
+              </svg>
+              {t.photos.add}
+            </button>
+          )}
+          {/* Without "capture", iPhone offers both the camera and the photo library */}
+          <input
+            ref={photoInput}
+            type="file"
+            accept="image/*"
+            hidden
+            onChange={(event) => {
+              void onPhotoFile(event.target.files?.[0]);
+              event.target.value = "";
+            }}
+          />
+          {photoError && <p className="error-text">{t.newMeal.unreadablePhoto}</p>}
+          {askPhoto && hasItems && (
+            <div className="form-card new-photo-card">
+              <strong>{t.photos.newPhoto}</strong>
+              <span className="muted">{t.photos.newPhotoNote}</span>
+              <input className="note-input" value={photoNote} maxLength={300} placeholder={t.newMeal.notePlaceholder} aria-label={t.newMeal.notePlaceholder} disabled={recognizePhoto.isPending} onChange={(e) => setPhotoNote(e.target.value)} />
+              <div className="new-photo-actions">
+                <button type="button" className="button-primary-inline" disabled={recognizePhoto.isPending} onClick={recognizeNewPhoto}>
+                  {recognizePhoto.isPending ? t.newMeal.analyzing : t.photos.recognize}
+                </button>
+                <button type="button" className="button-secondary" disabled={recognizePhoto.isPending} onClick={() => setAskPhoto(null)}>
+                  {t.photos.photoOnly}
+                </button>
+              </div>
+              {recognizePhoto.isError && <p className="error-text">{errorText(recognizePhoto.error)}</p>}
+            </div>
+          )}
+        </section>
+      )}
 
       <div className="segmented" role="radiogroup" aria-label={t.edit.type}>
         {[...MEAL_TYPES, ...(meal && !(MEAL_TYPES as readonly string[]).includes(meal.type) && (NUTRITION_MEAL_TYPES as readonly string[]).includes(meal.type) ? [meal.type as NutritionMealType] : [])].map((option) => (
@@ -328,11 +437,12 @@ export function EditMealPage({ date, id }: { date: string; id: string }) {
       <div className="detail-spacer" />
       <div className="edit-actions">
         {update.isError && <p className="error-text">{t.edit.saveFailed}</p>}
+        {savePhotos.isError && <p className="error-text">{t.photos.saveFailed}</p>}
         <div className="detail-actions edit-actions-row">
           <button type="button" className="button-secondary edit-delete" onClick={() => setConfirmDelete(true)}>
             {t.edit.delete}
           </button>
-          <button type="button" className="button-primary-inline" onClick={save} disabled={update.isPending || (hasItems && validItems.length === 0)}>
+          <button type="button" className="button-primary-inline" onClick={save} disabled={update.isPending || savePhotos.isPending || recognizePhoto.isPending || (hasItems && validItems.length === 0)}>
             {t.edit.save}
           </button>
         </div>

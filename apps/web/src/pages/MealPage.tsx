@@ -1,4 +1,5 @@
 import { favoriteNameFrom, type Meal } from "@intake/shared";
+import { PhotoCarousel } from "../components/PhotoCarousel";
 import { useState } from "react";
 import { Link } from "wouter";
 import { mealPhotoUrl, useDay, useFavoriteMeal, useMealPhotos } from "../api/queries";
@@ -32,7 +33,7 @@ export function MealPage({ date, id }: { date: string; id: string }) {
   const meal = day.data?.meals.find((m) => m.id === id);
   const back = dayHref(date, day.data?.clock.localDate);
   const [favoriteOpen, setFavoriteOpen] = useState(false);
-  const hasPhoto = useMealPhotos().data?.has(id) ?? false;
+  const photoIds = useMealPhotos().data?.get(id) ?? [];
 
   if (day.isPending) {
     return (
@@ -73,7 +74,7 @@ export function MealPage({ date, id }: { date: string; id: string }) {
   return (
     <div className="page detail-page">
       <BackHeader href={back} label={`${formatWeekday(date)} · ${meal.time}`} />
-      {hasPhoto && <img className="detail-photo" src={mealPhotoUrl(meal.id)} alt={t.meal.photoAlt(mealTitle(meal))} />}
+      {photoIds.length > 0 && <PhotoCarousel photos={photoIds.map((photoId) => ({ key: photoId, src: mealPhotoUrl(meal.id, photoId) }))} title={mealTitle(meal)} />}
 
       <section className="detail-hero">
         <h1>{mealTitle(meal)}</h1>

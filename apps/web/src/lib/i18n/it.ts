@@ -257,6 +257,23 @@ export const it = {
   },
 
   weekStrip: "Giorni della settimana",
+  photos: {
+    label: "Foto del pasto",
+    item: (index: number, count: number) => `Foto ${index} di ${count}`,
+    remove: (index: number) => `Togli la foto ${index}`,
+    add: "Aggiungi foto",
+    previous: "Foto precedente",
+    next: "Foto successiva",
+    count: (count: number) => `${count} foto`,
+    limit: (max: number) => `Al massimo ${max} foto per pasto.`,
+    tip: "Puoi aggiungere più foto, ad esempio una per portata: Claude conta ogni cibo una volta sola.",
+    section: "FOTO",
+    newPhoto: "Nuova foto",
+    newPhotoNote: "Vuoi aggiungere al pasto i cibi di questa foto?",
+    recognize: "Aggiungi i cibi con Claude",
+    photoOnly: "Solo la foto",
+    saveFailed: "Pasto salvato, ma alcune foto non sono state salvate. Riprova.",
+  },
   weekNav: { previous: "Settimana precedente", next: "Settimana successiva" },
   dayNav: {
     openTimeline: "Timeline del giorno →",

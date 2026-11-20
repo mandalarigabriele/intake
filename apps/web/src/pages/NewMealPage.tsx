@@ -1,9 +1,10 @@
-import { MEAL_TYPES, type MealItemInput, type Nutrients, type NutritionMealType, type RecognizedItem, type RecognizedMeal } from "@intake/shared";
+import { MEAL_PHOTOS_MAX, MEAL_TYPES, type MealItemInput, type Nutrients, type NutritionMealType, type RecognizedItem, type RecognizedMeal } from "@intake/shared";
 import { useMemo, useRef, useState } from "react";
 import { Link, useLocation } from "wouter";
 import { ApiError, newIdempotencyKey } from "../api/client";
 import { useCreateMeal, useDay, useRecognizeMeal } from "../api/queries";
 import { CloseIcon } from "../components/icons";
+import { PhotoCarousel } from "../components/PhotoCarousel";
 import { formatGrams, formatKcal } from "../lib/format";
 import { photoForRecognition } from "../lib/image";
 import { t } from "../lib/strings";
@@ -94,8 +95,8 @@ export function NewMealPage({ initialMode }: { initialMode: Mode }) {
   const [mode, setMode] = useState<Mode>(initialMode);
   const [note, setNote] = useState("");
   const [text, setText] = useState("");
-  const [preview, setPreview] = useState<string | null>(null);
-  const [photo, setPhoto] = useState<{ mediaType: "image/jpeg"; data: string } | null>(null);
+  // Up to MEAL_PHOTOS_MAX photos (e.g. one per course), recognized together and kept with the meal
+  const [photos, setPhotos] = useState<Array<{ key: string; preview: string; mediaType: "image/jpeg"; data: string }>>([]);
   const [photoError, setPhotoError] = useState(false);
   const [result, setResult] = useState<RecognizedMeal | null>(null);
   const [items, setItems] = useState<Draft[]>([]);
@@ -129,9 +130,8 @@ export function NewMealPage({ initialMode }: { initialMode: Mode }) {
     setPhotoError(false);
     try {
       const photo = await photoForRecognition(file);
-      // Nothing is sent yet: the photo is shown with the note, and "Analizza" sends both
-      setPreview(photo.previewUrl);
-      setPhoto({ mediaType: photo.mediaType, data: photo.data });
+      // Nothing is sent yet: the photos are shown with the note, and "Analizza" sends them all
+      setPhotos((list) => (list.length >= MEAL_PHOTOS_MAX ? list : [...list, { key: `p${Date.now()}`, preview: photo.previewUrl, mediaType: photo.mediaType, data: photo.data }]));
       recognize.reset();
     } catch {
       setPhotoError(true);
@@ -139,28 +139,30 @@ export function NewMealPage({ initialMode }: { initialMode: Mode }) {
   }
 
   function analyzePhoto() {
-    if (photo) recognize.mutate({ image: photo, text: note.trim() || undefined }, { onSuccess: showResult });
+    if (photos.length > 0) recognize.mutate({ images: photos.map(({ mediaType, data }) => ({ mediaType, data })), text: note.trim() || undefined }, { onSuccess: showResult });
   }
 
-  function changePhoto() {
-    // Clear the pickers too, or choosing the same picture again would not fire onChange
-    if (camera.current) camera.current.value = "";
+  /** Opens the photo picker again for another photo (on iPhone it also offers the camera). */
+  function addPhoto() {
+    // Clear the picker, or choosing the same picture again would not fire onChange
     if (library.current) library.current.value = "";
-    setPhoto(null);
-    setPreview(null);
+    library.current?.click();
+  }
+
+  function removePhoto(key: string) {
+    setPhotos((list) => list.filter((photo) => photo.key !== key));
     recognize.reset();
   }
 
   function analyzeText() {
-    setPhoto(null);
+    setPhotos([]);
     if (text.trim()) recognize.mutate({ text: text.trim() }, { onSuccess: showResult });
   }
 
   function restart() {
     setResult(null);
     setItems([]);
-    setPreview(null);
-    setPhoto(null);
+    setPhotos([]);
     recognize.reset();
   }
 
@@ -206,7 +208,7 @@ export function NewMealPage({ initialMode }: { initialMode: Mode }) {
         description: result.description,
         items: inputs,
         idempotencyKey,
-        ...(photo ? { photo } : {}),
+        ...(photos.length > 0 ? { photos: photos.map(({ mediaType, data }) => ({ mediaType, data })) } : {}),
         ...(favorite && name.trim() ? { favoriteName: name.trim() } : {}),
       },
       { onSuccess: () => navigate("/") },
@@ -235,18 +237,16 @@ export function NewMealPage({ initialMode }: { initialMode: Mode }) {
 
         {recognize.isPending ? (
           <div className="card recognize-wait" aria-live="polite" aria-busy="true">
-            {preview && <img src={preview} alt="" className="recognize-preview" />}
+            {photos[0] && <img src={photos[0].preview} alt="" className="recognize-preview" />}
             <span className="recognize-spinner" aria-hidden="true" />
             <strong>{t.newMeal.analyzing}</strong>
           </div>
         ) : mode === "photo" ? (
           <>
-            {photo && preview ? (
+            {photos.length > 0 ? (
               <div className="card photo-check">
-                <img src={preview} alt={t.newMeal.photoAlt} className="recognize-preview" />
-                <button type="button" className="text-button text-button-strong" onClick={changePhoto}>
-                  {t.newMeal.changePhoto}
-                </button>
+                <PhotoCarousel photos={photos.map((photo) => ({ key: photo.key, src: photo.preview }))} title={t.newMeal.title} onRemove={removePhoto} onAdd={addPhoto} />
+                <p className="sheet-note">{photos.length >= MEAL_PHOTOS_MAX ? t.photos.limit(MEAL_PHOTOS_MAX) : t.photos.tip}</p>
               </div>
             ) : (
               <div className="capture-actions">
@@ -274,7 +274,7 @@ export function NewMealPage({ initialMode }: { initialMode: Mode }) {
               <input className="note-input" value={note} maxLength={300} placeholder={t.newMeal.notePlaceholder} aria-label={t.newMeal.notePlaceholder} onChange={(e) => setNote(e.target.value)} />
             </div>
             <p className="sheet-note">{t.newMeal.photoTip}</p>
-            {photo && (
+            {photos.length > 0 && (
               <button type="button" className="button-primary" onClick={analyzePhoto}>
                 {t.newMeal.analyze}
               </button>
@@ -317,7 +317,16 @@ export function NewMealPage({ initialMode }: { initialMode: Mode }) {
       </header>
 
       <div className="card recognized-card">
-        {preview && <img src={preview} alt="" className="recognized-photo" />}
+        {photos[0] && (
+          <span className="meal-thumb-wrap">
+            <img src={photos[0].preview} alt="" className="recognized-photo" />
+            {photos.length > 1 && (
+              <span className="meal-thumb-count" aria-label={t.photos.count(photos.length)}>
+                {photos.length}
+              </span>
+            )}
+          </span>
+        )}
         <span className="recognized-text">
           <span className="eyebrow">{t.newMeal.recognized}</span>
           <strong className="stat-value">

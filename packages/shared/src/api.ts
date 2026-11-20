@@ -108,15 +108,15 @@ export interface UpdateMealRequest {
 /** POST /api/meals: logs a new meal (e.g. confirmed from a photo); same shape as an edit plus an idempotency key. */
 export interface CreateMealRequest extends UpdateMealRequest {
   idempotencyKey: string;
-  /** The photo the meal was recognized from (resized JPEG, base64), kept on the server with the meal. */
-  photo?: { mediaType: "image/jpeg"; data: string };
+  /** The photos the meal was recognized from (resized JPEGs, base64; at most MEAL_PHOTOS_MAX), kept on the server with the meal. */
+  photos?: Array<{ mediaType: "image/jpeg"; data: string }>;
   /** Also save the new meal as a favorite (saved meal) with this name. */
   favoriteName?: string;
 }
 
-/** POST /api/meals/recognize: a photo (base64, already resized by the app) and/or a free description. */
+/** POST /api/meals/recognize: up to MEAL_PHOTOS_MAX photos (base64, already resized by the app) and/or a free description. */
 export interface RecognizeMealRequest {
-  image?: { mediaType: "image/jpeg" | "image/png" | "image/webp"; data: string };
+  images?: Array<{ mediaType: "image/jpeg" | "image/png" | "image/webp"; data: string }>;
   text?: string;
 }
 
@@ -861,4 +861,18 @@ export interface RecognitionModelResponse {
   model: string;
   /** Models that can be chosen: RECOGNITION_MODELS, plus RECOGNITION_MODEL from .env when it names another one. */
   models: string[];
+}
+
+/** Photos kept with one meal (Pasti da foto): taken when it is logged or added later in Modifica pasto. */
+export const MEAL_PHOTOS_MAX = 6;
+
+/** A resized JPEG sent by the app, base64 without the data: prefix. */
+export interface MealPhotoUpload {
+  mediaType: "image/jpeg";
+  data: string;
+}
+
+/** GET /api/meals/photos: meal id → photo ids (oldest first), for the meals that have photos. */
+export interface MealPhotosResponse {
+  photos: Record<string, string[]>;
 }
