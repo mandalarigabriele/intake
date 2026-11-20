@@ -10,6 +10,7 @@ import { formatClock, formatDayLongMonth, formatMegabytes, formatKcal, formatOne
 import { LANGUAGE_NAMES, language, t } from "../lib/strings";
 import { exerciseName } from "./TrainingPage";
 import { getThemePreference, setThemePreference, type ThemePreference } from "../lib/theme";
+import { preferredPlanTab, setPreferredPlanTab, type PlanTab } from "../lib/planTab";
 
 const THEMES: ThemePreference[] = ["system", "light", "dark"];
 const STEP_GOAL = { min: 2000, max: 30000, step: 500 };
@@ -669,6 +670,7 @@ export function ProfilePage({ user }: { user: User }) {
   const signOut = useSignOut();
   const disconnect = useDisconnectNutrition();
   const [theme, setTheme] = useState<ThemePreference>(getThemePreference);
+  const [planTab, setPlanTab] = useState<PlanTab>(preferredPlanTab);
   const setLanguage = useSetLanguage();
   const [reminders, setReminders] = useState(false);
   const features = useFeatures().data;
@@ -792,6 +794,29 @@ export function ProfilePage({ user }: { user: User }) {
                     }}
                   >
                     {t.profile.themeOptions[option]}
+                  </button>
+                ))}
+              </div>
+            </div>
+            <div className="profile-row-item settings-row">
+              <span className="connection-text">
+                <strong id="plan-tab-label">{t.profile.planTab}</strong>
+                <span className="muted">{t.profile.planTabNote}</span>
+              </span>
+              <div className="segmented settings-segmented" role="radiogroup" aria-labelledby="plan-tab-label">
+                {(["plan", "needs"] as const).map((option) => (
+                  <button
+                    key={option}
+                    type="button"
+                    role="radio"
+                    aria-checked={planTab === option}
+                    className="segmented-option"
+                    onClick={() => {
+                      setPlanTab(option);
+                      setPreferredPlanTab(option);
+                    }}
+                  >
+                    {t.plan.tabs[option]}
                   </button>
                 ))}
               </div>

@@ -73,6 +73,8 @@ export const it = {
     appearance: "Aspetto",
     theme: "Tema",
     themeOptions: { system: "Sistema", light: "Chiaro", dark: "Scuro" },
+    planTab: "Piano apre su",
+    planTabNote: "Cosa vedi per primo nella scheda Piano, su questo dispositivo.",
     themeNote: "Vale per questo dispositivo.",
     language: "Lingua",
     languageNote: "Vale per tutta l’app su ogni dispositivo, anche per notifiche e frase del giorno.",
@@ -562,6 +564,8 @@ export const it = {
 
 
   plan: {
+    switch: "Cosa vedere",
+    tabs: { plan: "Piano pasti", needs: "Fabbisogno" } as Record<string, string>,
     daysTabs: "Giorni",
     title: "Piano",
     activeFrom: (date: string) => `Attivo dal ${date}`,

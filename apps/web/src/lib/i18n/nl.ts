@@ -73,6 +73,8 @@ export const nl: Strings = {
     appearance: "Weergave",
     theme: "Thema",
     themeOptions: { system: "Systeem", light: "Licht", dark: "Donker" },
+    planTab: "Plan opent op",
+    planTabNote: "Wat je eerst ziet in het tabblad Plan, op dit apparaat.",
     themeNote: "Geldt voor dit apparaat.",
     language: "Taal",
     languageNote: "Geldt voor de hele app op elk apparaat, ook voor meldingen en de zin van de dag.",
@@ -563,6 +565,8 @@ export const nl: Strings = {
 
 
   plan: {
+    switch: "Wat bekijken",
+    tabs: { plan: "Maaltijdplan", needs: "Behoefte" } as Record<string, string>,
     daysTabs: "Dagen",
     title: "Plan",
     activeFrom: (date: string) => `Actief sinds ${date}`,

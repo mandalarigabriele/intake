@@ -73,6 +73,8 @@ export const en: Strings = {
     appearance: "Appearance",
     theme: "Theme",
     themeOptions: { system: "System", light: "Light", dark: "Dark" },
+    planTab: "Plan opens on",
+    planTabNote: "What you see first in the Plan tab, on this device.",
     themeNote: "Applies to this device.",
     language: "Language",
     languageNote: "Applies to the whole app on every device, including notifications and the daily sentence.",
@@ -563,6 +565,8 @@ export const en: Strings = {
 
 
   plan: {
+    switch: "What to see",
+    tabs: { plan: "Meal plan", needs: "Daily needs" } as Record<string, string>,
     daysTabs: "Days",
     title: "Plan",
     activeFrom: (date: string) => `Active from ${date}`,

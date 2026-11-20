@@ -231,7 +231,11 @@ that speak of Claude as the chat outside Intake (logging by talking to Claude, t
 
 ## Piano — Il tuo fabbisogno (20 Nov)
 
-A card at the top of Piano, above the week's plan, with three bands divided by a line:
+Piano opens with a small segmented switch under the title, "Piano pasti" / "Fabbisogno" (at most 300 px wide). The
+meal plan is first; Impostazioni › Aspetto › "Piano apre su" can make Fabbisogno first on that device. The plan's
+subtitle and ⋯ menu belong to the meal plan and hide on Fabbisogno.
+
+The Fabbisogno view is one card with three bands divided by a line:
 
 1. The active goal: pills with the goal and its source ("calcolo standard", "proposta IA", "dai tuoi dati"), the
    calories large, the macros on one line, then weight · workouts a week · estimated maintenance. "Modifica" in the

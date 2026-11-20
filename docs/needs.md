@@ -5,6 +5,11 @@ few fields, check the active goal against the real data, and, on request, ask th
 
 ## The card (Piano)
 
+Piano has a small switch at the top, "Piano pasti" / "Fabbisogno": the meal plan comes first, since it is what is
+read during the day. Impostazioni › Aspetto › "Piano apre su" makes Fabbisogno the first one instead (per device,
+like the theme). The address keeps the choice (`/piano?vista=fabbisogno`), so coming back from the page shows the
+card again. The plan's subtitle and ⋯ menu show only with the meal plan.
+
 1. **Active goal**: the goal (Definizione, Mantenimento, Ricomposizione, Massa) and, when the goals were applied from
    here and Nutrition still has the same calories and protein, where they came from ("calcolo standard",
    "proposta IA", "dai tuoi dati"). Calories and macros come live from Nutrition. A short line gives the weight, the

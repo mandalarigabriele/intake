@@ -11,12 +11,14 @@ import {
   type Weekday,
 } from "@intake/shared";
 import { useEffect, useRef, useState } from "react";
+import { useLocation, useSearch } from "wouter";
 import { PlanUploadFailed, usePlans, useUploadPlan } from "../api/queries";
 import { CloseIcon, PlanIcon } from "../components/icons";
 import { formatKcal, formatMediumDate, formatShortDate } from "../lib/format";
 import { t } from "../lib/strings";
 import { Scrim } from "../components/Scrim";
 import { NeedsCard } from "../components/NeedsCard";
+import { PLAN_TAB_PARAM, planTabFromSearch, preferredPlanTab, type PlanTab } from "../lib/planTab";
 
 const roundTo = (value: number, step: number) => Math.round(value / step) * step;
 
@@ -35,6 +37,9 @@ function dayNote(day: PlannedDay): string {
 }
 
 export function PlanPage() {
+  const search = useSearch();
+  const [, navigate] = useLocation();
+  const [tab, setTab] = useState<PlanTab>(() => planTabFromSearch(search) ?? preferredPlanTab());
   const plans = usePlans();
   const upload = useUploadPlan();
   const fileInput = useRef<HTMLInputElement>(null);
@@ -100,134 +105,158 @@ export function PlanPage() {
     <div className="page section-page plan-page">
       <header className="section-header">
         <div className="page-heading">
-          {subtitle && <p className="page-date">{subtitle}</p>}
+          {tab === "plan" && subtitle && <p className="page-date">{subtitle}</p>}
           <h1 className="page-title">{t.plan.title}</h1>
         </div>
-        <div className="menu-anchor">
-          <button type="button" className="icon-button" aria-label={t.plan.manage} aria-haspopup="menu" aria-expanded={menuOpen} onClick={() => setMenuOpen((v) => !v)}>
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-              <circle cx="5" cy="12" r="2" />
-              <circle cx="12" cy="12" r="2" />
-              <circle cx="19" cy="12" r="2" />
-            </svg>
-          </button>
-          {menuOpen && (
-            <div className="menu" role="menu">
-              <button type="button" role="menuitem" className="menu-item menu-item-rich" onClick={() => fileInput.current?.click()}>
-                <strong>{t.plan.upload}</strong>
-                <span className="muted">{t.plan.uploadHint}</span>
-              </button>
-              <button
-                type="button"
-                role="menuitem"
-                className="menu-item menu-item-rich"
-                disabled={!data?.versions.length}
-                onClick={() => {
-                  setMenuOpen(false);
-                  setHistoryOpen(true);
-                }}
-              >
-                <strong>{t.plan.history}</strong>
-                <span className="muted">{t.plan.historyHint(data?.versions.length ?? 0, activeVersion ? formatMediumDate(activeVersion.validFrom) : null)}</span>
-              </button>
-              <button type="button" role="menuitem" className="menu-item" onClick={() => setMenuOpen(false)}>
-                {t.close}
-              </button>
-            </div>
-          )}
-        </div>
+        {tab === "plan" && (
+          <div className="menu-anchor">
+            <button type="button" className="icon-button" aria-label={t.plan.manage} aria-haspopup="menu" aria-expanded={menuOpen} onClick={() => setMenuOpen((v) => !v)}>
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                <circle cx="5" cy="12" r="2" />
+                <circle cx="12" cy="12" r="2" />
+                <circle cx="19" cy="12" r="2" />
+              </svg>
+            </button>
+            {menuOpen && (
+              <div className="menu" role="menu">
+                <button type="button" role="menuitem" className="menu-item menu-item-rich" onClick={() => fileInput.current?.click()}>
+                  <strong>{t.plan.upload}</strong>
+                  <span className="muted">{t.plan.uploadHint}</span>
+                </button>
+                <button
+                  type="button"
+                  role="menuitem"
+                  className="menu-item menu-item-rich"
+                  disabled={!data?.versions.length}
+                  onClick={() => {
+                    setMenuOpen(false);
+                    setHistoryOpen(true);
+                  }}
+                >
+                  <strong>{t.plan.history}</strong>
+                  <span className="muted">{t.plan.historyHint(data?.versions.length ?? 0, activeVersion ? formatMediumDate(activeVersion.validFrom) : null)}</span>
+                </button>
+                <button type="button" role="menuitem" className="menu-item" onClick={() => setMenuOpen(false)}>
+                  {t.close}
+                </button>
+              </div>
+            )}
+          </div>
+        )}
         <input ref={fileInput} type="file" accept="application/json,.json" hidden onChange={onFile} />
       </header>
 
-      {message && (
-        <div className="notice" data-kind={message.kind} role="status">
-          <p>{message.text}</p>
-          {message.issues && (
-            <ul className="issues">
-              {message.issues.map((issue, i) => (
-                <li key={i}>
-                  <code>{issue.path || "file"}</code> {issue.message}
-                </li>
-              ))}
-            </ul>
-          )}
-        </div>
-      )}
-
-      <NeedsCard />
-
-      {plans.isPending && <div className="card skeleton" style={{ height: 320 }} />}
-
-      {data && !shown && (
-        <div className="coming-soon">
-          <span className="coming-soon-icon">
-            <PlanIcon size={32} />
-          </span>
-          <strong>{t.plan.emptyTitle}</strong>
-          <p className="muted">{t.plan.emptyBody}</p>
-          <button type="button" className="button" onClick={() => fileInput.current?.click()} disabled={upload.isPending}>
-            {t.plan.upload}
+      <div className="segmented plan-switch" role="tablist" aria-label={t.plan.switch}>
+        {(["plan", "needs"] as const).map((option) => (
+          <button
+            key={option}
+            type="button"
+            role="tab"
+            aria-selected={tab === option}
+            className="segmented-option"
+            onClick={() => {
+              setTab(option);
+              navigate(`/piano?vista=${PLAN_TAB_PARAM[option]}`, { replace: true });
+            }}
+          >
+            {t.plan.tabs[option]}
           </button>
-        </div>
-      )}
+        ))}
+      </div>
 
-      {shown && day && (
+      {tab === "needs" ? (
+        <NeedsCard />
+      ) : (
         <>
-          <div className="plan-tabs" role="tablist" aria-label={t.plan.daysTabs}>
-            {WEEKDAYS.map((w, i) => (
-              <button
-                key={w}
-                type="button"
-                role="tab"
-                className="plan-tab"
-                aria-selected={w === weekday}
-                aria-label={t.weekdaysLong[i]}
-                onClick={() => setSelected(w)}
-              >
-                <span className="plan-tab-letter">{t.weekdaysShort[i]}</span>
-                <span className="plan-tab-tag">{dayTag(shown.plan.days[w], data?.active ? w === todayWeekday : false)}</span>
-              </button>
-            ))}
-          </div>
-
-          <div className="plan-day" role="tabpanel">
-            <div className="plan-day-head">
-              <h2>{t.weekdaysLong[dayIndex]}</h2>
-              <span className="muted">{dayNote(day)}</span>
-            </div>
-
-            {day.meals.map((meal, i) =>
-              isFixedMeal(meal) ? (
-                <article key={i} className="plan-meal">
-                  <header>
-                    <h3>{meal.title}</h3>
-                    {meal.time && <span className="muted">{meal.time}</span>}
-                  </header>
-                  <ul>
-                    {meal.foods.map((food, j) => (
-                      <li key={j}>{foodLine(food)}</li>
-                    ))}
-                  </ul>
-                </article>
-              ) : (
-                <article key={i} className="plan-meal" data-free>
-                  <h3>{meal.title}</h3>
-                  <span className="free-badge">{t.plan.freeBadge}</span>
-                </article>
-              ),
-            )}
-
-            {shown.plan.notes && shown.plan.notes.length > 0 && (
-              <details className="plan-notes">
-                <summary>{t.plan.notes}</summary>
-                <ul>
-                  {shown.plan.notes.map((note, i) => (
-                    <li key={i}>{note}</li>
+          {message && (
+            <div className="notice" data-kind={message.kind} role="status">
+              <p>{message.text}</p>
+              {message.issues && (
+                <ul className="issues">
+                  {message.issues.map((issue, i) => (
+                    <li key={i}>
+                      <code>{issue.path || "file"}</code> {issue.message}
+                    </li>
                   ))}
                 </ul>
-              </details>
-            )}
-          </div>
+              )}
+            </div>
+          )}
+
+          {plans.isPending && <div className="card skeleton" style={{ height: 320 }} />}
+
+          {data && !shown && (
+            <div className="coming-soon">
+              <span className="coming-soon-icon">
+                <PlanIcon size={32} />
+              </span>
+              <strong>{t.plan.emptyTitle}</strong>
+              <p className="muted">{t.plan.emptyBody}</p>
+              <button type="button" className="button" onClick={() => fileInput.current?.click()} disabled={upload.isPending}>
+                {t.plan.upload}
+              </button>
+            </div>
+          )}
+
+          {shown && day && (
+            <>
+              <div className="plan-tabs" role="tablist" aria-label={t.plan.daysTabs}>
+                {WEEKDAYS.map((w, i) => (
+                  <button
+                    key={w}
+                    type="button"
+                    role="tab"
+                    className="plan-tab"
+                    aria-selected={w === weekday}
+                    aria-label={t.weekdaysLong[i]}
+                    onClick={() => setSelected(w)}
+                  >
+                    <span className="plan-tab-letter">{t.weekdaysShort[i]}</span>
+                    <span className="plan-tab-tag">{dayTag(shown.plan.days[w], data?.active ? w === todayWeekday : false)}</span>
+                  </button>
+                ))}
+              </div>
+
+              <div className="plan-day" role="tabpanel">
+                <div className="plan-day-head">
+                  <h2>{t.weekdaysLong[dayIndex]}</h2>
+                  <span className="muted">{dayNote(day)}</span>
+                </div>
+
+                {day.meals.map((meal, i) =>
+                  isFixedMeal(meal) ? (
+                    <article key={i} className="plan-meal">
+                      <header>
+                        <h3>{meal.title}</h3>
+                        {meal.time && <span className="muted">{meal.time}</span>}
+                      </header>
+                      <ul>
+                        {meal.foods.map((food, j) => (
+                          <li key={j}>{foodLine(food)}</li>
+                        ))}
+                      </ul>
+                    </article>
+                  ) : (
+                    <article key={i} className="plan-meal" data-free>
+                      <h3>{meal.title}</h3>
+                      <span className="free-badge">{t.plan.freeBadge}</span>
+                    </article>
+                  ),
+                )}
+
+                {shown.plan.notes && shown.plan.notes.length > 0 && (
+                  <details className="plan-notes">
+                    <summary>{t.plan.notes}</summary>
+                    <ul>
+                      {shown.plan.notes.map((note, i) => (
+                        <li key={i}>{note}</li>
+                      ))}
+                    </ul>
+                  </details>
+                )}
+              </div>
+            </>
+          )}
         </>
       )}
 

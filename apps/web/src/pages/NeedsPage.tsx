@@ -139,13 +139,13 @@ export function NeedsPage() {
     if (!profile) return;
     await save.mutateAsync(profile);
     await apply.mutateAsync({ source, targets });
-    navigate("/piano");
+    navigate("/piano?vista=fabbisogno");
   }
 
   async function saveOnly() {
     if (!profile) return;
     await save.mutateAsync(profile);
-    navigate("/piano");
+    navigate("/piano?vista=fabbisogno");
   }
 
   const cut = draft.goal === "cut" || draft.goal === "bulk";
@@ -153,7 +153,7 @@ export function NeedsPage() {
   return (
     <div className="page detail-page edit-page needs-page">
       <header className="edit-header">
-        <Link href="/piano" className="text-button">
+        <Link href="/piano?vista=fabbisogno" className="text-button">
           {t.needs.cancel}
         </Link>
         <h1>{t.needs.title}</h1>

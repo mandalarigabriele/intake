@@ -7984,3 +7984,15 @@ div.connection-row {
   opacity: 0.45;
   cursor: default;
 }
+
+/* Piano: meal plan / Il tuo fabbisogno */
+.plan-switch {
+  width: 100%;
+  max-width: 300px;
+}
+
+.plan-switch .segmented-option[aria-selected="true"] {
+  background: var(--color-surface);
+  color: var(--color-text);
+  font-weight: 800;
+}
