@@ -62,10 +62,15 @@ Add a `macros` object to every non-free meal:
 
 ## Intake format (summary)
 
-`schemaVersion: 1`, `validFrom`, optional `notes[]`, and `days.monday` … `days.sunday`. Each day has optional `label`, `note`, `expectedProtein` and `meals[]`. A meal has `title`, optional `time` and `type`, optional `description`, and either `free: true` or `foods[]` (`name`, optional `quantity`, `unit`, `note`) plus optional `macros` (`kcal`, `protein`, `carbs`, `fat`, `fiber`, `sugar` + `addedSugar`, `saturatedFat`, `sodiumMg`, `caffeineMg`).
+`schemaVersion: 1`, `validFrom`, optional `notes[]`, and `days.monday` … `days.sunday`. Each day has optional `label`, `note`, `expectedProtein` and `meals[]`. A meal has `title`, optional `time` and `type`, optional `description`, and either `free: true` or `foods[]` (`name`, optional `quantity`, `unit`, `note` and `nutrients`: `kcal`, `protein`, `carbs`, `fat`, `fiber`, `sugar` + `addedSugar` of that food at its quantity, not per 100 g) plus optional `macros` for the whole meal (`kcal`, `protein`, `carbs`, `fat`, `fiber`, `sugar` + `addedSugar`, `saturatedFat`, `sodiumMg`, `caffeineMg`).
 
 ## Timeline behavior
 
 - Meals without a time use default slots: breakfast 08:00, lunch 13:00, dinner 20:00, snacks 11:00 before lunch and 16:00 after.
 - A planned meal is hidden once covered: by "Eaten as planned", or by a logged meal of the same type (e.g. logged through Claude) from 1 hour before to 3 hours after the planned time with, when the plan has macros, at least 40% of the planned kcal. Each logged meal covers at most one planned meal, the nearest in time.
 - Uncovered planned meals are "to log" once their time has passed (or on past days), "from the plan" before that, and "free" for free slots. "Skip" marks one as skipped for that day (stored locally, restorable with "Undo").
+
+
+### Nutrients per food
+
+A food may carry its own `nutrients`. When **every** food of a meal has them, "Mangiato come previsto" logs the meal food by food (`log_meal` with items), so each food keeps its amount and values on Nutrition and can be edited later in "Modifica pasto"; without them only the meal's totals are logged and the meal has no foods to edit. The meal's `macros` should be the sum of its foods' nutrients; the app keeps them in step when it creates or edits a meal. Plans generated in the app always have them; a plan loaded from a file can be completed in the app with "Dividi in alimenti con l'IA".

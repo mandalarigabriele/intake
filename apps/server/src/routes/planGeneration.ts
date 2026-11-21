@@ -36,7 +36,7 @@ export interface PlanGenerationRoutesOptions {
   store: PlanGenerationStore;
   needs: NeedsStore;
   /** Present with ANTHROPIC_API_KEY. */
-  generator?: Pick<PlanGenerator, "generate" | "replaceMeal" | "estimateMacros">;
+  generator?: Pick<PlanGenerator, "generate" | "replaceMeal" | "estimateMacros" | "splitFoodValues">;
   requireOwner: preHandlerHookHandler;
 }
 
@@ -214,6 +214,25 @@ export const planGenerationRoutes: FastifyPluginAsync<PlanGenerationRoutesOption
     try {
       const { kcal, protein, carbs, fat, fiber } = await generator.estimateMacros(body.data);
       return { macros: { kcal: Math.round(kcal), protein: Math.round(protein * 10) / 10, carbs: Math.round(carbs * 10) / 10, fat: Math.round(fat * 10) / 10, fiber: Math.round(fiber * 10) / 10 } };
+    } catch (error) {
+      if (!(error instanceof RecognitionError)) throw error;
+      request.log.warn({ reason: error.reason }, error.message);
+      return failed(reply, error);
+    }
+  });
+
+  // "Dividi in alimenti con l'IA": the proposal for a saved plan whose foods have no values yet. Nothing is saved here.
+  app.post<{ Params: { id: string } }>("/plans/:id/split-foods", async (request, reply) => {
+    if (!generator) return reply.code(503).send({ error: "recognition_not_configured" });
+    const stored = plans.get(Number(request.params.id));
+    if (!stored) return reply.code(404).send({ error: "Plan not found" });
+    const body = mealReplaceSchema.pick({ day: true, index: true }).safeParse(request.body);
+    const current = body.success ? stored.plan.days[body.data.day].meals[body.data.index] : undefined;
+    if (!body.success || !current || current.free || !current.macros) return reply.code(400).send({ error: "invalid_meal" });
+    if (current.foods.every((f) => f.nutrients)) return reply.code(409).send({ error: "already_split" });
+    try {
+      const foods = await generator.splitFoodValues({ description: current.description ?? current.title, foods: current.foods, totals: current.macros });
+      return { foods: current.foods.map((f, i) => ({ ...f, nutrients: foods[i] })) };
     } catch (error) {
       if (!(error instanceof RecognitionError)) throw error;
       request.log.warn({ reason: error.reason }, error.message);

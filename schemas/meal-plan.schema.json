@@ -102,6 +102,55 @@
                               "description": "Preparation note, e.g. \"a crudo\"",
                               "type": "string",
                               "minLength": 1
+                            },
+                            "nutrients": {
+                              "description": "Optional nutrients of this food at its quantity. When every food of a meal has them, \"Mangiato come previsto\" logs the meal food by food, so each one can be edited later",
+                              "type": "object",
+                              "properties": {
+                                "kcal": {
+                                  "type": "number",
+                                  "minimum": 0,
+                                  "description": "Energy in kcal, for this quantity of the food"
+                                },
+                                "protein": {
+                                  "type": "number",
+                                  "minimum": 0,
+                                  "description": "Protein in grams"
+                                },
+                                "carbs": {
+                                  "type": "number",
+                                  "minimum": 0,
+                                  "description": "Carbohydrates in grams"
+                                },
+                                "fat": {
+                                  "type": "number",
+                                  "minimum": 0,
+                                  "description": "Total fat in grams"
+                                },
+                                "fiber": {
+                                  "type": "number",
+                                  "minimum": 0,
+                                  "description": "Fiber in grams"
+                                },
+                                "sugar": {
+                                  "description": "Total sugar in grams. Must be given together with addedSugar.",
+                                  "type": "number",
+                                  "minimum": 0
+                                },
+                                "addedSugar": {
+                                  "description": "Added sugar in grams, part of sugar. Must be given together with sugar.",
+                                  "type": "number",
+                                  "minimum": 0
+                                }
+                              },
+                              "required": [
+                                "kcal",
+                                "protein",
+                                "carbs",
+                                "fat",
+                                "fiber"
+                              ],
+                              "additionalProperties": false
                             }
                           },
                           "required": [
@@ -308,6 +357,55 @@
                               "description": "Preparation note, e.g. \"a crudo\"",
                               "type": "string",
                               "minLength": 1
+                            },
+                            "nutrients": {
+                              "description": "Optional nutrients of this food at its quantity. When every food of a meal has them, \"Mangiato come previsto\" logs the meal food by food, so each one can be edited later",
+                              "type": "object",
+                              "properties": {
+                                "kcal": {
+                                  "type": "number",
+                                  "minimum": 0,
+                                  "description": "Energy in kcal, for this quantity of the food"
+                                },
+                                "protein": {
+                                  "type": "number",
+                                  "minimum": 0,
+                                  "description": "Protein in grams"
+                                },
+                                "carbs": {
+                                  "type": "number",
+                                  "minimum": 0,
+                                  "description": "Carbohydrates in grams"
+                                },
+                                "fat": {
+                                  "type": "number",
+                                  "minimum": 0,
+                                  "description": "Total fat in grams"
+                                },
+                                "fiber": {
+                                  "type": "number",
+                                  "minimum": 0,
+                                  "description": "Fiber in grams"
+                                },
+                                "sugar": {
+                                  "description": "Total sugar in grams. Must be given together with addedSugar.",
+                                  "type": "number",
+                                  "minimum": 0
+                                },
+                                "addedSugar": {
+                                  "description": "Added sugar in grams, part of sugar. Must be given together with sugar.",
+                                  "type": "number",
+                                  "minimum": 0
+                                }
+                              },
+                              "required": [
+                                "kcal",
+                                "protein",
+                                "carbs",
+                                "fat",
+                                "fiber"
+                              ],
+                              "additionalProperties": false
                             }
                           },
                           "required": [
@@ -514,6 +612,55 @@
                               "description": "Preparation note, e.g. \"a crudo\"",
                               "type": "string",
                               "minLength": 1
+                            },
+                            "nutrients": {
+                              "description": "Optional nutrients of this food at its quantity. When every food of a meal has them, \"Mangiato come previsto\" logs the meal food by food, so each one can be edited later",
+                              "type": "object",
+                              "properties": {
+                                "kcal": {
+                                  "type": "number",
+                                  "minimum": 0,
+                                  "description": "Energy in kcal, for this quantity of the food"
+                                },
+                                "protein": {
+                                  "type": "number",
+                                  "minimum": 0,
+                                  "description": "Protein in grams"
+                                },
+                                "carbs": {
+                                  "type": "number",
+                                  "minimum": 0,
+                                  "description": "Carbohydrates in grams"
+                                },
+                                "fat": {
+                                  "type": "number",
+                                  "minimum": 0,
+                                  "description": "Total fat in grams"
+                                },
+                                "fiber": {
+                                  "type": "number",
+                                  "minimum": 0,
+                                  "description": "Fiber in grams"
+                                },
+                                "sugar": {
+                                  "description": "Total sugar in grams. Must be given together with addedSugar.",
+                                  "type": "number",
+                                  "minimum": 0
+                                },
+                                "addedSugar": {
+                                  "description": "Added sugar in grams, part of sugar. Must be given together with sugar.",
+                                  "type": "number",
+                                  "minimum": 0
+                                }
+                              },
+                              "required": [
+                                "kcal",
+                                "protein",
+                                "carbs",
+                                "fat",
+                                "fiber"
+                              ],
+                              "additionalProperties": false
                             }
                           },
                           "required": [
@@ -720,6 +867,55 @@
                               "description": "Preparation note, e.g. \"a crudo\"",
                               "type": "string",
                               "minLength": 1
+                            },
+                            "nutrients": {
+                              "description": "Optional nutrients of this food at its quantity. When every food of a meal has them, \"Mangiato come previsto\" logs the meal food by food, so each one can be edited later",
+                              "type": "object",
+                              "properties": {
+                                "kcal": {
+                                  "type": "number",
+                                  "minimum": 0,
+                                  "description": "Energy in kcal, for this quantity of the food"
+                                },
+                                "protein": {
+                                  "type": "number",
+                                  "minimum": 0,
+                                  "description": "Protein in grams"
+                                },
+                                "carbs": {
+                                  "type": "number",
+                                  "minimum": 0,
+                                  "description": "Carbohydrates in grams"
+                                },
+                                "fat": {
+                                  "type": "number",
+                                  "minimum": 0,
+                                  "description": "Total fat in grams"
+                                },
+                                "fiber": {
+                                  "type": "number",
+                                  "minimum": 0,
+                                  "description": "Fiber in grams"
+                                },
+                                "sugar": {
+                                  "description": "Total sugar in grams. Must be given together with addedSugar.",
+                                  "type": "number",
+                                  "minimum": 0
+                                },
+                                "addedSugar": {
+                                  "description": "Added sugar in grams, part of sugar. Must be given together with sugar.",
+                                  "type": "number",
+                                  "minimum": 0
+                                }
+                              },
+                              "required": [
+                                "kcal",
+                                "protein",
+                                "carbs",
+                                "fat",
+                                "fiber"
+                              ],
+                              "additionalProperties": false
                             }
                           },
                           "required": [
@@ -926,6 +1122,55 @@
                               "description": "Preparation note, e.g. \"a crudo\"",
                               "type": "string",
                               "minLength": 1
+                            },
+                            "nutrients": {
+                              "description": "Optional nutrients of this food at its quantity. When every food of a meal has them, \"Mangiato come previsto\" logs the meal food by food, so each one can be edited later",
+                              "type": "object",
+                              "properties": {
+                                "kcal": {
+                                  "type": "number",
+                                  "minimum": 0,
+                                  "description": "Energy in kcal, for this quantity of the food"
+                                },
+                                "protein": {
+                                  "type": "number",
+                                  "minimum": 0,
+                                  "description": "Protein in grams"
+                                },
+                                "carbs": {
+                                  "type": "number",
+                                  "minimum": 0,
+                                  "description": "Carbohydrates in grams"
+                                },
+                                "fat": {
+                                  "type": "number",
+                                  "minimum": 0,
+                                  "description": "Total fat in grams"
+                                },
+                                "fiber": {
+                                  "type": "number",
+                                  "minimum": 0,
+                                  "description": "Fiber in grams"
+                                },
+                                "sugar": {
+                                  "description": "Total sugar in grams. Must be given together with addedSugar.",
+                                  "type": "number",
+                                  "minimum": 0
+                                },
+                                "addedSugar": {
+                                  "description": "Added sugar in grams, part of sugar. Must be given together with sugar.",
+                                  "type": "number",
+                                  "minimum": 0
+                                }
+                              },
+                              "required": [
+                                "kcal",
+                                "protein",
+                                "carbs",
+                                "fat",
+                                "fiber"
+                              ],
+                              "additionalProperties": false
                             }
                           },
                           "required": [
@@ -1132,6 +1377,55 @@
                               "description": "Preparation note, e.g. \"a crudo\"",
                               "type": "string",
                               "minLength": 1
+                            },
+                            "nutrients": {
+                              "description": "Optional nutrients of this food at its quantity. When every food of a meal has them, \"Mangiato come previsto\" logs the meal food by food, so each one can be edited later",
+                              "type": "object",
+                              "properties": {
+                                "kcal": {
+                                  "type": "number",
+                                  "minimum": 0,
+                                  "description": "Energy in kcal, for this quantity of the food"
+                                },
+                                "protein": {
+                                  "type": "number",
+                                  "minimum": 0,
+                                  "description": "Protein in grams"
+                                },
+                                "carbs": {
+                                  "type": "number",
+                                  "minimum": 0,
+                                  "description": "Carbohydrates in grams"
+                                },
+                                "fat": {
+                                  "type": "number",
+                                  "minimum": 0,
+                                  "description": "Total fat in grams"
+                                },
+                                "fiber": {
+                                  "type": "number",
+                                  "minimum": 0,
+                                  "description": "Fiber in grams"
+                                },
+                                "sugar": {
+                                  "description": "Total sugar in grams. Must be given together with addedSugar.",
+                                  "type": "number",
+                                  "minimum": 0
+                                },
+                                "addedSugar": {
+                                  "description": "Added sugar in grams, part of sugar. Must be given together with sugar.",
+                                  "type": "number",
+                                  "minimum": 0
+                                }
+                              },
+                              "required": [
+                                "kcal",
+                                "protein",
+                                "carbs",
+                                "fat",
+                                "fiber"
+                              ],
+                              "additionalProperties": false
                             }
                           },
                           "required": [
@@ -1338,6 +1632,55 @@
                               "description": "Preparation note, e.g. \"a crudo\"",
                               "type": "string",
                               "minLength": 1
+                            },
+                            "nutrients": {
+                              "description": "Optional nutrients of this food at its quantity. When every food of a meal has them, \"Mangiato come previsto\" logs the meal food by food, so each one can be edited later",
+                              "type": "object",
+                              "properties": {
+                                "kcal": {
+                                  "type": "number",
+                                  "minimum": 0,
+                                  "description": "Energy in kcal, for this quantity of the food"
+                                },
+                                "protein": {
+                                  "type": "number",
+                                  "minimum": 0,
+                                  "description": "Protein in grams"
+                                },
+                                "carbs": {
+                                  "type": "number",
+                                  "minimum": 0,
+                                  "description": "Carbohydrates in grams"
+                                },
+                                "fat": {
+                                  "type": "number",
+                                  "minimum": 0,
+                                  "description": "Total fat in grams"
+                                },
+                                "fiber": {
+                                  "type": "number",
+                                  "minimum": 0,
+                                  "description": "Fiber in grams"
+                                },
+                                "sugar": {
+                                  "description": "Total sugar in grams. Must be given together with addedSugar.",
+                                  "type": "number",
+                                  "minimum": 0
+                                },
+                                "addedSugar": {
+                                  "description": "Added sugar in grams, part of sugar. Must be given together with sugar.",
+                                  "type": "number",
+                                  "minimum": 0
+                                }
+                              },
+                              "required": [
+                                "kcal",
+                                "protein",
+                                "carbs",
+                                "fat",
+                                "fiber"
+                              ],
+                              "additionalProperties": false
                             }
                           },
                           "required": [

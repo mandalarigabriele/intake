@@ -55,11 +55,28 @@ export const plannedMacrosSchema = z
     path: ["saturatedFat"],
   });
 
+/** Nutrients of one food at its quantity (not per 100 g); with them a planned meal can be logged food by food. */
+export const plannedFoodNutrientsSchema = z
+  .strictObject({
+    kcal: z.number().nonnegative().describe("Energy in kcal, for this quantity of the food"),
+    protein: grams.describe("Protein in grams"),
+    carbs: grams.describe("Carbohydrates in grams"),
+    fat: grams.describe("Total fat in grams"),
+    fiber: grams.describe("Fiber in grams"),
+    sugar: grams.optional().describe("Total sugar in grams. Must be given together with addedSugar."),
+    addedSugar: grams.optional().describe("Added sugar in grams, part of sugar. Must be given together with sugar."),
+  })
+  .refine((n) => (n.sugar === undefined) === (n.addedSugar === undefined), { message: "sugar and addedSugar must be given together", path: ["addedSugar"] })
+  .refine((n) => n.sugar === undefined || n.addedSugar === undefined || n.addedSugar <= n.sugar, { message: "addedSugar cannot exceed sugar", path: ["addedSugar"] });
+
 export const plannedFoodSchema = z.strictObject({
   name: z.string().trim().min(1).describe('Food, e.g. "Yogurt greco" or a free-text line such as "1 frutto"'),
   quantity: z.number().positive().optional(),
   unit: z.string().trim().min(1).optional().describe('Unit of the quantity, e.g. "g", "ml", "piece"'),
   note: z.string().trim().min(1).optional().describe('Preparation note, e.g. "a crudo"'),
+  nutrients: plannedFoodNutrientsSchema
+    .optional()
+    .describe('Optional nutrients of this food at its quantity. When every food of a meal has them, "Mangiato come previsto" logs the meal food by food, so each one can be edited later'),
 });
 
 export const MEAL_TYPES = ["breakfast", "lunch", "dinner", "snack"] as const;
@@ -128,6 +145,7 @@ export const mealPlanSchema = z
 
 export type PlannedMacros = z.infer<typeof plannedMacrosSchema>;
 export type PlannedFood = z.infer<typeof plannedFoodSchema>;
+export type PlannedFoodNutrients = z.infer<typeof plannedFoodNutrientsSchema>;
 export type PlannedMeal = z.infer<typeof plannedMealSchema>;
 export type FixedPlannedMeal = z.infer<typeof fixedMealSchema>;
 export type MealTypeValue = (typeof MEAL_TYPES)[number];

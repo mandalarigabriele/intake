@@ -1,6 +1,7 @@
-import { isFixedMeal, mealFoodsText, mealTimes, mealTypeOf, planDay, type PlannedMacros } from "@intake/shared";
+import { isFixedMeal, mealFoodsText, mealTimes, mealTypeOf, planDay, type PlannedFood, type PlannedMacros } from "@intake/shared";
 import type { PlanStore } from "../db/planStore.js";
 import type { MealWriteFields, NutritionApi } from "../mcp/nutritionApi.js";
+import { itemFields, itemsAllOrNone } from "./mealWrites.js";
 
 export class PlanMealNotFoundError extends Error {
   constructor(message: string) {
@@ -15,6 +16,37 @@ export class PlanMealWithoutMacrosError extends Error {
     super("The planned meal has no nutrients to log");
     this.name = "PlanMealWithoutMacrosError";
   }
+}
+
+/**
+ * Items for log_meal when every planned food carries its own nutrients: each food is logged with its amount and values,
+ * so the meal keeps its foods and they can be edited later. Null when any food lacks them (the meal is logged as a total).
+ */
+export function plannedItems(foods: PlannedFood[]): Array<Record<string, unknown>> | null {
+  if (foods.length === 0 || foods.some((f) => !f.nutrients)) return null;
+  const items = foods.map((f) => {
+    const n = f.nutrients!;
+    return itemFields({
+      name: f.name,
+      quantity: f.quantity ?? null,
+      unit: f.unit ?? null,
+      nutrients: {
+        kcal: n.kcal,
+        protein: n.protein,
+        carbs: n.carbs,
+        fat: n.fat,
+        saturatedFat: null,
+        transFat: null,
+        fiber: n.fiber,
+        sugar: n.sugar ?? null,
+        addedSugar: n.addedSugar ?? null,
+        alcohol: null,
+        caffeineMg: null,
+        sodiumMg: null,
+      },
+    });
+  });
+  return itemsAllOrNone(items);
 }
 
 /** Planned nutrients → log_meal fields (optional ones only when the plan has them). */
@@ -64,10 +96,12 @@ export async function logPlannedMeal(
   const atPlannedTime = input.date < input.today;
   const description = `${meal.title}: ${mealFoodsText(meal)}`;
 
+  // With per-food values the meal keeps its foods in Nutrition; otherwise only its totals are logged
+  const items = plannedItems(meal.foods);
   const { id } = await api.logMeal({
     description,
     meal_type: mealTypeOf(meal),
-    ...macrosToFields(meal.macros),
+    ...(items ? { items } : macrosToFields(meal.macros)),
     ...(atPlannedTime ? { logged_at: `${input.date}T${time}` } : {}),
     idempotency_key: `intake-plan-${stored.id}-${input.date}-${input.index}`,
   });

@@ -1,6 +1,6 @@
-import { WEEKDAYS, foodLine, isFixedMeal, type MealPlan, type PlannedDay, type PlannedFood, type PlannedMeal, type Weekday } from "@intake/shared";
+import { WEEKDAYS, foodLine, isFixedMeal, type MealPlan, type PlannedDay, type PlannedFood, type PlannedMeal, type StoredPlan, type Weekday } from "@intake/shared";
 import { useEffect, useState, type ReactNode } from "react";
-import { useAlternativeMeal, useEstimateMacros, useFeatures } from "../api/queries";
+import { useAlternativeMeal, useConfirmSplitFoods, useEstimateMacros, useFeatures, useSplitFoodsProposal } from "../api/queries";
 import { formatKcal } from "../lib/format";
 import { planErrorText } from "../lib/planErrors";
 import { t } from "../lib/strings";
@@ -239,6 +239,31 @@ function MoveIcon() {
   );
 }
 
+/** A food row of the editor; a food that came with its values remembers them, to keep or scale them on save. */
+interface FoodRow {
+  name: string;
+  quantity: string;
+  unit: string;
+  nutrients?: PlannedFood["nutrients"];
+  origName?: string;
+  origQuantity?: number;
+  origUnit?: string;
+}
+
+/**
+ * The values of a saved food when its row is saved: kept as they are when nothing changed, scaled in proportion when
+ * only the amount changed, dropped when the name or the unit changed (they would no longer describe the food).
+ */
+function foodNutrients(row: FoodRow, quantity: number | undefined): PlannedFood["nutrients"] {
+  const n = row.nutrients;
+  if (!n || row.origQuantity === undefined || quantity === undefined) return undefined;
+  if (row.name.trim() !== row.origName || row.unit.trim() !== (row.origUnit ?? "")) return undefined;
+  if (quantity === row.origQuantity) return n;
+  const k = quantity / row.origQuantity;
+  const r1 = (v: number) => Math.round(v * 10) / 10;
+  return { kcal: r1(n.kcal * k), protein: r1(n.protein * k), carbs: r1(n.carbs * k), fat: r1(n.fat * k), fiber: r1(n.fiber * k), ...(n.sugar !== undefined && n.addedSugar !== undefined ? { sugar: r1(n.sugar * k), addedSugar: r1(Math.min(n.addedSugar, n.sugar) * k) } : {}) };
+}
+
 export interface DishEdit {
   description: string;
   foods: PlannedFood[];
@@ -253,11 +278,11 @@ const number = (value: string) => Number(value.trim().replace(",", "."));
  * "Modifica": the dish of one meal edited by hand: its text, its foods (name, amount, unit) and the main nutrients.
  * The nutrients are not recalculated from the foods; leaving them all empty keeps what the meal had.
  */
-export function EditMeal({ meal, onSave, busy, failed }: { meal: PlannedMeal; onSave: (edit: DishEdit, done: () => void) => void; busy?: boolean; failed?: boolean }) {
+export function EditMeal({ meal, onSave, busy, failed, onSplit }: { meal: PlannedMeal; onSave: (edit: DishEdit, done: () => void) => void; busy?: boolean; failed?: boolean; onSplit?: () => void }) {
   const fixed = isFixedMeal(meal) ? meal : null;
   const [open, setOpen] = useState(false);
   const [description, setDescription] = useState("");
-  const [foods, setFoods] = useState<Array<{ name: string; quantity: string; unit: string }>>([]);
+  const [foods, setFoods] = useState<Array<FoodRow>>([]);
   const [macros, setMacros] = useState<Record<(typeof MACRO_FIELDS)[number], string>>({ kcal: "", protein: "", carbs: "", fat: "", fiber: "" });
   const [problem, setProblem] = useState<string | null>(null);
   // "Ricalcola con l'IA" (paid, needs the AI part and the key) and "Cerca nel database" (free)
@@ -268,7 +293,7 @@ export function EditMeal({ meal, onSave, busy, failed }: { meal: PlannedMeal; on
 
   function start() {
     setDescription(fixed?.description ?? "");
-    setFoods(fixed ? fixed.foods.map((f) => ({ name: f.name, quantity: text(f.quantity), unit: f.unit ?? "" })) : [{ name: "", quantity: "", unit: "g" }]);
+    setFoods(fixed ? fixed.foods.map((f) => ({ name: f.name, quantity: text(f.quantity), unit: f.unit ?? "", nutrients: f.nutrients, origName: f.name, origQuantity: f.quantity, origUnit: f.unit })) : [{ name: "", quantity: "", unit: "g" }]);
     const m = fixed?.macros;
     setMacros({ kcal: text(m?.kcal), protein: text(m?.protein), carbs: text(m?.carbs), fat: text(m?.fat), fiber: text(m?.fiber) });
     setProblem(null);
@@ -287,7 +312,7 @@ export function EditMeal({ meal, onSave, busy, failed }: { meal: PlannedMeal; on
     );
   }
 
-  const setFood = (index: number, patch: Partial<{ name: string; quantity: string; unit: string }>) => setFoods(foods.map((f, i) => (i === index ? { ...f, ...patch } : f)));
+  const setFood = (index: number, patch: Partial<FoodRow>) => setFoods(foods.map((f, i) => (i === index ? { ...f, ...patch } : f)));
 
   const filledFoods = () => {
     const parsed: PlannedFood[] = [];
@@ -322,7 +347,8 @@ export function EditMeal({ meal, onSave, busy, failed }: { meal: PlannedMeal; on
     for (const f of named) {
       const quantity = f.quantity.trim() === "" ? undefined : number(f.quantity);
       if (quantity !== undefined && (!Number.isFinite(quantity) || quantity <= 0)) return setProblem(t.plan.editNeedNumber);
-      parsed.push({ name: f.name.trim(), ...(quantity !== undefined ? { quantity } : {}), ...(f.unit.trim() && quantity !== undefined ? { unit: f.unit.trim() } : {}) });
+      const nutrients = foodNutrients(f, quantity);
+      parsed.push({ name: f.name.trim(), ...(quantity !== undefined ? { quantity } : {}), ...(f.unit.trim() && quantity !== undefined ? { unit: f.unit.trim() } : {}), ...(nutrients ? { nutrients } : {}) });
     }
     const filled = MACRO_FIELDS.filter((key) => macros[key].trim() !== "");
     let edit: DishEdit = { description: description.trim(), foods: parsed };
@@ -376,6 +402,12 @@ export function EditMeal({ meal, onSave, busy, failed }: { meal: PlannedMeal; on
           <SearchIcon />
           {t.plan.dbSearch}
         </button>
+        {aiAvailable && onSplit && fixed && fixed.foods.some((f) => !f.nutrients) && (
+          <button type="button" className="button-secondary-small button-ai-soft" disabled={busy} title={t.plan.splitHint} onClick={onSplit}>
+            <SparklesIcon size={14} />
+            {t.plan.split}
+          </button>
+        )}
         {aiAvailable && (
           <button type="button" className="button-secondary-small button-ai-soft" disabled={estimate.isPending} title={t.plan.aiEstimateHint} onClick={askAi}>
             <SparklesIcon size={14} />
@@ -519,6 +551,85 @@ export function AlternativeMeal({ planId, day, index, meal, onUse, busy }: { pla
             </button>
           </div>
         </div>
+      )}
+    </div>
+  );
+}
+
+/**
+ * "Dividi in alimenti con l'IA": the proposed nutrients of each food of a saved meal, shown before anything is saved.
+ * Only "Conferma" writes them; the meal keeps its totals. docs/food-values.md
+ */
+export function SplitFoods({
+  plan,
+  day,
+  index,
+  onDone,
+  onClose,
+}: {
+  plan: StoredPlan;
+  day: Weekday;
+  index: number;
+  onDone: () => void;
+  onClose: () => void;
+}) {
+  const propose = useSplitFoodsProposal();
+  const confirm = useConfirmSplitFoods();
+  const [proposal, setProposal] = useState<PlannedFood[] | null>(null);
+  const s = t.plan;
+  const start = () => propose.mutate({ id: plan.id, day, index }, { onSuccess: (r) => setProposal(r.foods) });
+  return (
+    <div className="plan-split" role="group" aria-label={s.split}>
+      {!proposal && (
+        <>
+          <span className="muted plan-edit-hint">{s.splitNote}</span>
+          {propose.isError && (
+            <p className="error-text" role="alert">
+              {planErrorText(propose.error)}
+            </p>
+          )}
+          <div className="plan-replace-actions">
+            <button type="button" className="button-secondary-small" onClick={onClose}>
+              {s.editCancel}
+            </button>
+            <button type="button" className="button-primary-inline button-ai" disabled={propose.isPending} onClick={start}>
+              <SparklesIcon size={16} />
+              {propose.isPending ? s.splitWorking : s.splitAsk}
+            </button>
+          </div>
+        </>
+      )}
+      {proposal && (
+        <>
+          <span className="plan-edit-title">{s.splitProposal}</span>
+          <ul className="plan-split-list">
+            {proposal.map((f, i) => (
+              <li key={i}>
+                <span>{foodLine(f)}</span>
+                {f.nutrients && <span className="muted">{`${formatKcal(Math.round(f.nutrients.kcal))} kcal · P ${formatKcal(Math.round(f.nutrients.protein))} g`}</span>}
+              </li>
+            ))}
+          </ul>
+          <span className="muted plan-edit-hint">{s.splitCheck}</span>
+          {confirm.isError && (
+            <p className="error-text" role="alert">
+              {s.splitFailed}
+            </p>
+          )}
+          <div className="plan-replace-actions">
+            <button type="button" className="button-secondary-small" onClick={onClose}>
+              {s.editCancel}
+            </button>
+            <button
+              type="button"
+              className="button-primary-inline"
+              disabled={confirm.isPending}
+              onClick={() => confirm.mutate({ id: plan.id, day, index, foods: proposal }, { onSuccess: onDone })}
+            >
+              {s.splitConfirm}
+            </button>
+          </div>
+        </>
       )}
     </div>
   );

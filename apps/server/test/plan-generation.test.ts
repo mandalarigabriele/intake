@@ -26,8 +26,8 @@ function answer(kcalScale = 1): GeneratedPlan {
           slot: slot.id,
           free: false,
           description: `${slot.label} ${day}`,
-          foods: [{ name: s === 0 ? "Yogurt" : `Cibo ${d}-${s}`, quantity: 100, unit: "g" }],
-          macros: { kcal: base[0]! * kcalScale, protein: base[1]!, carbs: 40, fat: 12, fiber: 5, sugar: 8, addedSugar: 1 },
+          // One food carries the whole meal's nutrients, so the meal's macros are their sum as the app computes them
+          foods: [{ name: s === 0 ? "Yogurt" : `Cibo ${d}-${s}`, quantity: 100, unit: "g", kcal: base[0]! * kcalScale, protein: base[1]!, carbs: 40, fat: 12, fiber: 5, sugar: 8, addedSugar: 1 }],
         };
       }),
     })),
@@ -95,7 +95,8 @@ describe("PlanGenerator", () => {
 
   it("replaces one meal in its slot and time, sending the other dishes and the wish", async () => {
     const plan = (await new PlanGenerator({ apiKey: "k", model: () => "m", client: fakeClient([JSON.stringify(answer())]) as never }).generate(input)).plan;
-    const meal = { slot: "x", free: false, description: "Insalata di ceci", foods: [{ name: "Ceci", quantity: 150, unit: "g" }], macros: { kcal: 590, protein: 38, carbs: 50, fat: 15, fiber: 12, sugar: 4, addedSugar: 0 } };
+    // The model answers with the foods and the nutrients of each; the meal's macros are their sum
+    const meal = { slot: "x", free: false, description: "Insalata di ceci", foods: [{ name: "Ceci", quantity: 150, unit: "g", kcal: 590, protein: 38, carbs: 50, fat: 15, fiber: 12, sugar: 4, addedSugar: 0 }] };
     const client = fakeClient([JSON.stringify(meal)]);
     const generator = new PlanGenerator({ apiKey: "k", model: () => "m", client: client as never });
     const replaced = await generator.replaceMeal({ preferences: prefs, targets, plan, day: "monday", index: 2, note: "più leggero" });

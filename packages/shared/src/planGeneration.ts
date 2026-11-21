@@ -4,7 +4,7 @@
  * AI here: the server calls the model and runs these checks on every answer. Rules in docs/plan-generation.md.
  */
 import { z } from "zod";
-import { MEAL_PLAN_SCHEMA_VERSION, MEAL_TYPES, WEEKDAYS, mealPlanSchema, plannedFoodSchema, type MealPlan, type PlannedMacros, type PlannedMeal, type Weekday } from "./mealPlan.js";
+import { MEAL_PLAN_SCHEMA_VERSION, MEAL_TYPES, WEEKDAYS, mealPlanSchema, plannedFoodSchema, type MealPlan, type PlannedFoodNutrients, type PlannedMacros, type PlannedMeal, type Weekday } from "./mealPlan.js";
 
 export const PLAN_DIETS = ["omnivore", "vegetarian", "pescatarian", "vegan"] as const;
 export type PlanDiet = (typeof PLAN_DIETS)[number];
@@ -119,6 +119,22 @@ const macrosAnswer = z.object({
   addedSugar: z.number().nonnegative(),
 });
 
+/** One food of the AI answer: its quantity and the nutrients of that quantity (not per 100 g). */
+const foodAnswer = z.object({
+  name: z.string().trim().min(1).max(80),
+  quantity: z.number().positive(),
+  unit: z.string().trim().min(1).max(12),
+  kcal: z.number().nonnegative(),
+  protein: z.number().nonnegative(),
+  carbs: z.number().nonnegative(),
+  fat: z.number().nonnegative(),
+  fiber: z.number().nonnegative(),
+  sugar: z.number().nonnegative(),
+  addedSugar: z.number().nonnegative(),
+});
+
+export const generatedMacrosSchema = macrosAnswer;
+
 export const generatedPlanSchema = z.object({
   notes: z.array(z.string().trim().min(1).max(200)).max(6),
   days: z
@@ -131,8 +147,7 @@ export const generatedPlanSchema = z.object({
             slot: z.string(),
             free: z.boolean(),
             description: z.string().max(160),
-            foods: z.array(z.object({ name: z.string().trim().min(1).max(80), quantity: z.number().positive(), unit: z.string().trim().min(1).max(12) })).max(12),
-            macros: macrosAnswer,
+            foods: z.array(foodAnswer).max(12),
           }),
         ),
       }),
@@ -153,6 +168,25 @@ const macrosJson = {
     fiber: { type: "number", description: "grams" },
     sugar: { type: "number", description: "total sugars, grams" },
     addedSugar: { type: "number", description: "added sugars, grams, part of sugar" },
+  },
+} as const;
+
+/** One food of a generated meal: quantity and the nutrients of that quantity. */
+const foodJson = {
+  type: "object",
+  additionalProperties: false,
+  required: ["name", "quantity", "unit", "kcal", "protein", "carbs", "fat", "fiber", "sugar", "addedSugar"],
+  properties: {
+    name: { type: "string" },
+    quantity: { type: "number" },
+    unit: { type: "string", description: "g, ml, or a count unit such as pz" },
+    kcal: { type: "number", description: "for this quantity of the food, not per 100 g" },
+    protein: { type: "number", description: "grams" },
+    carbs: { type: "number", description: "grams" },
+    fat: { type: "number", description: "grams" },
+    fiber: { type: "number", description: "grams" },
+    sugar: { type: "number", description: "total sugars, grams" },
+    addedSugar: { type: "number", description: "added sugars, grams, part of sugar; 0 for whole foods" },
   },
 } as const;
 
@@ -179,22 +213,16 @@ export const GENERATED_PLAN_JSON_SCHEMA = {
             items: {
               type: "object",
               additionalProperties: false,
-              required: ["slot", "free", "description", "foods", "macros"],
+              required: ["slot", "free", "description", "foods"],
               properties: {
                 slot: { type: "string", description: "The slot id" },
                 free: { type: "boolean", description: "True only for the free meals requested" },
                 description: { type: "string", description: "Short readable name of the dish" },
                 foods: {
                   type: "array",
-                  description: "The foods with their quantity; empty for a free meal",
-                  items: {
-                    type: "object",
-                    additionalProperties: false,
-                    required: ["name", "quantity", "unit"],
-                    properties: { name: { type: "string" }, quantity: { type: "number" }, unit: { type: "string", description: "g, ml, or a count unit such as pz" } },
-                  },
+                  description: "The foods with their quantity and the nutrients of that quantity; empty for a free meal. The meal's nutrients are the sum of its foods",
+                  items: foodJson,
                 },
-                macros: { ...macrosJson, description: "Nutrients of the whole meal; all zero for a free meal" },
               },
             },
           },
@@ -208,24 +236,51 @@ const round1 = (value: number) => Math.round(value * 10) / 10;
 
 export type GeneratedMeal = GeneratedPlan["days"][number]["meals"][number];
 
+/** The nutrients of a meal: the sum of its foods' (rounded like a generated meal). */
+export function sumFoodNutrients(foods: Array<{ nutrients?: PlannedFoodNutrients }>): PlannedMacros | null {
+  if (foods.length === 0 || foods.some((f) => !f.nutrients)) return null;
+  const sum = { kcal: 0, protein: 0, carbs: 0, fat: 0, fiber: 0, sugar: 0, addedSugar: 0 };
+  let sugarKnown = true;
+  for (const { nutrients: n } of foods) {
+    sum.kcal += n!.kcal;
+    sum.protein += n!.protein;
+    sum.carbs += n!.carbs;
+    sum.fat += n!.fat;
+    sum.fiber += n!.fiber;
+    if (n!.sugar === undefined || n!.addedSugar === undefined) sugarKnown = false;
+    else {
+      sum.sugar += n!.sugar;
+      sum.addedSugar += n!.addedSugar;
+    }
+  }
+  const sugar = round1(sum.sugar);
+  return {
+    kcal: Math.round(sum.kcal),
+    protein: round1(sum.protein),
+    carbs: round1(sum.carbs),
+    fat: round1(sum.fat),
+    fiber: round1(sum.fiber),
+    ...(sugarKnown ? { sugar, addedSugar: Math.min(sugar, round1(sum.addedSugar)) } : {}),
+  };
+}
+
 /** One meal of the AI answer as a PlannedMeal; title, time and type come from its slot (or the meal it replaces). */
 export function toPlannedMeal(meal: GeneratedMeal | undefined, base: { title: string; time?: string; type?: PlanSlot["type"] }): PlannedMeal {
   if (!meal || meal.free || meal.foods.length === 0) return { ...base, free: true as const, ...(meal?.description ? { description: meal.description } : {}) };
-  const m = meal.macros;
-  const sugar = round1(m.sugar);
+  const foods = meal.foods.map((f) => {
+    const sugar = round1(f.sugar);
+    return {
+      name: f.name,
+      quantity: round1(f.quantity),
+      unit: f.unit,
+      nutrients: { kcal: Math.round(f.kcal * 10) / 10, protein: round1(f.protein), carbs: round1(f.carbs), fat: round1(f.fat), fiber: round1(f.fiber), sugar, addedSugar: Math.min(sugar, round1(f.addedSugar)) },
+    };
+  });
   return {
     ...base,
     description: meal.description || meal.foods.map((f) => f.name).join(", "),
-    foods: meal.foods.map((f) => ({ name: f.name, quantity: round1(f.quantity), unit: f.unit })),
-    macros: {
-      kcal: Math.round(m.kcal),
-      protein: round1(m.protein),
-      carbs: round1(m.carbs),
-      fat: round1(m.fat),
-      fiber: round1(m.fiber),
-      sugar,
-      addedSugar: Math.min(sugar, round1(m.addedSugar)),
-    },
+    foods,
+    macros: sumFoodNutrients(foods)!,
   };
 }
 
@@ -247,8 +302,8 @@ export function toMealPlan(answer: GeneratedPlan, slots: PlanSlot[], validFrom: 
   return mealPlanSchema.parse({ schemaVersion: MEAL_PLAN_SCHEMA_VERSION, validFrom, ...(notes.length ? { notes } : {}), days });
 }
 
-/** JSON schema of the nutrients of one meal, for "Ricalcola con l'IA" (the macros object of a generated meal). */
-export const GENERATED_MACROS_JSON_SCHEMA = GENERATED_PLAN_JSON_SCHEMA.properties.days.items.properties.meals.items.properties.macros;
+/** JSON schema of the nutrients of one meal, for "Ricalcola con l'IA". */
+export const GENERATED_MACROS_JSON_SCHEMA = macrosJson;
 
 /** JSON schema of one meal, for "Sostituisci" (the same shape as a meal of the whole plan). */
 export const GENERATED_MEAL_JSON_SCHEMA = GENERATED_PLAN_JSON_SCHEMA.properties.days.items.properties.meals.items;
@@ -340,10 +395,18 @@ export function editMeal(plan: MealPlan, edit: MealEdit): MealPlan {
     if (macros.saturatedFat !== undefined) macros.saturatedFat = Math.min(macros.saturatedFat, fat);
     if (macros.sugar !== undefined && macros.addedSugar !== undefined) macros.addedSugar = Math.min(macros.addedSugar, macros.sugar);
   }
+  // Per-food values stay only while they still describe the meal: with all foods valued, the meal's nutrients are their
+  // sum; when the person typed totals that differ (more than 3%), the foods' values would mislead and are dropped
+  let foods = edit.foods;
+  const summed = sumFoodNutrients(foods);
+  if (summed) {
+    if (edit.macros && macros && Math.abs(summed.kcal - macros.kcal) > Math.max(10, macros.kcal * 0.03)) foods = foods.map(({ nutrients: _dropped, ...food }) => food);
+    else macros = { ...(macros ?? {}), ...summed };
+  }
   const meal = {
     ...base,
     ...(edit.description ? { description: edit.description } : {}),
-    foods: edit.foods,
+    foods,
     ...(macros ? { macros } : {}),
   } as PlannedMeal;
   return replaceMeal(plan, edit.day, edit.index, meal);

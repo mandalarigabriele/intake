@@ -10,7 +10,7 @@ import {
 import { useRef, useState } from "react";
 import { useLocation, useSearch } from "wouter";
 import { PlanUploadFailed, useDay, useFeatures, usePlan, usePlans, useEditPlanMeal, useSetPlanTime, useStartPlan, useSwapPlanMeal, useUploadPlan } from "../api/queries";
-import { AlternativeMeal, EditMeal, MoveMeal, PlanDayMeals, PlanDaySummary, SameTimeSwitch } from "../components/PlanDay";
+import { AlternativeMeal, EditMeal, MoveMeal, PlanDayMeals, PlanDaySummary, SameTimeSwitch, SplitFoods } from "../components/PlanDay";
 import { CloseIcon, PlanIcon, SparklesIcon } from "../components/icons";
 import { formatKcal, formatMediumDate, formatShortDate } from "../lib/format";
 import { shareFile } from "../lib/shareFile";
@@ -59,6 +59,7 @@ export function PlanPage() {
   const swap = useSwapPlanMeal();
   const edit = useEditPlanMeal();
   const startNow = useStartPlan();
+  const [splitting, setSplitting] = useState<{ day: Weekday; index: number } | null>(null);
   const [sameTime, setSameTime] = useState(true);
 
   const todayWeekday = data ? weekdayOf(data.today) : "monday";
@@ -276,7 +277,16 @@ export function PlanPage() {
                   onTime={(index, time) => setTime.mutate({ id: shown.id, day: weekday, index, time, allDays: sameTime })}
                   extra={(meal, index) => (
                     <div className="plan-meal-actions">
-                      <EditMeal meal={meal} busy={edit.isPending} failed={edit.isError} onSave={(dish, done) => edit.mutate({ id: shown.id, day: weekday, index, ...dish }, { onSuccess: done })} />
+                      <EditMeal
+                        meal={meal}
+                        busy={edit.isPending}
+                        failed={edit.isError}
+                        onSave={(dish, done) => edit.mutate({ id: shown.id, day: weekday, index, ...dish }, { onSuccess: done })}
+                        onSplit={() => setSplitting({ day: weekday, index })}
+                      />
+                      {splitting?.day === weekday && splitting.index === index && (
+                        <SplitFoods plan={shown} day={weekday} index={index} onDone={() => setSplitting(null)} onClose={() => setSplitting(null)} />
+                      )}
                       {canGenerate && !meal.free && (
                         <AlternativeMeal
                           planId={shown.id}

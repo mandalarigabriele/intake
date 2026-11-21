@@ -852,6 +852,27 @@ export function useEditPlanMeal() {
   });
 }
 
+/** "Dividi in alimenti con l'IA": the proposed food values of a saved meal (Claude API; nothing is saved). */
+export function useSplitFoodsProposal() {
+  return useMutation({
+    mutationFn: ({ id, day, index }: { id: number; day: string; index: number }) =>
+      apiFetch<{ foods: Array<PlannedFood & { nutrients: NonNullable<PlannedFood["nutrients"]> }> }>(`/api/plans/${id}/split-foods`, { method: "POST", json: { day, index } }),
+  });
+}
+
+/** Confirms the proposed food values: the meal keeps its totals and its foods get their values. */
+export function useConfirmSplitFoods() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({ id, day, index, foods }: { id: number; day: string; index: number; foods: PlannedFood[] }) =>
+      apiFetch<StoredPlan>(`/api/plans/${id}/split-foods`, { method: "PATCH", json: { day, index, foods } }),
+    onSuccess: () => {
+      void queryClient.invalidateQueries({ queryKey: ["plans"] });
+      return invalidateDays(queryClient);
+    },
+  });
+}
+
 /** "Applica da oggi": a scheduled plan version starts on the given day (today). */
 export function useStartPlan() {
   const queryClient = useQueryClient();

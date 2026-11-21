@@ -1,5 +1,5 @@
 import { readFileSync } from "node:fs";
-import { mealPlanSchema, type Meal, type MealPlan } from "@intake/shared";
+import { isFixedMeal, mealPlanSchema, type Meal, type MealPlan } from "@intake/shared";
 import { describe, expect, it, vi } from "vitest";
 import { buildApp } from "../src/app.js";
 import { openDatabase } from "../src/db/database.js";
@@ -224,6 +224,43 @@ describe("logPlannedMeal", () => {
     expect(store.linksOn("2026-11-05")).toEqual([{ planId: plan.id, index: 2, mealId: "new-meal" }]);
   });
 
+  it("logs a planned meal food by food when every food has its nutrients, so the foods are kept in Nutrition", async () => {
+    const withFoods = mealPlanSchema.parse({
+      schemaVersion: 1,
+      validFrom: "2026-11-02",
+      days: {
+        ...examplePlan.days,
+        monday: {
+          meals: [
+            {
+              title: "Pranzo",
+              time: "13:00",
+              type: "lunch",
+              description: "Riso e tonno",
+              foods: [
+                { name: "Riso", quantity: 80, unit: "g", nutrients: { kcal: 280, protein: 6, carbs: 62, fat: 0.6, fiber: 1, sugar: 0, addedSugar: 0 } },
+                { name: "Tonno", quantity: 100, unit: "g", nutrients: { kcal: 110, protein: 25, carbs: 0, fat: 1, fiber: 0, sugar: 0, addedSugar: 0 } },
+              ],
+              macros: { kcal: 390, protein: 31, carbs: 62, fat: 1.6, fiber: 1, sugar: 0, addedSugar: 0 },
+            },
+          ],
+        },
+      },
+    });
+    const store = new PlanStore(openDatabase(":memory:"));
+    const plan = store.add(withFoods);
+    const logMeal = vi.fn<(fields: Record<string, unknown>) => Promise<{ id: string }>>(async () => ({ id: "m1" }));
+    const api = { logMeal, mealsByDate: vi.fn(async () => ({ timezone: null, meals: [] })) } as never;
+    await logPlannedMeal(api, store, { date: "2026-11-02", planId: plan.id, index: 0, today: "2026-11-06", now: "09:00:00" });
+    const sent = logMeal.mock.calls[0]![0];
+    expect(sent.items).toEqual([
+      expect.objectContaining({ name: "Riso", amount: 80, unit: "g", calories: 280, protein_g: 6 }),
+      expect.objectContaining({ name: "Tonno", amount: 100, unit: "g", calories: 110, protein_g: 25 }),
+    ]);
+    // The totals are not sent next to the items: Nutrition takes the meal from its items
+    expect(sent).not.toHaveProperty("calories");
+  });
+
   it("logs today's planned meals now (no logged_at), whether their time has passed or not", async () => {
     const { store, plan, logMeal, api } = setup({ id: "m" });
     // Lunch planned at 13:00, confirmed at 13:30; dinner planned later, confirmed early
@@ -335,6 +372,28 @@ describe("plan routes", () => {
     expect((await app.inject({ method: "PATCH", url: `/api/plans/${first.id}/start`, headers, payload: { validFrom: "2026-11-05" } })).statusCode).toBe(409);
     expect((await app.inject({ method: "PATCH", url: `/api/plans/${later.id}/start`, headers, payload: { validFrom: "domani" } })).statusCode).toBe(400);
     expect((await app.inject({ method: "PATCH", url: "/api/plans/999/start", headers, payload: { validFrom: "2026-11-05" } })).statusCode).toBe(404);
+  });
+
+  it("proposes the food values of a saved plan without saving, and saves them only on confirm", async () => {
+    const { app, plans, headers } = await signedIn();
+    const { id } = (await app.inject({ method: "POST", url: "/api/plans", headers, payload: examplePlan })).json();
+    const beforeMeal = plans.get(id)!.plan.days.monday.meals[2]!;
+    if (!isFixedMeal(beforeMeal)) throw new Error("expected a meal with foods");
+    const before = beforeMeal;
+    // Routes for the split live in the generation routes: the plan routes alone are checked here for the save path
+    const foods = before.foods.map((f) => ({ ...f, nutrients: { kcal: 100, protein: 5, carbs: 10, fat: 2, fiber: 1, sugar: 1, addedSugar: 0 } }));
+    const saved = await app.inject({ method: "PATCH", url: `/api/plans/${id}/split-foods`, headers, payload: { day: "monday", index: 2, foods } });
+    expect(saved.statusCode).toBe(200);
+    const afterMeal = plans.get(id)!.plan.days.monday.meals[2]!;
+    if (!isFixedMeal(afterMeal)) throw new Error("expected a meal with foods");
+    const after = afterMeal;
+    expect(after.foods.every((f) => f.nutrients)).toBe(true);
+    // The totals of the meal stay the reference
+    expect(after.macros).toEqual(before.macros);
+    expect(plans.versions("2026-11-05")).toHaveLength(1);
+    // A different number of foods is refused, and so is an unknown meal
+    expect((await app.inject({ method: "PATCH", url: `/api/plans/${id}/split-foods`, headers, payload: { day: "monday", index: 2, foods: foods.slice(1) } })).statusCode).toBe(400);
+    expect((await app.inject({ method: "PATCH", url: `/api/plans/999/split-foods`, headers, payload: { day: "monday", index: 2, foods } })).statusCode).toBe(404);
   });
 
   it("rejects an invalid plan with readable issues", async () => {

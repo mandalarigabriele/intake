@@ -24,7 +24,7 @@ function nutrientFields(nutrients: Nutrients): Record<string, number> {
   );
 }
 
-function itemFields(item: Pick<MealItemInput, "name" | "quantity" | "unit" | "nutrients">): Record<string, unknown> {
+export function itemFields(item: Pick<MealItemInput, "name" | "quantity" | "unit" | "nutrients">): Record<string, unknown> {
   return {
     name: item.name,
     ...(item.quantity !== null ? { amount: item.quantity } : {}),

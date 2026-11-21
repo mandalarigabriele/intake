@@ -1,4 +1,4 @@
-import { importPlan, editMeal, mealEditSchema, mealMoveSchema, mealTimeChangeSchema, setMealTime, swapMeals, type PlanUploadError, type PlansResponse } from "@intake/shared";
+import { WEEKDAYS, importPlan, mealPlanSchema, plannedFoodSchema, editMeal, mealEditSchema, mealMoveSchema, mealTimeChangeSchema, setMealTime, swapMeals, type PlanUploadError, type PlansResponse } from "@intake/shared";
 import type { FastifyPluginAsync, preHandlerHookHandler } from "fastify";
 import { z } from "zod";
 import type { PlanStore } from "../db/planStore.js";
@@ -11,6 +11,9 @@ export interface PlanRoutesOptions {
 }
 
 const startSchema = z.object({ validFrom: z.iso.date() }).strict();
+const splitConfirmSchema = z
+  .object({ day: z.enum(WEEKDAYS), index: z.number().int().min(0).max(9), foods: z.array(plannedFoodSchema).min(1).max(20) })
+  .strict();
 
 /** Meal plan versions under /api/plans. */
 export const planRoutes: FastifyPluginAsync<PlanRoutesOptions> = async (app, { plans, api, requireOwner }) => {
@@ -37,6 +40,19 @@ export const planRoutes: FastifyPluginAsync<PlanRoutesOptions> = async (app, { p
     const plan = { ...stored.plan, validFrom: body.data.validFrom };
     plans.update(stored.id, plan);
     return { ...stored, validFrom: body.data.validFrom, plan };
+  });
+
+  // Confirms the split: the foods of the meal get their values, the meal keeps its totals. Saved as the same version.
+  app.patch<{ Params: { id: string } }>("/plans/:id/split-foods", async (request, reply) => {
+    const stored = plans.get(Number(request.params.id));
+    if (!stored) return reply.code(404).send({ error: "Plan not found" });
+    const body = splitConfirmSchema.safeParse(request.body);
+    const current = body.success ? stored.plan.days[body.data.day].meals[body.data.index] : undefined;
+    if (!body.success || !current || current.free || body.data.foods.length !== current.foods.length) return reply.code(400).send({ error: "invalid_split" });
+    const meals = stored.plan.days[body.data.day].meals.map((meal, i) => (i === body.data.index && !meal.free ? { ...meal, foods: body.data.foods } : meal));
+    const plan = mealPlanSchema.parse({ ...stored.plan, days: { ...stored.plan.days, [body.data.day]: { ...stored.plan.days[body.data.day], meals } } });
+    plans.update(stored.id, plan);
+    return { ...stored, plan };
   });
 
   // Piano: a meal time changed on one day or on every day of a stored version (it stays the same version)

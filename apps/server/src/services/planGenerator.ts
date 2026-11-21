@@ -1,4 +1,5 @@
 import Anthropic, { APIError } from "@anthropic-ai/sdk";
+import { z } from "zod";
 import type { Message, MessageParam } from "@anthropic-ai/sdk/resources/messages";
 import {
   DAY_ALTERNATIVE_JSON_SCHEMA,
@@ -6,11 +7,13 @@ import {
   GENERATED_MEAL_JSON_SCHEMA,
   GENERATED_PLAN_JSON_SCHEMA,
   WEEKDAYS,
+  generatedMacrosSchema,
   generatedMealSchema,
   toPlannedMeal,
   dayAlternativeSchema,
   type DayAlternativeAnswer,
   type DayBudget,
+  type PlannedFoodNutrients,
   type MealPlan,
   type PlannedFood,
   type PlannedMeal,
@@ -68,6 +71,52 @@ const system = (language: Language) =>
     "Do not give medical advice; this is a food plan for a healthy adult.",
     `Write every dish, food and note in ${LANGUAGE_NAMES[language]}.`,
   ].join(" ");
+
+const dayAlternativeSystemFor = (language: Language) =>
+  [
+    "You estimate the nutrients of the foods of one meal for a healthy adult, from standard food composition tables.",
+    "Give each food's nutrients for the amount it is given, never per 100 g. Keep the sugars consistent: added sugar is part of sugar and whole foods have none.",
+    `Write nothing but the requested values; any text is in ${LANGUAGE_NAMES[language]}.`,
+  ].join(" ");
+
+const splitFoodsSchema = z.object({
+  foods: z.array(
+    z.object({
+      kcal: z.number().nonnegative(),
+      protein: z.number().nonnegative(),
+      carbs: z.number().nonnegative(),
+      fat: z.number().nonnegative(),
+      fiber: z.number().nonnegative(),
+      sugar: z.number().nonnegative(),
+      addedSugar: z.number().nonnegative(),
+    }),
+  ),
+});
+
+const SPLIT_FOODS_JSON_SCHEMA = {
+  type: "object",
+  additionalProperties: false,
+  required: ["foods"],
+  properties: {
+    foods: {
+      type: "array",
+      items: {
+        type: "object",
+        additionalProperties: false,
+        required: ["kcal", "protein", "carbs", "fat", "fiber", "sugar", "addedSugar"],
+        properties: {
+          kcal: { type: "number" },
+          protein: { type: "number", description: "grams" },
+          carbs: { type: "number", description: "grams" },
+          fat: { type: "number", description: "grams" },
+          fiber: { type: "number", description: "grams" },
+          sugar: { type: "number", description: "grams" },
+          addedSugar: { type: "number", description: "grams, part of sugar" },
+        },
+      },
+    },
+  },
+} as const;
 
 /** The WHO healthy diet guidance the day's alternative follows (it is a food suggestion for a healthy adult, not medical advice). */
 const dayAlternativeSystem = (language: Language) =>
@@ -196,9 +245,23 @@ export class PlanGenerator {
     const list = input.foods.map((f) => ({ name: f.name, ...(f.quantity !== undefined ? { amount: f.quantity, unit: f.unit ?? "" } : {}) }));
     const text = `Estimate the nutrients of this whole meal from its foods and amounts, using standard food composition tables (CREA, USDA). Foods without an amount are a normal portion.\n${JSON.stringify({ dish: input.description || undefined, foods: list }, null, 2)}\nAnswer with the nutrients only.`;
     const answer = await this.ask([{ role: "user", content: text }], GENERATED_MACROS_JSON_SCHEMA, "estimate");
-    const parsed = generatedMealSchema.shape.macros.safeParse(answer.json);
+    const parsed = generatedMacrosSchema.safeParse(answer.json);
     if (!parsed.success) throw new RecognitionError("unreadable", "Claude API answer did not match the nutrients schema");
     return parsed.data;
+  }
+
+  /**
+   * "Dividi in alimenti con l'IA" for a plan saved before per-food values: the nutrients of each food estimated from its
+   * amount, and scaled so the foods add up to the meal's totals already in the plan (the totals stay the reference).
+   * Nothing is saved here; the person confirms in the app.
+   */
+  async splitFoodValues(input: { description: string; foods: PlannedFood[]; totals: { kcal: number; protein: number; carbs: number; fat: number; fiber: number; sugar?: number; addedSugar?: number } }): Promise<PlannedFoodNutrients[]> {
+    const list = input.foods.map((f) => ({ name: f.name, ...(f.quantity !== undefined ? { amount: f.quantity, unit: f.unit ?? "" } : {}) }));
+    const text = `Estimate the nutrients of each food of this meal, for the amount given (not per 100 g), from standard food composition tables (CREA, USDA). Foods without an amount are a normal portion.\n${JSON.stringify({ dish: input.description || undefined, foods: list, mealTotals: input.totals }, null, 2)}\nAnswer with one entry per food, in the same order. The sum of the foods should match the meal totals; keep them close.`;
+    const answer = await this.ask([{ role: "user", content: text }], SPLIT_FOODS_JSON_SCHEMA, "split food values", undefined, dayAlternativeSystemFor(this.options.language?.() ?? "it"));
+    const parsed = splitFoodsSchema.safeParse(answer.json);
+    if (!parsed.success || parsed.data.foods.length !== input.foods.length) throw new RecognitionError("unreadable", "Claude API answer did not match the food split");
+    return parsed.data.foods;
   }
 
   /** One structured-output request, streamed; returns the parsed JSON and the raw text. */
