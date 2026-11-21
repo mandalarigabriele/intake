@@ -39,6 +39,7 @@ import type {
   GoalsUpdate,
   BackupStatus,
   PlanGenerationJob,
+  MealEdit,
   MealMove,
   MealReplace,
   MealTimeChange,
@@ -806,6 +807,27 @@ export function useSwapPlanMeal() {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: ({ id, ...move }: MealMove & { id: number }) => apiFetch<StoredPlan>(`/api/plans/${id}/swap`, { method: "PATCH", json: move }),
+    onSuccess: () => {
+      void queryClient.invalidateQueries({ queryKey: ["plans"] });
+      return invalidateDays(queryClient);
+    },
+  });
+}
+
+/** "Modifica": one dish of the draft edited by hand. */
+export function useEditDraftMeal(id: string) {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (edit: MealEdit) => apiFetch<PlanGenerationJob>(`/api/plans/generate/${id}/meal`, { method: "PATCH", json: edit }),
+    onSuccess: (job) => queryClient.setQueryData(planJobKey(id), job),
+  });
+}
+
+/** "Modifica" on a stored version; Oggi and Timeline follow. */
+export function useEditPlanMeal() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({ id, ...edit }: MealEdit & { id: number }) => apiFetch<StoredPlan>(`/api/plans/${id}/meal`, { method: "PATCH", json: edit }),
     onSuccess: () => {
       void queryClient.invalidateQueries({ queryKey: ["plans"] });
       return invalidateDays(queryClient);

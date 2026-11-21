@@ -1,8 +1,8 @@
 import { MEAL_TYPES, PLAN_DIETS, WEEKDAYS, type PlanPreferences, type PlanSlot, type PlanViolation, type PlannedMeal, type Weekday } from "@intake/shared";
 import { useEffect, useState } from "react";
 import { Link, useLocation } from "wouter";
-import { useActivatePlanDraft, usePlanGeneration, usePlanGenerationJob, useReplaceDraftMeal, useSavePlanPreferences, useSetDraftTime, useStartPlanGeneration, useSwapDraftMeal } from "../api/queries";
-import { MoveMeal, PlanDayMeals, PlanDaySummary, SameTimeSwitch } from "../components/PlanDay";
+import { useActivatePlanDraft, usePlanGeneration, usePlanGenerationJob, useEditDraftMeal, useReplaceDraftMeal, useSavePlanPreferences, useSetDraftTime, useStartPlanGeneration, useSwapDraftMeal } from "../api/queries";
+import { EditMeal, MoveMeal, PlanDayMeals, PlanDaySummary, SameTimeSwitch } from "../components/PlanDay";
 import { ApiError } from "../api/client";
 import { CloseIcon, SparklesIcon } from "../components/icons";
 import { formatKcal } from "../lib/format";
@@ -86,6 +86,7 @@ export function PlanGeneratePage() {
   const setTime = useSetDraftTime(jobId ?? "");
   const replace = useReplaceDraftMeal(jobId ?? "");
   const swap = useSwapDraftMeal(jobId ?? "");
+  const edit = useEditDraftMeal(jobId ?? "");
 
   useEffect(() => {
     if (!view.data || prefs) return;
@@ -268,6 +269,7 @@ export function PlanGeneratePage() {
               busyIndex={busyIndex}
               extra={(meal, index) => (
                 <div className="plan-meal-actions">
+                  <EditMeal meal={meal} busy={edit.isPending || replace.isPending} failed={edit.isError} onSave={(dish, done) => edit.mutate({ day: weekday, index, ...dish }, { onSuccess: done })} />
                   {!meal.free && replaceControl(meal, index)}
                   {moveControl(index)}
                 </div>

@@ -4,7 +4,7 @@
  * AI here: the server calls the model and runs these checks on every answer. Rules in docs/plan-generation.md.
  */
 import { z } from "zod";
-import { MEAL_PLAN_SCHEMA_VERSION, MEAL_TYPES, WEEKDAYS, mealPlanSchema, type MealPlan, type PlannedMeal, type Weekday } from "./mealPlan.js";
+import { MEAL_PLAN_SCHEMA_VERSION, MEAL_TYPES, WEEKDAYS, mealPlanSchema, plannedFoodSchema, type MealPlan, type PlannedMacros, type PlannedMeal, type Weekday } from "./mealPlan.js";
 
 export const PLAN_DIETS = ["omnivore", "vegetarian", "pescatarian", "vegan"] as const;
 export type PlanDiet = (typeof PLAN_DIETS)[number];
@@ -290,6 +290,47 @@ export function swapMeals(plan: MealPlan, day: Weekday, index: number, toDay: We
     ...plan,
     days: { ...plan.days, [day]: put(day, { ...sa.base, ...sb.dish } as PlannedMeal), [toDay]: put(toDay, { ...sb.base, ...sa.dish } as PlannedMeal) },
   });
+}
+
+/** Body of "Modifica" on a dish of a draft or a stored plan: the dish text, its foods and, when given, the main nutrients. */
+export const mealEditSchema = z
+  .object({
+    day: z.enum(WEEKDAYS),
+    index: z.number().int().min(0).max(9),
+    description: z.string().trim().max(200),
+    foods: z.array(plannedFoodSchema).min(1).max(20),
+    macros: z
+      .object({ kcal: z.number().min(0).max(5000), protein: z.number().min(0).max(500), carbs: z.number().min(0).max(1000), fat: z.number().min(0).max(500), fiber: z.number().min(0).max(200) })
+      .strict()
+      .optional(),
+  })
+  .strict();
+export type MealEdit = z.infer<typeof mealEditSchema>;
+
+/**
+ * The plan with one dish edited by hand. The slot keeps its title, time and type; a free meal becomes a dish. The main
+ * nutrients are rounded, and the optional ones (sugar, saturated fat…) are kept but never above what they belong to.
+ */
+export function editMeal(plan: MealPlan, edit: MealEdit): MealPlan {
+  const current = plan.days[edit.day].meals[edit.index];
+  if (!current) throw new Error("No such meal");
+  const base = { title: current.title, ...(current.time !== undefined ? { time: current.time } : {}), ...(current.type !== undefined ? { type: current.type } : {}) };
+  const previous = "macros" in current && current.macros ? current.macros : null;
+  let macros: PlannedMacros | undefined = previous ?? undefined;
+  if (edit.macros) {
+    const m = edit.macros;
+    const fat = round1(m.fat);
+    macros = { ...(previous ?? {}), kcal: Math.round(m.kcal), protein: round1(m.protein), carbs: round1(m.carbs), fat, fiber: round1(m.fiber) };
+    if (macros.saturatedFat !== undefined) macros.saturatedFat = Math.min(macros.saturatedFat, fat);
+    if (macros.sugar !== undefined && macros.addedSugar !== undefined) macros.addedSugar = Math.min(macros.addedSugar, macros.sugar);
+  }
+  const meal = {
+    ...base,
+    ...(edit.description ? { description: edit.description } : {}),
+    foods: edit.foods,
+    ...(macros ? { macros } : {}),
+  } as PlannedMeal;
+  return replaceMeal(plan, edit.day, edit.index, meal);
 }
 
 /** Body of "Sposta" on a draft or a stored plan: the meal and the day whose same meal it swaps with. */

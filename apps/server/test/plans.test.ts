@@ -307,6 +307,20 @@ describe("plan routes", () => {
     expect((await app.inject({ method: "PATCH", url: "/api/plans/999/swap", headers, payload: { day: "monday", index: 2, toDay: "friday" } })).statusCode).toBe(404);
   });
 
+  it("edits one dish of a stored version by hand", async () => {
+    const { app, plans, headers } = await signedIn();
+    const { id } = (await app.inject({ method: "POST", url: "/api/plans", headers, payload: examplePlan })).json();
+    const edit = { day: "monday", index: 2, description: "Riso e pollo", foods: [{ name: "Riso", quantity: 80, unit: "g" }, { name: "Pollo", quantity: 150, unit: "g" }], macros: { kcal: 650, protein: 45, carbs: 80, fat: 12, fiber: 4 } };
+    expect((await app.inject({ method: "PATCH", url: `/api/plans/${id}/meal`, headers, payload: edit })).statusCode).toBe(200);
+    const meal = plans.get(id)!.plan.days.monday.meals[2]!;
+    expect(meal).toMatchObject({ description: "Riso e pollo", macros: { kcal: 650 } });
+    expect(plans.versions("2026-11-05")).toHaveLength(1);
+    for (const payload of [{ ...edit, foods: [] }, { ...edit, index: 42 }, { ...edit, macros: { ...edit.macros, kcal: -1 } }, { ...edit, extra: true }]) {
+      expect((await app.inject({ method: "PATCH", url: `/api/plans/${id}/meal`, headers, payload })).statusCode).toBe(400);
+    }
+    expect((await app.inject({ method: "PATCH", url: "/api/plans/999/meal", headers, payload: edit })).statusCode).toBe(404);
+  });
+
   it("rejects an invalid plan with readable issues", async () => {
     const { app, headers } = await signedIn();
     const response = await app.inject({ method: "POST", url: "/api/plans", headers, payload: { ...examplePlan, validFrom: "domani" } });

@@ -203,6 +203,12 @@ describe("plan generation routes", () => {
     expect(swapped.draft.checks.days).toHaveLength(7);
     expect((await app.inject({ method: "PATCH", url: `/api/plans/generate/${id}/swap`, headers, payload: { day: "monday", index: 2, toDay: "monday" } })).statusCode).toBe(400);
 
+    const edited = await app.inject({ method: "PATCH", url: `/api/plans/generate/${id}/meal`, headers, payload: { day: "monday", index: 2, description: "Funghi e riso", foods: [{ name: "Funghi", quantity: 100, unit: "g" }], macros: { kcal: 500, protein: 20, carbs: 70, fat: 10, fiber: 6 } } });
+    expect(edited.statusCode).toBe(200);
+    expect(edited.json().draft.plan.days.monday.meals[2].description).toBe("Funghi e riso");
+    expect(edited.json().draft.checks.violations.some((v: { kind: string; day?: string }) => v.kind === "disliked" && v.day === "monday")).toBe(true);
+    expect((await app.inject({ method: "PATCH", url: `/api/plans/generate/${id}/meal`, headers, payload: { day: "monday", index: 2, description: "x", foods: [] } })).statusCode).toBe(400);
+
     const replaced = await app.inject({ method: "POST", url: `/api/plans/generate/${id}/replace`, headers, payload: { day: "monday", index: 2, note: "" } });
     expect(replaced.statusCode).toBe(200);
     expect(replaced.json().draft.plan.days.monday.meals[2].description).toBe("Funghi trifolati");

@@ -9,8 +9,8 @@ import {
 } from "@intake/shared";
 import { useRef, useState } from "react";
 import { useLocation, useSearch } from "wouter";
-import { PlanUploadFailed, useDay, useFeatures, usePlan, usePlans, useSetPlanTime, useSwapPlanMeal, useUploadPlan } from "../api/queries";
-import { MoveMeal, PlanDayMeals, PlanDaySummary, SameTimeSwitch } from "../components/PlanDay";
+import { PlanUploadFailed, useDay, useFeatures, usePlan, usePlans, useEditPlanMeal, useSetPlanTime, useSwapPlanMeal, useUploadPlan } from "../api/queries";
+import { EditMeal, MoveMeal, PlanDayMeals, PlanDaySummary, SameTimeSwitch } from "../components/PlanDay";
 import { CloseIcon, PlanIcon, SparklesIcon } from "../components/icons";
 import { formatKcal, formatMediumDate, formatShortDate } from "../lib/format";
 import { t } from "../lib/strings";
@@ -56,6 +56,7 @@ export function PlanPage() {
   const goals = useDay("today").data?.goals ?? null;
   const setTime = useSetPlanTime();
   const swap = useSwapPlanMeal();
+  const edit = useEditPlanMeal();
   const [sameTime, setSameTime] = useState(true);
 
   const todayWeekday = data ? weekdayOf(data.today) : "monday";
@@ -248,8 +249,9 @@ export function PlanPage() {
                   day={day}
                   timeBusy={setTime.isPending}
                   onTime={(index, time) => setTime.mutate({ id: shown.id, day: weekday, index, time, allDays: sameTime })}
-                  extra={(_meal, index) => (
+                  extra={(meal, index) => (
                     <div className="plan-meal-actions">
+                      <EditMeal meal={meal} busy={edit.isPending} failed={edit.isError} onSave={(dish, done) => edit.mutate({ id: shown.id, day: weekday, index, ...dish }, { onSuccess: done })} />
                       <MoveMeal plan={shown.plan} day={weekday} index={index} busy={swap.isPending} failed={swap.isError} onMove={(toDay) => swap.mutate({ id: shown.id, day: weekday, index, toDay })} />
                     </div>
                   )}

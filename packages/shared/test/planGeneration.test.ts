@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { WEEKDAYS } from "../src/mealPlan.js";
-import { checkPlan, defaultPlanPreferences, describeProblems, planPreferencesSchema, slotsFromPlan, swapMeals, toMealPlan, type GeneratedPlan } from "../src/planGeneration.js";
+import { checkPlan, defaultPlanPreferences, describeProblems, planPreferencesSchema, slotsFromPlan, swapMeals, editMeal, toMealPlan, type GeneratedPlan } from "../src/planGeneration.js";
 
 const prefs = defaultPlanPreferences();
 const macros = (kcal: number, protein: number) => ({ kcal, protein, carbs: 50, fat: 15, fiber: 5, sugar: 10, addedSugar: 2 });
@@ -122,5 +122,20 @@ describe("plan edits", () => {
     expect(pizza.days.friday.meals[dinner]).toMatchObject({ free: true, title: plan.days.friday.meals[dinner]!.title });
     expect(pizza.days.saturday.meals[dinner]!.free).not.toBe(true);
     expect(pizza.days.saturday.meals[dinner]).toHaveProperty("foods");
+  });
+
+  it("edits a dish by hand: new text, foods and nutrients, keeping the slot, the time and the optional nutrients within bounds", () => {
+    const plan = toMealPlan(week((day, slot) => (slot === "lunch" ? { description: "Pranzo", foods: [{ name: "Riso", quantity: 80, unit: "g" }], macros: { kcal: 600, protein: 30, carbs: 80, fat: 20, fiber: 5, sugar: 8, addedSugar: 6 } } : {})), prefs.slots, "2026-11-23");
+    const lunch = prefs.slots.findIndex((slot) => slot.id === "lunch");
+    const edited = editMeal(plan, { day: "tuesday", index: lunch, description: "Pasta e fagioli", foods: [{ name: "Pasta", quantity: 70, unit: "g" }, { name: "Fagioli", quantity: 150, unit: "g" }], macros: { kcal: 640.4, protein: 28.26, carbs: 90, fat: 12, fiber: 15 } });
+    const meal = edited.days.tuesday.meals[lunch]!;
+    expect(meal).toMatchObject({ title: plan.days.tuesday.meals[lunch]!.title, time: plan.days.tuesday.meals[lunch]!.time, description: "Pasta e fagioli" });
+    expect("macros" in meal && meal.macros).toMatchObject({ kcal: 640, protein: 28.3, fat: 12, sugar: 8, addedSugar: 6 });
+    expect(edited.days.monday.meals[lunch]).toEqual(plan.days.monday.meals[lunch]);
+    // Without nutrients they stay as they were, and an empty text leaves the dish without a description
+    const kept = editMeal(plan, { day: "tuesday", index: lunch, description: "", foods: [{ name: "Gnocchi" }] });
+    expect("macros" in kept.days.tuesday.meals[lunch]! && kept.days.tuesday.meals[lunch]!.macros?.kcal).toBe(600);
+    expect(kept.days.tuesday.meals[lunch]!.description).toBeUndefined();
+    expect(() => editMeal(plan, { day: "tuesday", index: 9, description: "", foods: [{ name: "x" }] })).toThrow();
   });
 });

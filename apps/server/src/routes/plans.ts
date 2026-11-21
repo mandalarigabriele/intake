@@ -1,4 +1,4 @@
-import { importPlan, mealMoveSchema, mealTimeChangeSchema, setMealTime, swapMeals, type PlanUploadError, type PlansResponse } from "@intake/shared";
+import { importPlan, editMeal, mealEditSchema, mealMoveSchema, mealTimeChangeSchema, setMealTime, swapMeals, type PlanUploadError, type PlansResponse } from "@intake/shared";
 import type { FastifyPluginAsync, preHandlerHookHandler } from "fastify";
 import type { PlanStore } from "../db/planStore.js";
 import type { NutritionApi } from "../mcp/nutritionApi.js";
@@ -41,6 +41,22 @@ export const planRoutes: FastifyPluginAsync<PlanRoutesOptions> = async (app, { p
     const body = mealMoveSchema.safeParse(request.body);
     if (!body.success || body.data.day === body.data.toDay || !stored.plan.days[body.data.day].meals[body.data.index]) return reply.code(400).send({ error: "invalid_move" });
     const plan = swapMeals(stored.plan, body.data.day, body.data.index, body.data.toDay);
+    plans.update(stored.id, plan);
+    return { ...stored, plan };
+  });
+
+  // Piano: one dish edited by hand (text, foods, main nutrients); the version stays the same
+  app.patch<{ Params: { id: string } }>("/plans/:id/meal", async (request, reply) => {
+    const stored = plans.get(Number(request.params.id));
+    if (!stored) return reply.code(404).send({ error: "Plan not found" });
+    const body = mealEditSchema.safeParse(request.body);
+    if (!body.success || !stored.plan.days[body.data.day].meals[body.data.index]) return reply.code(400).send({ error: "invalid_meal" });
+    let plan;
+    try {
+      plan = editMeal(stored.plan, body.data);
+    } catch {
+      return reply.code(400).send({ error: "invalid_meal" });
+    }
     plans.update(stored.id, plan);
     return { ...stored, plan };
   });

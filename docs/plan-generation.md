@@ -28,4 +28,6 @@ The model is chosen in Impostazioni › Funzioni (separate from the photo model,
 
 - `PATCH /api/plans/generate/:id/swap` and `PATCH /api/plans/:id/swap` {day, index, toDay}: "Sposta" swaps the dish of a meal with the same meal of another day (each day has fixed meals, so moving a dish means swapping; a free meal can be moved too). Each slot keeps its title, time and type. On the draft the checks run again; on a stored plan the version is updated in place. Planned meals already logged keep their link to the slot, not to the dish.
 
+- `PATCH /api/plans/generate/:id/meal` and `PATCH /api/plans/:id/meal` {day, index, description, foods, macros?}: "Modifica" edits one dish by hand: its text, its foods (name, amount, unit) and the main nutrients (kcal, protein, carbs, fat, fiber). The nutrients are not recalculated from the foods: the person updates them, or leaves them all empty to keep what the meal had; sugar, saturated fat and the other optional nutrients are kept, never above what they belong to. The slot keeps its title, time and type, and a free meal becomes a dish. On the draft the checks run again; on a stored plan the version is updated in place.
+
 The result is a health-neutral food plan for healthy adults; the app says so and does not replace a doctor or dietitian.

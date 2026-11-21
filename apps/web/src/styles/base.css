@@ -8720,6 +8720,7 @@ div.connection-row {
 }
 
 .plan-meal-actions > .plan-replace,
+.plan-meal-actions > .plan-edit,
 .plan-meal-actions > .plan-move {
   flex-basis: 100%;
 }
@@ -8774,4 +8775,62 @@ div.connection-row {
 .plan-move-row:disabled {
   opacity: 0.5;
   cursor: default;
+}
+
+/* Modifica: the editor of a dish */
+.plan-edit {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 10px 0 2px;
+}
+
+.plan-edit-title {
+  margin-top: 4px;
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+}
+
+.plan-edit-food {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 64px 52px 32px;
+  gap: 6px;
+  align-items: center;
+}
+
+.plan-edit-food input,
+.plan-edit .field input {
+  min-width: 0;
+  width: 100%;
+  min-height: 40px;
+  padding: 0 10px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-surface-input);
+  color: var(--color-text);
+  font: inherit;
+  font-size: 16px;
+}
+
+.plan-edit-values {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.plan-edit-values .field span {
+  font-size: 12px;
+}
+
+.plan-edit-hint {
+  font-size: 12px;
+}
+
+@media (min-width: 560px) {
+  .plan-edit-values {
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+  }
 }

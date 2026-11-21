@@ -2,6 +2,8 @@ import { randomUUID } from "node:crypto";
 import {
   PLAN_MODELS,
   checkPlan,
+  editMeal,
+  mealEditSchema,
   mealMoveSchema,
   mealReplaceSchema,
   mealTimeChangeSchema,
@@ -144,6 +146,22 @@ export const planGenerationRoutes: FastifyPluginAsync<PlanGenerationRoutesOption
     const body = mealTimeChangeSchema.safeParse(request.body);
     if (!body.success || !job.draft.plan.days[body.data.day].meals[body.data.index]) return reply.code(400).send({ error: "invalid_time" });
     job.draft = { ...job.draft, plan: setMealTime(job.draft.plan, body.data.day, body.data.index, body.data.time, body.data.allDays) };
+    return publicJob(job);
+  });
+
+  // "Modifica": a dish edited by hand; the checks are run again
+  app.patch<{ Params: { id: string } }>("/plans/generate/:id/meal", async (request, reply) => {
+    const job = jobs.get(request.params.id);
+    if (!job?.draft) return reply.code(404).send({ error: "not_found" });
+    const body = mealEditSchema.safeParse(request.body);
+    if (!body.success || !job.draft.plan.days[body.data.day].meals[body.data.index]) return reply.code(400).send({ error: "invalid_meal" });
+    let plan;
+    try {
+      plan = editMeal(job.draft.plan, body.data);
+    } catch {
+      return reply.code(400).send({ error: "invalid_meal" });
+    }
+    job.draft = { ...job.draft, plan, checks: checkPlan(plan, job.draft.targets, job.preferences) };
     return publicJob(job);
   });
 

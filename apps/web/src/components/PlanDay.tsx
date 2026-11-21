@@ -1,4 +1,4 @@
-import { WEEKDAYS, foodLine, isFixedMeal, type MealPlan, type PlannedDay, type PlannedMeal, type Weekday } from "@intake/shared";
+import { WEEKDAYS, foodLine, isFixedMeal, type MealPlan, type PlannedDay, type PlannedFood, type PlannedMeal, type Weekday } from "@intake/shared";
 import { useEffect, useState, type ReactNode } from "react";
 import { formatKcal } from "../lib/format";
 import { t } from "../lib/strings";
@@ -231,6 +231,131 @@ function MoveIcon() {
   return (
     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
       <path d="M7 4v14M3 14l4 4 4-4M17 20V6M13 10l4-4 4 4" />
+    </svg>
+  );
+}
+
+export interface DishEdit {
+  description: string;
+  foods: PlannedFood[];
+  macros?: { kcal: number; protein: number; carbs: number; fat: number; fiber: number };
+}
+
+const MACRO_FIELDS = ["kcal", "protein", "carbs", "fat", "fiber"] as const;
+const text = (value: number | undefined) => (value === undefined ? "" : String(value).replace(".", ","));
+const number = (value: string) => Number(value.trim().replace(",", "."));
+
+/**
+ * "Modifica": the dish of one meal edited by hand: its text, its foods (name, amount, unit) and the main nutrients.
+ * The nutrients are not recalculated from the foods; leaving them all empty keeps what the meal had.
+ */
+export function EditMeal({ meal, onSave, busy, failed }: { meal: PlannedMeal; onSave: (edit: DishEdit, done: () => void) => void; busy?: boolean; failed?: boolean }) {
+  const fixed = isFixedMeal(meal) ? meal : null;
+  const [open, setOpen] = useState(false);
+  const [description, setDescription] = useState("");
+  const [foods, setFoods] = useState<Array<{ name: string; quantity: string; unit: string }>>([]);
+  const [macros, setMacros] = useState<Record<(typeof MACRO_FIELDS)[number], string>>({ kcal: "", protein: "", carbs: "", fat: "", fiber: "" });
+  const [problem, setProblem] = useState<string | null>(null);
+
+  function start() {
+    setDescription(fixed?.description ?? "");
+    setFoods(fixed ? fixed.foods.map((f) => ({ name: f.name, quantity: text(f.quantity), unit: f.unit ?? "" })) : [{ name: "", quantity: "", unit: "g" }]);
+    const m = fixed?.macros;
+    setMacros({ kcal: text(m?.kcal), protein: text(m?.protein), carbs: text(m?.carbs), fat: text(m?.fat), fiber: text(m?.fiber) });
+    setProblem(null);
+    setOpen(true);
+  }
+
+  if (!open) {
+    return (
+      <button type="button" className="plan-meal-action" disabled={busy} aria-label={t.plan.editOf(meal.title)} onClick={start}>
+        <EditIcon />
+        {t.plan.edit}
+      </button>
+    );
+  }
+
+  const setFood = (index: number, patch: Partial<{ name: string; quantity: string; unit: string }>) => setFoods(foods.map((f, i) => (i === index ? { ...f, ...patch } : f)));
+
+  function submit(event: React.FormEvent) {
+    event.preventDefault();
+    const named = foods.filter((f) => f.name.trim());
+    if (named.length === 0) return setProblem(t.plan.editNeedFood);
+    const parsed: PlannedFood[] = [];
+    for (const f of named) {
+      const quantity = f.quantity.trim() === "" ? undefined : number(f.quantity);
+      if (quantity !== undefined && (!Number.isFinite(quantity) || quantity <= 0)) return setProblem(t.plan.editNeedNumber);
+      parsed.push({ name: f.name.trim(), ...(quantity !== undefined ? { quantity } : {}), ...(f.unit.trim() && quantity !== undefined ? { unit: f.unit.trim() } : {}) });
+    }
+    const filled = MACRO_FIELDS.filter((key) => macros[key].trim() !== "");
+    let edit: DishEdit = { description: description.trim(), foods: parsed };
+    if (filled.length > 0) {
+      const values = Object.fromEntries(MACRO_FIELDS.map((key) => [key, macros[key].trim() === "" ? 0 : number(macros[key])])) as Record<(typeof MACRO_FIELDS)[number], number>;
+      if (Object.values(values).some((v) => !Number.isFinite(v) || v < 0)) return setProblem(t.plan.editNeedNumber);
+      edit = { ...edit, macros: values };
+    }
+    setProblem(null);
+    onSave(edit, () => setOpen(false));
+  }
+
+  const macroLabels: Record<(typeof MACRO_FIELDS)[number], string> = { kcal: `${t.calories.label} (kcal)`, protein: `${t.macros.protein} (g)`, carbs: `${t.macros.carbs} (g)`, fat: `${t.macros.fat} (g)`, fiber: `${t.macros.fiber} (g)` };
+
+  return (
+    <form className="plan-edit" onSubmit={submit} aria-label={t.plan.editOf(meal.title)}>
+      <label className="field">
+        <span>{t.plan.editDish}</span>
+        <input value={description} maxLength={200} placeholder={t.plan.editDishPlaceholder} onChange={(e) => setDescription(e.target.value)} />
+      </label>
+
+      <span className="plan-edit-title">{t.plan.editFoods}</span>
+      {foods.map((food, i) => (
+        <div key={i} className="plan-edit-food">
+          <input value={food.name} maxLength={80} aria-label={`${t.plan.foodName} ${i + 1}`} placeholder={t.plan.foodName} onChange={(e) => setFood(i, { name: e.target.value })} />
+          <input value={food.quantity} inputMode="decimal" aria-label={`${t.plan.foodQty} · ${food.name || i + 1}`} placeholder="0" onChange={(e) => setFood(i, { quantity: e.target.value })} />
+          <input value={food.unit} maxLength={12} aria-label={`${t.plan.foodUnit} · ${food.name || i + 1}`} placeholder="g" onChange={(e) => setFood(i, { unit: e.target.value })} />
+          <button type="button" className="item-remove" aria-label={t.plan.foodRemove(food.name)} disabled={foods.length <= 1} onClick={() => setFoods(foods.filter((_, j) => j !== i))}>
+            ×
+          </button>
+        </div>
+      ))}
+      {foods.length < 20 && (
+        <button type="button" className="text-button text-button-strong add-food" onClick={() => setFoods([...foods, { name: "", quantity: "", unit: "g" }])}>
+          {t.plan.addFood}
+        </button>
+      )}
+
+      <span className="plan-edit-title">{t.plan.editValues}</span>
+      <div className="plan-edit-values">
+        {MACRO_FIELDS.map((key) => (
+          <label key={key} className="field">
+            <span>{macroLabels[key]}</span>
+            <input value={macros[key]} inputMode="decimal" onChange={(e) => setMacros({ ...macros, [key]: e.target.value })} />
+          </label>
+        ))}
+      </div>
+      <span className="muted plan-edit-hint">{t.plan.editValuesHint}</span>
+
+      {(problem || failed) && (
+        <p className="error-text" role="alert">
+          {problem ?? t.plan.editFailed}
+        </p>
+      )}
+      <div className="plan-replace-actions">
+        <button type="button" className="button-secondary-small" onClick={() => setOpen(false)}>
+          {t.plan.editCancel}
+        </button>
+        <button type="submit" className="button-primary-inline" disabled={busy}>
+          {t.plan.editSave}
+        </button>
+      </div>
+    </form>
+  );
+}
+
+function EditIcon() {
+  return (
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <path d="M4 20h4L19 9l-4-4L4 16v4zM13.5 6.5l4 4" />
     </svg>
   );
 }
