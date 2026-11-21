@@ -82,7 +82,7 @@ export const en: Strings = {
     home: {
       title: "Customize home",
       note: "Order and cards of Today, on every device. Cards of features that are off don't appear.",
-      cards: { nextMeal: "Next meal", calories: "Calories", macros: "Macronutrients", water: "Water", training: "Today's workout", plan: "Plan and reality", activity: "Activity and rest", insight: "From your data" },
+      cards: { nextMeal: "Next meal", scores: "Effort, recovery and sleep", calories: "Calories", macros: "Macronutrients", water: "Water", training: "Today's workout", plan: "Plan and reality", activity: "Activity and rest", insight: "From your data" },
       planNote: "only with an active plan",
       up: (name: string) => `Move ${name} up`,
       down: (name: string) => `Move ${name} down`,

@@ -503,7 +503,7 @@ function HomeLayoutCard() {
   const s = t.profile.home;
   // Cards of parts that are off are not listed; they keep their place for when the part comes back
   const available = (id: HomeCardId) =>
-    (id !== "water" || features.water) && (id !== "training" || features.training) && (id !== "activity" || features.health);
+    (id !== "water" || features.water) && (id !== "training" || features.training) && ((id !== "activity" && id !== "scores") || features.health);
   const listed = layout.order.filter(available);
 
   const move = (id: HomeCardId, step: -1 | 1) => {
