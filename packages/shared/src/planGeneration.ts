@@ -247,6 +247,9 @@ export function toMealPlan(answer: GeneratedPlan, slots: PlanSlot[], validFrom: 
   return mealPlanSchema.parse({ schemaVersion: MEAL_PLAN_SCHEMA_VERSION, validFrom, ...(notes.length ? { notes } : {}), days });
 }
 
+/** JSON schema of the nutrients of one meal, for "Ricalcola con l'IA" (the macros object of a generated meal). */
+export const GENERATED_MACROS_JSON_SCHEMA = GENERATED_PLAN_JSON_SCHEMA.properties.days.items.properties.meals.items.properties.macros;
+
 /** JSON schema of one meal, for "Sostituisci" (the same shape as a meal of the whole plan). */
 export const GENERATED_MEAL_JSON_SCHEMA = GENERATED_PLAN_JSON_SCHEMA.properties.days.items.properties.meals.items;
 export const generatedMealSchema = generatedPlanSchema.shape.days.element.shape.meals.element;
@@ -300,8 +303,18 @@ export const mealEditSchema = z
     description: z.string().trim().max(200),
     foods: z.array(plannedFoodSchema).min(1).max(20),
     macros: z
-      .object({ kcal: z.number().min(0).max(5000), protein: z.number().min(0).max(500), carbs: z.number().min(0).max(1000), fat: z.number().min(0).max(500), fiber: z.number().min(0).max(200) })
+      .object({
+        kcal: z.number().min(0).max(5000),
+        protein: z.number().min(0).max(500),
+        carbs: z.number().min(0).max(1000),
+        fat: z.number().min(0).max(500),
+        fiber: z.number().min(0).max(200),
+        // Given together, they mean the macros describe a new dish: the optional nutrients of the old one are dropped
+        sugar: z.number().min(0).max(1000).optional(),
+        addedSugar: z.number().min(0).max(1000).optional(),
+      })
       .strict()
+      .refine((m) => (m.sugar === undefined) === (m.addedSugar === undefined), { message: "sugar and addedSugar must be given together" })
       .optional(),
   })
   .strict();
@@ -309,7 +322,8 @@ export type MealEdit = z.infer<typeof mealEditSchema>;
 
 /**
  * The plan with one dish edited by hand. The slot keeps its title, time and type; a free meal becomes a dish. The main
- * nutrients are rounded, and the optional ones (sugar, saturated fat…) are kept but never above what they belong to.
+ * nutrients are rounded, and the optional ones (sugar, saturated fat…) are kept but never above what they belong to,
+ * unless the edit brings its own sugar (a whole new dish), which then replaces them.
  */
 export function editMeal(plan: MealPlan, edit: MealEdit): MealPlan {
   const current = plan.days[edit.day].meals[edit.index];
@@ -320,7 +334,9 @@ export function editMeal(plan: MealPlan, edit: MealEdit): MealPlan {
   if (edit.macros) {
     const m = edit.macros;
     const fat = round1(m.fat);
-    macros = { ...(previous ?? {}), kcal: Math.round(m.kcal), protein: round1(m.protein), carbs: round1(m.carbs), fat, fiber: round1(m.fiber) };
+    const core = { kcal: Math.round(m.kcal), protein: round1(m.protein), carbs: round1(m.carbs), fat, fiber: round1(m.fiber) };
+    // With sugar the macros are a whole new dish (an alternative): nothing of the old one is kept
+    macros = m.sugar !== undefined && m.addedSugar !== undefined ? { ...core, sugar: round1(m.sugar), addedSugar: Math.min(round1(m.addedSugar), round1(m.sugar)) } : { ...(previous ?? {}), ...core };
     if (macros.saturatedFat !== undefined) macros.saturatedFat = Math.min(macros.saturatedFat, fat);
     if (macros.sugar !== undefined && macros.addedSugar !== undefined) macros.addedSugar = Math.min(macros.addedSugar, macros.sugar);
   }
@@ -488,4 +504,29 @@ export interface PlanGenerationJob {
   /** Short reason when it failed (recognition_* codes, as for the photos). */
   error: string | null;
   draft: PlanDraft | null;
+}
+
+// ── Dish tools (docs/plan-generation.md) ──────────────────────
+
+/** A USDA food found by "Cerca nel database"; values per 100 g. */
+export interface FoodCandidateDto {
+  id: number;
+  description: string;
+  kcal: number;
+  protein: number;
+  carbs: number;
+  fat: number;
+}
+
+/** A USDA food scaled to an amount of grams. */
+export interface FoodMacrosDto {
+  id: number;
+  name: string;
+  amountG: number;
+  values: { kcal: number; protein: number; carbs: number; fat: number; fiber: number | null; sugar: number | null };
+}
+
+/** The nutrients "Ricalcola con l'IA" puts in the editor. */
+export interface EstimatedMacrosDto {
+  macros: { kcal: number; protein: number; carbs: number; fat: number; fiber: number };
 }

@@ -357,3 +357,7 @@ The print page's main button is "Salva PDF" (a compact A4 made by the app, share
 Piano (active plan and AI review): every meal has a "Sposta" pill next to "Sostituisci". It opens a list titled "Scambia con lo stesso pasto di…" with one row per other day and the dish that day would send back ("Giovedì · Pasta al ragù…"); tapping a row swaps the two dishes at once, the times stay. A free meal ("libero") can be moved the same way.
 
 Every meal also has a "Modifica" pill (before "Sposta"; "Sostituisci" stays AI-only in the review). It opens an editor under the meal: the dish text, one row per food (name, amount, unit, ×) with "+ Aggiungi alimento", and the nutrients of the meal (Calorie, Proteine, Carboidrati, Grassi, Fibre; five columns from 560 px), with the note that they are not recalculated. "Salva" applies it at once; a missing food name or a non-numeric value shows an error line.
+
+The dish editor ends with two tools: "Cerca nel database" (free: a panel with one row per food, its grams, a "Cerca" button that opens an English search with the USDA results and their values per 100 g, then "Usa i valori (N alimenti su M)") and "Ricalcola con l'IA" with the sparkles (paid). Both only fill the nutrient fields; "Salva" is still the person's. On the plan, "Alternativa" (sparkles) opens a wish field, then a green card with the proposed dish next to "Ora: 655 kcal · P 32 g" and "Annulla / Un'altra / Usa questo".
+
+When a plan is scheduled (not in effect yet), Piano shows a notice "Un piano è programmato: parte il …" with "Applica da oggi".

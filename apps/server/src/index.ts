@@ -126,6 +126,7 @@ const app = await buildApp({
         })
       : undefined,
   },
+  foods: { api },
   weekApi: api,
   weekHealth: health,
   profile: { api, hevyConfigured: Boolean(config.HEVY_API_KEY) },

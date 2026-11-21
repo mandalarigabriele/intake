@@ -136,6 +136,9 @@ describe("plan edits", () => {
     const kept = editMeal(plan, { day: "tuesday", index: lunch, description: "", foods: [{ name: "Gnocchi" }] });
     expect("macros" in kept.days.tuesday.meals[lunch]! && kept.days.tuesday.meals[lunch]!.macros?.kcal).toBe(600);
     expect(kept.days.tuesday.meals[lunch]!.description).toBeUndefined();
+    // Macros with their own sugar describe a whole new dish: the old optional nutrients are not kept
+    const alt = editMeal(plan, { day: "tuesday", index: lunch, description: "Orata", foods: [{ name: "Orata", quantity: 200, unit: "g" }], macros: { kcal: 500, protein: 40, carbs: 30, fat: 15, fiber: 4, sugar: 2, addedSugar: 5 } });
+    expect("macros" in alt.days.tuesday.meals[lunch]! && alt.days.tuesday.meals[lunch]!.macros).toMatchObject({ kcal: 500, sugar: 2, addedSugar: 2 });
     expect(() => editMeal(plan, { day: "tuesday", index: 9, description: "", foods: [{ name: "x" }] })).toThrow();
   });
 });

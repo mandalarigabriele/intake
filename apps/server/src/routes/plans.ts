@@ -1,5 +1,6 @@
 import { importPlan, editMeal, mealEditSchema, mealMoveSchema, mealTimeChangeSchema, setMealTime, swapMeals, type PlanUploadError, type PlansResponse } from "@intake/shared";
 import type { FastifyPluginAsync, preHandlerHookHandler } from "fastify";
+import { z } from "zod";
 import type { PlanStore } from "../db/planStore.js";
 import type { NutritionApi } from "../mcp/nutritionApi.js";
 
@@ -8,6 +9,8 @@ export interface PlanRoutesOptions {
   api: Pick<NutritionApi, "clock">;
   requireOwner: preHandlerHookHandler;
 }
+
+const startSchema = z.object({ validFrom: z.iso.date() }).strict();
 
 /** Meal plan versions under /api/plans. */
 export const planRoutes: FastifyPluginAsync<PlanRoutesOptions> = async (app, { plans, api, requireOwner }) => {
@@ -21,6 +24,19 @@ export const planRoutes: FastifyPluginAsync<PlanRoutesOptions> = async (app, { p
   app.get<{ Params: { id: string } }>("/plans/:id", async (request, reply) => {
     const plan = plans.get(Number(request.params.id));
     return plan ?? reply.code(404).send({ error: "Plan not found" });
+  });
+
+  // Piano: a scheduled version starts on another day, e.g. today ("Applica da oggi"); versions already in effect keep their date
+  app.patch<{ Params: { id: string } }>("/plans/:id/start", async (request, reply) => {
+    const stored = plans.get(Number(request.params.id));
+    if (!stored) return reply.code(404).send({ error: "Plan not found" });
+    const body = startSchema.safeParse(request.body);
+    if (!body.success) return reply.code(400).send({ error: "invalid_date" });
+    const today = (await api.clock()).localDate;
+    if (stored.validFrom <= today) return reply.code(409).send({ error: "plan_already_started" });
+    const plan = { ...stored.plan, validFrom: body.data.validFrom };
+    plans.update(stored.id, plan);
+    return { ...stored, validFrom: body.data.validFrom, plan };
   });
 
   // Piano: a meal time changed on one day or on every day of a stored version (it stays the same version)

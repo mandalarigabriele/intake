@@ -27,8 +27,8 @@ const FEATURE_ROUTES: Array<{ keys: FeatureKey[]; prefix: RegExp }> = [
   { keys: ["reminders"], prefix: /^\/api\/push(\/|\?|$)/ },
   { keys: ["water"], prefix: /^\/api\/water(\/|\?|$)/ },
   // Photo meals: the recognition, the kept photos and the AI opinion on the needs (logging a meal, the favorites and
-  // the needs calculation stay with Alimentazione)
-  { keys: ["photoMeals"], prefix: /^\/api\/meals\/(recognize|photos)(\/|\?|$)|^\/api\/meals\/[^/?]+\/photos?(\/|\?|$)|^\/api\/needs\/ai(\/|\?|$)|^\/api\/plans\/(generate|generation)(\/|\?|$)/ },
+  // the needs calculation stay with Alimentazione); plan generation, the nutrient estimate and the dish alternative
+  { keys: ["photoMeals"], prefix: /^\/api\/meals\/(recognize|photos)(\/|\?|$)|^\/api\/meals\/[^/?]+\/photos?(\/|\?|$)|^\/api\/needs\/ai(\/|\?|$)|^\/api\/plans\/(generate|generation|estimate)(\/|\?|$)|^\/api\/plans\/\d+\/alternative(\/|\?|$)/ },
 ];
 
 /** The part that hides an API URL right now, or null when the route is served (Alimentazione and the rest). */

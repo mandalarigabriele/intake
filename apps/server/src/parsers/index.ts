@@ -7,3 +7,4 @@ export { parseNutritionSummary, parseWeightTrends, type NutritionSummary, type W
 export { parseMealPatterns, type MealPatterns } from "./mealPatterns.js";
 export { parseExportLink, isNutritionExportUrl, type ExportLink } from "./exportLink.js";
 export { parseSavedMeals } from "./savedMeals.js";
+export { parseFoodSearch, parseFoodMacros, type FoodCandidate, type FoodMacros, type FoodValues } from "./foods.js";

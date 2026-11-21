@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from "vitest";
-import { WEEKDAYS, defaultPlanPreferences, type GeneratedPlan, type PlanDraft } from "@intake/shared";
+import { WEEKDAYS, defaultPlanPreferences, toMealPlan, type GeneratedPlan, type PlanDraft } from "@intake/shared";
 import { buildApp } from "../src/app.js";
 import { openDatabase } from "../src/db/database.js";
 import { NeedsStore } from "../src/db/needsStore.js";
@@ -106,6 +106,19 @@ describe("PlanGenerator", () => {
     expect(sent.output_config.format.schema.properties.foods).toBeDefined();
   });
 
+  it("estimates the nutrients of a meal from its foods with the macros schema", async () => {
+    const macros = { kcal: 640, protein: 28, carbs: 90, fat: 12, fiber: 15, sugar: 6, addedSugar: 0 };
+    const client = fakeClient([JSON.stringify(macros)]);
+    const generator = new PlanGenerator({ apiKey: "k", model: () => "m", client: client as never });
+    expect(await generator.estimateMacros({ description: "Pasta e fagioli", foods: [{ name: "Pasta", quantity: 70, unit: "g" }, { name: "Fagioli", quantity: 150, unit: "g" }] })).toEqual(macros);
+    const sent = (client.stream.mock.calls[0] as unknown as [Record<string, any>])[0];
+    expect(sent.messages[0].content).toContain("Fagioli");
+    expect(sent.output_config.format.schema.properties.kcal).toBeDefined();
+    expect(sent.output_config.format.schema.properties.foods).toBeUndefined();
+    const bad = new PlanGenerator({ apiKey: "k", model: () => "m", client: fakeClient([JSON.stringify({ kcal: 1 })]) as never });
+    await expect(bad.estimateMacros({ description: "", foods: [{ name: "x" }] })).rejects.toMatchObject({ reason: "unreadable" });
+  });
+
   it("turns refusals, cut and malformed answers into RecognitionError", async () => {
     const make = (texts: string[], stop?: string) => new PlanGenerator({ apiKey: "k", model: () => "m", client: fakeClient(texts, stop) as never });
     await expect(make(["{}"], "refusal").generate(input)).rejects.toMatchObject({ reason: "refused" });
@@ -118,7 +131,7 @@ describe("PlanGenerator", () => {
 const timedPlan = (job: { draft: { plan: any } }) => job.draft.plan;
 
 describe("plan generation routes", () => {
-  function setup(generator?: { generate: (...args: any[]) => Promise<PlanDraft>; replaceMeal?: (...args: any[]) => Promise<any> }) {
+  function setup(generator?: { generate: (...args: any[]) => Promise<PlanDraft>; replaceMeal?: (...args: any[]) => Promise<any>; estimateMacros?: (...args: any[]) => Promise<any> }) {
     const db = openDatabase(":memory:");
     const plans = new PlanStore(db);
     const store = new PlanGenerationStore(db);
@@ -217,6 +230,38 @@ describe("plan generation routes", () => {
     expect((await app.inject({ method: "POST", url: `/api/plans/generate/${id}/replace`, headers, payload: { day: "monday", index: 9, note: "" } })).statusCode).toBe(400);
     replaceMeal.mockRejectedValueOnce(new RecognitionError("busy", "overloaded"));
     expect((await app.inject({ method: "POST", url: `/api/plans/generate/${id}/replace`, headers, payload: { day: "monday", index: 2, note: "" } })).statusCode).toBe(503);
+  });
+
+  it("estimates nutrients and offers an alternative dish for a stored plan without saving anything", async () => {
+    const estimateMacros = vi.fn(async () => ({ kcal: 640.4, protein: 28.26, carbs: 90, fat: 12, fiber: 15, sugar: 6, addedSugar: 0 }));
+    const replaceMeal = vi.fn(async ({ plan, day, index }: any) => ({ ...plan.days[day].meals[index], description: "Orata e patate" }));
+    const deps = setup({ generate: async () => Promise.reject(new Error("unused")), replaceMeal, estimateMacros });
+    const { app, headers } = await signedIn(deps);
+    const stored = deps.plans.add(toMealPlan(answer(), prefs.slots, "2026-11-23"));
+
+    const estimate = await app.inject({ method: "POST", url: "/api/plans/estimate", headers, payload: { description: "Pasta", foods: [{ name: "Pasta", quantity: 70, unit: "g" }] } });
+    expect(estimate.json()).toEqual({ macros: { kcal: 640, protein: 28.3, carbs: 90, fat: 12, fiber: 15 } });
+    expect((await app.inject({ method: "POST", url: "/api/plans/estimate", headers, payload: { foods: [] } })).statusCode).toBe(400);
+
+    const alternative = await app.inject({ method: "POST", url: `/api/plans/${stored.id}/alternative`, headers, payload: { day: "monday", index: 2, note: "più leggero" } });
+    expect(alternative.statusCode).toBe(200);
+    expect(alternative.json().meal.description).toBe("Orata e patate");
+    expect(replaceMeal.mock.calls[0]![0]).toMatchObject({ day: "monday", index: 2, note: "più leggero", targets: { kcal: 2000, protein: 135 } });
+    // Nothing was saved
+    expect(deps.plans.get(stored.id)?.plan.days.monday.meals[2]?.description).not.toBe("Orata e patate");
+    expect((await app.inject({ method: "POST", url: `/api/plans/${stored.id}/alternative`, headers, payload: { day: "monday", index: 42, note: "" } })).statusCode).toBe(400);
+    expect((await app.inject({ method: "POST", url: "/api/plans/999/alternative", headers, payload: { day: "monday", index: 2, note: "" } })).statusCode).toBe(404);
+    estimateMacros.mockRejectedValueOnce(new RecognitionError("credit", "no credit"));
+    expect((await app.inject({ method: "POST", url: "/api/plans/estimate", headers, payload: { foods: [{ name: "x" }] } })).statusCode).toBe(402);
+
+    // Without a key they answer 503
+    const noKey = await signedIn(setup());
+    expect((await noKey.app.inject({ method: "POST", url: "/api/plans/estimate", headers: noKey.headers, payload: { foods: [{ name: "x" }] } })).statusCode).toBe(503);
+    const off = { training: true, health: true, reminders: true, water: true, photoMeals: false };
+    expect(blockedBy("/api/plans/estimate", (key) => off[key])).toBe("photoMeals");
+    expect(blockedBy("/api/plans/12/alternative", (key) => off[key])).toBe("photoMeals");
+    expect(blockedBy("/api/plans/12/meal", (key) => off[key])).toBeNull();
+    expect(blockedBy("/api/foods/search?q=rice", (key) => off[key])).toBeNull();
   });
 
   it("reports a failed generation with the recognition code, answers 503 without a key, and hides with the part", async () => {

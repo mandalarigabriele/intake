@@ -5,6 +5,7 @@ import {
   editMeal,
   mealEditSchema,
   mealMoveSchema,
+  plannedFoodSchema,
   mealReplaceSchema,
   mealTimeChangeSchema,
   replaceMeal,
@@ -20,7 +21,7 @@ import {
   type PlanGenerationView,
   type PlanTargets,
 } from "@intake/shared";
-import type { FastifyPluginAsync, preHandlerHookHandler } from "fastify";
+import type { FastifyPluginAsync, FastifyReply, preHandlerHookHandler } from "fastify";
 import { z } from "zod";
 import type { NeedsStore } from "../db/needsStore.js";
 import type { PlanGenerationStore } from "../db/planGenerationStore.js";
@@ -35,7 +36,7 @@ export interface PlanGenerationRoutesOptions {
   store: PlanGenerationStore;
   needs: NeedsStore;
   /** Present with ANTHROPIC_API_KEY. */
-  generator?: Pick<PlanGenerator, "generate" | "replaceMeal">;
+  generator?: Pick<PlanGenerator, "generate" | "replaceMeal" | "estimateMacros">;
   requireOwner: preHandlerHookHandler;
 }
 
@@ -44,6 +45,8 @@ const JOB_TTL_MS = 60 * 60_000;
 const RECENT_MEAL_DAYS = 14;
 const RECENT_MEALS_MAX = 40;
 const LB_TO_KG = 0.45359237;
+
+const estimateSchema = z.object({ description: z.string().trim().max(200).default(""), foods: z.array(plannedFoodSchema).min(1).max(20) }).strict();
 
 const activateSchema = z.object({ validFrom: z.iso.date() }).strict();
 
@@ -60,6 +63,9 @@ export const planGenerationRoutes: FastifyPluginAsync<PlanGenerationRoutesOption
   const prune = () => {
     for (const [id, job] of jobs) if (Date.now() - job.createdAt > JOB_TTL_MS) jobs.delete(id);
   };
+
+  const failed = (reply: FastifyReply, error: RecognitionError) =>
+    reply.code(error.reason === "credit" ? 402 : error.reason === "busy" ? 503 : error.reason === "refused" ? 422 : 502).send({ error: `recognition_${error.reason}` });
 
   async function targets(): Promise<PlanTargets> {
     const goals = await api.goals();
@@ -194,9 +200,44 @@ export const planGenerationRoutes: FastifyPluginAsync<PlanGenerationRoutesOption
     } catch (error) {
       if (!(error instanceof RecognitionError)) throw error;
       request.log.warn({ reason: error.reason }, error.message);
-      return reply.code(error.reason === "credit" ? 402 : error.reason === "busy" ? 503 : error.reason === "refused" ? 422 : 502).send({ error: `recognition_${error.reason}` });
+      return failed(reply, error);
     } finally {
       job.replacing = false;
+    }
+  });
+
+  // "Ricalcola con l'IA": the nutrients of a meal estimated from its foods; nothing is saved, the editor fills its fields
+  app.post("/plans/estimate", async (request, reply) => {
+    if (!generator) return reply.code(503).send({ error: "recognition_not_configured" });
+    const body = estimateSchema.safeParse(request.body);
+    if (!body.success) return reply.code(400).send({ error: "invalid_meal" });
+    try {
+      const { kcal, protein, carbs, fat, fiber } = await generator.estimateMacros(body.data);
+      return { macros: { kcal: Math.round(kcal), protein: Math.round(protein * 10) / 10, carbs: Math.round(carbs * 10) / 10, fat: Math.round(fat * 10) / 10, fiber: Math.round(fiber * 10) / 10 } };
+    } catch (error) {
+      if (!(error instanceof RecognitionError)) throw error;
+      request.log.warn({ reason: error.reason }, error.message);
+      return failed(reply, error);
+    }
+  });
+
+  // "Alternativa": another dish for one meal of a stored plan, in its slot and within the person's constraints. Nothing is
+  // saved: the app shows it and the person chooses (the edit route then saves it)
+  app.post<{ Params: { id: string } }>("/plans/:id/alternative", async (request, reply) => {
+    if (!generator) return reply.code(503).send({ error: "recognition_not_configured" });
+    const stored = plans.get(Number(request.params.id));
+    if (!stored) return reply.code(404).send({ error: "Plan not found" });
+    const body = mealReplaceSchema.safeParse(request.body);
+    const current = body.success ? stored.plan.days[body.data.day].meals[body.data.index] : undefined;
+    if (!body.success || !current || current.free) return reply.code(400).send({ error: "invalid_meal" });
+    try {
+      const preferences = store.get().preferences ?? defaultPlanPreferences(slotsFromPlan(stored.plan) ?? undefined);
+      const meal = await generator.replaceMeal({ preferences, targets: await targets(), plan: stored.plan, day: body.data.day, index: body.data.index, note: body.data.note });
+      return { meal };
+    } catch (error) {
+      if (!(error instanceof RecognitionError)) throw error;
+      request.log.warn({ reason: error.reason }, error.message);
+      return failed(reply, error);
     }
   });
 

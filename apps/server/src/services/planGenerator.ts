@@ -1,12 +1,14 @@
 import Anthropic, { APIError } from "@anthropic-ai/sdk";
 import type { Message, MessageParam } from "@anthropic-ai/sdk/resources/messages";
 import {
+  GENERATED_MACROS_JSON_SCHEMA,
   GENERATED_MEAL_JSON_SCHEMA,
   GENERATED_PLAN_JSON_SCHEMA,
   WEEKDAYS,
   generatedMealSchema,
   toPlannedMeal,
   type MealPlan,
+  type PlannedFood,
   type PlannedMeal,
   type Weekday,
   checkPlan,
@@ -136,6 +138,19 @@ export class PlanGenerator {
     const parsed = generatedMealSchema.safeParse(answer.json);
     if (!parsed.success) throw new RecognitionError("unreadable", "Claude API answer did not match the meal schema");
     return toPlannedMeal({ ...parsed.data, free: false }, { title: current.title, time: current.time, type: current.type });
+  }
+
+  /**
+   * "Ricalcola con l'IA": the nutrients of a meal estimated from its foods and amounts (standard composition tables).
+   * One small request; the answer is never saved by itself, the person confirms it in the editor.
+   */
+  async estimateMacros(input: { description: string; foods: PlannedFood[] }): Promise<{ kcal: number; protein: number; carbs: number; fat: number; fiber: number; sugar: number; addedSugar: number }> {
+    const list = input.foods.map((f) => ({ name: f.name, ...(f.quantity !== undefined ? { amount: f.quantity, unit: f.unit ?? "" } : {}) }));
+    const text = `Estimate the nutrients of this whole meal from its foods and amounts, using standard food composition tables (CREA, USDA). Foods without an amount are a normal portion.\n${JSON.stringify({ dish: input.description || undefined, foods: list }, null, 2)}\nAnswer with the nutrients only.`;
+    const answer = await this.ask([{ role: "user", content: text }], GENERATED_MACROS_JSON_SCHEMA, "estimate");
+    const parsed = generatedMealSchema.shape.macros.safeParse(answer.json);
+    if (!parsed.success) throw new RecognitionError("unreadable", "Claude API answer did not match the nutrients schema");
+    return parsed.data;
   }
 
   /** One structured-output request, streamed; returns the parsed JSON and the raw text. */

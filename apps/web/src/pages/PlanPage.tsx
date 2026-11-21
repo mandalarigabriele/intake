@@ -1,16 +1,16 @@
 import {
   WEEKDAYS,
   dayTotals,
-  planAverages,
-  weekdayOf,
+  isFixedMeal,
+  planAverages,  weekdayOf,
   type PlanUploadError,
   type PlannedDay,
   type Weekday,
 } from "@intake/shared";
 import { useRef, useState } from "react";
 import { useLocation, useSearch } from "wouter";
-import { PlanUploadFailed, useDay, useFeatures, usePlan, usePlans, useEditPlanMeal, useSetPlanTime, useSwapPlanMeal, useUploadPlan } from "../api/queries";
-import { EditMeal, MoveMeal, PlanDayMeals, PlanDaySummary, SameTimeSwitch } from "../components/PlanDay";
+import { PlanUploadFailed, useDay, useFeatures, usePlan, usePlans, useEditPlanMeal, useSetPlanTime, useStartPlan, useSwapPlanMeal, useUploadPlan } from "../api/queries";
+import { AlternativeMeal, EditMeal, MoveMeal, PlanDayMeals, PlanDaySummary, SameTimeSwitch } from "../components/PlanDay";
 import { CloseIcon, PlanIcon, SparklesIcon } from "../components/icons";
 import { formatKcal, formatMediumDate, formatShortDate } from "../lib/format";
 import { t } from "../lib/strings";
@@ -57,6 +57,7 @@ export function PlanPage() {
   const setTime = useSetPlanTime();
   const swap = useSwapPlanMeal();
   const edit = useEditPlanMeal();
+  const startNow = useStartPlan();
   const [sameTime, setSameTime] = useState(true);
 
   const todayWeekday = data ? weekdayOf(data.today) : "monday";
@@ -200,6 +201,16 @@ export function PlanPage() {
 
           {plans.isPending && <div className="card skeleton" style={{ height: 320 }} />}
 
+          {data && scheduled && (
+            <div className="notice plan-scheduled" role="status">
+              <p>{t.plan.scheduledBanner(formatMediumDate(scheduled.validFrom))}</p>
+              <button type="button" className="button-primary-inline" disabled={startNow.isPending} onClick={() => startNow.mutate({ id: scheduled.id, validFrom: data.today })}>
+                {t.plan.startNow}
+              </button>
+              {startNow.isError && <p className="error-text">{t.plan.startFailed}</p>}
+            </div>
+          )}
+
           {data && !shown && (
             <div className="coming-soon">
               <span className="coming-soon-icon">
@@ -252,6 +263,21 @@ export function PlanPage() {
                   extra={(meal, index) => (
                     <div className="plan-meal-actions">
                       <EditMeal meal={meal} busy={edit.isPending} failed={edit.isError} onSave={(dish, done) => edit.mutate({ id: shown.id, day: weekday, index, ...dish }, { onSuccess: done })} />
+                      {canGenerate && !meal.free && (
+                        <AlternativeMeal
+                          planId={shown.id}
+                          day={weekday}
+                          index={index}
+                          meal={meal}
+                          busy={edit.isPending}
+                          onUse={(dish) => {
+                            const fixed = isFixedMeal(dish) ? dish : null;
+                            if (!fixed) return;
+                            const m = fixed.macros;
+                            edit.mutate({ id: shown.id, day: weekday, index, description: fixed.description ?? "", foods: fixed.foods, ...(m ? { macros: { kcal: m.kcal, protein: m.protein, carbs: m.carbs, fat: m.fat, fiber: m.fiber, ...(m.sugar !== undefined && m.addedSugar !== undefined ? { sugar: m.sugar, addedSugar: m.addedSugar } : {}) } } : {}) });
+                          }}
+                        />
+                      )}
                       <MoveMeal plan={shown.plan} day={weekday} index={index} busy={swap.isPending} failed={swap.isError} onMove={(toDay) => swap.mutate({ id: shown.id, day: weekday, index, toDay })} />
                     </div>
                   )}

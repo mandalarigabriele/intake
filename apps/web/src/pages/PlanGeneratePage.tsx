@@ -6,17 +6,12 @@ import { EditMeal, MoveMeal, PlanDayMeals, PlanDaySummary, SameTimeSwitch } from
 import { ApiError } from "../api/client";
 import { CloseIcon, SparklesIcon } from "../components/icons";
 import { formatKcal } from "../lib/format";
+import { planErrorText } from "../lib/planErrors";
 import { t } from "../lib/strings";
 
 const MAX_SLOTS = 7;
 const splitTerms = (text: string) => text.split(",").map((term) => term.trim()).filter(Boolean);
 const dayName = (weekday: (typeof WEEKDAYS)[number]) => t.weekdaysLong[WEEKDAYS.indexOf(weekday)]!;
-
-/** The message of a failed generation or replacement, with the wording of plans (not of photos). */
-function planErrorText(error: unknown): string {
-  const code = error instanceof ApiError ? error.code : null;
-  return (code && t.planGen.errors[code]) || t.planGen.errors.recognition_failed!;
-}
 
 function violationText(v: PlanViolation): string {
   const s = t.planGen;

@@ -321,6 +321,22 @@ describe("plan routes", () => {
     expect((await app.inject({ method: "PATCH", url: "/api/plans/999/meal", headers, payload: edit })).statusCode).toBe(404);
   });
 
+  it("starts a scheduled version today, and refuses one that already started", async () => {
+    const { app, plans, headers } = await signedIn();
+    const first = (await app.inject({ method: "POST", url: "/api/plans", headers, payload: { ...examplePlan, validFrom: "2026-11-01" } })).json();
+    const later = (await app.inject({ method: "POST", url: "/api/plans", headers, payload: { ...examplePlan, validFrom: "2099-01-01" } })).json();
+    expect(plans.activeOn("2026-11-05")?.id).toBe(first.id);
+    const started = await app.inject({ method: "PATCH", url: `/api/plans/${later.id}/start`, headers, payload: { validFrom: "2026-11-05" } });
+    expect(started.statusCode).toBe(200);
+    expect(plans.activeOn("2026-11-05")?.id).toBe(later.id);
+    expect(plans.get(later.id)?.plan.validFrom).toBe("2026-11-05");
+    expect(plans.get(first.id)?.validFrom).toBe("2026-11-01");
+    expect((await app.inject({ method: "PATCH", url: `/api/plans/${later.id}/start`, headers, payload: { validFrom: "2026-11-06" } })).statusCode).toBe(409);
+    expect((await app.inject({ method: "PATCH", url: `/api/plans/${first.id}/start`, headers, payload: { validFrom: "2026-11-05" } })).statusCode).toBe(409);
+    expect((await app.inject({ method: "PATCH", url: `/api/plans/${later.id}/start`, headers, payload: { validFrom: "domani" } })).statusCode).toBe(400);
+    expect((await app.inject({ method: "PATCH", url: "/api/plans/999/start", headers, payload: { validFrom: "2026-11-05" } })).statusCode).toBe(404);
+  });
+
   it("rejects an invalid plan with readable issues", async () => {
     const { app, headers } = await signedIn();
     const response = await app.inject({ method: "POST", url: "/api/plans", headers, payload: { ...examplePlan, validFrom: "domani" } });

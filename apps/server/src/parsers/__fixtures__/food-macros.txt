@@ -1,0 +1,8 @@
+Pasta, whole-wheat, cooked (Includes foods for USDA's Food Distribution Program)
+USDA FoodData Central 168910 · SR Legacy
+Per 100 g: calories 149 kcal · protein 5.99 g · carbs 30.07 g · fat 1.71 g · saturated fat 0.243 g · trans fat 0 g · fiber 3.9 g · sugar 0.75 g · alcohol 0 g · caffeine 0 mg
+For 150 g: calories 224 kcal · protein 8.99 g · carbs 45.11 g · fat 2.57 g · saturated fat 0.36 g · trans fat 0 g · fiber 5.85 g · sugar 1.13 g · alcohol 0 g · caffeine 0 mg
+Not in this record (not zero): added sugar, sodium.
+Portions: 100 g · 1 cup elbows (117 g) · 1 cup farfalle (107 g) · 1 cup lasagne (116 g) · 1 cup penne (97 g) · 1 cup rotini (107 g) · 1 cup shells (105 g) · 1 cup spaghetti not packed (117 g) · 1 cup spaghetti packed (151 g)
+food_ref: {"source":"usda","id":"168910","amount_g":150} · sent with the values above, the meal tools record values that match this record as USDA.
+Source: USDA FoodData Central (fdc.nal.usda.gov), U.S. government data in the public domain.

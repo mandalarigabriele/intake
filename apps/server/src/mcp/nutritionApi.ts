@@ -18,6 +18,7 @@ import {
   type ParsedMeals,
 } from "../parsers/index.js";
 import type { ToolResult } from "./connection.js";
+import { parseFoodMacros, parseFoodSearch, type FoodCandidate, type FoodMacros } from "../parsers/foods.js";
 
 /** Fields accepted by log_meal / update_meal (snake_case as the tool expects). */
 export interface MealWriteFields {
@@ -225,6 +226,16 @@ export class NutritionApi {
    */
   async exportAllData(): Promise<ExportLink> {
     return this.report("export_all_data", parseExportLink((await this.request("export_all_data", {})).text));
+  }
+
+  /** USDA FoodData Central generic foods by English name (up to 10); free, no Claude request. */
+  searchFoods(query: string): Promise<FoodCandidate[]> {
+    return this.callText("search_foods", { query }, parseFoodSearch);
+  }
+
+  /** One USDA food scaled to `amountG` grams. */
+  foodMacros(fdcId: number, amountG: number): Promise<FoodMacros> {
+    return this.callText("get_food_macros", { fdc_id: fdcId, amount_g: amountG }, (text) => parseFoodMacros(text, amountG));
   }
 
   /** Logs water now. The idempotency key makes a retried request safe. */

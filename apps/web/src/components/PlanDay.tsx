@@ -1,7 +1,11 @@
 import { WEEKDAYS, foodLine, isFixedMeal, type MealPlan, type PlannedDay, type PlannedFood, type PlannedMeal, type Weekday } from "@intake/shared";
 import { useEffect, useState, type ReactNode } from "react";
+import { useAlternativeMeal, useEstimateMacros, useFeatures } from "../api/queries";
 import { formatKcal } from "../lib/format";
+import { planErrorText } from "../lib/planErrors";
 import { t } from "../lib/strings";
+import { FoodPicker } from "./FoodPicker";
+import { SparklesIcon } from "./icons";
 
 export interface PlanGoals {
   kcal: number | null;
@@ -256,6 +260,11 @@ export function EditMeal({ meal, onSave, busy, failed }: { meal: PlannedMeal; on
   const [foods, setFoods] = useState<Array<{ name: string; quantity: string; unit: string }>>([]);
   const [macros, setMacros] = useState<Record<(typeof MACRO_FIELDS)[number], string>>({ kcal: "", protein: "", carbs: "", fat: "", fiber: "" });
   const [problem, setProblem] = useState<string | null>(null);
+  // "Ricalcola con l'IA" (paid, needs the AI part and the key) and "Cerca nel database" (free)
+  const aiAvailable = useFeatures().data?.recognition === true;
+  const estimate = useEstimateMacros();
+  const [picking, setPicking] = useState(false);
+  const [note, setNote] = useState<string | null>(null);
 
   function start() {
     setDescription(fixed?.description ?? "");
@@ -263,6 +272,9 @@ export function EditMeal({ meal, onSave, busy, failed }: { meal: PlannedMeal; on
     const m = fixed?.macros;
     setMacros({ kcal: text(m?.kcal), protein: text(m?.protein), carbs: text(m?.carbs), fat: text(m?.fat), fiber: text(m?.fiber) });
     setProblem(null);
+    setPicking(false);
+    setNote(null);
+    estimate.reset();
     setOpen(true);
   }
 
@@ -276,6 +288,31 @@ export function EditMeal({ meal, onSave, busy, failed }: { meal: PlannedMeal; on
   }
 
   const setFood = (index: number, patch: Partial<{ name: string; quantity: string; unit: string }>) => setFoods(foods.map((f, i) => (i === index ? { ...f, ...patch } : f)));
+
+  const filledFoods = () => {
+    const parsed: PlannedFood[] = [];
+    for (const f of foods.filter((row) => row.name.trim())) {
+      const quantity = f.quantity.trim() === "" ? undefined : number(f.quantity);
+      if (quantity !== undefined && (!Number.isFinite(quantity) || quantity <= 0)) return null;
+      parsed.push({ name: f.name.trim(), ...(quantity !== undefined ? { quantity } : {}), ...(f.unit.trim() && quantity !== undefined ? { unit: f.unit.trim() } : {}) });
+    }
+    return parsed.length > 0 ? parsed : null;
+  };
+
+  function askAi() {
+    const parsed = filledFoods();
+    if (!parsed) return setProblem(t.plan.editNeedFood);
+    setProblem(null);
+    estimate.mutate(
+      { description: description.trim(), foods: parsed },
+      {
+        onSuccess: ({ macros: m }) => {
+          setMacros({ kcal: text(m.kcal), protein: text(m.protein), carbs: text(m.carbs), fat: text(m.fat), fiber: text(m.fiber) });
+          setNote(t.plan.aiEstimated);
+        },
+      },
+    );
+  }
 
   function submit(event: React.FormEvent) {
     event.preventDefault();
@@ -334,6 +371,38 @@ export function EditMeal({ meal, onSave, busy, failed }: { meal: PlannedMeal; on
         ))}
       </div>
       <span className="muted plan-edit-hint">{t.plan.editValuesHint}</span>
+      <div className="plan-edit-tools">
+        <button type="button" className="button-secondary-small" aria-expanded={picking} onClick={() => setPicking(!picking)}>
+          <SearchIcon />
+          {t.plan.dbSearch}
+        </button>
+        {aiAvailable && (
+          <button type="button" className="button-secondary-small button-ai-soft" disabled={estimate.isPending} title={t.plan.aiEstimateHint} onClick={askAi}>
+            <SparklesIcon size={14} />
+            {estimate.isPending ? t.plan.aiEstimating : t.plan.aiEstimate}
+          </button>
+        )}
+      </div>
+      {estimate.isError && (
+        <p className="error-text" role="alert">
+          {planErrorText(estimate.error)}
+        </p>
+      )}
+      {note && (
+        <p className="muted plan-edit-hint" role="status">
+          {note}
+        </p>
+      )}
+      {picking && (
+        <FoodPicker
+          foods={foods}
+          onApply={(values, used, total) => {
+            setMacros({ kcal: text(Math.round(values.kcal)), protein: text(Math.round(values.protein * 10) / 10), carbs: text(Math.round(values.carbs * 10) / 10), fat: text(Math.round(values.fat * 10) / 10), fiber: text(Math.round(values.fiber * 10) / 10) });
+            setNote(t.plan.dbApplied(used, total));
+            setPicking(false);
+          }}
+        />
+      )}
 
       {(problem || failed) && (
         <p className="error-text" role="alert">
@@ -357,5 +426,100 @@ function EditIcon() {
     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
       <path d="M4 20h4L19 9l-4-4L4 16v4zM13.5 6.5l4 4" />
     </svg>
+  );
+}
+
+function SearchIcon() {
+  return (
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <circle cx="11" cy="11" r="6.5" />
+      <path d="M16 16l4 4" />
+    </svg>
+  );
+}
+
+/**
+ * "Alternativa": another dish for a meal of the stored plan, in its slot and within the constraints (Claude API, paid,
+ * marked with the sparkles). It is shown next to the current dish and only replaces it when "Usa questo" is tapped.
+ */
+export function AlternativeMeal({ planId, day, index, meal, onUse, busy }: { planId: number; day: Weekday; index: number; meal: PlannedMeal; onUse: (dish: PlannedMeal) => void; busy?: boolean }) {
+  const [open, setOpen] = useState(false);
+  const [wish, setWish] = useState("");
+  const generate = useAlternativeMeal();
+  const current = isFixedMeal(meal) ? meal.macros : undefined;
+
+  if (!open) {
+    return (
+      <button type="button" className="plan-meal-action" disabled={busy} aria-label={t.plan.alternativeOf(meal.title)} onClick={() => { setOpen(true); setWish(""); generate.reset(); }}>
+        <SparklesIcon size={14} />
+        {t.plan.alternative}
+      </button>
+    );
+  }
+  const run = () => generate.mutate({ id: planId, day, index, note: wish.trim() });
+  const candidate = generate.data?.meal;
+  const fixed = candidate && isFixedMeal(candidate) ? candidate : null;
+  const macros = fixed?.macros;
+  return (
+    <div className="plan-alt" role="group" aria-label={t.plan.alternativeOf(meal.title)}>
+      {!generate.isPending && !fixed && (
+        <form
+          onSubmit={(e) => {
+            e.preventDefault();
+            run();
+          }}
+        >
+          <label className="field">
+            <span>{t.plan.altWish}</span>
+            <input value={wish} maxLength={200} placeholder={t.plan.altWishPlaceholder} autoFocus onChange={(e) => setWish(e.target.value)} />
+          </label>
+          <span className="muted plan-edit-hint">{t.plan.altNote}</span>
+          {generate.isError && (
+            <p className="error-text" role="alert">
+              {planErrorText(generate.error)}
+            </p>
+          )}
+          <div className="plan-replace-actions">
+            <button type="button" className="button-secondary-small" onClick={() => setOpen(false)}>
+              {t.plan.altCancel}
+            </button>
+            <button type="submit" className="button-primary-inline button-ai">
+              <SparklesIcon size={16} />
+              {t.plan.altGenerate}
+            </button>
+          </div>
+        </form>
+      )}
+      {generate.isPending && (
+        <p className="plan-meal-busy" aria-live="polite">
+          <span className="recognize-spinner" aria-hidden="true" /> {t.plan.altWorking}
+        </p>
+      )}
+      {fixed && (
+        <div className="plan-alt-card">
+          <span className="plan-edit-title">{t.plan.altProposal}</span>
+          <strong>{fixed.description ?? fixed.foods.map(foodLine).join(", ")}</strong>
+          <ul>
+            {fixed.foods.map((food, i) => (
+              <li key={i}>{foodLine(food)}</li>
+            ))}
+          </ul>
+          {macros && <p className="plan-meal-macros">{`${formatKcal(macros.kcal)} kcal · ${t.plan.macroLine(formatKcal(macros.protein), formatKcal(macros.carbs), formatKcal(macros.fat), formatKcal(macros.fiber ?? 0))}`}</p>}
+          {current && <p className="muted plan-edit-hint">{t.plan.altNow(formatKcal(current.kcal), formatKcal(current.protein))}</p>}
+          <div className="plan-replace-actions">
+            <button type="button" className="button-secondary-small" onClick={() => setOpen(false)}>
+              {t.plan.altCancel}
+            </button>
+            <button type="button" className="button-secondary-small" disabled={generate.isPending} onClick={run}>
+              <SparklesIcon size={14} />
+              {t.plan.altAnother}
+            </button>
+            <button type="button" className="button-primary-inline" disabled={busy} onClick={() => { onUse(candidate!); setOpen(false); }}>
+              {t.plan.altUse}
+            </button>
+          </div>
+        </div>
+      )}
+    </div>
   );
 }

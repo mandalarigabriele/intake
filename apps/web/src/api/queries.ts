@@ -39,9 +39,14 @@ import type {
   GoalsUpdate,
   BackupStatus,
   PlanGenerationJob,
+  EstimatedMacrosDto,
+  FoodCandidateDto,
+  FoodMacrosDto,
   MealEdit,
   MealMove,
   MealReplace,
+  PlannedFood,
+  PlannedMeal,
   MealTimeChange,
   PlanGenerationView,
   PlanPreferences,
@@ -832,5 +837,35 @@ export function useEditPlanMeal() {
       void queryClient.invalidateQueries({ queryKey: ["plans"] });
       return invalidateDays(queryClient);
     },
+  });
+}
+
+/** "Applica da oggi": a scheduled plan version starts on the given day (today). */
+export function useStartPlan() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({ id, validFrom }: { id: number; validFrom: string }) => apiFetch<StoredPlan>(`/api/plans/${id}/start`, { method: "PATCH", json: { validFrom } }),
+    onSuccess: () => {
+      void queryClient.invalidateQueries({ queryKey: ["plans"] });
+      return invalidateDays(queryClient);
+    },
+  });
+}
+
+/** "Cerca nel database": USDA foods by English name (free; Nutrition server). */
+export const searchFoods = (query: string) => apiFetch<{ foods: FoodCandidateDto[] }>(`/api/foods/search?q=${encodeURIComponent(query)}`);
+
+/** One USDA food scaled to a number of grams. */
+export const foodMacros = (id: number, amountG: number) => apiFetch<FoodMacrosDto>(`/api/foods/${id}?amount=${amountG}`);
+
+/** "Ricalcola con l'IA": the nutrients of a meal from its foods (Claude API; nothing is saved). */
+export function useEstimateMacros() {
+  return useMutation({ mutationFn: (meal: { description: string; foods: PlannedFood[] }) => apiFetch<EstimatedMacrosDto>("/api/plans/estimate", { method: "POST", json: meal }) });
+}
+
+/** "Alternativa": another dish for a meal of a stored plan (Claude API; nothing is saved until it is used). */
+export function useAlternativeMeal() {
+  return useMutation({
+    mutationFn: ({ id, ...request }: MealReplace & { id: number }) => apiFetch<{ meal: PlannedMeal }>(`/api/plans/${id}/alternative`, { method: "POST", json: request }),
   });
 }

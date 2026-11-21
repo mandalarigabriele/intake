@@ -8720,6 +8720,7 @@ div.connection-row {
 }
 
 .plan-meal-actions > .plan-replace,
+.plan-meal-actions > .plan-alt,
 .plan-meal-actions > .plan-edit,
 .plan-meal-actions > .plan-move {
   flex-basis: 100%;
@@ -8833,4 +8834,143 @@ div.connection-row {
   .plan-edit-values {
     grid-template-columns: repeat(5, minmax(0, 1fr));
   }
+}
+
+/* A plan waiting for its start date, with "Applica da oggi" */
+.plan-scheduled {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px 12px;
+}
+
+.plan-scheduled p {
+  margin: 0;
+  flex: 1 1 200px;
+}
+
+/* Editor tools: search the database (free) and recalculate with the AI (paid, sparkles) */
+.plan-edit-tools {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.plan-edit-tools .button-secondary-small {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0 12px;
+}
+
+.food-picker {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 10px 12px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+}
+
+.food-picker-row {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.food-picker-head {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 64px auto auto;
+  align-items: center;
+  gap: 6px;
+  font-size: 14px;
+}
+
+.food-picker-head strong {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.food-picker input {
+  min-width: 0;
+  width: 100%;
+  min-height: 40px;
+  padding: 0 10px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-surface-input);
+  color: var(--color-text);
+  font: inherit;
+  font-size: 16px;
+}
+
+.food-picker-head .button-secondary-small {
+  padding: 0 12px;
+}
+
+.food-picker-picked {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--color-accent-strong);
+}
+
+.food-picker-search {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.food-picker-form {
+  display: flex;
+  gap: 6px;
+}
+
+.food-picker-result {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.food-picker-result .muted {
+  font-size: 12px;
+}
+
+.food-picker > .button-primary-inline {
+  align-self: flex-end;
+}
+
+/* Alternativa: the proposed dish next to the current one */
+.plan-alt {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 10px 0 2px;
+}
+
+.plan-alt form {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.plan-alt-card {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 12px 14px;
+  border-radius: var(--radius-md);
+  background: var(--color-accent-soft);
+}
+
+.plan-alt-card ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  font-size: 14px;
+}
+
+.plan-alt-card .plan-replace-actions {
+  flex-wrap: wrap;
 }

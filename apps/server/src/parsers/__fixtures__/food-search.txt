@@ -1,0 +1,6 @@
+USDA FoodData Central generic foods, in USDA's order. Values are per 100 g.
+168916 · Pasta, whole grain, 51% whole wheat, remaining unenriched semolina, cooked · SR Legacy · calories 159 kcal · protein 5.82 g · carbs 31.5 g · fat 1.5 g
+2708442 · Whole wheat cereal, cooked · Survey (FNDDS) · calories 47 kcal · protein 1.55 g · carbs 10.39 g · fat 0.28 g
+2708358 · Pasta, whole grain, cooked · Survey (FNDDS) · calories 148 kcal · protein 5.95 g · carbs 29.89 g · fat 1.7 g
+168910 · Pasta, whole-wheat, cooked (Includes foods for USDA's Food Distribution Program) · SR Legacy · calories 149 kcal · protein 5.99 g · carbs 30.1 g · fat 1.71 g
+2708357 · Pasta, cooked · Survey (FNDDS) · calories 157 kcal · protein 5.76 g · carbs 30.68 g · fat 0.92 g
