@@ -35,4 +35,6 @@ The model is chosen in Impostazioni › Funzioni (separate from the photo model,
 - **Alternativa** (paid, sparkles; `POST /api/plans/:id/alternative`, part Pasti da foto): on a stored plan, another dish for one meal, in its slot, close to its calories and protein, within the saved constraints (the generation preferences, or the defaults for an uploaded plan) and not already in the week; an optional wish ("senza forno"). It is shown next to the current dish and nothing changes until "Usa questo" (saved with the edit route, replacing the old dish's optional nutrients too); "Un'altra" asks again.
 - `PATCH /api/plans/:id/start` {validFrom}: a scheduled version starts on another day, used by "Applica da oggi" (Piano shows a banner while a plan is scheduled). Versions already in effect answer 409.
 
+- **Scarica il piano (JSON)** (Piano › ⋯): the plan Piano shows as a `.json` file (`piano-<date>.json`, the Intake meal plan format of `docs/meal-plan-format.md`, with the edits made in the app), made in the browser; on phones it opens the share sheet. It can be uploaded again with "Carica nuovo piano".
+
 The result is a health-neutral food plan for healthy adults; the app says so and does not replace a doctor or dietitian.

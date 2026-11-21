@@ -361,3 +361,5 @@ Every meal also has a "Modifica" pill (before "Sposta"; "Sostituisci" stays AI-o
 The dish editor ends with two tools: "Cerca nel database" (free: a panel with one row per food, its grams, a "Cerca" button that opens an English search with the USDA results and their values per 100 g, then "Usa i valori (N alimenti su M)") and "Ricalcola con l'IA" with the sparkles (paid). Both only fill the nutrient fields; "Salva" is still the person's. On the plan, "Alternativa" (sparkles) opens a wish field, then a green card with the proposed dish next to "Ora: 655 kcal · P 32 g" and "Annulla / Un'altra / Usa questo".
 
 When a plan is scheduled (not in effect yet), Piano shows a notice "Un piano è programmato: parte il …" with "Applica da oggi".
+
+Piano ⋯ menu: 280 px wide (never wider than the screen minus 16 px per side), 8 px inside padding and 2 px between rows; rich rows have 10 px of vertical padding so a title and a two-line hint never touch the next row. Entries: Genera con l'IA, Lista della spesa, Stampa o salva PDF, Scarica il piano (JSON), Carica nuovo piano, Storico versioni, Chiudi.

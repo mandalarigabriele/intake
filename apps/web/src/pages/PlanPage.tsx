@@ -13,6 +13,7 @@ import { PlanUploadFailed, useDay, useFeatures, usePlan, usePlans, useEditPlanMe
 import { AlternativeMeal, EditMeal, MoveMeal, PlanDayMeals, PlanDaySummary, SameTimeSwitch } from "../components/PlanDay";
 import { CloseIcon, PlanIcon, SparklesIcon } from "../components/icons";
 import { formatKcal, formatMediumDate, formatShortDate } from "../lib/format";
+import { shareFile } from "../lib/shareFile";
 import { t } from "../lib/strings";
 import { Scrim } from "../components/Scrim";
 import { NeedsCard } from "../components/NeedsCard";
@@ -134,6 +135,19 @@ export function PlanPage() {
                 <button type="button" role="menuitem" className="menu-item menu-item-rich" disabled={!shown} onClick={() => navigate("/piano/stampa")}>
                   <strong>{t.shopping.print}</strong>
                   <span className="muted">{t.shopping.printHint}</span>
+                </button>
+                <button
+                  type="button"
+                  role="menuitem"
+                  className="menu-item menu-item-rich"
+                  disabled={!shown}
+                  onClick={() => {
+                    setMenuOpen(false);
+                    if (shown) void shareFile(new Blob([`${JSON.stringify(shown.plan, null, 2)}\n`], { type: "application/json" }), `${t.shopping.pdfName}-${shown.validFrom}.json`, "application/json");
+                  }}
+                >
+                  <strong>{t.plan.download}</strong>
+                  <span className="muted">{t.plan.downloadHint}</span>
                 </button>
                 <button type="button" role="menuitem" className="menu-item menu-item-rich" onClick={() => fileInput.current?.click()}>
                   <strong>{t.plan.upload}</strong>

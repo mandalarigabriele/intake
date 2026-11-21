@@ -706,6 +706,8 @@ export const nl: Strings = {
     timeHint: "Tik op een tijd om die te wijzigen.",
     timeFailed: "Tijd niet gewijzigd. Probeer opnieuw.",
     macroLine: (protein: string, carbs: string, fat: string, fiber: string) => `E ${protein} g · K ${carbs} g · V ${fat} g · Vezels ${fiber} g`,
+    download: "Plan downloaden (JSON)",
+    downloadHint: "Dit plan als bestand, om te bewaren of opnieuw te uploaden",
     aiEstimate: "Herbereken met AI",
     aiEstimateHint: "Schat calorieën en macro’s uit de producten en hoeveelheden. Gebruikt de AI (betaald).",
     aiEstimating: "Berekenen…",

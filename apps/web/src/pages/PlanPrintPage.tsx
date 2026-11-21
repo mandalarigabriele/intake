@@ -4,6 +4,7 @@ import { Link } from "wouter";
 import { useShownPlan } from "../api/queries";
 import { formatKcal, formatMediumDate } from "../lib/format";
 import { makePlanPdf, planPdfName } from "../lib/planPdf";
+import { shareFile } from "../lib/shareFile";
 import { t } from "../lib/strings";
 
 /**
@@ -33,25 +34,7 @@ export function PlanPrintPage() {
   // The installed iPhone app has no print window: only the PDF is offered there
   const standalone = typeof window !== "undefined" && (window.matchMedia("(display-mode: standalone)").matches || (navigator as Navigator & { standalone?: boolean }).standalone === true);
 
-  async function savePdf() {
-    if (!pdf) return;
-    const file = new File([pdf.blob], pdf.name, { type: "application/pdf" });
-    if (navigator.canShare?.({ files: [file] })) {
-      try {
-        await navigator.share({ files: [file], title: pdf.name });
-      } catch {
-        // Closing the share sheet is not an error
-      }
-      return;
-    }
-    // No share sheet (desktop browsers): download the file
-    const url = URL.createObjectURL(pdf.blob);
-    const link = document.createElement("a");
-    link.href = url;
-    link.download = pdf.name;
-    link.click();
-    setTimeout(() => URL.revokeObjectURL(url), 10_000);
-  }
+  const savePdf = () => (pdf ? shareFile(pdf.blob, pdf.name, "application/pdf") : undefined);
 
   return (
     <div className="page print-page">

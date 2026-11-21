@@ -706,6 +706,8 @@ export const it = {
     timeHint: "Tocca un orario per cambiarlo.",
     timeFailed: "Orario non cambiato. Riprova.",
     macroLine: (protein: string, carbs: string, fat: string, fiber: string) => `P ${protein} g · C ${carbs} g · G ${fat} g · Fibre ${fiber} g`,
+    download: "Scarica il piano (JSON)",
+    downloadHint: "Il file di questo piano, da conservare o ricaricare",
     aiEstimate: "Ricalcola con l’IA",
     aiEstimateHint: "Stima calorie e macro dagli alimenti e dalle quantità. Usa l’IA (a pagamento).",
     aiEstimating: "Calcolo…",

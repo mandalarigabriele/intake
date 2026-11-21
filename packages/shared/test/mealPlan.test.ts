@@ -56,4 +56,15 @@ describe("schemas/meal-plan.schema.json", () => {
     const committed = JSON.parse(readFileSync(new URL("schemas/meal-plan.schema.json", root), "utf8"));
     expect(committed).toEqual(mealPlanJsonSchema());
   });
+
+  it("takes back a plan saved with JSON.stringify, as the download of Piano writes it", async () => {
+    const { importPlan } = await import("../src/index.js");
+    const { readFileSync } = await import("node:fs");
+    const original = importPlan(JSON.parse(readFileSync(new URL("../../../examples/meal-plan.example.json", import.meta.url), "utf8")));
+    expect(original.success).toBe(true);
+    if (!original.success) return;
+    const again = importPlan(JSON.parse(`${JSON.stringify(original.plan, null, 2)}\n`));
+    expect(again.success).toBe(true);
+    expect(again.success && again.plan).toEqual(original.plan);
+  });
 });

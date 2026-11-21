@@ -706,6 +706,8 @@ export const en: Strings = {
     timeHint: "Tap a time to change it.",
     timeFailed: "Time not changed. Try again.",
     macroLine: (protein: string, carbs: string, fat: string, fiber: string) => `P ${protein} g · C ${carbs} g · F ${fat} g · Fiber ${fiber} g`,
+    download: "Download the plan (JSON)",
+    downloadHint: "This plan as a file, to keep or upload again",
     aiEstimate: "Recalculate with AI",
     aiEstimateHint: "Estimates calories and macros from the foods and amounts. Uses the AI (paid).",
     aiEstimating: "Calculating…",
