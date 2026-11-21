@@ -12,6 +12,8 @@ describe("home layout", () => {
     expect([...layout.order].sort()).toEqual([...HOME_CARDS].sort());
     expect(layout.hidden).toEqual(["water"]);
     expect(completeHomeLayout(null)).toEqual({ order: [...HOME_CARDS], hidden: [] });
+    // By default the rings come right after the next meal, as Oggi was before the layout could change
+    expect(HOME_CARDS.slice(0, 3)).toEqual(["nextMeal", "scores", "calories"]);
   });
 
   it("is owner-only, validated, and kept for the installation", async () => {

@@ -82,7 +82,7 @@ export const nl: Strings = {
     home: {
       title: "Startscherm aanpassen",
       note: "Volgorde en kaarten van Vandaag, op elk apparaat. Kaarten van uitgeschakelde functies verschijnen niet.",
-      cards: { nextMeal: "Volgende maaltijd", calories: "Calorieën", macros: "Macronutriënten", water: "Water", training: "Training van vandaag", plan: "Plan en werkelijkheid", activity: "Activiteit en rust", insight: "Uit je gegevens" },
+      cards: { nextMeal: "Volgende maaltijd", scores: "Inspanning, herstel en slaap", calories: "Calorieën", macros: "Macronutriënten", water: "Water", training: "Training van vandaag", plan: "Plan en werkelijkheid", activity: "Activiteit en rust", insight: "Uit je gegevens" },
       planNote: "alleen met een actief plan",
       up: (name: string) => `${name} omhoog`,
       down: (name: string) => `${name} omlaag`,

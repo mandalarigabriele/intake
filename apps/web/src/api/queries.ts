@@ -914,7 +914,7 @@ const homeLayoutKey = ["home-layout"] as const;
 
 /** Order and visibility of the cards of Oggi (Profilo › Personalizza home). */
 export function useHomeLayout() {
-  return useQuery({ queryKey: homeLayoutKey, queryFn: () => apiFetch<HomeLayout>("/api/home-layout"), staleTime: Infinity });
+  return useQuery({ queryKey: homeLayoutKey, queryFn: () => apiFetch<HomeLayout>("/api/home-layout"), staleTime: 30_000 });
 }
 
 /** Saves the layout; the change shows at once and goes back if the server refuses it. */

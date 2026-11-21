@@ -64,6 +64,8 @@ function Summary({ view, selected, onAdd }: { view: DayView; selected: string; o
         </CalorieCard>
       ),
     },
+    // Effort, recovery and sleep: on phones they sit right after the next meal, as before the layout could change
+    scores: { column: "main", node: features?.health && <ScoreRings date={view.date} /> },
     macros: { column: "main", node: <MacroCard totals={view.totals} goals={view.goals} /> },
     water: {
       column: "main",
@@ -96,15 +98,10 @@ function Summary({ view, selected, onAdd }: { view: DayView; selected: string; o
   return (
     <div className="today-grid">
       <div className="today-main">
-        {/* Not movable: the UTC notice and the scores stay first */}
+        {/* Not movable: the UTC notice stays first */}
         {view.isToday && (
-          <div className="home-slot" style={{ order: -2 }}>
-            <TimezoneNotice timezone={view.clock.timezone} />
-          </div>
-        )}
-        {features?.health && (
           <div className="home-slot" style={{ order: -1 }}>
-            <ScoreRings date={view.date} />
+            <TimezoneNotice timezone={view.clock.timezone} />
           </div>
         )}
         {slots("main")}

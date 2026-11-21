@@ -82,7 +82,7 @@ export const it = {
     home: {
       title: "Personalizza home",
       note: "Ordine e card di Oggi, su ogni dispositivo. Le card delle parti spente non compaiono.",
-      cards: { nextMeal: "Prossimo pasto", calories: "Calorie", macros: "Macronutrienti", water: "Acqua", training: "Allenamento di oggi", plan: "Piano e realtà", activity: "Attività e riposo", insight: "Dai tuoi dati" },
+      cards: { nextMeal: "Prossimo pasto", scores: "Sforzo, recupero e sonno", calories: "Calorie", macros: "Macronutrienti", water: "Acqua", training: "Allenamento di oggi", plan: "Piano e realtà", activity: "Attività e riposo", insight: "Dai tuoi dati" },
       planNote: "solo con un piano attivo",
       up: (name: string) => `Sposta su ${name}`,
       down: (name: string) => `Sposta giù ${name}`,
