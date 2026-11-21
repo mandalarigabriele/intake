@@ -8974,3 +8974,22 @@ div.connection-row {
 .plan-alt-card .plan-replace-actions {
   flex-wrap: wrap;
 }
+
+/* Primary buttons inside the plan's inline panels (editor, Sostituisci, Alternativa, picker, banner, print page):
+   the same size as their "Annulla", not the full-height button of whole screens */
+.plan-replace-actions .button-primary-inline,
+.plan-alt-card .button-primary-inline,
+.food-picker .button-primary-inline,
+.plan-scheduled .button-primary-inline,
+.print-buttons .button-primary-inline {
+  flex: 0 0 auto;
+  height: 44px;
+  padding: 0 20px;
+  border-radius: var(--radius-md);
+  font-size: 14px;
+  gap: 6px;
+}
+
+.plan-replace-actions {
+  align-items: center;
+}
