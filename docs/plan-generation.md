@@ -26,4 +26,6 @@ The model is chosen in Impostazioni › Funzioni (separate from the photo model,
 - `POST /api/plans/generate/:id/replace` {day, index, note}: another dish for one meal (single-meal structured output, same kcal and protein, different from the dishes of the week); the checks run again.
 - `PATCH /api/plans/generate/:id/time` and `PATCH /api/plans/:id/time` {day, index, time, allDays}: a new time for one meal, or for the same meal on every day ("Stesso orario tutti i giorni", on by default). On a stored plan it updates the version in place (`PlanStore.update`), so Oggi and Timeline follow.
 
+- `PATCH /api/plans/generate/:id/swap` and `PATCH /api/plans/:id/swap` {day, index, toDay}: "Sposta" swaps the dish of a meal with the same meal of another day (each day has fixed meals, so moving a dish means swapping; a free meal can be moved too). Each slot keeps its title, time and type. On the draft the checks run again; on a stored plan the version is updated in place. Planned meals already logged keep their link to the slot, not to the dish.
+
 The result is a health-neutral food plan for healthy adults; the app says so and does not replace a doctor or dietitian.

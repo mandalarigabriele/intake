@@ -8710,3 +8710,68 @@ div.connection-row {
     font-size: 8.5pt;
   }
 }
+
+/* Sposta: the day list that appears under a meal */
+.plan-meal-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: flex-start;
+}
+
+.plan-meal-actions > .plan-replace,
+.plan-meal-actions > .plan-move {
+  flex-basis: 100%;
+}
+
+.plan-move {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 10px 0 2px;
+}
+
+.plan-move > .muted {
+  font-size: 12px;
+}
+
+.plan-move > .button-secondary-small {
+  align-self: flex-end;
+  padding: 0 14px;
+}
+
+.plan-move-list {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+}
+
+.plan-move-row {
+  min-height: 44px;
+  padding: 8px 12px;
+  border: none;
+  border-top: 1px solid var(--color-divider);
+  background: var(--color-surface);
+  color: var(--color-text);
+  font: inherit;
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.35;
+  text-align: left;
+  cursor: pointer;
+}
+
+.plan-move-row:first-child {
+  border-top: none;
+}
+
+.plan-move-row:hover:not(:disabled) {
+  background: var(--color-accent-soft);
+}
+
+.plan-move-row:disabled {
+  opacity: 0.5;
+  cursor: default;
+}

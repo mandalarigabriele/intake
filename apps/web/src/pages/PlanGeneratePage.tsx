@@ -1,8 +1,8 @@
-import { MEAL_TYPES, PLAN_DIETS, WEEKDAYS, type PlanPreferences, type PlanSlot, type PlanViolation, type Weekday } from "@intake/shared";
+import { MEAL_TYPES, PLAN_DIETS, WEEKDAYS, type PlanPreferences, type PlanSlot, type PlanViolation, type PlannedMeal, type Weekday } from "@intake/shared";
 import { useEffect, useState } from "react";
 import { Link, useLocation } from "wouter";
-import { useActivatePlanDraft, usePlanGeneration, usePlanGenerationJob, useReplaceDraftMeal, useSavePlanPreferences, useSetDraftTime, useStartPlanGeneration } from "../api/queries";
-import { PlanDayMeals, PlanDaySummary, SameTimeSwitch } from "../components/PlanDay";
+import { useActivatePlanDraft, usePlanGeneration, usePlanGenerationJob, useReplaceDraftMeal, useSavePlanPreferences, useSetDraftTime, useStartPlanGeneration, useSwapDraftMeal } from "../api/queries";
+import { MoveMeal, PlanDayMeals, PlanDaySummary, SameTimeSwitch } from "../components/PlanDay";
 import { ApiError } from "../api/client";
 import { CloseIcon, SparklesIcon } from "../components/icons";
 import { formatKcal } from "../lib/format";
@@ -85,6 +85,7 @@ export function PlanGeneratePage() {
   const [wish, setWish] = useState("");
   const setTime = useSetDraftTime(jobId ?? "");
   const replace = useReplaceDraftMeal(jobId ?? "");
+  const swap = useSwapDraftMeal(jobId ?? "");
 
   useEffect(() => {
     if (!view.data || prefs) return;
@@ -141,6 +142,61 @@ export function PlanGeneratePage() {
       setReplacing(null);
     };
     const busyIndex = replace.isPending && replace.variables?.day === weekday ? replace.variables.index : null;
+    const replaceControl = (meal: PlannedMeal, index: number) => {
+        if (busyIndex === index) {
+          return (
+            <p className="plan-meal-busy" aria-live="polite">
+              <span className="recognize-spinner" aria-hidden="true" /> {s.replacing}
+            </p>
+          );
+        }
+        const open = replacing?.day === weekday && replacing.index === index;
+        if (!open) {
+          return (
+            <button
+              type="button"
+              className="plan-meal-action"
+              disabled={replace.isPending}
+              aria-label={s.replaceOf(meal.title)}
+              onClick={() => {
+                setReplacing({ day: weekday, index });
+                setWish("");
+                replace.reset();
+              }}
+            >
+              <SparklesIcon size={14} />
+              {s.replace}
+            </button>
+          );
+        }
+        return (
+          <form
+            className="plan-replace"
+            onSubmit={(e) => {
+              e.preventDefault();
+              replace.mutate({ day: weekday, index, note: wish.trim() }, { onSuccess: () => setReplacing(null) });
+            }}
+          >
+            <label className="field">
+              <span>{s.replaceNote}</span>
+              <input value={wish} maxLength={200} placeholder={s.replacePlaceholder} autoFocus onChange={(e) => setWish(e.target.value)} />
+            </label>
+            {replace.isError && <p className="error-text">{planErrorText(replace.error)}</p>}
+            <div className="plan-replace-actions">
+              <button type="button" className="button-secondary-small" onClick={() => setReplacing(null)}>
+                {s.cancel}
+              </button>
+              <button type="submit" className="button-primary-inline button-ai">
+                <SparklesIcon size={16} />
+                {s.replace}
+              </button>
+            </div>
+          </form>
+        );
+    };
+    const moveControl = (index: number) => (
+      <MoveMeal plan={draft.plan} day={weekday} index={index} busy={swap.isPending || replace.isPending} failed={swap.isError} onMove={(toDay) => swap.mutate({ day: weekday, index, toDay })} />
+    );
     return (
       <div className="page detail-page edit-page plan-gen-page plan-gen-review">
         {header}
@@ -210,59 +266,12 @@ export function PlanGeneratePage() {
               onTime={(index, time) => setTime.mutate({ day: weekday, index, time, allDays: sameTime })}
               warnings={(index) => mealWarnings(draft.checks.violations, weekday, index)}
               busyIndex={busyIndex}
-              extra={(meal, index) => {
-                if (meal.free) return null;
-                if (busyIndex === index) {
-                  return (
-                    <p className="plan-meal-busy" aria-live="polite">
-                      <span className="recognize-spinner" aria-hidden="true" /> {s.replacing}
-                    </p>
-                  );
-                }
-                const open = replacing?.day === weekday && replacing.index === index;
-                if (!open) {
-                  return (
-                    <button
-                      type="button"
-                      className="plan-meal-action"
-                      disabled={replace.isPending}
-                      aria-label={s.replaceOf(meal.title)}
-                      onClick={() => {
-                        setReplacing({ day: weekday, index });
-                        setWish("");
-                        replace.reset();
-                      }}
-                    >
-                      <SparklesIcon size={14} />
-                      {s.replace}
-                    </button>
-                  );
-                }
-                return (
-                  <form
-                    className="plan-replace"
-                    onSubmit={(e) => {
-                      e.preventDefault();
-                      replace.mutate({ day: weekday, index, note: wish.trim() }, { onSuccess: () => setReplacing(null) });
-                    }}
-                  >
-                    <label className="field">
-                      <span>{s.replaceNote}</span>
-                      <input value={wish} maxLength={200} placeholder={s.replacePlaceholder} autoFocus onChange={(e) => setWish(e.target.value)} />
-                    </label>
-                    {replace.isError && <p className="error-text">{planErrorText(replace.error)}</p>}
-                    <div className="plan-replace-actions">
-                      <button type="button" className="button-secondary-small" onClick={() => setReplacing(null)}>
-                        {s.cancel}
-                      </button>
-                      <button type="submit" className="button-primary-inline button-ai">
-                        <SparklesIcon size={16} />
-                        {s.replace}
-                      </button>
-                    </div>
-                  </form>
-                );
-              }}
+              extra={(meal, index) => (
+                <div className="plan-meal-actions">
+                  {!meal.free && replaceControl(meal, index)}
+                  {moveControl(index)}
+                </div>
+              )}
             />
           </div>
 

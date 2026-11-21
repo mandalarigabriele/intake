@@ -706,6 +706,13 @@ export const en: Strings = {
     timeHint: "Tap a time to change it.",
     timeFailed: "Time not changed. Try again.",
     macroLine: (protein: string, carbs: string, fat: string, fiber: string) => `P ${protein} g · C ${carbs} g · F ${fat} g · Fiber ${fiber} g`,
+    move: "Move",
+    moveOf: (meal: string) => `Move ${meal} to another day`,
+    moveTitle: "Swap with the same meal on…",
+    moveHint: "The two dishes swap places: the times stay where they are.",
+    moveRow: (day: string, dish: string) => `${day} · ${dish}`,
+    moveClose: "Cancel",
+    moveFailed: "Dish not moved. Try again.",
   },
 
   shopping: {

@@ -115,6 +115,8 @@ describe("PlanGenerator", () => {
   });
 });
 
+const timedPlan = (job: { draft: { plan: any } }) => job.draft.plan;
+
 describe("plan generation routes", () => {
   function setup(generator?: { generate: (...args: any[]) => Promise<PlanDraft>; replaceMeal?: (...args: any[]) => Promise<any> }) {
     const db = openDatabase(":memory:");
@@ -193,6 +195,13 @@ describe("plan generation routes", () => {
     expect(timed.draft.plan.days.sunday.meals[0].time).toBe("07:30");
     const one = (await app.inject({ method: "PATCH", url: `/api/plans/generate/${id}/time`, headers, payload: { day: "friday", index: 4, time: "21:00", allDays: false } })).json();
     expect([one.draft.plan.days.friday.meals[4].time, one.draft.plan.days.monday.meals[4].time]).toEqual(["21:00", prefs.slots[4]!.time]);
+
+    const before = timedPlan(one);
+    const swapped = (await app.inject({ method: "PATCH", url: `/api/plans/generate/${id}/swap`, headers, payload: { day: "monday", index: 2, toDay: "friday" } })).json();
+    expect(swapped.draft.plan.days.monday.meals[2].description).toBe(before.days.friday.meals[2].description);
+    expect(swapped.draft.plan.days.friday.meals[2].description).toBe(before.days.monday.meals[2].description);
+    expect(swapped.draft.checks.days).toHaveLength(7);
+    expect((await app.inject({ method: "PATCH", url: `/api/plans/generate/${id}/swap`, headers, payload: { day: "monday", index: 2, toDay: "monday" } })).statusCode).toBe(400);
 
     const replaced = await app.inject({ method: "POST", url: `/api/plans/generate/${id}/replace`, headers, payload: { day: "monday", index: 2, note: "" } });
     expect(replaced.statusCode).toBe(200);

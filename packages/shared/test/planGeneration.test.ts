@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { WEEKDAYS } from "../src/mealPlan.js";
-import { checkPlan, defaultPlanPreferences, describeProblems, planPreferencesSchema, slotsFromPlan, toMealPlan, type GeneratedPlan } from "../src/planGeneration.js";
+import { checkPlan, defaultPlanPreferences, describeProblems, planPreferencesSchema, slotsFromPlan, swapMeals, toMealPlan, type GeneratedPlan } from "../src/planGeneration.js";
 
 const prefs = defaultPlanPreferences();
 const macros = (kcal: number, protein: number) => ({ kcal, protein, carbs: 50, fat: 15, fiber: 5, sugar: 10, addedSugar: 2 });
@@ -103,5 +103,24 @@ describe("plan edits", () => {
     const swapped = replaceMeal(plan, "monday", 2, toPlannedMeal({ slot: "lunch", free: false, description: "Riso e pollo", foods: [{ name: "Riso", quantity: 80, unit: "g" }], macros: macros(600, 40) }, { title: "Pranzo", time: "13:30", type: "lunch" }));
     expect(swapped.days.monday.meals[2]).toMatchObject({ title: "Pranzo", time: "13:30", description: "Riso e pollo" });
     expect(swapped.days.tuesday.meals[2]).toEqual(plan.days.tuesday.meals[2]);
+  });
+
+  it("swaps a dish with the same meal of another day, keeping each slot's title and time, free meals included", () => {
+    const plan = toMealPlan(
+      week((day, slot) => (slot === "lunch" ? { description: `Pranzo ${day}`, foods: [{ name: day, quantity: 10, unit: "g" }] } : day === "saturday" && slot === "dinner" ? { free: true, foods: [] } : {})),
+      prefs.slots,
+      "2026-11-23",
+    );
+    const lunch = prefs.slots.findIndex((slot) => slot.id === "lunch");
+    const swapped = swapMeals(plan, "monday", lunch, "friday");
+    expect(swapped.days.monday.meals[lunch]).toMatchObject({ title: plan.days.monday.meals[lunch]!.title, time: plan.days.monday.meals[lunch]!.time, description: "Pranzo friday" });
+    expect(swapped.days.friday.meals[lunch]).toMatchObject({ time: plan.days.friday.meals[lunch]!.time, description: "Pranzo monday" });
+    expect(swapMeals(plan, "monday", lunch, "monday")).toBe(plan);
+    // The pizza moves to Friday and Friday's dinner goes to Saturday
+    const dinner = prefs.slots.findIndex((slot) => slot.id === "dinner");
+    const pizza = swapMeals(plan, "saturday", dinner, "friday");
+    expect(pizza.days.friday.meals[dinner]).toMatchObject({ free: true, title: plan.days.friday.meals[dinner]!.title });
+    expect(pizza.days.saturday.meals[dinner]!.free).not.toBe(true);
+    expect(pizza.days.saturday.meals[dinner]).toHaveProperty("foods");
   });
 });

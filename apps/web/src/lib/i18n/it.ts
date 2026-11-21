@@ -706,6 +706,13 @@ export const it = {
     timeHint: "Tocca un orario per cambiarlo.",
     timeFailed: "Orario non cambiato. Riprova.",
     macroLine: (protein: string, carbs: string, fat: string, fiber: string) => `P ${protein} g · C ${carbs} g · G ${fat} g · Fibre ${fiber} g`,
+    move: "Sposta",
+    moveOf: (meal: string) => `Sposta ${meal} in un altro giorno`,
+    moveTitle: "Scambia con lo stesso pasto di…",
+    moveHint: "I due piatti si scambiano di posto: gli orari restano dove sono.",
+    moveRow: (day: string, dish: string) => `${day} · ${dish}`,
+    moveClose: "Annulla",
+    moveFailed: "Piatto non spostato. Riprova.",
   },
 
   shopping: {

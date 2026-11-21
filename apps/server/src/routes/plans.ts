@@ -1,4 +1,4 @@
-import { importPlan, mealTimeChangeSchema, setMealTime, type PlanUploadError, type PlansResponse } from "@intake/shared";
+import { importPlan, mealMoveSchema, mealTimeChangeSchema, setMealTime, swapMeals, type PlanUploadError, type PlansResponse } from "@intake/shared";
 import type { FastifyPluginAsync, preHandlerHookHandler } from "fastify";
 import type { PlanStore } from "../db/planStore.js";
 import type { NutritionApi } from "../mcp/nutritionApi.js";
@@ -30,6 +30,17 @@ export const planRoutes: FastifyPluginAsync<PlanRoutesOptions> = async (app, { p
     const body = mealTimeChangeSchema.safeParse(request.body);
     if (!body.success || !stored.plan.days[body.data.day].meals[body.data.index]) return reply.code(400).send({ error: "invalid_time" });
     const plan = setMealTime(stored.plan, body.data.day, body.data.index, body.data.time, body.data.allDays);
+    plans.update(stored.id, plan);
+    return { ...stored, plan };
+  });
+
+  // Piano: a dish swapped with the same meal of another day (the version stays the same)
+  app.patch<{ Params: { id: string } }>("/plans/:id/swap", async (request, reply) => {
+    const stored = plans.get(Number(request.params.id));
+    if (!stored) return reply.code(404).send({ error: "Plan not found" });
+    const body = mealMoveSchema.safeParse(request.body);
+    if (!body.success || body.data.day === body.data.toDay || !stored.plan.days[body.data.day].meals[body.data.index]) return reply.code(400).send({ error: "invalid_move" });
+    const plan = swapMeals(stored.plan, body.data.day, body.data.index, body.data.toDay);
     plans.update(stored.id, plan);
     return { ...stored, plan };
   });

@@ -272,6 +272,30 @@ export function setMealTime(plan: MealPlan, day: Weekday, index: number, time: s
   return mealPlanSchema.parse({ ...plan, days });
 }
 
+/**
+ * The plan with the dish of one meal swapped with the same meal of another day ("Sposta in un altro giorno"): the dish
+ * (description, foods, macros, or the free meal) changes place, while each slot keeps its title, time and type.
+ */
+export function swapMeals(plan: MealPlan, day: Weekday, index: number, toDay: Weekday): MealPlan {
+  const a = plan.days[day].meals[index];
+  const b = plan.days[toDay].meals[index];
+  if (!a || !b || day === toDay) return plan;
+  const split = (meal: PlannedMeal) => {
+    const { title, time, type, ...dish } = meal;
+    return { base: { title, ...(time !== undefined ? { time } : {}), ...(type !== undefined ? { type } : {}) }, dish };
+  };
+  const [sa, sb] = [split(a), split(b)];
+  const put = (weekday: Weekday, meal: PlannedMeal) => ({ ...plan.days[weekday], meals: plan.days[weekday].meals.map((m, i) => (i === index ? meal : m)) });
+  return mealPlanSchema.parse({
+    ...plan,
+    days: { ...plan.days, [day]: put(day, { ...sa.base, ...sb.dish } as PlannedMeal), [toDay]: put(toDay, { ...sb.base, ...sa.dish } as PlannedMeal) },
+  });
+}
+
+/** Body of "Sposta" on a draft or a stored plan: the meal and the day whose same meal it swaps with. */
+export const mealMoveSchema = z.object({ day: z.enum(WEEKDAYS), index: z.number().int().min(0).max(9), toDay: z.enum(WEEKDAYS) }).strict();
+export type MealMove = z.infer<typeof mealMoveSchema>;
+
 /** Body of the time change on a draft or a stored plan. */
 export const mealTimeChangeSchema = z
   .object({ day: z.enum(WEEKDAYS), index: z.number().int().min(0).max(9), time, allDays: z.boolean() })

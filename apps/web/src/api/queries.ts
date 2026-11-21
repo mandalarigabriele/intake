@@ -39,6 +39,7 @@ import type {
   GoalsUpdate,
   BackupStatus,
   PlanGenerationJob,
+  MealMove,
   MealReplace,
   MealTimeChange,
   PlanGenerationView,
@@ -789,4 +790,25 @@ export function useShownPlan() {
   const scheduled = data?.versions.filter((v) => v.status === "scheduled").at(-1);
   const scheduledPlan = usePlan(data && !data.active ? scheduled?.id : undefined).data ?? null;
   return { plans, shown: data?.active ?? scheduledPlan };
+}
+
+/** "Sposta": a dish of the draft swapped with the same meal of another day. */
+export function useSwapDraftMeal(id: string) {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (move: MealMove) => apiFetch<PlanGenerationJob>(`/api/plans/generate/${id}/swap`, { method: "PATCH", json: move }),
+    onSuccess: (job) => queryClient.setQueryData(planJobKey(id), job),
+  });
+}
+
+/** "Sposta" on a stored version; Oggi and Timeline follow. */
+export function useSwapPlanMeal() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({ id, ...move }: MealMove & { id: number }) => apiFetch<StoredPlan>(`/api/plans/${id}/swap`, { method: "PATCH", json: move }),
+    onSuccess: () => {
+      void queryClient.invalidateQueries({ queryKey: ["plans"] });
+      return invalidateDays(queryClient);
+    },
+  });
 }

@@ -706,6 +706,13 @@ export const nl: Strings = {
     timeHint: "Tik op een tijd om die te wijzigen.",
     timeFailed: "Tijd niet gewijzigd. Probeer opnieuw.",
     macroLine: (protein: string, carbs: string, fat: string, fiber: string) => `E ${protein} g · K ${carbs} g · V ${fat} g · Vezels ${fiber} g`,
+    move: "Verplaatsen",
+    moveOf: (meal: string) => `${meal} naar een andere dag verplaatsen`,
+    moveTitle: "Ruilen met dezelfde maaltijd op…",
+    moveHint: "De twee gerechten wisselen van plaats: de tijden blijven staan.",
+    moveRow: (day: string, dish: string) => `${day} · ${dish}`,
+    moveClose: "Annuleren",
+    moveFailed: "Gerecht niet verplaatst. Probeer opnieuw.",
   },
 
   shopping: {

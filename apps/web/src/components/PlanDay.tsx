@@ -1,4 +1,4 @@
-import { foodLine, isFixedMeal, type PlannedDay, type PlannedMeal } from "@intake/shared";
+import { WEEKDAYS, foodLine, isFixedMeal, type MealPlan, type PlannedDay, type PlannedMeal, type Weekday } from "@intake/shared";
 import { useEffect, useState, type ReactNode } from "react";
 import { formatKcal } from "../lib/format";
 import { t } from "../lib/strings";
@@ -176,5 +176,61 @@ export function SameTimeSwitch({ checked, onChange }: { checked: boolean; onChan
       <span>{t.plan.sameTime}</span>
       <input type="checkbox" role="switch" className="switch" checked={checked} onChange={(e) => onChange(e.target.checked)} />
     </label>
+  );
+}
+
+/**
+ * "Sposta": the dish of a meal goes to the same meal of another day and that day's dish takes its place. The days are
+ * listed with the dish they would send back, so the swap is clear before it is made.
+ */
+export function MoveMeal({ plan, day, index, onMove, busy, failed }: { plan: MealPlan; day: Weekday; index: number; onMove: (toDay: Weekday) => void; busy?: boolean; failed?: boolean }) {
+  const [open, setOpen] = useState(false);
+  const meal = plan.days[day].meals[index];
+  if (!meal) return null;
+  if (!open) {
+    return (
+      <button type="button" className="plan-meal-action" disabled={busy} aria-label={t.plan.moveOf(meal.title)} onClick={() => setOpen(true)}>
+        <MoveIcon />
+        {t.plan.move}
+      </button>
+    );
+  }
+  return (
+    <div className="plan-move" role="group" aria-label={t.plan.moveTitle}>
+      <strong>{t.plan.moveTitle}</strong>
+      <div className="plan-move-list">
+        {WEEKDAYS.filter((w) => w !== day && plan.days[w].meals[index]).map((w) => {
+          const other = plan.days[w].meals[index]!;
+          const dish = isFixedMeal(other) ? (other.description ?? other.foods.map(foodLine).join(", ")) : t.plan.freeBadge.toLowerCase();
+          return (
+            <button
+              key={w}
+              type="button"
+              className="plan-move-row"
+              disabled={busy}
+              onClick={() => {
+                onMove(w);
+                setOpen(false);
+              }}
+            >
+              {t.plan.moveRow(t.weekdaysLong[WEEKDAYS.indexOf(w)]!, dish)}
+            </button>
+          );
+        })}
+      </div>
+      <span className="muted">{t.plan.moveHint}</span>
+      {failed && <p className="error-text">{t.plan.moveFailed}</p>}
+      <button type="button" className="button-secondary-small" onClick={() => setOpen(false)}>
+        {t.plan.moveClose}
+      </button>
+    </div>
+  );
+}
+
+function MoveIcon() {
+  return (
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <path d="M7 4v14M3 14l4 4 4-4M17 20V6M13 10l4-4 4 4" />
+    </svg>
   );
 }
