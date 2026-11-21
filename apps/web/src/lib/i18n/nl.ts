@@ -350,6 +350,15 @@ export const nl: Strings = {
     modelRow: "Model voor plannen",
     modelNote: "Een plan vraagt meer zorg dan een foto: Sonnet wordt aanbevolen.",
     modelFailed: "Model niet gewijzigd. Probeer het opnieuw.",
+    errors: {
+      recognition_not_configured: "De AI is niet ingesteld: ANTHROPIC_API_KEY ontbreekt op de server.",
+      recognition_auth: "De API-sleutel van de AI is ongeldig. Controleer ANTHROPIC_API_KEY op de server.",
+      recognition_busy: "De AI is nu bezet. Probeer het zo opnieuw.",
+      recognition_credit: "AI-tegoed op: laad het op in de Anthropic Console (Billing).",
+      recognition_refused: "De AI wilde dit plan niet schrijven. Pas de notities aan.",
+      recognition_unreadable: "De AI maakte het plan niet af of antwoordde ongeldig. Er is niets opgeslagen: probeer opnieuw, misschien met kortere notities.",
+      recognition_failed: "Genereren mislukt. Probeer opnieuw.",
+    } as Record<string, string>,
   },
   photos: {
     label: "Foto's van de maaltijd",

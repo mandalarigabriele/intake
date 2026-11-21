@@ -350,6 +350,15 @@ export const it = {
     modelRow: "Modello per i piani",
     modelNote: "Un piano richiede più cura di una foto: Sonnet è il consigliato.",
     modelFailed: "Modello non cambiato. Riprova.",
+    errors: {
+      recognition_not_configured: "L’IA non è configurata: manca ANTHROPIC_API_KEY sul server.",
+      recognition_auth: "La chiave API dell’IA non è valida. Controlla ANTHROPIC_API_KEY sul server.",
+      recognition_busy: "L’IA è occupata in questo momento. Riprova tra poco.",
+      recognition_credit: "Credito IA esaurito: ricaricalo dalla Console di Anthropic (Billing).",
+      recognition_refused: "L’IA non ha voluto scrivere questo piano. Prova a cambiare le note.",
+      recognition_unreadable: "L’IA non ha finito il piano o ha risposto in modo non valido. Non è stato salvato nulla: riprova, magari con note più brevi.",
+      recognition_failed: "Generazione non riuscita. Riprova.",
+    } as Record<string, string>,
   },
   photos: {
     label: "Foto del pasto",

@@ -15,7 +15,7 @@ Only on "Genera piano" / "Sostituisci": the daily goals, the preferences and not
 
 ## Model and output
 
-The model is chosen in Impostazioni › Funzioni (separate from the photo model, key in `plan_generation`, Sonnet by default, allowlist in `PLAN_MODELS`). The request is streamed with a structured output (JSON schema, medium effort); the answer is validated with zod and converted to a `MealPlan` (`toMealPlan`).
+The model is chosen in Impostazioni › Funzioni (separate from the photo model, key in `plan_generation`, Sonnet by default, allowlist in `PLAN_MODELS`). The request is streamed with a structured output (JSON schema, low effort and room for 64 000 output tokens, because thinking counts toward the limit; an answer cut at the limit is reported as "unreadable" and nothing is saved); the answer is validated with zod and converted to a `MealPlan` (`toMealPlan`).
 
 ## Checks
 

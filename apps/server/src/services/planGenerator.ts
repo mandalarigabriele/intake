@@ -42,8 +42,12 @@ export interface PlanGeneratorOptions {
   log?: { info(details: object, message: string): void; warn(details: object, message: string): void };
 }
 
-/** A week is long: room for 7 days × 7 meals with their foods, and for adaptive thinking. */
-const MAX_TOKENS = 32_000;
+/**
+ * A week is long: 7 days × up to 7 meals with their foods. Thinking counts toward max_tokens, so the effort is low
+ * (the answer is structured and the checks catch mistakes) and the room is large; at 32 000 tokens with medium effort
+ * a long list of notes could run out before the JSON was complete.
+ */
+const MAX_TOKENS = 64_000;
 const TIMEOUT_MS = 10 * 60_000;
 
 const DIETS: Record<string, string> = { omnivore: "omnivore", vegetarian: "vegetarian (no meat, no fish)", pescatarian: "pescatarian (fish yes, no meat)", vegan: "vegan (no animal products)" };
@@ -144,7 +148,7 @@ export class PlanGenerator {
         model,
         max_tokens: MAX_TOKENS,
         system: system(this.options.language?.() ?? "it"),
-        output_config: { effort: "medium", format: { type: "json_schema", schema: schema as Record<string, unknown> } },
+        output_config: { effort: "low", format: { type: "json_schema", schema: schema as Record<string, unknown> } },
         messages,
       });
       stream.on("text", (delta) => {

@@ -350,6 +350,15 @@ export const en: Strings = {
     modelRow: "Model for plans",
     modelNote: "A plan needs more care than a photo: Sonnet is recommended.",
     modelFailed: "Model not changed. Try again.",
+    errors: {
+      recognition_not_configured: "The AI is not configured: ANTHROPIC_API_KEY is missing on the server.",
+      recognition_auth: "The AI API key is not valid. Check ANTHROPIC_API_KEY on the server.",
+      recognition_busy: "The AI is busy right now. Try again shortly.",
+      recognition_credit: "AI credit used up: top it up in the Anthropic Console (Billing).",
+      recognition_refused: "The AI declined to write this plan. Try changing the notes.",
+      recognition_unreadable: "The AI did not finish the plan or answered in an invalid way. Nothing was saved: try again, maybe with shorter notes.",
+      recognition_failed: "Generation failed. Try again.",
+    } as Record<string, string>,
   },
   photos: {
     label: "Meal photos",

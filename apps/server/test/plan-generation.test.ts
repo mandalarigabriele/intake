@@ -69,7 +69,7 @@ describe("PlanGenerator", () => {
     expect(progress).toHaveBeenLastCalledWith(1, 7);
     const sent = (client.stream.mock.calls[0] as unknown as [Record<string, any>])[0];
     expect(sent.model).toBe("claude-sonnet-5-5");
-    expect(sent.output_config).toMatchObject({ effort: "medium", format: { type: "json_schema" } });
+    expect(sent.output_config).toMatchObject({ effort: "low", format: { type: "json_schema" } });
     expect(sent.messages[0].content).toContain('"kcal": 2000');
   });
 

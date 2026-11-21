@@ -7,11 +7,16 @@ import { ApiError } from "../api/client";
 import { CloseIcon, SparklesIcon } from "../components/icons";
 import { formatKcal } from "../lib/format";
 import { t } from "../lib/strings";
-import { errorText } from "./NewMealPage";
 
 const MAX_SLOTS = 7;
 const splitTerms = (text: string) => text.split(",").map((term) => term.trim()).filter(Boolean);
 const dayName = (weekday: (typeof WEEKDAYS)[number]) => t.weekdaysLong[WEEKDAYS.indexOf(weekday)]!;
+
+/** The message of a failed generation or replacement, with the wording of plans (not of photos). */
+function planErrorText(error: unknown): string {
+  const code = error instanceof ApiError ? error.code : null;
+  return (code && t.planGen.errors[code]) || t.planGen.errors.recognition_failed!;
+}
 
 function violationText(v: PlanViolation): string {
   const s = t.planGen;
@@ -245,7 +250,7 @@ export function PlanGeneratePage() {
                       <span>{s.replaceNote}</span>
                       <input value={wish} maxLength={200} placeholder={s.replacePlaceholder} autoFocus onChange={(e) => setWish(e.target.value)} />
                     </label>
-                    {replace.isError && <p className="error-text">{errorText(replace.error)}</p>}
+                    {replace.isError && <p className="error-text">{planErrorText(replace.error)}</p>}
                     <div className="plan-replace-actions">
                       <button type="button" className="button-secondary-small" onClick={() => setReplacing(null)}>
                         {s.cancel}
@@ -313,7 +318,7 @@ export function PlanGeneratePage() {
   const targets = view.data.targets;
   const update = (patch: Partial<PlanPreferences>) => setPrefs({ ...prefs, ...patch });
   const setSlot = (index: number, patch: Partial<PlanSlot>) => update({ slots: prefs.slots.map((slot, i) => (i === index ? { ...slot, ...patch } : slot)) });
-  const failed = status === "failed" ? errorText(new ApiError(502, job.data?.error ?? "recognition_failed", "plan generation failed")) : null;
+  const failed = status === "failed" ? planErrorText(new ApiError(502, job.data?.error ?? "recognition_failed", "plan generation failed")) : null;
   const startError = start.error instanceof ApiError && start.error.code === "generation_running" ? s.running : start.isError || save.isError ? s.startFailed : null;
 
   function generate() {
