@@ -119,6 +119,32 @@ describe("PlanGenerator", () => {
     await expect(bad.estimateMacros({ description: "", foods: [{ name: "x" }] })).rejects.toMatchObject({ reason: "unreadable" });
   });
 
+  it("suggests a dish for today with its own system prompt (WHO guidance), the budget and the hint", async () => {
+    const reply = { description: "Orata e patate", reason: "Leggera", foods: [{ name: "Orata", quantity: 200, unit: "g", kcal: 220, protein: 40, carbs: 0, fat: 6, fiber: 0, sugar: 0, addedSugar: 0 }] };
+    const client = fakeClient([JSON.stringify(reply)]);
+    const generator = new PlanGenerator({ apiKey: "k", model: () => "m", client: client as never });
+    const out = await generator.suggestForDay({
+      preferences: { ...prefs, dislikes: ["funghi"] },
+      meal: { title: "Pranzo", time: "13:00", currentDish: "Pasta al pomodoro" },
+      goals: { kcal: 2000, protein: 135, carbs: 230, fat: 65, fiber: 30 },
+      eaten: { kcal: 500, protein: 30, carbs: 60, fat: 15, fiber: 6 },
+      budget: { kcal: 650, protein: 50, carbs: 80, fat: 25, fiber: 13 },
+      otherMealsLeft: [{ title: "Cena", kcal: 600, protein: 40 }],
+      week: { days: 2, avgKcal: 1900, avgProtein: 120 },
+      note: "ho zucchine e uova",
+    });
+    expect(out.description).toBe("Orata e patate");
+    const sent = (client.stream.mock.calls[0] as unknown as [Record<string, any>])[0];
+    expect(sent.system).toContain("WHO healthy diet");
+    expect(sent.system).not.toContain("one-week meal plan");
+    expect(sent.messages[0].content).toContain("ho zucchine e uova");
+    expect(sent.messages[0].content).toContain('"budgetForThisMeal"');
+    expect(sent.messages[0].content).toContain("funghi");
+    expect(sent.output_config.format.schema.required).toEqual(["description", "reason", "foods"]);
+    const bad = new PlanGenerator({ apiKey: "k", model: () => "m", client: fakeClient([JSON.stringify({ description: "x" })]) as never });
+    await expect(bad.suggestForDay({ preferences: prefs, meal: { title: "Pranzo", time: "13:00", currentDish: null }, goals: { kcal: null, protein: null, carbs: null, fat: null, fiber: null }, eaten: { kcal: 0, protein: 0, carbs: 0, fat: 0, fiber: 0 }, budget: { kcal: null, protein: null, carbs: null, fat: null, fiber: null }, otherMealsLeft: [], week: null, note: "" })).rejects.toMatchObject({ reason: "unreadable" });
+  });
+
   it("turns refusals, cut and malformed answers into RecognitionError", async () => {
     const make = (texts: string[], stop?: string) => new PlanGenerator({ apiKey: "k", model: () => "m", client: fakeClient(texts, stop) as never });
     await expect(make(["{}"], "refusal").generate(input)).rejects.toMatchObject({ reason: "refused" });

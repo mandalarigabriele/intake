@@ -1,12 +1,16 @@
 import Anthropic, { APIError } from "@anthropic-ai/sdk";
 import type { Message, MessageParam } from "@anthropic-ai/sdk/resources/messages";
 import {
+  DAY_ALTERNATIVE_JSON_SCHEMA,
   GENERATED_MACROS_JSON_SCHEMA,
   GENERATED_MEAL_JSON_SCHEMA,
   GENERATED_PLAN_JSON_SCHEMA,
   WEEKDAYS,
   generatedMealSchema,
   toPlannedMeal,
+  dayAlternativeSchema,
+  type DayAlternativeAnswer,
+  type DayBudget,
   type MealPlan,
   type PlannedFood,
   type PlannedMeal,
@@ -63,6 +67,18 @@ const system = (language: Language) =>
     "Spread the calories sensibly across the slots (snacks lighter than lunch and dinner) and repeat ingredients across the week to keep shopping simple, without repeating whole dishes beyond the limits.",
     "Do not give medical advice; this is a food plan for a healthy adult.",
     `Write every dish, food and note in ${LANGUAGE_NAMES[language]}.`,
+  ].join(" ");
+
+/** The WHO healthy diet guidance the day's alternative follows (it is a food suggestion for a healthy adult, not medical advice). */
+const dayAlternativeSystem = (language: Language) =>
+  [
+    "You suggest one alternative dish for a single meal of today, for a healthy adult who tracks food in a personal diary, using realistic home cooking.",
+    "Aim for the calories and protein of the budget you are given (within about 10%) and keep carbohydrates, fat and fiber near theirs, so the whole day stays on its goals.",
+    "Follow the WHO healthy diet guidance: free sugars under 10% of energy, saturated fat under 10% of energy, no industrial trans fat, little salt (sodium under 2 g a day overall), at least 400 g of fruit and vegetables a day overall, fiber from whole grains and legumes, mostly unsaturated fats, and little processed meat.",
+    "Keep the week in mind: if the week so far is under or over its goals, lean slightly the other way without going outside the budget.",
+    "Obey the constraints strictly: never use an allergen or intolerance, avoid disliked foods, respect the diet and the cooking time. If the person lists ingredients they have, use them as the base.",
+    "Give every food a quantity (grams or millilitres for anything weighed, pz for pieces) and the nutrients of that quantity, from standard composition tables (CREA, USDA). Do not give medical advice.",
+    `Write the dish, the foods and the reason in ${LANGUAGE_NAMES[language]}.`,
   ].join(" ");
 
 function userMessage({ preferences: p, targets, profile, recentMeals }: PlanGeneratorInput): string {
@@ -141,6 +157,38 @@ export class PlanGenerator {
   }
 
   /**
+   * "Alternativa" in the Timeline: another dish for one planned meal of today only, sized on what is left of the day's
+   * goals and checked against the week so far. Nothing is saved: the person confirms it on the meal screen.
+   */
+  async suggestForDay(input: {
+    preferences: PlanPreferences;
+    meal: { title: string; time: string; currentDish: string | null };
+    goals: Record<keyof DayBudget, number | null>;
+    eaten: Record<keyof DayBudget, number>;
+    budget: DayBudget;
+    otherMealsLeft: Array<{ title: string; kcal: number | null; protein: number | null }>;
+    week: { days: number; avgKcal: number; avgProtein: number } | null;
+    note: string;
+  }): Promise<DayAlternativeAnswer> {
+    const p = input.preferences;
+    const request = {
+      replace: { meal: input.meal.title, time: input.meal.time, currentDish: input.meal.currentDish },
+      budgetForThisMeal: input.budget,
+      dailyGoals: input.goals,
+      eatenSoFarToday: input.eaten,
+      otherPlannedMealsStillToEat: input.otherMealsLeft,
+      weekSoFar: input.week,
+      constraints: { diet: DIETS[p.diet], allergiesAndIntolerances: p.allergies, dislikedFoods: p.dislikes, maxCookingMinutesOnWeekdays: p.cookingMinutes },
+    };
+    const wish = input.note.trim();
+    const text = `Suggest one alternative dish for this meal, only for today.\n${JSON.stringify(request, null, 2)}${wish ? `\n\nWhat I have or prefer: ${wish}` : ""}`;
+    const answer = await this.ask([{ role: "user", content: text }], DAY_ALTERNATIVE_JSON_SCHEMA, "day alternative", undefined, dayAlternativeSystem(this.options.language?.() ?? "it"));
+    const parsed = dayAlternativeSchema.safeParse(answer.json);
+    if (!parsed.success) throw new RecognitionError("unreadable", "Claude API answer did not match the alternative schema");
+    return parsed.data;
+  }
+
+  /**
    * "Ricalcola con l'IA": the nutrients of a meal estimated from its foods and amounts (standard composition tables).
    * One small request; the answer is never saved by itself, the person confirms it in the editor.
    */
@@ -154,7 +202,7 @@ export class PlanGenerator {
   }
 
   /** One structured-output request, streamed; returns the parsed JSON and the raw text. */
-  private async ask(messages: MessageParam[], schema: unknown, what: string, onText?: (streamed: string) => void): Promise<{ json: unknown; text: string }> {
+  private async ask(messages: MessageParam[], schema: unknown, what: string, onText?: (streamed: string) => void, systemText?: string): Promise<{ json: unknown; text: string }> {
     const model = this.options.model();
     let streamed = "";
     let response: Message;
@@ -162,7 +210,7 @@ export class PlanGenerator {
       const stream = this.client.stream({
         model,
         max_tokens: MAX_TOKENS,
-        system: system(this.options.language?.() ?? "it"),
+        system: systemText ?? system(this.options.language?.() ?? "it"),
         output_config: { effort: "low", format: { type: "json_schema", schema: schema as Record<string, unknown> } },
         messages,
       });

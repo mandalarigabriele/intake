@@ -643,6 +643,7 @@ export const en: Strings = {
     portion: "serving",
     foodsSaved: "FOODS",
     favoriteEyebrow: "FAVORITE",
+    alternativeEyebrow: "ALTERNATIVE",
     favoriteMissing: "This favorite is no longer on Nutrition.",
     addFoodPlaceholder: "E.g. parmesan 10 g, a spoon of oil",
     addFoodSubmit: "Add",
@@ -799,6 +800,23 @@ export const en: Strings = {
     goalsLine: (kcal: string | null, protein: string | null) => [kcal && `${kcal} kcal`, protein && `P ${protein} g`].filter(Boolean).join(" · "),
     free: "Free meal",
     generatedOn: (date: string) => `Printed on ${date}`,
+  },
+
+  dayAlt: {
+    button: "Alternative for today",
+    title: "Alternative for today",
+    note: "An AI proposal for today only, sized on what is left of your goals, on the meals already logged and the ones still planned, on the week so far and on WHO guidance. The plan does not change.",
+    hint: "Hint (optional)",
+    hintPlaceholder: "E.g. I have zucchini and eggs, short on time",
+    generate: "Generate",
+    working: "Looking for an alternative…",
+    proposal: "PROPOSAL FOR TODAY",
+    budget: (kcal: string, protein: string) => `For this meal: about ${kcal} kcal and ${protein} g of protein`,
+    reason: "Why",
+    use: "Log this",
+    another: "Another one",
+    cancel: "Cancel",
+    gone: "This proposal is gone: generate again.",
   },
 
   needs: {

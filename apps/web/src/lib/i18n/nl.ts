@@ -643,6 +643,7 @@ export const nl: Strings = {
     portion: "portie",
     foodsSaved: "VOEDINGSMIDDELEN",
     favoriteEyebrow: "FAVORIET",
+    alternativeEyebrow: "ALTERNATIEF",
     favoriteMissing: "Deze favoriet staat niet meer op Nutrition.",
     addFoodPlaceholder: "Bijv. parmezaan 10 g, een lepel olie",
     addFoodSubmit: "Toevoegen",
@@ -799,6 +800,23 @@ export const nl: Strings = {
     goalsLine: (kcal: string | null, protein: string | null) => [kcal && `${kcal} kcal`, protein && `E ${protein} g`].filter(Boolean).join(" · "),
     free: "Vrije maaltijd",
     generatedOn: (date: string) => `Afgedrukt op ${date}`,
+  },
+
+  dayAlt: {
+    button: "Alternatief voor vandaag",
+    title: "Alternatief voor vandaag",
+    note: "Een AI-voorstel alleen voor vandaag, afgestemd op wat er van je doelen overblijft, op de al geregistreerde en nog geplande maaltijden, op de week tot nu toe en op de richtlijnen van de WHO. Het plan verandert niet.",
+    hint: "Hint (optioneel)",
+    hintPlaceholder: "Bijv. ik heb courgette en eieren, weinig tijd",
+    generate: "Genereren",
+    working: "Ik zoek een alternatief…",
+    proposal: "VOORSTEL VOOR VANDAAG",
+    budget: (kcal: string, protein: string) => `Voor deze maaltijd: ongeveer ${kcal} kcal en ${protein} g eiwit`,
+    reason: "Waarom",
+    use: "Dit registreren",
+    another: "Nog een",
+    cancel: "Annuleren",
+    gone: "Dit voorstel bestaat niet meer: genereer opnieuw.",
   },
 
   needs: {

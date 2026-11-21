@@ -643,6 +643,7 @@ export const it = {
     portion: "porzione",
     foodsSaved: "ALIMENTI",
     favoriteEyebrow: "PREFERITO",
+    alternativeEyebrow: "ALTERNATIVA",
     favoriteMissing: "Questo preferito non c’è più su Nutrition.",
     addFoodPlaceholder: "Es. parmigiano 10 g, un cucchiaio d’olio",
     addFoodSubmit: "Aggiungi",
@@ -799,6 +800,23 @@ export const it = {
     goalsLine: (kcal: string | null, protein: string | null) => [kcal && `${kcal} kcal`, protein && `P ${protein} g`].filter(Boolean).join(" · "),
     free: "Pasto libero",
     generatedOn: (date: string) => `Stampato il ${date}`,
+  },
+
+  dayAlt: {
+    button: "Alternativa per oggi",
+    title: "Alternativa per oggi",
+    note: "Una proposta dell’IA solo per oggi, calibrata su quello che resta dei tuoi obiettivi, sui pasti già registrati e su quelli ancora previsti, sulla settimana finora e sulle linee guida dell’OMS. Il piano non cambia.",
+    hint: "Suggerimento (facoltativo)",
+    hintPlaceholder: "Es. ho zucchine e uova, poco tempo",
+    generate: "Genera",
+    working: "Cerco un’alternativa…",
+    proposal: "PROPOSTA PER OGGI",
+    budget: (kcal: string, protein: string) => `Per questo pasto: circa ${kcal} kcal e ${protein} g di proteine`,
+    reason: "Perché",
+    use: "Registra questo",
+    another: "Un’altra",
+    cancel: "Annulla",
+    gone: "Questa proposta non c’è più: genera di nuovo.",
   },
 
   needs: {

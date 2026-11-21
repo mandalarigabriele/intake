@@ -39,6 +39,7 @@ import type {
   GoalsUpdate,
   BackupStatus,
   PlanGenerationJob,
+  DayAlternative,
   EstimatedMacrosDto,
   FoodCandidateDto,
   FoodMacrosDto,
@@ -858,5 +859,12 @@ export function useEstimateMacros() {
 export function useAlternativeMeal() {
   return useMutation({
     mutationFn: ({ id, ...request }: MealReplace & { id: number }) => apiFetch<{ meal: PlannedMeal }>(`/api/plans/${id}/alternative`, { method: "POST", json: request }),
+  });
+}
+
+/** "Alternativa per oggi": another dish for a planned meal of today (Claude API; nothing is saved). */
+export function useDayAlternative() {
+  return useMutation({
+    mutationFn: (request: { index: number; note: string }) => apiFetch<DayAlternative>("/api/days/today/alternative", { method: "POST", json: request }),
   });
 }

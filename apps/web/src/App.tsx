@@ -98,6 +98,10 @@ function SignedIn({ user, notice, adding, openAdd, closeAdd }: SignedInProps) {
         </Route>
         {/* A favorite opens on the confirmation screen; it needs no AI, so it works with Pasti da foto off */}
         <Route path="/pasto/nuovo/preferito/:id">{(params) => <NewMealPage key={params.id} initialMode="text" savedId={params.id} />}</Route>
+        {/* The day's AI alternative, handed over by the Timeline or Oggi, confirmed like any meal */}
+        <Route path="/pasto/nuovo/alternativa">
+          <NewMealPage initialMode="text" fromAlternative />
+        </Route>
         <Route path="/pasto/nuovo/testo">{on?.recognition ? <NewMealPage initialMode="text" /> : home}</Route>
         <Route path="/pasto/nuovo">{on?.recognition ? <NewMealPage initialMode="photo" /> : home}</Route>
         <Route path="/pasto/:date/:id/modifica">{(params) => <EditMealPage date={params.date} id={params.id} />}</Route>

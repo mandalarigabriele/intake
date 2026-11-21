@@ -5,6 +5,7 @@ import { mealPhotoUrl, useMealPhotos } from "../api/queries";
 import { ConfirmDeleteSheet } from "./ConfirmDeleteSheet";
 import { formatDuration, formatGramsShort, formatKcal, formatTime } from "../lib/format";
 import { t } from "../lib/strings";
+import { DayAlternative } from "./DayAlternative";
 import { MACROS } from "./MacroCard";
 import { SleepPhases } from "./SleepPhases";
 import { WorkoutCard } from "./WorkoutCard";
@@ -147,8 +148,11 @@ function PlannedCard({
   logging,
   failed,
   onOther,
+  suggest,
 }: {
   entry: PlannedEntry;
+  /** Today: the AI alternative can be asked. */
+  suggest: boolean;
   onLog: () => void;
   onSkip: (skip: boolean) => void;
   logging: boolean;
@@ -192,12 +196,16 @@ function PlannedCard({
           </div>
           {!entry.macros && <p className="planned-hint">{t.timeline.noMacros}</p>}
           {failed && <p className="error-text">{t.timeline.logFailed}</p>}
+          {suggest && <DayAlternative entry={entry} />}
         </>
       )}
       {entry.status === "planned" && (
-        <button type="button" className="button-small skip-upcoming" onClick={() => onSkip(true)}>
-          {t.timeline.skip}
-        </button>
+        <>
+          <button type="button" className="button-small skip-upcoming" onClick={() => onSkip(true)}>
+            {t.timeline.skip}
+          </button>
+          {suggest && <DayAlternative entry={entry} />}
+        </>
       )}
     </article>
   );
@@ -310,6 +318,7 @@ export function Timeline({ meals, planned, workouts = [], sleep = null, hasPlan,
                   logging={loggingPlanned?.planId === entry.entry.planId && loggingPlanned.index === entry.entry.index}
                   failed={logFailed && loggingPlanned?.planId === entry.entry.planId && loggingPlanned.index === entry.entry.index}
                   onOther={onOther}
+                  suggest={now !== null}
                 />
               )}
             </li>

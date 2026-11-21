@@ -1,4 +1,4 @@
-import { MEAL_PHOTOS_MAX, MEAL_TYPES, NUTRITION_MEAL_TYPES, type MealItem, type MealItemInput, type Nutrients, type NutritionMealType, type RecognizedItem, type RecognizedMeal, type SavedMeal } from "@intake/shared";
+import { MEAL_PHOTOS_MAX, MEAL_TYPES, NUTRITION_MEAL_TYPES, type DayAlternative, type MealItem, type MealItemInput, type Nutrients, type NutritionMealType, type RecognizedItem, type RecognizedMeal, type SavedMeal } from "@intake/shared";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Link, useLocation } from "wouter";
 import { ApiError, newIdempotencyKey } from "../api/client";
@@ -6,6 +6,7 @@ import { useCreateMeal, useDay, useFeatures, useRecognizeMeal, useSavedMeals } f
 import { CloseIcon, SparklesIcon } from "../components/icons";
 import { PhotoCarousel } from "../components/PhotoCarousel";
 import { formatGrams, formatKcal, formatOneDecimal } from "../lib/format";
+import { readAlternativeDraft } from "../lib/dayAlternativeDraft";
 import { photoForRecognition } from "../lib/image";
 import { t } from "../lib/strings";
 
@@ -66,6 +67,20 @@ function fromMealItem(item: MealItem, key: number): Draft {
     unit: counted ? item.unit || t.newMeal.portion : t.newMeal.portion,
     visible: true,
     perUnit: { kcal: n.kcal / amount, protein: n.protein / amount, carbs: n.carbs / amount, fat: n.fat / amount, fiber: per(n.fiber), sugar: per(n.sugar), addedSugar: per(n.addedSugar) },
+  };
+}
+
+/** A food of the day's AI alternative: nutrients are for the whole amount, as for a logged meal's items. */
+function fromAlternativeItem(item: DayAlternative["items"][number], key: number): Draft {
+  const n = item.nutrients;
+  const amount = item.quantity;
+  return {
+    key,
+    name: item.name,
+    amount,
+    unit: item.unit,
+    visible: true,
+    perUnit: { kcal: n.kcal / amount, protein: n.protein / amount, carbs: n.carbs / amount, fat: n.fat / amount, fiber: n.fiber / amount, sugar: n.sugar / amount, addedSugar: Math.min(n.addedSugar, n.sugar) / amount },
   };
 }
 
@@ -138,7 +153,7 @@ export function errorText(error: unknown): string {
  * 100 g), or a favorite is opened with its foods (`savedId`); the user corrects quantities, type and time, then the
  * meal is logged on Nutrition with its items.
  */
-export function NewMealPage({ initialMode, savedId }: { initialMode: Mode; savedId?: string }) {
+export function NewMealPage({ initialMode, savedId, fromAlternative = false }: { initialMode: Mode; savedId?: string; fromAlternative?: boolean }) {
   const day = useDay("today");
   const recognition = useFeatures().data?.recognition ?? false;
   const saved = useSavedMeals();
@@ -195,6 +210,16 @@ export function NewMealPage({ initialMode, savedId }: { initialMode: Mode; saved
     setItems(fromSavedMeal(savedMeal));
     if (savedMeal.mealType && (NUTRITION_MEAL_TYPES as readonly string[]).includes(savedMeal.mealType)) setType(savedMeal.mealType as NutritionMealType);
   }, [savedMeal, result]);
+
+  // The day's AI alternative (Timeline, Oggi) opens on the same confirmation screen, with its foods to correct
+  const alternative = useMemo(() => (fromAlternative ? readAlternativeDraft() : null), [fromAlternative]);
+  const prefilled = Boolean(savedId) || Boolean(alternative);
+  useEffect(() => {
+    if (!alternative || result) return;
+    setResult({ description: alternative.description, items: [] });
+    setItems(alternative.items.map(fromAlternativeItem));
+    if ((NUTRITION_MEAL_TYPES as readonly string[]).includes(alternative.type)) setType(alternative.type as NutritionMealType);
+  }, [alternative, result]);
 
   async function onPhoto(file: File | undefined) {
     if (!file) return;
@@ -286,7 +311,7 @@ export function NewMealPage({ initialMode, savedId }: { initialMode: Mode; saved
   }
 
   // A favorite still loading, or gone from Nutrition
-  if (!result && savedId) {
+  if (!result && (savedId || fromAlternative)) {
     return (
       <div className="page detail-page edit-page new-meal-page">
         <header className="edit-header">
@@ -296,7 +321,7 @@ export function NewMealPage({ initialMode, savedId }: { initialMode: Mode; saved
           <h1>{t.newMeal.title}</h1>
           <span />
         </header>
-        {saved.isPending ? <div className="card skeleton" style={{ height: 220 }} aria-label={t.loading} /> : <p className="notice" data-kind="error">{t.newMeal.favoriteMissing}</p>}
+        {savedId && saved.isPending ? <div className="card skeleton" style={{ height: 220 }} aria-label={t.loading} /> : <p className="notice" data-kind="error">{fromAlternative ? t.dayAlt.gone : t.newMeal.favoriteMissing}</p>}
       </div>
     );
   }
@@ -397,7 +422,7 @@ export function NewMealPage({ initialMode, savedId }: { initialMode: Mode; saved
   return (
     <div className="page detail-page edit-page new-meal-page">
       <header className="edit-header">
-        {savedId ? (
+        {prefilled ? (
           <Link href="/" className="text-button">
             {t.newMeal.cancel}
           </Link>
@@ -422,7 +447,7 @@ export function NewMealPage({ initialMode, savedId }: { initialMode: Mode; saved
           </span>
         )}
         <span className="recognized-text">
-          <span className="eyebrow">{savedId ? t.newMeal.favoriteEyebrow : t.newMeal.recognized}</span>
+          <span className="eyebrow">{savedId ? t.newMeal.favoriteEyebrow : alternative ? t.newMeal.alternativeEyebrow : t.newMeal.recognized}</span>
           <strong className="stat-value">
             {formatKcal(totals.kcal)} <span className="muted">{savedId ? "kcal" : t.newMeal.estimatedKcal}</span>
           </strong>
@@ -445,7 +470,7 @@ export function NewMealPage({ initialMode, savedId }: { initialMode: Mode; saved
         </label>
       </div>
 
-      <span className="sheet-section">{savedId ? t.newMeal.foodsSaved : t.newMeal.foods}</span>
+      <span className="sheet-section">{prefilled ? t.newMeal.foodsSaved : t.newMeal.foods}</span>
       <div className="form-card">
         {items.map((item, index) => (
           <div key={item.key} className="item-edit">

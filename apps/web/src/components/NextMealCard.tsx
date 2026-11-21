@@ -4,6 +4,7 @@ import { Link } from "wouter";
 import { useLogPlanned, useSkipPlanned } from "../api/queries";
 import { formatKcal } from "../lib/format";
 import { t } from "../lib/strings";
+import { DayAlternative } from "./DayAlternative";
 
 const minutes = (time: string) => Number(time.slice(0, 2)) * 60 + Number(time.slice(3, 5));
 
@@ -124,6 +125,7 @@ export function NextMealCard({ view, onAdd }: Props) {
                 {t.nextMeal.day}
               </Link>
             </div>
+            <DayAlternative entry={next} />
             {after && <p className="next-meal-after">{t.nextMeal.then(after.title, after.time, after.foods)}</p>}
           </div>
         </>

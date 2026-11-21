@@ -8990,3 +8990,92 @@ div.connection-row {
 .plan-replace-actions {
   align-items: center;
 }
+
+/* Alternativa per oggi (Timeline and Oggi's next meal): the hint field and the proposal */
+.day-alt-open {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  width: 100%;
+  margin-top: 8px;
+}
+
+.day-alt {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px solid var(--color-divider);
+}
+
+.day-alt form {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.day-alt .field input {
+  min-width: 0;
+  width: 100%;
+  min-height: 44px;
+  padding: 0 12px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-surface-input);
+  color: var(--color-text);
+  font: inherit;
+  font-size: 16px;
+}
+
+.day-alt-note {
+  font-size: 12px;
+  line-height: 1.45;
+}
+
+.day-alt-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 8px;
+}
+
+.day-alt-actions .button-secondary-small {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0 14px;
+}
+
+.day-alt-actions .button-primary-inline {
+  flex: 0 0 auto;
+  height: 44px;
+  padding: 0 20px;
+  border-radius: var(--radius-md);
+  font-size: 14px;
+  gap: 6px;
+}
+
+.day-alt-card {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 12px 14px;
+  border-radius: var(--radius-md);
+  background: var(--color-accent-soft);
+}
+
+.day-alt-card ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  font-size: 14px;
+}
+
+.day-alt-reason {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.45;
+}

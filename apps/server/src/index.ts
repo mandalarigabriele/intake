@@ -68,6 +68,15 @@ const hevySync =
         log: { warn: (details, message) => app.log.warn(details, message), info: (details, message) => app.log.info(details, message) },
       })
     : null;
+const planGenerator = config.ANTHROPIC_API_KEY
+  ? new PlanGenerator({
+      apiKey: config.ANTHROPIC_API_KEY,
+      model: () => services.planGeneration.get().model,
+      language: () => services.language.get(),
+      log: { info: (details, message) => app.log.info(details, message), warn: (details, message) => app.log.warn(details, message) },
+    })
+  : undefined;
+
 const app = await buildApp({
   webDistDir: config.WEB_DIST_DIR ?? resolve(import.meta.dirname, "../../web/dist"),
   logger: true,
@@ -117,15 +126,10 @@ const app = await buildApp({
     plans: services.plans,
     store: services.planGeneration,
     needs: services.needs,
-    generator: config.ANTHROPIC_API_KEY
-      ? new PlanGenerator({
-          apiKey: config.ANTHROPIC_API_KEY,
-          model: () => services.planGeneration.get().model,
-          language: () => services.language.get(),
-          log: { info: (details, message) => app.log.info(details, message), warn: (details, message) => app.log.warn(details, message) },
-        })
-      : undefined,
+    generator: planGenerator,
   },
+  // "Alternativa" in the Timeline and Oggi: the same model and generator, only for today's meal
+  dayAlternative: { api, plans: services.plans, store: services.planGeneration, generator: planGenerator },
   foods: { api },
   weekApi: api,
   weekHealth: health,
