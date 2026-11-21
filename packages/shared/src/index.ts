@@ -8,3 +8,4 @@ export * from "./goalInput.js";
 export * from "./favoriteName.js";
 export * from "./needs.js";
 export * from "./planGeneration.js";
+export * from "./shoppingList.js";

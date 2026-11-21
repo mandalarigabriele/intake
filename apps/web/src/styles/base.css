@@ -8438,3 +8438,255 @@ div.connection-row {
     top: 24px;
   }
 }
+
+/* ================= Piano › Lista della spesa and Stampa (docs/shopping-list.md) ================= */
+
+.shopping-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.shopping-print {
+  display: inline-flex;
+  align-items: center;
+  padding: 0 16px;
+  text-decoration: none;
+}
+
+.shopping-hint {
+  margin: 0;
+  font-size: 12px;
+}
+
+.shopping-group {
+  padding: 14px 16px;
+  gap: 4px;
+}
+
+.shopping-group h2 {
+  margin: 0 0 4px;
+  font-size: 13px;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  color: var(--color-text-muted);
+}
+
+.shopping-group ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.shopping-group li {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 12px;
+  padding: 8px 0;
+  border-top: 1px solid var(--color-divider);
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.shopping-group li:first-child {
+  border-top: none;
+}
+
+.shopping-group li .muted {
+  flex: none;
+  font-size: 12px;
+}
+
+.print-page {
+  max-width: 900px;
+}
+
+.print-controls {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.print-controls-text {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.print-controls-text .muted {
+  font-size: 12px;
+}
+
+/* The sheet looks like paper on screen too, so what is printed is what is seen */
+.print-sheet {
+  padding: 24px;
+  border-radius: var(--radius-card-sm);
+  background: var(--color-surface);
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  font-size: 13px;
+  line-height: 1.45;
+}
+
+.print-head h1 {
+  margin: 0;
+  font-size: 24px;
+}
+
+.print-head p {
+  margin: 2px 0 0;
+  color: var(--color-text-muted);
+  font-weight: 600;
+}
+
+.print-days {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 16px;
+}
+
+.print-day {
+  break-inside: avoid;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.print-day h2,
+.print-shopping h2,
+.print-notes h2 {
+  margin: 0;
+  padding-bottom: 4px;
+  border-bottom: 2px solid var(--color-text);
+  font-size: 15px;
+  font-weight: 800;
+}
+
+.print-meal p {
+  margin: 0;
+}
+
+.print-meal-head {
+  display: flex;
+  gap: 8px;
+  align-items: baseline;
+}
+
+.print-kcal {
+  margin-left: auto;
+  font-variant-numeric: tabular-nums;
+  font-weight: 700;
+}
+
+.print-foods {
+  color: var(--color-text-muted);
+  font-size: 12px;
+}
+
+.print-shopping-columns {
+  columns: 2 220px;
+  column-gap: 24px;
+  margin-top: 8px;
+}
+
+.print-category {
+  break-inside: avoid;
+  margin-bottom: 12px;
+}
+
+.print-category h3 {
+  margin: 0 0 4px;
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.print-category ul,
+.print-notes ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.print-category li {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 2px 0;
+}
+
+.print-box {
+  flex: none;
+  width: 11px;
+  height: 11px;
+  border: 1.5px solid var(--color-text);
+  border-radius: 2px;
+}
+
+.print-notes ul {
+  margin-top: 6px;
+  list-style: disc;
+  padding-left: 18px;
+}
+
+@page {
+  margin: 14mm;
+}
+
+@media print {
+  /* Paper is always light, whatever the system theme */
+  :root {
+    color-scheme: light;
+  }
+
+  /* The app never scrolls (only .shell-main does): let the page flow so every page is printed */
+  html,
+  body {
+    height: auto;
+    overflow: visible;
+    background: transparent;
+  }
+
+  .shell {
+    position: static;
+    height: auto;
+    overflow: visible;
+    display: block;
+    background: transparent;
+  }
+
+  /* The shopping list starts on its own page, to cut out or take to the shop */
+  .print-shopping {
+    break-before: page;
+  }
+
+  .shell-main {
+    overflow: visible;
+  }
+
+  .sidebar,
+  .tabbar,
+  .ptr,
+  .print-controls {
+    display: none !important;
+  }
+
+  .print-page {
+    max-width: none;
+    padding: 0;
+  }
+
+  .print-sheet {
+    padding: 0;
+    background: none;
+    border-radius: 0;
+    font-size: 10.5pt;
+  }
+
+  .print-days {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}

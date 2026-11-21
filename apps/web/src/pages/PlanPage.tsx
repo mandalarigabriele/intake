@@ -124,6 +124,14 @@ export function PlanPage() {
                     <span className="muted">{t.planGen.menuHint}</span>
                   </button>
                 )}
+                <button type="button" role="menuitem" className="menu-item menu-item-rich" disabled={!shown} onClick={() => navigate("/piano/spesa")}>
+                  <strong>{t.shopping.menu}</strong>
+                  <span className="muted">{t.shopping.menuHint}</span>
+                </button>
+                <button type="button" role="menuitem" className="menu-item menu-item-rich" disabled={!shown} onClick={() => navigate("/piano/stampa")}>
+                  <strong>{t.shopping.print}</strong>
+                  <span className="muted">{t.shopping.printHint}</span>
+                </button>
                 <button type="button" role="menuitem" className="menu-item menu-item-rich" onClick={() => fileInput.current?.click()}>
                   <strong>{t.plan.upload}</strong>
                   <span className="muted">{t.plan.uploadHint}</span>

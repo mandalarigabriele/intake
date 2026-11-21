@@ -13,6 +13,8 @@ import { HealthTrendsPage } from "./pages/HealthTrendsPage";
 import { MealPage } from "./pages/MealPage";
 import { NewMealPage } from "./pages/NewMealPage";
 import { NeedsPage } from "./pages/NeedsPage";
+import { PlanPrintPage } from "./pages/PlanPrintPage";
+import { ShoppingListPage } from "./pages/ShoppingListPage";
 import { PlanGeneratePage } from "./pages/PlanGeneratePage";
 import { PlanPage } from "./pages/PlanPage";
 import { ProfilePage } from "./pages/ProfilePage";
@@ -101,6 +103,12 @@ function SignedIn({ user, notice, adding, openAdd, closeAdd }: SignedInProps) {
         <Route path="/profilo/salute">{on?.health ? <HealthPage /> : home}</Route>
         <Route path="/profilo">
           <ProfilePage user={user} />
+        </Route>
+        <Route path="/piano/spesa">
+          <ShoppingListPage />
+        </Route>
+        <Route path="/piano/stampa">
+          <PlanPrintPage />
         </Route>
         <Route path="/piano/genera">{on?.recognition ? <PlanGeneratePage /> : home}</Route>
         <Route path="/piano/fabbisogno">

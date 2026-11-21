@@ -781,3 +781,12 @@ export function useSetPlanTime() {
     },
   });
 }
+
+/** The plan Piano shows: the one in effect today, or the next scheduled one when none is active yet. */
+export function useShownPlan() {
+  const plans = usePlans();
+  const data = plans.data;
+  const scheduled = data?.versions.filter((v) => v.status === "scheduled").at(-1);
+  const scheduledPlan = usePlan(data && !data.active ? scheduled?.id : undefined).data ?? null;
+  return { plans, shown: data?.active ?? scheduledPlan };
+}

@@ -347,3 +347,7 @@ Reference screens: `OggiDark.dc.html` and `PianoDark.dc.html`.
 Piano › ⋯ › "Genera con l'IA" opens a pushed screen: targets, meals of the day, free meals, variety, food, cooking, notes, then "Genera piano" (with sparkles). The review starts with a summary card ("Alcune cose non tornano": days off target in one line, repeated dishes), each line opening its day; affected meals have a ⚠ line with the reason, a "Sostituisci" pill (optional wish, then a spinner on that meal) and a time chip that opens the system picker. The day totals card shows each macro against the goal with a bar and a text label ("in linea", "▲ 250 sopra", "▼ 24 sotto"); "Stesso orario tutti i giorni" is on by default.
 
 The same day view (`components/PlanDay.tsx`) is the Piano page: header, switch, day tabs and meals share one centred column (max 1040 px); at ≥ 1000 px a 320 px aside holds the totals, the time switch and the notes.
+
+## Piano — shopping list and print page (21 Nov)
+
+⋯ menu entries "Lista della spesa" and "Stampa o salva PDF" (disabled without a plan). The list is a pushed screen (no tab bar): intro, "Copia lista" (turns into "Copiata ✓") next to "Stampa o salva PDF", then one card per supermarket section with each line and "in N pasti". The print page is a paper-like sheet on screen: title, validity and averages, the seven days in a responsive grid, then the shopping list on its own page in two columns with a box before each item. When printing, the app chrome is hidden and the colors are forced light.

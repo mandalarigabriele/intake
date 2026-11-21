@@ -55,7 +55,7 @@ export function AppShell({ user, onAdd, children }: Props) {
   const sidebar = SIDEBAR.filter((item) => !("feature" in item) || features?.[item.feature]);
 
   // Meal detail, edit, Profilo and Apple Salute are pushed screens without the bottom tab bar (docs/design)
-  const pushed = location.startsWith("/pasto/") || location.startsWith("/profilo");
+  const pushed = location.startsWith("/pasto/") || location.startsWith("/profilo") || location === "/piano/spesa" || location === "/piano/stampa";
   const section = sectionOf(location);
   const main = useRef<HTMLElement>(null);
   const pull = usePullToRefresh(main);
