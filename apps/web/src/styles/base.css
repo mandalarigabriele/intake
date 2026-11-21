@@ -2961,17 +2961,6 @@ a.bar-column:hover .bar:not([data-empty]) {
   display: none;
 }
 
-.timeline-hint {
-  padding: 0 4px 12px;
-  font-size: 13px;
-  color: var(--color-text-muted);
-}
-
-.timeline-hint a {
-  color: var(--color-accent);
-  font-weight: 700;
-}
-
 /* ================= Oggi recap and Timeline page ================= */
 
 .day-recap {

@@ -38,7 +38,6 @@ function DayTimeline({ view, selected, onAdd }: { view: DayView; selected: strin
       planned={view.planned}
       workouts={workouts.data?.workouts ?? []}
       sleep={health.data?.date === view.date ? health.data.sleep : null}
-      hasPlan={view.hasPlan}
       now={view.isToday ? view.clock.localTime : null}
       heading={false}
       onLogPlanned={(entry) => logPlanned.mutate({ date: view.date, planId: entry.planId, index: entry.index })}

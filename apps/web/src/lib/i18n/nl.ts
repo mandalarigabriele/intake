@@ -544,8 +544,6 @@ export const nl: Strings = {
     logFailed: "Maaltijd niet geregistreerd. Probeer het opnieuw.",
     now: "NU",
     nowLabel: "Nu",
-    noPlan: "Geen actief plan voor deze dag ·",
-    uploadPlan: "Plan uploaden",
     empty: "Geen maaltijden geregistreerd.",
   },
 

@@ -18,7 +18,6 @@ interface Props {
   workouts?: Workout[];
   /** The night that ended this day (Apple Health), shown as a chip at wake-up time. */
   sleep?: HealthNight | null;
-  hasPlan: boolean;
   /** Show the "Timeline" heading (off on the Timeline page, whose title already says it). */
   heading?: boolean;
   /** Local time HH:MM:SS when the day is today; the "now" marker is shown only then. */
@@ -215,7 +214,7 @@ function PlannedCard({
  * Vertical timeline of the day: logged meals, planned meals from the active plan and, for today,
  * the "now" marker. A continuous rod runs behind the time labels: solid until now, dashed after.
  */
-export function Timeline({ meals, planned, workouts = [], sleep = null, hasPlan, heading = true, now, onLogPlanned, onSkipPlanned, loggingPlanned, logFailed, onOther }: Props) {
+export function Timeline({ meals, planned, workouts = [], sleep = null, heading = true, now, onLogPlanned, onSkipPlanned, loggingPlanned, logFailed, onOther }: Props) {
   const entries: Entry[] = [
     ...(sleep ? [{ kind: "sleep", time: sleep.wake, night: sleep } as Entry] : []),
     ...meals.map((meal): Entry => ({ kind: "meal", time: meal.time, meal })),
@@ -248,12 +247,6 @@ export function Timeline({ meals, planned, workouts = [], sleep = null, hasPlan,
         <span className="muted">{counts.filter(Boolean).join(" · ")}</span>
       </header>
       {meals.length === 0 && planned.length === 0 && workouts.length === 0 && !sleep && <p className="muted timeline-empty">{t.timeline.empty}</p>}
-      {!hasPlan && (
-        <p className="timeline-hint">
-          {t.timeline.noPlan}{" "}
-          <Link href="/piano">{t.timeline.uploadPlan}</Link>
-        </p>
-      )}
       <ol className="timeline">
         {entries.map((entry, i) => {
           const rod = nowIndex === -1 || i < nowIndex ? "past" : "future";

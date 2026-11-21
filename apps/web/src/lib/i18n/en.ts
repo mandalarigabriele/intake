@@ -544,8 +544,6 @@ export const en: Strings = {
     logFailed: "Meal not logged. Try again.",
     now: "NOW",
     nowLabel: "Now",
-    noPlan: "No active plan for this day ·",
-    uploadPlan: "Upload the plan",
     empty: "No meals logged.",
   },
 
