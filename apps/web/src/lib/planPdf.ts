@@ -48,7 +48,8 @@ export async function makePlanPdf(plan: MealPlan): Promise<Blob> {
       doc.setFont("helvetica", "bold").setFontSize(7.5);
       rows.push({ text: doc.splitTextToSize(latin(head), colWidth), bold: true });
       doc.setFont("helvetica", "normal").setFontSize(7.5);
-      const body = isFixedMeal(meal) ? (meal.description ?? meal.foods.map(foodLine).join(", ")) : s.free;
+      // The foods with their doses, one running line: the dish text alone would hide the amounts
+      const body = isFixedMeal(meal) ? meal.foods.map(foodLine).join(" · ") : s.free;
       rows.push({ text: doc.splitTextToSize(latin(body), colWidth), bold: false });
     }
     const height = 6 + rows.reduce((sum, r) => sum + r.text.length * line + (r.bold ? 0 : 1.2), 0);

@@ -85,8 +85,7 @@ export function PlanPrintPage() {
                         {meal.time && <span>{meal.time}</span>}
                         {meal.macros && <span className="print-kcal">{formatKcal(meal.macros.kcal)} kcal</span>}
                       </div>
-                      <p>{meal.description ?? meal.foods.map(foodLine).join(", ")}</p>
-                      {meal.description && <p className="print-foods">{meal.foods.map(foodLine).join(" · ")}</p>}
+                      <p>{meal.foods.map(foodLine).join(" · ")}</p>
                     </div>
                   ) : (
                     <div key={j} className="print-meal">

@@ -8600,11 +8600,6 @@ div.connection-row {
   font-weight: 700;
 }
 
-.print-foods {
-  color: var(--color-text-muted);
-  font-size: 12px;
-}
-
 .print-shopping-columns {
   columns: 2 220px;
   column-gap: 24px;
@@ -8706,11 +8701,6 @@ div.connection-row {
   .print-days {
     grid-template-columns: repeat(3, minmax(0, 1fr));
     gap: 10px;
-  }
-
-  /* The dish line already names the foods */
-  .print-foods {
-    display: none;
   }
 
   .print-sheet {
