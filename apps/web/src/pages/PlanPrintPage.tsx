@@ -1,8 +1,9 @@
 import { SHOPPING_CATEGORIES, WEEKDAYS, foodLine, isFixedMeal, planAverages, shoppingLine, shoppingList } from "@intake/shared";
-import { useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Link } from "wouter";
 import { useShownPlan } from "../api/queries";
 import { formatKcal, formatMediumDate } from "../lib/format";
+import { makePlanPdf, planPdfName } from "../lib/planPdf";
 import { t } from "../lib/strings";
 
 /**
@@ -16,6 +17,42 @@ export function PlanPrintPage() {
   const s = t.shopping;
   const averages = shown ? planAverages(shown.plan) : null;
 
+  // The PDF is made when the page opens, so the button only has to share it: iOS drops the share if it comes too long after the tap
+  const [pdf, setPdf] = useState<{ blob: Blob; name: string } | null>(null);
+  const [pdfFailed, setPdfFailed] = useState(false);
+  useEffect(() => {
+    if (!shown) return;
+    let cancelled = false;
+    makePlanPdf(shown.plan)
+      .then((blob) => !cancelled && setPdf({ blob, name: planPdfName(shown.plan) }))
+      .catch(() => !cancelled && setPdfFailed(true));
+    return () => {
+      cancelled = true;
+    };
+  }, [shown]);
+  // The installed iPhone app has no print window: only the PDF is offered there
+  const standalone = typeof window !== "undefined" && (window.matchMedia("(display-mode: standalone)").matches || (navigator as Navigator & { standalone?: boolean }).standalone === true);
+
+  async function savePdf() {
+    if (!pdf) return;
+    const file = new File([pdf.blob], pdf.name, { type: "application/pdf" });
+    if (navigator.canShare?.({ files: [file] })) {
+      try {
+        await navigator.share({ files: [file], title: pdf.name });
+      } catch {
+        // Closing the share sheet is not an error
+      }
+      return;
+    }
+    // No share sheet (desktop browsers): download the file
+    const url = URL.createObjectURL(pdf.blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = pdf.name;
+    link.click();
+    setTimeout(() => URL.revokeObjectURL(url), 10_000);
+  }
+
   return (
     <div className="page print-page">
       <div className="print-controls">
@@ -28,13 +65,21 @@ export function PlanPrintPage() {
           <strong>{s.print}</strong>
           <span className="muted">{s.printHint2}</span>
         </div>
-        <button type="button" className="button-primary-inline" disabled={!shown} onClick={() => window.print()}>
-          {s.printAction}
-        </button>
+        <div className="print-buttons">
+          <button type="button" className="button-primary-inline" disabled={!pdf} onClick={savePdf}>
+            {pdf || pdfFailed ? s.savePdf : s.pdfPreparing}
+          </button>
+          {!standalone && (
+            <button type="button" className="button-secondary-small" disabled={!shown} onClick={() => window.print()}>
+              {s.printPlain}
+            </button>
+          )}
+        </div>
       </div>
 
       {plans.isPending && <div className="card skeleton" style={{ height: 240 }} />}
       {plans.data && !shown && <p className="muted">{s.empty}</p>}
+      {pdfFailed && <p className="notice" data-kind="error">{s.pdfFailed}</p>}
 
       {shown && (
         <article className="print-sheet">

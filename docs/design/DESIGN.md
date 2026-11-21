@@ -351,3 +351,5 @@ The same day view (`components/PlanDay.tsx`) is the Piano page: header, switch, 
 ## Piano — shopping list and print page (21 Nov)
 
 ⋯ menu entries "Lista della spesa" and "Stampa o salva PDF" (disabled without a plan). The list is a pushed screen (no tab bar): intro, "Copia lista" (turns into "Copiata ✓") next to "Stampa o salva PDF", then one card per supermarket section with each line and "in N pasti". The print page is a paper-like sheet on screen: title, validity and averages, the seven days in a responsive grid, then the shopping list on its own page in two columns with a box before each item. When printing, the app chrome is hidden and the colors are forced light.
+
+The print page's main button is "Salva PDF" (a compact A4 made by the app, share sheet on phones, download on desktop; disabled with "Preparo il PDF…" until ready); "Stampa" sits next to it on desktop browsers only.

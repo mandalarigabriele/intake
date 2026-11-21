@@ -20,4 +20,6 @@ Plans written as free text (a whole dish in one food line) give lines like the d
 
 ## PDF
 
-`/piano/stampa` shows the week (every day with time, kcal, dish and foods), then the shopping list on its own page, with a box to tick before each item, and the plan notes. "Stampa / Salva PDF" opens the system print window; "Salva come PDF" makes the file. The print styles (`@media print` in `styles/base.css`) hide the app, force light colors and let the page flow, because on screen only `.shell-main` scrolls.
+`/piano/stampa` makes a compact A4 PDF in the browser (`lib/planPdf.ts`, jsPDF loaded only on that page): page 1 has the seven days in three columns (time, meal, kcal, dish), page 2 the shopping list in sections with a box before each item. It is made when the page opens, so "Salva PDF" only has to hand it over: on phones and tablets it opens the system share sheet (Save to Files, Print, Mail, AirDrop), on desktop browsers it downloads `piano-<date>.pdf`. The installed iPhone app has no print window (`window.print()` does nothing there), which is why the PDF is made by the app and the "Stampa" button is hidden in the installed app.
+
+The page also shows the week and the list as a sheet, and "Stampa" (desktop browsers) prints that sheet with `@media print` styles (three columns, small type, light colors, app chrome hidden; on screen only `.shell-main` scrolls, so the print styles let the page flow). The standard PDF fonts only cover Western characters: other characters become a space.
