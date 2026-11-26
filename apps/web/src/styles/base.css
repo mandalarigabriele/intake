@@ -10432,3 +10432,26 @@ div.connection-row {
   margin: 6px 0 0;
   font-size: 13px;
 }
+
+/*
+ * Touch screens: the fields designed below 16 px raised to 16 px, so Safari does not zoom in on focus (see the block
+ * after .field above). This one is at the end of the file so it wins over the rules it raises; the :where() rule
+ * covers the fields with no size of their own (the browser default is 13 px) without beating any designed size.
+ */
+@media (pointer: coarse) {
+  :where(input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([type="file"]), textarea, select) {
+    font-size: 16px;
+  }
+
+  .note-input,
+  .text-entry textarea,
+  .plan-time,
+  .plan-meals-time input,
+  .plan-gen-slot input[type="time"],
+  .plan-gen-slot select,
+  .plan-gen-page .form-row select,
+  .dish-fav-search,
+  .dish-alias input {
+    font-size: 16px;
+  }
+}
