@@ -873,6 +873,26 @@ export function useConfirmSplitFoods() {
   });
 }
 
+/** "Dividi la settimana in alimenti": the proposal for every meal of the week that lacks food values (Claude API). */
+export function useSplitWeekProposal() {
+  return useMutation({
+    mutationFn: (id: number) => apiFetch<{ days: Array<{ day: string; meals: Array<{ index: number; foods: PlannedFood[] }> }> }>(`/api/plans/${id}/split-foods/week`, { method: "POST" }),
+  });
+}
+
+/** Confirms the whole week's proposal in one version. */
+export function useConfirmSplitWeek() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({ id, days }: { id: number; days: Array<{ day: string; meals: Array<{ index: number; foods: PlannedFood[] }> }> }) =>
+      apiFetch<StoredPlan>(`/api/plans/${id}/split-foods/week`, { method: "PATCH", json: { days } }),
+    onSuccess: () => {
+      void queryClient.invalidateQueries({ queryKey: ["plans"] });
+      return invalidateDays(queryClient);
+    },
+  });
+}
+
 /** "Applica da oggi": a scheduled plan version starts on the given day (today). */
 export function useStartPlan() {
   const queryClient = useQueryClient();

@@ -1,7 +1,8 @@
 import { WEEKDAYS, foodLine, isFixedMeal, type MealPlan, type PlannedDay, type PlannedFood, type PlannedMeal, type StoredPlan, type Weekday } from "@intake/shared";
 import { useEffect, useState, type ReactNode } from "react";
-import { useAlternativeMeal, useConfirmSplitFoods, useEstimateMacros, useFeatures, useSplitFoodsProposal } from "../api/queries";
+import { useAlternativeMeal, useConfirmSplitFoods, useConfirmSplitWeek, useEstimateMacros, useFeatures, useSplitFoodsProposal, useSplitWeekProposal } from "../api/queries";
 import { formatKcal } from "../lib/format";
+import { ApiError } from "../api/client";
 import { planErrorText } from "../lib/planErrors";
 import { t } from "../lib/strings";
 import { FoodPicker } from "./FoodPicker";
@@ -558,7 +559,7 @@ export function AlternativeMeal({ planId, day, index, meal, onUse, busy }: { pla
 
 /**
  * "Dividi in alimenti con l'IA": the proposed nutrients of each food of a saved meal, shown before anything is saved.
- * Only "Conferma" writes them; the meal keeps its totals. docs/food-values.md
+ * Only "Conferma" writes them; the meal keeps its totals. docs/plan-generation.md
  */
 export function SplitFoods({
   plan,
@@ -632,5 +633,88 @@ export function SplitFoods({
         </>
       )}
     </div>
+  );
+}
+
+/**
+ * "Dividi la settimana in alimenti": the proposal for every meal of the week that lacks food values, shown day by day
+ * before anything is saved; "Conferma la settimana" writes it all in one version. docs/plan-generation.md
+ */
+export function SplitWeek({ plan, onDone, onClose }: { plan: StoredPlan; onDone: () => void; onClose: () => void }) {
+  const propose = useSplitWeekProposal();
+  const confirm = useConfirmSplitWeek();
+  const [proposal, setProposal] = useState<Array<{ day: string; meals: Array<{ index: number; foods: PlannedFood[] }> }> | null>(null);
+  const s = t.plan;
+  const nothing = propose.isError && propose.error instanceof ApiError && propose.error.code === "already_split";
+  const dayName = (d: string) => t.weekdaysLong[WEEKDAYS.indexOf(d as Weekday)] ?? d;
+  return (
+    <section className="card plan-split-week" aria-label={s.splitWeekMenu}>
+      <strong>{s.splitWeekMenu}</strong>
+      {!proposal && (
+        <>
+          <span className="muted plan-edit-hint">{s.splitWeekNote}</span>
+          {nothing && <p className="muted">{s.splitWeekNothing}</p>}
+          {propose.isError && !nothing && (
+            <p className="error-text" role="alert">
+              {planErrorText(propose.error)}
+            </p>
+          )}
+          <div className="plan-replace-actions">
+            <button type="button" className="button-secondary-small" onClick={onClose}>
+              {s.editCancel}
+            </button>
+            <button
+              type="button"
+              className="button-primary-inline button-ai"
+              disabled={propose.isPending}
+              onClick={() => propose.mutate(plan.id, { onSuccess: (r) => setProposal(r.days) })}
+            >
+              <SparklesIcon size={16} />
+              {propose.isPending ? s.splitWeekWorking : s.splitWeekAsk}
+            </button>
+          </div>
+        </>
+      )}
+      {proposal && (
+        <>
+          <span className="plan-edit-title">{s.splitWeekProposal}</span>
+          {proposal.map((d) => (
+            <div key={d.day} className="plan-split-day">
+              <span className="plan-edit-title">{dayName(d.day)}</span>
+              {d.meals.map((m) => {
+                const planned = plan.plan.days[d.day as Weekday].meals[m.index];
+                return (
+                  <div key={m.index} className="plan-split-meal">
+                    <span className="muted">{planned?.title ?? ""}</span>
+                    <ul className="plan-split-list">
+                      {m.foods.map((f, i) => (
+                        <li key={i}>
+                          <span>{foodLine(f)}</span>
+                          {f.nutrients && <span className="muted">{`${formatKcal(Math.round(f.nutrients.kcal))} kcal`}</span>}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                );
+              })}
+            </div>
+          ))}
+          <span className="muted plan-edit-hint">{s.splitCheck}</span>
+          {confirm.isError && (
+            <p className="error-text" role="alert">
+              {s.splitFailed}
+            </p>
+          )}
+          <div className="plan-replace-actions">
+            <button type="button" className="button-secondary-small" onClick={onClose}>
+              {s.editCancel}
+            </button>
+            <button type="button" className="button-primary-inline" disabled={confirm.isPending} onClick={() => confirm.mutate({ id: plan.id, days: proposal }, { onSuccess: onDone })}>
+              {s.splitWeekConfirm}
+            </button>
+          </div>
+        </>
+      )}
+    </section>
   );
 }

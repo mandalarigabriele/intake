@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from "vitest";
-import { WEEKDAYS, defaultPlanPreferences, toMealPlan, type GeneratedPlan, type PlanDraft } from "@intake/shared";
+import { WEEKDAYS, defaultPlanPreferences, toMealPlan, type GeneratedPlan, type MealPlan, type PlanDraft } from "@intake/shared";
 import { buildApp } from "../src/app.js";
 import { openDatabase } from "../src/db/database.js";
 import { NeedsStore } from "../src/db/needsStore.js";
@@ -158,7 +158,7 @@ describe("PlanGenerator", () => {
 const timedPlan = (job: { draft: { plan: any } }) => job.draft.plan;
 
 describe("plan generation routes", () => {
-  function setup(generator?: { generate: (...args: any[]) => Promise<PlanDraft>; replaceMeal?: (...args: any[]) => Promise<any>; estimateMacros?: (...args: any[]) => Promise<any> }) {
+  function setup(generator?: { generate: (...args: any[]) => Promise<PlanDraft>; replaceMeal?: (...args: any[]) => Promise<any>; estimateMacros?: (...args: any[]) => Promise<any>; splitDayFoodValues?: (...args: any[]) => Promise<any> }) {
     const db = openDatabase(":memory:");
     const plans = new PlanStore(db);
     const store = new PlanGenerationStore(db);
@@ -289,6 +289,31 @@ describe("plan generation routes", () => {
     expect(blockedBy("/api/plans/12/alternative", (key) => off[key])).toBe("photoMeals");
     expect(blockedBy("/api/plans/12/meal", (key) => off[key])).toBeNull();
     expect(blockedBy("/api/foods/search?q=rice", (key) => off[key])).toBeNull();
+  });
+
+  it("proposes the food values of a whole week with one request per day, and nothing for a week already split", async () => {
+    const splitDayFoodValues = vi.fn(async (meals: Array<{ key: number; foods: Array<{ quantity?: number }> }>) =>
+      meals.map((m) => ({ key: m.key, foods: m.foods.map(() => ({ kcal: 100, protein: 5, carbs: 10, fat: 2, fiber: 1, sugar: 1, addedSugar: 0 })) })),
+    );
+    const deps = setup({ generate: async () => Promise.reject(new Error("unused")), splitDayFoodValues });
+    const { app, headers } = await signedIn(deps);
+    // A plan loaded from a file: totals per meal, no values per food (generated plans now have them)
+    const withoutFoodValues = (plan: MealPlan): MealPlan => ({ ...plan, days: Object.fromEntries(WEEKDAYS.map((d) => [d, { ...plan.days[d], meals: plan.days[d].meals.map((m) => (m.free ? m : { ...m, foods: m.foods.map(({ nutrients: _n, ...f }) => f) })) }])) as MealPlan["days"] });
+    const stored = deps.plans.add(withoutFoodValues(toMealPlan(answer(), prefs.slots, "2026-11-23")));
+    const proposal = await app.inject({ method: "POST", url: `/api/plans/${stored.id}/split-foods/week`, headers });
+    expect(proposal.statusCode).toBe(200);
+    // Seven days, one request each (every day has meals without values)
+    expect(splitDayFoodValues).toHaveBeenCalledTimes(7);
+    const days = proposal.json().days;
+    expect(days).toHaveLength(7);
+    expect(days[0].meals[0].foods[0].nutrients).toMatchObject({ kcal: 100 });
+    // Nothing was saved
+    const firstMeal = deps.plans.get(stored.id)?.plan.days.monday.meals[0];
+    expect(firstMeal && "foods" in firstMeal && firstMeal.foods.some((f) => f.nutrients)).toBe(false);
+    // A week whose foods already have values has nothing to split
+    const done = deps.plans.add(toMealPlan(answer(), prefs.slots, "2026-12-01"));
+    expect((await app.inject({ method: "POST", url: `/api/plans/${done.id}/split-foods/week`, headers })).statusCode).toBe(409);
+    expect((await app.inject({ method: "POST", url: "/api/plans/999/split-foods/week", headers })).statusCode).toBe(404);
   });
 
   it("reports a failed generation with the recognition code, answers 503 without a key, and hides with the part", async () => {

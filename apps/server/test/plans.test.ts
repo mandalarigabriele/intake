@@ -396,6 +396,35 @@ describe("plan routes", () => {
     expect((await app.inject({ method: "PATCH", url: `/api/plans/999/split-foods`, headers, payload: { day: "monday", index: 2, foods } })).statusCode).toBe(404);
   });
 
+  it("confirms a whole-week split in one version: every meal listed gets its foods' values, the totals stay", async () => {
+    const { app, plans, headers } = await signedIn();
+    const { id } = (await app.inject({ method: "POST", url: "/api/plans", headers, payload: examplePlan })).json();
+    const monday = plans.get(id)!.plan.days.monday.meals;
+    const tuesday = plans.get(id)!.plan.days.tuesday.meals;
+    const valued = (foods: Array<{ name: string; quantity?: number; unit?: string }>) => foods.map((f) => ({ ...f, nutrients: { kcal: 50, protein: 2, carbs: 8, fat: 1, fiber: 1, sugar: 1, addedSugar: 0 } }));
+    const mondayFoods = monday[2] && isFixedMeal(monday[2]) ? monday[2].foods : [];
+    const tuesdayFoods = tuesday[2] && isFixedMeal(tuesday[2]) ? tuesday[2].foods : [];
+    const confirm = await app.inject({
+      method: "PATCH",
+      url: `/api/plans/${id}/split-foods/week`,
+      headers,
+      payload: { days: [{ day: "monday", meals: [{ index: 2, foods: valued(mondayFoods) }] }, { day: "tuesday", meals: [{ index: 2, foods: valued(tuesdayFoods) }] }] },
+    });
+    expect(confirm.statusCode).toBe(200);
+    expect(plans.versions("2026-11-05")).toHaveLength(1);
+    const after = plans.get(id)!.plan;
+    const mealAfter = after.days.monday.meals[2];
+    if (!mealAfter || !isFixedMeal(mealAfter)) throw new Error("expected a meal with foods");
+    expect(mealAfter.foods.every((f) => f.nutrients)).toBe(true);
+    expect(mealAfter.macros).toEqual(monday[2] && isFixedMeal(monday[2]) ? monday[2].macros : undefined);
+    // A meal with a different number of foods is refused and nothing is written
+    const before = JSON.stringify(plans.get(id)!.plan);
+    const bad = await app.inject({ method: "PATCH", url: `/api/plans/${id}/split-foods/week`, headers, payload: { days: [{ day: "monday", meals: [{ index: 2, foods: valued(mondayFoods.slice(1)) }] }] } });
+    expect(bad.statusCode).toBe(400);
+    expect(JSON.stringify(plans.get(id)!.plan)).toBe(before);
+    expect((await app.inject({ method: "PATCH", url: "/api/plans/999/split-foods/week", headers, payload: { days: [{ day: "monday", meals: [{ index: 2, foods: valued(mondayFoods) }] }] } })).statusCode).toBe(404);
+  });
+
   it("rejects an invalid plan with readable issues", async () => {
     const { app, headers } = await signedIn();
     const response = await app.inject({ method: "POST", url: "/api/plans", headers, payload: { ...examplePlan, validFrom: "domani" } });

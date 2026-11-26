@@ -118,6 +118,30 @@ const SPLIT_FOODS_JSON_SCHEMA = {
   },
 } as const;
 
+const splitDaySchema = z.object({
+  meals: z.array(z.object({ key: z.number().int(), foods: splitFoodsSchema.shape.foods })),
+});
+
+const SPLIT_DAY_JSON_SCHEMA = {
+  type: "object",
+  additionalProperties: false,
+  required: ["meals"],
+  properties: {
+    meals: {
+      type: "array",
+      items: {
+        type: "object",
+        additionalProperties: false,
+        required: ["key", "foods"],
+        properties: {
+          key: { type: "number", description: "the key of the meal, as given" },
+          foods: SPLIT_FOODS_JSON_SCHEMA.properties.foods,
+        },
+      },
+    },
+  },
+} as const;
+
 /** The WHO healthy diet guidance the day's alternative follows (it is a food suggestion for a healthy adult, not medical advice). */
 const dayAlternativeSystem = (language: Language) =>
   [
@@ -262,6 +286,24 @@ export class PlanGenerator {
     const parsed = splitFoodsSchema.safeParse(answer.json);
     if (!parsed.success || parsed.data.foods.length !== input.foods.length) throw new RecognitionError("unreadable", "Claude API answer did not match the food split");
     return parsed.data.foods;
+  }
+
+  /**
+   * "Dividi tutta la settimana in alimenti": the food values of every meal of one day that still lacks them, in one
+   * request (one request per day, not per meal). Each meal's foods are estimated and must add up to its totals.
+   */
+  async splitDayFoodValues(meals: Array<{ key: number; description: string; foods: PlannedFood[]; totals: { kcal: number; protein: number; carbs: number; fat: number; fiber: number; sugar?: number; addedSugar?: number } }>): Promise<Array<{ key: number; foods: PlannedFoodNutrients[] }>> {
+    const payload = meals.map((m) => ({ key: m.key, dish: m.description || undefined, foods: m.foods.map((f) => ({ name: f.name, ...(f.quantity !== undefined ? { amount: f.quantity, unit: f.unit ?? "" } : {}) })), mealTotals: m.totals }));
+    const text = `Estimate the nutrients of each food of these meals, for the amount given (not per 100 g), from standard food composition tables (CREA, USDA). Foods without an amount are a normal portion. For each meal answer with its key and one entry per food, in the same order. The foods of each meal should add up to that meal's totals; keep them close.\n${JSON.stringify(payload, null, 2)}`;
+    const answer = await this.ask([{ role: "user", content: text }], SPLIT_DAY_JSON_SCHEMA, "split day food values", undefined, dayAlternativeSystemFor(this.options.language?.() ?? "it"));
+    const parsed = splitDaySchema.safeParse(answer.json);
+    if (!parsed.success) throw new RecognitionError("unreadable", "Claude API answer did not match the day split");
+    const byKey = new Map(parsed.data.meals.map((m) => [m.key, m.foods]));
+    return meals.map((m) => {
+      const foods = byKey.get(m.key);
+      if (!foods || foods.length !== m.foods.length) throw new RecognitionError("unreadable", "Claude API answer lost a meal or a food of the day split");
+      return { key: m.key, foods };
+    });
   }
 
   /** One structured-output request, streamed; returns the parsed JSON and the raw text. */

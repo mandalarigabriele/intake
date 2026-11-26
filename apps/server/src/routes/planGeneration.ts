@@ -6,6 +6,9 @@ import {
   mealEditSchema,
   mealMoveSchema,
   plannedFoodSchema,
+  WEEKDAYS,
+  type PlannedFood,
+  type Weekday,
   mealReplaceSchema,
   mealTimeChangeSchema,
   replaceMeal,
@@ -36,7 +39,7 @@ export interface PlanGenerationRoutesOptions {
   store: PlanGenerationStore;
   needs: NeedsStore;
   /** Present with ANTHROPIC_API_KEY. */
-  generator?: Pick<PlanGenerator, "generate" | "replaceMeal" | "estimateMacros" | "splitFoodValues">;
+  generator?: Pick<PlanGenerator, "generate" | "replaceMeal" | "estimateMacros" | "splitFoodValues" | "splitDayFoodValues">;
   requireOwner: preHandlerHookHandler;
 }
 
@@ -238,6 +241,29 @@ export const planGenerationRoutes: FastifyPluginAsync<PlanGenerationRoutesOption
       request.log.warn({ reason: error.reason }, error.message);
       return failed(reply, error);
     }
+  });
+
+  // "Dividi tutta la settimana in alimenti con l'IA": the food values of every meal that lacks them, one request per day.
+  // Nothing is saved here; PATCH .../split-foods/week saves what the person confirmed.
+  app.post<{ Params: { id: string } }>("/plans/:id/split-foods/week", async (request, reply) => {
+    if (!generator) return reply.code(503).send({ error: "recognition_not_configured" });
+    const stored = plans.get(Number(request.params.id));
+    if (!stored) return reply.code(404).send({ error: "Plan not found" });
+    const days: Array<{ day: Weekday; meals: Array<{ index: number; foods: PlannedFood[] }> }> = [];
+    try {
+      for (const day of WEEKDAYS) {
+        const todo = stored.plan.days[day].meals.flatMap((meal, index) => (!meal.free && meal.macros && meal.foods.some((f) => !f.nutrients) ? [{ key: index, description: meal.description ?? meal.title, foods: meal.foods, totals: meal.macros }] : []));
+        if (todo.length === 0) continue;
+        const split = await generator.splitDayFoodValues(todo);
+        days.push({ day, meals: split.map((m) => ({ index: m.key, foods: todo.find((t) => t.key === m.key)!.foods.map((f, i) => ({ ...f, nutrients: m.foods[i] })) })) });
+      }
+    } catch (error) {
+      if (!(error instanceof RecognitionError)) throw error;
+      request.log.warn({ reason: error.reason }, error.message);
+      return failed(reply, error);
+    }
+    if (days.length === 0) return reply.code(409).send({ error: "already_split" });
+    return { days };
   });
 
   // "Alternativa": another dish for one meal of a stored plan, in its slot and within the person's constraints. Nothing is
