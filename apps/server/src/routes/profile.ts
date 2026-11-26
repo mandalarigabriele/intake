@@ -34,14 +34,28 @@ const goalsBody = z
   });
 
 /**
- * IANA zone names the runtime lists, plus UTC. Intl.DateTimeFormat alone would also take "+01:00", "GMT" or
- * "europe/rome", which are not zone names.
+ * An IANA zone name: "UTC", or "Area/City" with capitalised segments ("America/Argentina/Buenos_Aires", "Etc/GMT+1").
+ * The shape is checked here, and the runtime must accept it too. Checking only against the runtime's list would refuse
+ * valid newer names (e.g. "Asia/Kolkata") on a Node that does not list them yet; Intl alone would take "+01:00",
+ * "GMT" or "europe/rome", which are not zone names.
  */
-const TIME_ZONES = new Set([...Intl.supportedValuesOf("timeZone"), "UTC"]);
+const ZONE_SHAPE = /^(UTC|[A-Z][A-Za-z_]*(\/[A-Z][A-Za-z_]*|\/[A-Za-z_]+[+-]?\d*){1,2})$/;
+
+const knownToRuntime = (name: string) => {
+  try {
+    new Intl.DateTimeFormat("en", { timeZone: name });
+    return true;
+  } catch {
+    return false;
+  }
+};
 
 const timezoneBody = z
   .object({
-    timezone: z.string().refine((name) => TIME_ZONES.has(name)),
+    timezone: z
+      .string()
+      .max(64)
+      .refine((name) => ZONE_SHAPE.test(name) && knownToRuntime(name)),
   })
   .strict();
 

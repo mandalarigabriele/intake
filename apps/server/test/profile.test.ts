@@ -47,10 +47,14 @@ describe("profile routes", () => {
     expect(ok.json()).toEqual({ timezone: "Europe/Rome" });
     expect(setTimezone).toHaveBeenCalledWith("Europe/Rome");
     expect((await app.inject({ method: "POST", url: "/api/timezone", headers, payload: { timezone: "UTC" } })).statusCode).toBe(200);
+    // Valid names that a runtime's list may not show yet are accepted (Asia/Kolkata was refused before)
+    for (const timezone of ["Asia/Kolkata", "Europe/Kyiv", "America/Argentina/Buenos_Aires", "Etc/GMT+1"]) {
+      expect((await app.inject({ method: "POST", url: "/api/timezone", headers, payload: { timezone } })).statusCode).toBe(200);
+    }
     for (const timezone of ["Mars/Olympus", "", 42, "+01:00", "GMT", "europe/rome"]) {
       expect((await app.inject({ method: "POST", url: "/api/timezone", headers, payload: { timezone } })).statusCode).toBe(400);
     }
-    expect(setTimezone).toHaveBeenCalledTimes(2);
+    expect(setTimezone).toHaveBeenCalledTimes(6);
   });
 
   it("changes only the goals sent, clears with null and refuses impossible values", async () => {
